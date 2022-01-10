@@ -45,7 +45,97 @@ namespace
      , {"TEP", QT_TRANSLATE_NOOP ("LogQSO", "Trans-equatorial")}
      , {"TR", QT_TRANSLATE_NOOP ("LogQSO", "Troposheric ducting")}
     };
+
+  struct Satellite
+  {
+    char const * id_;
+    char const * name_;
+  };
+  constexpr Satellite satellite[] =
+    {
+     {"", ""}
+      , {"AISAT1", QT_TRANSLATE_NOOP ("LogQSO", "AISAT-1 AMSAT India APRS DigipeaterA")}
+      , {"AO-10", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 10")}
+      , {"AO-109", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 109")}
+      , {"AO-13", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 13")}
+      , {"AO-16", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 16")}
+      , {"AO-21", QT_TRANSLATE_NOOP ("LogQSO", "OSCAR 21/RS-14")}
+      , {"AO-27", QT_TRANSLATE_NOOP ("LogQSO", "AMRAD-OSCAR 27")}
+      , {"AO-3", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 3")}
+      , {"AO-4", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 4")}
+      , {"AO-40", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 40")}
+      , {"AO-51", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 51")}
+      , {"AO-6", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 6")}
+      , {"AO-7", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 7")}
+      , {"AO-73", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 73")}
+      , {"AO-8", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 8")}
+      , {"AO-85", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 85 (Fox-1A)")}
+      , {"AO-91", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 91 (RadFxSat / Fox-1B)")}
+      , {"AO-92", QT_TRANSLATE_NOOP ("LogQSO", "AMSAT-OSCAR 92 (Fox-1D)")}
+      , {"ARISS", QT_TRANSLATE_NOOP ("LogQSO", "ARISS")}
+      , {"Arsene", QT_TRANSLATE_NOOP ("LogQSO", "OSCAR 24")}
+      , {"BO-102", QT_TRANSLATE_NOOP ("LogQSO", "BIT Progress-OSCAR 102 (CAS-7B)")}
+      , {"BY70-1", QT_TRANSLATE_NOOP ("LogQSO", "Bayi Kepu Weixing 1")}
+      , {"CAS-3H", QT_TRANSLATE_NOOP ("LogQSO", "LilacSat-2")}
+      , {"CAS-4A", QT_TRANSLATE_NOOP ("LogQSO", "CAMSAT 4A (CAS-4A)")}
+      , {"CAS-4B", QT_TRANSLATE_NOOP ("LogQSO", "CAMSAT 4B (CAS-4B)")}
+      , {"DO-64", QT_TRANSLATE_NOOP ("LogQSO", "Delfi OSCAR-64")}
+      , {"EO-79", QT_TRANSLATE_NOOP ("LogQSO", "FUNcube-3")}
+      , {"EO-88", QT_TRANSLATE_NOOP ("LogQSO", "Emirates-OSCAR 88 (Nayif-1)")}
+      , {"FO-12", QT_TRANSLATE_NOOP ("LogQSO", "Fuji-OSCAR 12")}
+      , {"FO-20", QT_TRANSLATE_NOOP ("LogQSO", "Fuji-OSCAR 20")}
+      , {"FO-29", QT_TRANSLATE_NOOP ("LogQSO", "Fuji-OSCAR 29")}
+      , {"FO-99", QT_TRANSLATE_NOOP ("LogQSO", "Fuji-OSCAR 99 (NEXUS)")}
+      , {"FS-3", QT_TRANSLATE_NOOP ("LogQSO", "FalconSAT 3")}
+      , {"HO-107", QT_TRANSLATE_NOOP ("LogQSO", "HuskySat OSCAR 107")}
+      , {"HO-113", QT_TRANSLATE_NOOP ("LogQSO", "HO-113")}
+      , {"HO-68", QT_TRANSLATE_NOOP ("LogQSO", "Hope-Oscar 68")}
+      , {"IO-86", QT_TRANSLATE_NOOP ("LogQSO", "Indonesia-OSCAR 86 (LAPAN-ORARI)")}
+      , {"JO-97", QT_TRANSLATE_NOOP ("LogQSO", "Jordan-OSCAR 97(JY1Sat)")}
+      , {"KEDR", QT_TRANSLATE_NOOP ("LogQSO", "ARISSat-1")}
+      , {"LO-19", QT_TRANSLATE_NOOP ("LogQSO", "Lusat-OSCAR 19")}
+      , {"LO-78", QT_TRANSLATE_NOOP ("LogQSO", "LituanicaSAT-1")}
+      , {"LO-87", QT_TRANSLATE_NOOP ("LogQSO", "LUSEX-OSCAR 87")}
+      , {"LO-90", QT_TRANSLATE_NOOP ("LogQSO", "LilacSat-OSCAR 90 (LilacSat-1)")}
+      , {"MAYA-3", QT_TRANSLATE_NOOP ("LogQSO", "Cubesat")}
+      , {"MAYA-4", QT_TRANSLATE_NOOP ("LogQSO", "Cubesat")}
+      , {"MIREX", QT_TRANSLATE_NOOP ("LogQSO", "MIR Packet Digipeater")}
+      , {"NO-103", QT_TRANSLATE_NOOP ("LogQSO", "Navy-OSCAR 103 (BRICSAT 2)")}
+      , {"NO-104", QT_TRANSLATE_NOOP ("LogQSO", "Navy-OSCAR 104 (PSAT 2)")}
+      , {"NO-44", QT_TRANSLATE_NOOP ("LogQSO", "Navy-OSCAR 44")}
+      , {"NO-83", QT_TRANSLATE_NOOP ("LogQSO", "BRICsat")}
+      , {"NO-84", QT_TRANSLATE_NOOP ("LogQSO", "PSAT")}
+      , {"PO-101", QT_TRANSLATE_NOOP ("LogQSO", "Phillipines-OSCAR-101 (Diwata-2)")}
+      , {"QO-100", QT_TRANSLATE_NOOP ("LogQSO", "Qatar-OSCAR 100 (Es'hail-2/P4A)")}
+      , {"RS-1", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 1")}
+      , {"RS-10", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 10")}
+      , {"RS-11", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 11")}
+      , {"RS-12", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 12")}
+      , {"RS-13", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 13")}
+      , {"RS-15", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 15")}
+      , {"RS-2", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 2")}
+      , {"RS-44", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 44 (DOSAAF-85)")}
+      , {"RS-5", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 5")}
+      , {"RS-6", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 6")}
+      , {"RS-7", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 7")}
+      , {"RS-8", QT_TRANSLATE_NOOP ("LogQSO", "Radio Sputnik 8")}
+      , {"SAREX", QT_TRANSLATE_NOOP ("LogQSO", "Shuttle Amateur Radio Experiment (SAREX) Digipeater")}
+      , {"SO-35", QT_TRANSLATE_NOOP ("LogQSO", "Sunsat-OSCAR 35")}
+      , {"SO-41", QT_TRANSLATE_NOOP ("LogQSO", "Saudi-OSCAR 41")}
+      , {"SO-50", QT_TRANSLATE_NOOP ("LogQSO", "Saudi-OSCAR 50")}
+      , {"SO-67", QT_TRANSLATE_NOOP ("LogQSO", "Sumbandila Oscar 67")}
+      , {"TAURUS", QT_TRANSLATE_NOOP ("LogQSO", "Taurus-1 (Jinniuzuo-1)")}
+      , {"TO-108", QT_TRANSLATE_NOOP ("LogQSO", "TQ-OSCAR 108 (CAS-6 / TQ-1)")}
+      , {"UKUBE1", QT_TRANSLATE_NOOP ("LogQSO", "UKube-1 (FUNcube-2)")}
+      , {"UO-14", QT_TRANSLATE_NOOP ("LogQSO", "UOSAT-OSCAR 14")}
+      , {"UVSQ", QT_TRANSLATE_NOOP ("LogQSO", "CubeSat")}
+      , {"VO-52", QT_TRANSLATE_NOOP ("LogQSO", "VUsat-OSCAR 52")}
+      , {"XW-2A", QT_TRANSLATE_NOOP ("LogQSO", "Hope 2A (CAS-3A)")}
+      , {"XW-2B", QT_TRANSLATE_NOOP ("LogQSO", "Hope 2B (CAS-3B)")}
+      , {"XW-2C", QT_TRANSLATE_NOOP ("LogQSO", "Hope 2C (CAS-3C)")}
+    };
 }
+
 
 LogQSO::LogQSO(QString const& programTitle, QSettings * settings
                , Configuration const * config, LogBook * log, QWidget *parent)
@@ -61,7 +151,12 @@ LogQSO::LogQSO(QString const& programTitle, QSettings * settings
     {
       ui->comboBoxPropMode->addItem (prop_mode.name_, prop_mode.id_);
     }
+  for (auto const& satellite : satellite)
+    {
+      ui->comboBoxSatellite->addItem (satellite.name_, satellite.id_);
+    }
   loadSettings ();
+  connect (ui->comboBoxPropMode, &QComboBox::currentTextChanged, this, &LogQSO::propModeChanged);
   auto date_time_format = QLocale {}.dateFormat (QLocale::ShortFormat) + " hh:mm:ss";
   ui->start_date_time->setDisplayFormat (date_time_format);
   ui->end_date_time->setDisplayFormat (date_time_format);
@@ -79,6 +174,7 @@ void LogQSO::loadSettings ()
   ui->cbTxPower->setChecked (m_settings->value ("SaveTxPower", false).toBool ());
   ui->cbComments->setChecked (m_settings->value ("SaveComments", false).toBool ());
   ui->cbPropMode->setChecked (m_settings->value ("SavePropMode", false).toBool ());
+  ui->cbSatellite->setChecked (m_settings->value ("SaveSatellite", false).toBool ());
   m_txPower = m_settings->value ("TxPower", "").toString ();
   m_comments = m_settings->value ("LogComments", "").toString();
   int prop_index {0};
@@ -87,6 +183,19 @@ void LogQSO::loadSettings ()
       prop_index = ui->comboBoxPropMode->findData (m_settings->value ("PropMode", "").toString());
     }
   ui->comboBoxPropMode->setCurrentIndex (prop_index);
+  int satellite {0};
+  if (ui->cbSatellite->isChecked ())
+    {
+      satellite = ui->comboBoxSatellite->findData (m_settings->value ("Satellite", "").toString());
+    }
+  ui->comboBoxSatellite->setCurrentIndex (satellite);
+  if (m_settings->value ("PropMode", "") != "SAT")
+  {
+      ui->cbSatellite->setDisabled(true);
+      ui->comboBoxSatellite->setDisabled(true);
+  }
+  m_freqRx = m_settings->value ("FreqRx", "").toString ();
+  ui->cbFreqRx->setChecked (m_settings->value ("SaveFreqRx", false).toBool ());
   m_settings->endGroup ();
 }
 
@@ -97,9 +206,13 @@ void LogQSO::storeSettings () const
   m_settings->setValue ("SaveTxPower", ui->cbTxPower->isChecked ());
   m_settings->setValue ("SaveComments", ui->cbComments->isChecked ());
   m_settings->setValue ("SavePropMode", ui->cbPropMode->isChecked ());
+  m_settings->setValue ("SaveSatellite", ui->cbSatellite->isChecked ());
+  m_settings->setValue ("SaveFreqRx", ui->cbFreqRx->isChecked ());
   m_settings->setValue ("TxPower", m_txPower);
   m_settings->setValue ("LogComments", m_comments);
   m_settings->setValue ("PropMode", ui->comboBoxPropMode->currentData ());
+  m_settings->setValue ("Satellite", ui->comboBoxSatellite->currentData ());
+  m_settings->setValue ("FreqRx", m_freqRx);
   m_settings->endGroup ();
 }
 
@@ -119,6 +232,14 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
   else
     {
       ui->txPower->clear ();
+    }
+  if (ui->cbFreqRx->isChecked ())
+    {
+      ui->freqRx->setText (m_freqRx);
+    }
+  else
+    {
+      ui->freqRx->clear ();
     }
   if (ui->cbComments->isChecked ())
     {
@@ -151,6 +272,10 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
   if (!ui->cbPropMode->isChecked ())
     {
       ui->comboBoxPropMode->setCurrentIndex (-1);
+    }
+  if (!ui->cbSatellite->isChecked ())
+    {
+      ui->comboBoxSatellite->setCurrentIndex (-1);
     }
 
   using SpOp = Configuration::SpecialOperatingActivity;
@@ -231,6 +356,8 @@ void LogQSO::accept()
     }
 
   auto const& prop_mode = ui->comboBoxPropMode->currentData ().toString ();
+  auto const& satellite = ui->comboBoxSatellite->currentData ().toString ();
+  m_freqRx = ui->freqRx->text ();
   //Log this QSO to file "wsjtx.log"
   static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx.log")};
   if(!f.open(QIODevice::Text | QIODevice::Append)) {
@@ -244,7 +371,8 @@ void LogQSO::accept()
       dateTimeOff.time().toString("hh:mm:ss,") + hisCall + "," +
       hisGrid + "," + strDialFreq + "," + mode +
       "," + rptSent + "," + rptRcvd + "," + m_txPower +
-      "," + m_comments + "," + name + "," + prop_mode;
+      "," + m_comments + "," + name + "," + prop_mode +
+      "," + satellite + "," + m_freqRx;
     QTextStream out(&f);
     out << logEntry <<
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
@@ -274,6 +402,8 @@ void LogQSO::accept()
                     , xsent
                     , xrcvd
                     , prop_mode
+                    , satellite
+                    , m_freqRx
                     , m_log->QSOToADIF (hisCall
                                         , hisGrid
                                         , mode
@@ -291,8 +421,22 @@ void LogQSO::accept()
                                         , operator_call
                                         , xsent
                                         , xrcvd
-                                        , prop_mode));
+                                        , prop_mode
+                                        , satellite
+                                        , m_freqRx));
   QDialog::accept();
+}
+
+void LogQSO::propModeChanged()
+{
+    if (ui->comboBoxPropMode->currentData() != "SAT") {
+        ui->comboBoxSatellite->setDisabled(true);
+        ui->cbSatellite->setDisabled(true);
+    } else {
+        ui->comboBoxSatellite->setDisabled(false);
+        ui->cbSatellite->setDisabled(false);
+    }
+
 }
 
 // closeEvent is only called from the system menu close widget for a

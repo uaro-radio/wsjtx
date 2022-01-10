@@ -44,7 +44,8 @@ public:
                         QDateTime const& dateTimeOff, QString const& band, QString const& comments,
                         QString const& name, QString const& strDialFreq, QString const& myCall,
                         QString const& m_myGrid, QString const& m_txPower, QString const& operator_call,
-                        QString const& xSent, QString const& xRcvd, QString const& propmode);
+                        QString const& xSent, QString const& xRcvd, QString const& propmode,
+                        QString const& satellite, QString const& freqRx);
 
   Q_SIGNAL void finished_loading (int worked_before_record_count, QString const& error) const;
 

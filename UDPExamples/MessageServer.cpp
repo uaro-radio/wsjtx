@@ -330,6 +330,8 @@ void MessageServer::impl::parse_message (QHostAddress const& sender, port_type s
                 QByteArray exchange_sent;
                 QByteArray exchange_rcvd;
                 QByteArray prop_mode;
+                QByteArray satellite;
+                QByteArray freqRx;
                 in >> time_off >> dx_call >> dx_grid >> dial_frequency >> mode >> report_sent >> report_received
                    >> tx_power >> comments >> name >> time_on >> operator_call >> my_call >> my_grid
                    >> exchange_sent >> exchange_rcvd >> prop_mode;
@@ -343,7 +345,8 @@ void MessageServer::impl::parse_message (QHostAddress const& sender, port_type s
                                               , QString::fromUtf8 (comments), QString::fromUtf8 (name), time_on
                                               , QString::fromUtf8 (operator_call), QString::fromUtf8 (my_call)
                                               , QString::fromUtf8 (my_grid), QString::fromUtf8 (exchange_sent)
-                                              , QString::fromUtf8 (exchange_rcvd), QString::fromUtf8 (prop_mode));
+                                              , QString::fromUtf8 (exchange_rcvd), QString::fromUtf8 (prop_mode)
+                                              , QString::fromUtf8 (satellite), QString::fromUtf8 (freqRx));
                   }
               }
               break;

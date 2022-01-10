@@ -38,7 +38,8 @@ public:
                        , QString const& report_received, QString const& tx_power, QString const& comments
                        , QString const& name, QDateTime time_on, QString const& operator_call
                        , QString const& my_call, QString const& my_grid
-                       , QString const& exchange_sent, QString const& exchange_rcvd, QString const& prop_mode);
+                       , QString const& exchange_sent, QString const& exchange_rcvd, QString const& prop_mode
+                       , QString const& satellite, QString const& freqRx);
 
 private:
   void restart_server ();
