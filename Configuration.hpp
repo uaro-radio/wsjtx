@@ -189,7 +189,9 @@ public:
   bool clear_DXcall () const;
   bool highlight_DXgrid () const;
   bool clear_DXgrid () const;
- 
+  bool erase_BandActivity () const;
+  bool set_RXtoTX () const;
+
   enum class SpecialOperatingActivity {NONE, NA_VHF, EU_VHF, FIELD_DAY, RTTY, WW_DIGI, FOX, HOUND};
   SpecialOperatingActivity special_op_id () const;
 

@@ -6162,6 +6162,7 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
 
   m_xSent.clear ();
   m_xRcvd.clear ();
+  if (m_config.set_RXtoTX ()) on_pbT2R_clicked();   // Mod for WD5DHK
   if (m_config.clear_DXcall ()) ui->dxCallEntry->clear ();
   if (m_config.clear_DXgrid ()) ui->dxGridEntry->clear ();
 }
@@ -7151,6 +7152,7 @@ void MainWindow::band_changed (Frequency f)
       }
     setRig (f);
     setXIT (ui->TxFreqSpinBox->value ());
+    if (m_config.erase_BandActivity ()) ui->decodedTextBrowser->erase ();   // Mod for WD5DHK
   }
 }
 

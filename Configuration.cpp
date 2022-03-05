@@ -675,6 +675,8 @@ private:
   bool clear_DXcall_;
   bool highlight_DXgrid_;
   bool clear_DXgrid_;
+  bool erase_BandActivity_;
+  bool set_RXtoTX_;
 
   QAudioDeviceInfo audio_input_device_;
   QAudioDeviceInfo next_audio_input_device_;
@@ -797,6 +799,9 @@ bool Configuration::highlight_DXcall () const {return m_->highlight_DXcall_;}
 bool Configuration::clear_DXcall () const {return m_->clear_DXcall_;}
 bool Configuration::highlight_DXgrid () const {return m_->highlight_DXgrid_;}
 bool Configuration::clear_DXgrid () const {return m_->clear_DXgrid_;}
+bool Configuration::erase_BandActivity () const {return m_->erase_BandActivity_;}
+bool Configuration::set_RXtoTX () const {return m_->set_RXtoTX_;}
+
 
 void Configuration::set_calibration (CalibrationParams params)
 {
@@ -1438,6 +1443,8 @@ void Configuration::impl::initialize_models ()
   ui_->cbClearDXcall->setChecked(clear_DXcall_);
   ui_->cbHighlightDXgrid->setChecked(highlight_DXgrid_);
   ui_->cbClearDXgrid->setChecked(clear_DXgrid_);
+  ui_->cbEraseBandActivity->setChecked(erase_BandActivity_);
+  ui_->cbRxToTxAfterQSO->setChecked(set_RXtoTX_);
 
   set_rig_invariants ();
 }
@@ -1599,6 +1606,8 @@ void Configuration::impl::read_settings ()
   clear_DXcall_ = settings_->value("clear_DXcall",false).toBool ();
   highlight_DXgrid_ = settings_->value("highlight_DXgrid",false).toBool ();
   clear_DXgrid_ = settings_->value("clear_DXgrid",false).toBool ();
+  erase_BandActivity_ = settings_->value("erase_BandActivity",false).toBool ();
+  set_RXtoTX_ = settings_->value("set_RXtoTX",false).toBool ();
 }
 
 void Configuration::impl::find_audio_devices ()
@@ -1735,6 +1744,8 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("clear_DXcall", clear_DXcall_);
   settings_->setValue ("highlight_DXgrid", highlight_DXgrid_);
   settings_->setValue ("clear_DXgrid", clear_DXgrid_);
+  settings_->setValue ("erase_BandActivity", erase_BandActivity_);
+  settings_->setValue ("set_RXtoTX", set_RXtoTX_);
   settings_->sync ();
 }
 
@@ -2227,6 +2238,8 @@ void Configuration::impl::accept ()
   clear_DXcall_ = ui_->cbClearDXcall->isChecked();
   highlight_DXgrid_ = ui_->cbHighlightDXgrid->isChecked();
   clear_DXgrid_ = ui_->cbClearDXgrid->isChecked();
+  erase_BandActivity_ = ui_->cbEraseBandActivity->isChecked();
+  set_RXtoTX_ = ui_->cbRxToTxAfterQSO->isChecked();
 
   write_settings ();		// make visible to all
 }
