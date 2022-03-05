@@ -521,6 +521,30 @@ private:
   Q_SLOT void on_Field_Day_Exchange_textEdited (QString const&);
   Q_SLOT void on_RTTY_Exchange_textEdited (QString const&);
   Q_SLOT void on_Contest_Name_textEdited (QString const&);
+  Q_SLOT void on_Blacklist1_textEdited (QString const&);
+  Q_SLOT void on_Blacklist2_textEdited (QString const&);
+  Q_SLOT void on_Blacklist3_textEdited (QString const&);
+  Q_SLOT void on_Blacklist4_textEdited (QString const&);
+  Q_SLOT void on_Blacklist5_textEdited (QString const&);
+  Q_SLOT void on_Blacklist6_textEdited (QString const&);
+  Q_SLOT void on_Blacklist7_textEdited (QString const&);
+  Q_SLOT void on_Blacklist8_textEdited (QString const&);
+  Q_SLOT void on_Blacklist9_textEdited (QString const&);
+  Q_SLOT void on_Blacklist10_textEdited (QString const&);
+  Q_SLOT void on_Blacklist11_textEdited (QString const&);
+  Q_SLOT void on_Blacklist12_textEdited (QString const&);
+  Q_SLOT void on_Whitelist1_textEdited (QString const&);
+  Q_SLOT void on_Whitelist2_textEdited (QString const&);
+  Q_SLOT void on_Whitelist3_textEdited (QString const&);
+  Q_SLOT void on_Whitelist4_textEdited (QString const&);
+  Q_SLOT void on_Whitelist5_textEdited (QString const&);
+  Q_SLOT void on_Whitelist6_textEdited (QString const&);
+  Q_SLOT void on_Whitelist7_textEdited (QString const&);
+  Q_SLOT void on_Whitelist8_textEdited (QString const&);
+  Q_SLOT void on_Whitelist9_textEdited (QString const&);
+  Q_SLOT void on_Whitelist10_textEdited (QString const&);
+  Q_SLOT void on_Whitelist11_textEdited (QString const&);
+  Q_SLOT void on_Whitelist12_textEdited (QString const&);
 
   // typenames used as arguments must match registered type names :(
   Q_SIGNAL void start_transceiver (unsigned seqeunce_number) const;
@@ -617,6 +641,30 @@ private:
   QString FD_exchange_;
   QString RTTY_exchange_;
   QString Contest_Name_;
+  QString Blacklist1_;
+  QString Blacklist2_;
+  QString Blacklist3_;
+  QString Blacklist4_;
+  QString Blacklist5_;
+  QString Blacklist6_;
+  QString Blacklist7_;
+  QString Blacklist8_;
+  QString Blacklist9_;
+  QString Blacklist10_;
+  QString Blacklist11_;
+  QString Blacklist12_;
+  QString Whitelist1_;
+  QString Whitelist2_;
+  QString Whitelist3_;
+  QString Whitelist4_;
+  QString Whitelist5_;
+  QString Whitelist6_;
+  QString Whitelist7_;
+  QString Whitelist8_;
+  QString Whitelist9_;
+  QString Whitelist10_;
+  QString Whitelist11_;
+  QString Whitelist12_;
 
   qint32 id_interval_;
   qint32 ntrials_;
@@ -653,6 +701,8 @@ private:
   bool single_decode_;
   bool twoPass_;
   bool Individual_Contest_Name_;
+  bool Blacklisted_;
+  bool Whitelisted_;
   bool bSpecialOp_;
   int  SelectedActivity_;
   bool x2ToneSpacing_;
@@ -767,6 +817,8 @@ bool Configuration::decode_at_52s () const {return m_->decode_at_52s_;}
 bool Configuration::single_decode () const {return m_->single_decode_;}
 bool Configuration::twoPass() const {return m_->twoPass_;}
 bool Configuration::Individual_Contest_Name() const {return m_->Individual_Contest_Name_;}
+bool Configuration::Blacklisted() const {return m_->Blacklisted_;}
+bool Configuration::Whitelisted() const {return m_->Whitelisted_;}
 bool Configuration::x2ToneSpacing() const {return m_->x2ToneSpacing_;}
 bool Configuration::x4ToneSpacing() const {return m_->x4ToneSpacing_;}
 bool Configuration::split_mode () const {return m_->split_mode ();}
@@ -934,6 +986,126 @@ QString Configuration::RTTY_Exchange() const
 QString Configuration::Contest_Name() const
 {
   return m_->Contest_Name_;
+}
+
+QString Configuration::Blacklist1() const
+{
+  return m_->Blacklist1_;
+}
+
+QString Configuration::Blacklist2() const
+{
+  return m_->Blacklist2_;
+}
+
+QString Configuration::Blacklist3() const
+{
+  return m_->Blacklist3_;
+}
+
+QString Configuration::Blacklist4() const
+{
+  return m_->Blacklist4_;
+}
+
+QString Configuration::Blacklist5() const
+{
+  return m_->Blacklist5_;
+}
+
+QString Configuration::Blacklist6() const
+{
+  return m_->Blacklist6_;
+}
+
+QString Configuration::Blacklist7() const
+{
+  return m_->Blacklist7_;
+}
+
+QString Configuration::Blacklist8() const
+{
+  return m_->Blacklist8_;
+}
+
+QString Configuration::Blacklist9() const
+{
+  return m_->Blacklist9_;
+}
+
+QString Configuration::Blacklist10() const
+{
+  return m_->Blacklist10_;
+}
+
+QString Configuration::Blacklist11() const
+{
+  return m_->Blacklist11_;
+}
+
+QString Configuration::Blacklist12() const
+{
+  return m_->Blacklist12_;
+}
+
+QString Configuration::Whitelist1() const
+{
+  return m_->Whitelist1_;
+}
+
+QString Configuration::Whitelist2() const
+{
+  return m_->Whitelist2_;
+}
+
+QString Configuration::Whitelist3() const
+{
+  return m_->Whitelist3_;
+}
+
+QString Configuration::Whitelist4() const
+{
+  return m_->Whitelist4_;
+}
+
+QString Configuration::Whitelist5() const
+{
+  return m_->Whitelist5_;
+}
+
+QString Configuration::Whitelist6() const
+{
+  return m_->Whitelist6_;
+}
+
+QString Configuration::Whitelist7() const
+{
+  return m_->Whitelist7_;
+}
+
+QString Configuration::Whitelist8() const
+{
+  return m_->Whitelist8_;
+}
+
+QString Configuration::Whitelist9() const
+{
+  return m_->Whitelist9_;
+}
+
+QString Configuration::Whitelist10() const
+{
+  return m_->Whitelist10_;
+}
+
+QString Configuration::Whitelist11() const
+{
+  return m_->Whitelist11_;
+}
+
+QString Configuration::Whitelist12() const
+{
+  return m_->Whitelist12_;
 }
 
 auto Configuration::special_op_id () const -> SpecialOperatingActivity
@@ -1378,6 +1550,8 @@ void Configuration::impl::initialize_models ()
   ui_->single_decode_check_box->setChecked(single_decode_);
   ui_->cbTwoPass->setChecked(twoPass_);
   ui_->cbContestName->setChecked(Individual_Contest_Name_);
+  ui_->cbBlacklist->setChecked(Blacklisted_);
+  ui_->cbWhitelist->setChecked(Whitelisted_);
   ui_->gbSpecialOpActivity->setChecked(bSpecialOp_);
   ui_->special_op_activity_button_group->button (SelectedActivity_)->setChecked (true);
   ui_->cbx2ToneSpacing->setChecked(x2ToneSpacing_);
@@ -1486,6 +1660,55 @@ void Configuration::impl::read_settings ()
   Contest_Name_ = settings_->value ("Contest_Name",QString {}).toString ();
   ui_->Field_Day_Exchange->setText(FD_exchange_);
   ui_->RTTY_Exchange->setText(RTTY_exchange_);
+  Blacklist1_ = settings_->value ("Blacklist1",QString {}).toString ();
+  Blacklist2_ = settings_->value ("Blacklist2",QString {}).toString ();
+  Blacklist3_ = settings_->value ("Blacklist3",QString {}).toString ();
+  Blacklist4_ = settings_->value ("Blacklist4",QString {}).toString ();
+  Blacklist5_ = settings_->value ("Blacklist5",QString {}).toString ();
+  Blacklist6_ = settings_->value ("Blacklist6",QString {}).toString ();
+  Blacklist7_ = settings_->value ("Blacklist7",QString {}).toString ();
+  Blacklist8_ = settings_->value ("Blacklist8",QString {}).toString ();
+  Blacklist9_ = settings_->value ("Blacklist9",QString {}).toString ();
+  Blacklist10_ = settings_->value ("Blacklist10",QString {}).toString ();
+  Blacklist11_ = settings_->value ("Blacklist11",QString {}).toString ();
+  Blacklist12_ = settings_->value ("Blacklist12",QString {}).toString ();
+  Whitelist1_ = settings_->value ("Whitelist1",QString {}).toString ();
+  Whitelist2_ = settings_->value ("Whitelist2",QString {}).toString ();
+  Whitelist3_ = settings_->value ("Whitelist3",QString {}).toString ();
+  Whitelist4_ = settings_->value ("Whitelist4",QString {}).toString ();
+  Whitelist5_ = settings_->value ("Whitelist5",QString {}).toString ();
+  Whitelist6_ = settings_->value ("Whitelist6",QString {}).toString ();
+  Whitelist7_ = settings_->value ("Whitelist7",QString {}).toString ();
+  Whitelist8_ = settings_->value ("Whitelist8",QString {}).toString ();
+  Whitelist9_ = settings_->value ("Whitelist9",QString {}).toString ();
+  Whitelist10_ = settings_->value ("Whitelist10",QString {}).toString ();
+  Whitelist11_ = settings_->value ("Whitelist11",QString {}).toString ();
+  Whitelist12_ = settings_->value ("Whitelist12",QString {}).toString ();
+  ui_->Blacklist1->setText(Blacklist1_);
+  ui_->Blacklist2->setText(Blacklist2_);
+  ui_->Blacklist3->setText(Blacklist3_);
+  ui_->Blacklist4->setText(Blacklist4_);
+  ui_->Blacklist5->setText(Blacklist5_);
+  ui_->Blacklist6->setText(Blacklist6_);
+  ui_->Blacklist7->setText(Blacklist7_);
+  ui_->Blacklist8->setText(Blacklist8_);
+  ui_->Blacklist9->setText(Blacklist9_);
+  ui_->Blacklist10->setText(Blacklist10_);
+  ui_->Blacklist11->setText(Blacklist11_);
+  ui_->Blacklist12->setText(Blacklist12_);
+  ui_->Whitelist1->setText(Whitelist1_);
+  ui_->Whitelist2->setText(Whitelist2_);
+  ui_->Whitelist3->setText(Whitelist3_);
+  ui_->Whitelist4->setText(Whitelist4_);
+  ui_->Whitelist5->setText(Whitelist5_);
+  ui_->Whitelist6->setText(Whitelist6_);
+  ui_->Whitelist7->setText(Whitelist7_);
+  ui_->Whitelist8->setText(Whitelist8_);
+  ui_->Whitelist9->setText(Whitelist9_);
+  ui_->Whitelist10->setText(Whitelist10_);
+  ui_->Whitelist11->setText(Whitelist11_);
+  ui_->Whitelist12->setText(Whitelist12_);
+
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
       && next_font_ != font_)
     {
@@ -1601,6 +1824,8 @@ void Configuration::impl::read_settings ()
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
   twoPass_ = settings_->value("TwoPass",true).toBool ();
   Individual_Contest_Name_ = settings_->value("Individual_Contest_Name",true).toBool ();
+  Blacklisted_ = settings_->value("Blacklisted",false).toBool ();
+  Whitelisted_ = settings_->value("Whitelisted",false).toBool ();
   bSpecialOp_ = settings_->value("SpecialOpActivity",false).toBool ();
   SelectedActivity_ = settings_->value("SelectedActivity",1).toInt (); 
   x2ToneSpacing_ = settings_->value("x2ToneSpacing",false).toBool ();
@@ -1666,6 +1891,30 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("Field_Day_Exchange", FD_exchange_);
   settings_->setValue ("RTTY_Exchange", RTTY_exchange_);
   settings_->setValue ("Contest_Name", Contest_Name_);
+  settings_->setValue ("Blacklist1", Blacklist1_);
+  settings_->setValue ("Blacklist2", Blacklist2_);
+  settings_->setValue ("Blacklist3", Blacklist3_);
+  settings_->setValue ("Blacklist4", Blacklist4_);
+  settings_->setValue ("Blacklist5", Blacklist5_);
+  settings_->setValue ("Blacklist6", Blacklist6_);
+  settings_->setValue ("Blacklist7", Blacklist7_);
+  settings_->setValue ("Blacklist8", Blacklist8_);
+  settings_->setValue ("Blacklist9", Blacklist9_);
+  settings_->setValue ("Blacklist10", Blacklist10_);
+  settings_->setValue ("Blacklist11", Blacklist11_);
+  settings_->setValue ("Blacklist12", Blacklist12_);
+  settings_->setValue ("Whitelist1", Whitelist1_);
+  settings_->setValue ("Whitelist2", Whitelist2_);
+  settings_->setValue ("Whitelist3", Whitelist3_);
+  settings_->setValue ("Whitelist4", Whitelist4_);
+  settings_->setValue ("Whitelist5", Whitelist5_);
+  settings_->setValue ("Whitelist6", Whitelist6_);
+  settings_->setValue ("Whitelist7", Whitelist7_);
+  settings_->setValue ("Whitelist8", Whitelist8_);
+  settings_->setValue ("Whitelist9", Whitelist9_);
+  settings_->setValue ("Whitelist10", Whitelist10_);
+  settings_->setValue ("Whitelist11", Whitelist11_);
+  settings_->setValue ("Whitelist12", Whitelist12_);
   settings_->setValue ("Font", font_.toString ());
   settings_->setValue ("DecodedTextFont", decoded_text_font_.toString ());
   settings_->setValue ("IDint", id_interval_);
@@ -1743,6 +1992,8 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("SingleDecode", single_decode_);
   settings_->setValue ("TwoPass", twoPass_);
   settings_->setValue ("Individual_Contest_Name", Individual_Contest_Name_);
+  settings_->setValue ("Blacklisted", Blacklisted_);
+  settings_->setValue ("Whitelisted", Whitelisted_);
   settings_->setValue ("SelectedActivity", SelectedActivity_);
   settings_->setValue ("SpecialOpActivity", bSpecialOp_);
   settings_->setValue ("x2ToneSpacing", x2ToneSpacing_);
@@ -2139,6 +2390,30 @@ void Configuration::impl::accept ()
   FD_exchange_= ui_->Field_Day_Exchange->text ().toUpper ();
   RTTY_exchange_= ui_->RTTY_Exchange->text ().toUpper ();
   Contest_Name_= ui_->Contest_Name->text ().toUpper ();
+  Blacklist1_= ui_->Blacklist1->text ().toUpper ();
+  Blacklist2_= ui_->Blacklist2->text ().toUpper ();
+  Blacklist3_= ui_->Blacklist3->text ().toUpper ();
+  Blacklist4_= ui_->Blacklist4->text ().toUpper ();
+  Blacklist5_= ui_->Blacklist5->text ().toUpper ();
+  Blacklist6_= ui_->Blacklist6->text ().toUpper ();
+  Blacklist7_= ui_->Blacklist7->text ().toUpper ();
+  Blacklist8_= ui_->Blacklist8->text ().toUpper ();
+  Blacklist9_= ui_->Blacklist9->text ().toUpper ();
+  Blacklist10_= ui_->Blacklist10->text ().toUpper ();
+  Blacklist11_= ui_->Blacklist11->text ().toUpper ();
+  Blacklist12_= ui_->Blacklist12->text ().toUpper ();
+  Whitelist1_= ui_->Whitelist1->text ().toUpper ();
+  Whitelist2_= ui_->Whitelist2->text ().toUpper ();
+  Whitelist3_= ui_->Whitelist3->text ().toUpper ();
+  Whitelist4_= ui_->Whitelist4->text ().toUpper ();
+  Whitelist5_= ui_->Whitelist5->text ().toUpper ();
+  Whitelist6_= ui_->Whitelist6->text ().toUpper ();
+  Whitelist7_= ui_->Whitelist7->text ().toUpper ();
+  Whitelist8_= ui_->Whitelist8->text ().toUpper ();
+  Whitelist9_= ui_->Whitelist9->text ().toUpper ();
+  Whitelist10_= ui_->Whitelist10->text ().toUpper ();
+  Whitelist11_= ui_->Whitelist11->text ().toUpper ();
+  Whitelist12_= ui_->Whitelist12->text ().toUpper ();
   spot_to_psk_reporter_ = ui_->psk_reporter_check_box->isChecked ();
   psk_reporter_tcpip_ = ui_->psk_reporter_tcpip_check_box->isChecked ();
   id_interval_ = ui_->CW_id_interval_spin_box->value ();
@@ -2179,6 +2454,8 @@ void Configuration::impl::accept ()
   single_decode_ = ui_->single_decode_check_box->isChecked ();
   twoPass_ = ui_->cbTwoPass->isChecked ();
   Individual_Contest_Name_ = ui_->cbContestName->isChecked ();
+  Blacklisted_ = ui_->cbBlacklist->isChecked ();
+  Whitelisted_ = ui_->cbWhitelist->isChecked ();
   bSpecialOp_ = ui_->gbSpecialOpActivity->isChecked ();
   SelectedActivity_ = ui_->special_op_activity_button_group->checkedId();
   x2ToneSpacing_ = ui_->cbx2ToneSpacing->isChecked ();
@@ -2269,6 +2546,8 @@ void Configuration::impl::accept ()
   erase_BandActivity_ = ui_->cbEraseBandActivity->isChecked();
   set_RXtoTX_ = ui_->cbRxToTxAfterQSO->isChecked();
   Individual_Contest_Name_ = ui_->cbContestName->isChecked();
+  Blacklisted_ = ui_->cbBlacklist->isChecked();
+  Whitelisted_ = ui_->cbWhitelist->isChecked();
 
   write_settings ();		// make visible to all
 }
@@ -2771,10 +3050,130 @@ void Configuration::impl::on_RTTY_Exchange_textEdited (QString const& exchange)
   ui_->RTTY_Exchange->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Contest_Name_textEdited (QString const& exchange)     // UR
-{                                                                                  // UR
-  ui_->Contest_Name->setText (exchange.toUpper ());                                // UR
-}                                                                                  // UR
+void Configuration::impl::on_Contest_Name_textEdited (QString const& exchange)
+{
+  ui_->Contest_Name->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist1_textEdited (QString const& exchange)
+{
+  ui_->Blacklist1->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist2_textEdited (QString const& exchange)
+{
+  ui_->Blacklist2->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist3_textEdited (QString const& exchange)
+{
+  ui_->Blacklist3->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist4_textEdited (QString const& exchange)
+{
+  ui_->Blacklist4->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist5_textEdited (QString const& exchange)
+{
+  ui_->Blacklist5->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist6_textEdited (QString const& exchange)
+{
+  ui_->Blacklist6->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist7_textEdited (QString const& exchange)
+{
+  ui_->Blacklist7->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist8_textEdited (QString const& exchange)
+{
+  ui_->Blacklist8->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist9_textEdited (QString const& exchange)
+{
+  ui_->Blacklist9->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist10_textEdited (QString const& exchange)
+{
+  ui_->Blacklist10->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist11_textEdited (QString const& exchange)
+{
+  ui_->Blacklist11->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Blacklist12_textEdited (QString const& exchange)
+{
+  ui_->Blacklist12->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist1_textEdited (QString const& exchange)
+{
+  ui_->Whitelist1->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist2_textEdited (QString const& exchange)
+{
+  ui_->Whitelist2->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist3_textEdited (QString const& exchange)
+{
+  ui_->Whitelist3->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist4_textEdited (QString const& exchange)
+{
+  ui_->Whitelist4->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist5_textEdited (QString const& exchange)
+{
+  ui_->Whitelist5->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist6_textEdited (QString const& exchange)
+{
+  ui_->Whitelist6->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist7_textEdited (QString const& exchange)
+{
+  ui_->Whitelist7->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist8_textEdited (QString const& exchange)
+{
+  ui_->Whitelist8->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist9_textEdited (QString const& exchange)
+{
+  ui_->Whitelist9->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist10_textEdited (QString const& exchange)
+{
+  ui_->Whitelist10->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist11_textEdited (QString const& exchange)
+{
+  ui_->Whitelist11->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Whitelist12_textEdited (QString const& exchange)
+{
+  ui_->Whitelist12->setText (exchange.toUpper ());
+}
 
 bool Configuration::impl::have_rig ()
 {

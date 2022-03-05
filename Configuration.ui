@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>554</width>
+    <width>589</width>
     <height>687</height>
    </rect>
   </property>
@@ -3148,6 +3148,170 @@ Right click for insert and delete options.</string>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="filters_tab">
+      <attribute name="title">
+       <string>Filters</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_13">
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="gridLayout_19">
+         <item row="3" column="2">
+          <widget class="QLineEdit" name="Blacklist3"/>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="Blacklist6"/>
+         </item>
+         <item row="2" column="0" colspan="4">
+          <widget class="QCheckBox" name="cbBlacklist">
+           <property name="text">
+            <string>Hide messages containing the following callsigns or keywords:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLineEdit" name="Blacklist1"/>
+         </item>
+         <item row="10" column="3">
+          <widget class="QLineEdit" name="Whitelist12"/>
+         </item>
+         <item row="10" column="0">
+          <widget class="QLineEdit" name="Whitelist9"/>
+         </item>
+         <item row="4" column="3">
+          <widget class="QLineEdit" name="Blacklist8"/>
+         </item>
+         <item row="7" column="0" colspan="4">
+          <widget class="QCheckBox" name="cbWhitelist">
+           <property name="text">
+            <string>Show only messages containing the following callsigns or keywords:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="3">
+          <widget class="QLineEdit" name="Blacklist12"/>
+         </item>
+         <item row="4" column="2">
+          <widget class="QLineEdit" name="Blacklist7"/>
+         </item>
+         <item row="8" column="2">
+          <widget class="QLineEdit" name="Whitelist3"/>
+         </item>
+         <item row="9" column="3">
+          <widget class="QLineEdit" name="Whitelist8"/>
+         </item>
+         <item row="10" column="2">
+          <widget class="QLineEdit" name="Whitelist11"/>
+         </item>
+         <item row="10" column="1">
+          <widget class="QLineEdit" name="Whitelist10"/>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLineEdit" name="Blacklist9"/>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="Blacklist2"/>
+         </item>
+         <item row="8" column="3">
+          <widget class="QLineEdit" name="Whitelist4"/>
+         </item>
+         <item row="3" column="3">
+          <widget class="QLineEdit" name="Blacklist4"/>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLineEdit" name="Whitelist1"/>
+         </item>
+         <item row="11" column="0">
+          <spacer name="verticalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="0" colspan="4">
+          <widget class="QLabel" name="label_18">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Filters for the Band Activity window</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QLineEdit" name="Whitelist6"/>
+         </item>
+         <item row="8" column="1">
+          <widget class="QLineEdit" name="Whitelist2"/>
+         </item>
+         <item row="5" column="2">
+          <widget class="QLineEdit" name="Blacklist11"/>
+         </item>
+         <item row="1" column="0" colspan="4" alignment="Qt::AlignBottom">
+          <widget class="QLabel" name="label_24">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Blacklist</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLineEdit" name="Blacklist5"/>
+         </item>
+         <item row="9" column="0">
+          <widget class="QLineEdit" name="Whitelist5"/>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLineEdit" name="Blacklist10"/>
+         </item>
+         <item row="6" column="0" colspan="4" alignment="Qt::AlignBottom">
+          <widget class="QLabel" name="label_23">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Whitelist</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="2">
+          <widget class="QLineEdit" name="Whitelist7"/>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -3377,9 +3541,9 @@ Right click for insert and delete options.</string>
   <buttongroup name="CAT_data_bits_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
   <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
   <buttongroup name="TX_audio_source_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
  </buttongroups>
 </ui>

@@ -3534,7 +3534,43 @@ void MainWindow::readFromStdout()                             //readFromStdout
         } else {
           DecodedText decodedtext1=decodedtext0;
 
+          // Filtering out messages with keywords from Blacklist
+       if (SpecOp::NONE == m_config.special_op_id() && m_config.Blacklisted ()
+            && (
+               (decodedtext.string().contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
+            || (decodedtext.string().contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
+               )) {
+                    return;
+
+          // Filtering out everything but messages with keywords from Whitelist
+       } else if (SpecOp::NONE == m_config.special_op_id() && m_config.Whitelisted ()
+             && !(decodedtext.string().contains(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist4()) && (m_config.Whitelist4()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist5()) && (m_config.Whitelist5()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist6()) && (m_config.Whitelist6()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist7()) && (m_config.Whitelist7()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist8()) && (m_config.Whitelist8()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist9()) && (m_config.Whitelist9()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist10()) && (m_config.Whitelist10()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
+             && !(decodedtext.string().contains(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
+                ) {
+                     return;
+
           // Filtering out some false decodes
+       } else {
           if (SpecOp::NONE == m_config.special_op_id() && ui->actionReduce_false_decodes->isChecked()
               && !decodedtext.string().contains("QRP")                    // pass all QRP stations
               ) {
@@ -3572,6 +3608,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
                 haveFSpread, fSpread);
             }
+       }
 
           if (m_config.highlight_DXcall () && (m_hisCall!="") && ((decodedtext.string().contains(QRegularExpression {"(\\w+) " + m_hisCall}))
                || (decodedtext.string().contains(QRegularExpression {"(\\w+) <" + m_hisCall +">"}))
