@@ -1007,6 +1007,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_fastGraph->setMode(m_mode);
   m_wideGraph->setMode(m_mode);
 
+  connect (&minuteTimer, &QTimer::timeout, this, &MainWindow::bandHoppingTimer);
   connect (&minuteTimer, &QTimer::timeout, this, &MainWindow::on_the_minute);
   minuteTimer.setSingleShot (true);
   minuteTimer.start (ms_minute_error () + 60 * 1000);
@@ -1190,6 +1191,38 @@ void MainWindow::writeSettings()
       }
     m_settings->setValue ("PhaseEqualizationCoefficients", QVariant {coeffs});
   }
+  m_settings->setValue ("bh_160m", ui->cb160m->isChecked() );
+  m_settings->setValue ("bh_80m", ui->cb80m->isChecked() );
+  m_settings->setValue ("bh_60m", ui->cb60m->isChecked() );
+  m_settings->setValue ("bh_40m", ui->cb40m->isChecked() );
+  m_settings->setValue ("bh_30m", ui->cb30m->isChecked() );
+  m_settings->setValue ("bh_20m", ui->cb20m->isChecked() );
+  m_settings->setValue ("bh_17m", ui->cb17m->isChecked() );
+  m_settings->setValue ("bh_15m", ui->cb15m->isChecked() );
+  m_settings->setValue ("bh_12m", ui->cb12m->isChecked() );
+  m_settings->setValue ("bh_10m", ui->cb10m->isChecked() );
+  m_settings->setValue ("bh_6m", ui->cb6m->isChecked() );
+  m_settings->setValue ("bh_4m", ui->cb4m->isChecked() );
+  m_settings->setValue ("bh_2m", ui->cb2m->isChecked() );
+  m_settings->setValue ("bh_70cm", ui->cb70cm->isChecked() );
+  m_settings->setValue ("bh_6mQ65", ui->cb6mQ65->isChecked() );
+  m_settings->setValue ("bh_2mQ65", ui->cb2mQ65->isChecked() );
+  m_settings->setValue ("bh_6mMSK", ui->cb6mMSK->isChecked() );
+  m_settings->setValue ("bh_2mMSK", ui->cb2mMSK->isChecked() );
+  m_settings->setValue ("bh_40mFT4", ui->cb40mFT4->isChecked() );
+  m_settings->setValue ("bh_30mFT4", ui->cb30mFT4->isChecked() );
+  m_settings->setValue ("bh_20mFT4", ui->cb20mFT4->isChecked() );
+  m_settings->setValue ("bh_17mFT4", ui->cb17mFT4->isChecked() );
+  m_settings->setValue ("bh_2200mFST4", ui->cb2200mFST4->isChecked() );
+  m_settings->setValue ("bh_630mFST4", ui->cb630mFST4->isChecked() );
+  m_settings->setValue ("bh_630m", ui->cb630m->isChecked() );
+  m_settings->setValue ("bh_80mDXp", ui->cb80mDXp->isChecked() );
+  m_settings->setValue ("bh_40mDXp", ui->cb40mDXp->isChecked() );
+  m_settings->setValue ("bh_30mDXp", ui->cb30mDXp->isChecked() );
+  m_settings->setValue ("bh_20mDXp", ui->cb20mDXp->isChecked() );
+  m_settings->setValue ("bh_17mDXp", ui->cb17mDXp->isChecked() );
+  m_settings->setValue ("bh_15mDXp", ui->cb15mDXp->isChecked() );
+  m_settings->setValue ("bh_10mDXp", ui->cb10mDXp->isChecked() );
   m_settings->setValue ("actionDontSplitALLTXT", ui->actionDon_t_split_ALL_TXT->isChecked() );
   m_settings->setValue ("splitAllTxtYearly", ui->actionSplit_ALL_TXT_yearly->isChecked() );
   m_settings->setValue ("splitAllTxtMonthly", ui->actionSplit_ALL_TXT_monthly->isChecked() );
@@ -1236,6 +1269,38 @@ void MainWindow::readSettings()
   ui->actionAstronomical_data->setChecked (displayAstro);
 
   m_settings->beginGroup("Common");
+  ui->cb160m->setChecked(m_settings->value("bh_160m", false).toBool());
+  ui->cb80m->setChecked(m_settings->value("bh_80m", false).toBool());
+  ui->cb60m->setChecked(m_settings->value("bh_60m", false).toBool());
+  ui->cb40m->setChecked(m_settings->value("bh_40m", false).toBool());
+  ui->cb30m->setChecked(m_settings->value("bh_30m", false).toBool());
+  ui->cb20m->setChecked(m_settings->value("bh_20m", false).toBool());
+  ui->cb17m->setChecked(m_settings->value("bh_17m", false).toBool());
+  ui->cb15m->setChecked(m_settings->value("bh_15m", false).toBool());
+  ui->cb12m->setChecked(m_settings->value("bh_12m", false).toBool());
+  ui->cb10m->setChecked(m_settings->value("bh_10m", false).toBool());
+  ui->cb6m->setChecked(m_settings->value("bh_6m", false).toBool());
+  ui->cb4m->setChecked(m_settings->value("bh_4m", false).toBool());
+  ui->cb2m->setChecked(m_settings->value("bh_2m", false).toBool());
+  ui->cb70cm->setChecked(m_settings->value("bh_70cm", false).toBool());
+  ui->cb6mQ65->setChecked(m_settings->value("bh_6mQ65", false).toBool());
+  ui->cb2mQ65->setChecked(m_settings->value("bh_2mQ65", false).toBool());
+  ui->cb6mMSK->setChecked(m_settings->value("bh_6mMSK", false).toBool());
+  ui->cb2mMSK->setChecked(m_settings->value("bh_2mMSK", false).toBool());
+  ui->cb40mFT4->setChecked(m_settings->value("bh_40mFT4", false).toBool());
+  ui->cb30mFT4->setChecked(m_settings->value("bh_30mFT4", false).toBool());
+  ui->cb20mFT4->setChecked(m_settings->value("bh_20mFT4", false).toBool());
+  ui->cb17mFT4->setChecked(m_settings->value("bh_17mFT4", false).toBool());
+  ui->cb2200mFST4->setChecked(m_settings->value("bh_2200mFST4", false).toBool());
+  ui->cb630mFST4->setChecked(m_settings->value("bh_630mFST4", false).toBool());
+  ui->cb630m->setChecked(m_settings->value("bh_630m", false).toBool());
+  ui->cb80mDXp->setChecked(m_settings->value("bh_80mDXp", false).toBool());
+  ui->cb40mDXp->setChecked(m_settings->value("bh_40mDXp", false).toBool());
+  ui->cb30mDXp->setChecked(m_settings->value("bh_30mDXp", false).toBool());
+  ui->cb20mDXp->setChecked(m_settings->value("bh_20mDXp", false).toBool());
+  ui->cb17mDXp->setChecked(m_settings->value("bh_17mDXp", false).toBool());
+  ui->cb15mDXp->setChecked(m_settings->value("bh_15mDXp", false).toBool());
+  ui->cb10mDXp->setChecked(m_settings->value("bh_10mDXp", false).toBool());
   ui->actionDon_t_split_ALL_TXT->setChecked(m_settings->value("actionDontSplitALLTXT", true).toBool());
   ui->actionSplit_ALL_TXT_yearly->setChecked(m_settings->value("splitAllTxtYearly", false).toBool());
   ui->actionSplit_ALL_TXT_monthly->setChecked(m_settings->value("splitAllTxtMonthly", false).toBool());
@@ -1954,6 +2019,7 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
 
 void MainWindow::on_autoButton_clicked (bool checked)
 {
+  ui->pbBandHopping->setChecked(false); // disable band hopping when Tx is enabled
   m_auto = checked;
   m_maxPoints=-1;
   if (checked
@@ -9555,4 +9621,398 @@ void MainWindow::on_jt65Button_clicked()
     ui->houndButton->setStyleSheet("");
     m_config.setSpecial_None();
     on_actionJT65_triggered();
+}
+
+void MainWindow::bandHoppingTimer()
+{
+    if(ui->pbBandHopping->isChecked()) {
+    static int startIndex = 0;
+    int nextStartIndex = startIndex +1;
+    switch (startIndex){
+    case 0:
+            startIndex = nextStartIndex;  // band hopping every other minute
+            return;
+    case 1:
+            on_stopButton_clicked();   // prevent spotting wrong band
+            if (m_config.spot_to_psk_reporter ()) m_psk_Reporter.sendReport();  // spot late decodes before changing band
+            QTimer::singleShot (500, this, SLOT (bandHopping()));   // delay to prevent spotting wrong band
+            startIndex = 0;
+            return;
+     }
+   }
+}
+
+void MainWindow::bandHopping()
+{
+    if(ui->pbBandHopping->isChecked() && !ui->autoButton->isChecked() && !ui->tuneButton->isChecked()) {
+    static int startIndex = 0;
+    int nextStartIndex = startIndex +1;
+    switch (startIndex){
+    case 0:
+        if (ui->cb160m->isChecked()) {
+            setRig (1840000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 1:
+        if (ui->cb80m->isChecked()) {
+            setRig (3573000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 2:
+        if (ui->cb60m->isChecked()) {
+            setRig (5357000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 3:
+        if (ui->cb40m->isChecked()) {
+            setRig (7074000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 4:
+        if (ui->cb30m->isChecked()) {
+            setRig (10136000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 5:
+        if (ui->cb20m->isChecked()) {
+            setRig (14074000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 6:
+        if (ui->cb17m->isChecked()) {
+            setRig (18100000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 7:
+        if (ui->cb15m->isChecked()) {
+            setRig (21074000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 8:
+        if (ui->cb12m->isChecked()) {
+            setRig (24915000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 9:
+        if (ui->cb10m->isChecked()) {
+            setRig (28074000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 10:
+        if (ui->cb6m->isChecked()) {
+            setRig (50313000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 11:
+        if (ui->cb4m->isChecked()) {
+            setRig (70154000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 12:
+        if (ui->cb2m->isChecked()) {
+            setRig (144174000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 13:
+        if (ui->cb70cm->isChecked()) {
+            setRig (432174000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 14:
+        if (ui->cb6mQ65->isChecked()) {
+            setRig (50305000);
+            on_actionQ65_triggered();
+            ui->sbTR->setValue (m_settings->value ("TRPeriod", 30).toInt());
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 15:
+        if (ui->cb2mQ65->isChecked()) {
+            setRig (144170000);
+            on_actionQ65_triggered();
+            ui->sbTR->setValue (m_settings->value ("TRPeriod", 30).toInt());
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 16:
+        if (ui->cb6mMSK->isChecked()) {
+            setRig (50280000);
+            on_actionMSK144_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 17:
+        if (ui->cb2mMSK->isChecked()) {
+            setRig (144360000);
+            on_actionMSK144_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 18:
+        if (ui->cb40mFT4->isChecked()) {
+            setRig (7047500);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 19:
+        if (ui->cb30mFT4->isChecked()) {
+            setRig (10140000);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 20:
+        if (ui->cb20mFT4->isChecked()) {
+            setRig (14080000);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 21:
+        if (ui->cb17mFT4->isChecked()) {
+            setRig (18104000);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+
+    case 22:
+        if (ui->cb2200mFST4->isChecked()) {
+            setRig (136000);
+            on_actionFST4_triggered();
+            ui->sbTR->setValue (m_settings->value ("TRPeriod", 60).toInt());
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 23:
+        if (ui->cb630mFST4->isChecked()) {
+            setRig (474200);
+            on_actionFST4_triggered();
+            ui->sbTR->setValue (m_settings->value ("TRPeriod", 60).toInt());
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 24:
+        if (ui->cb630m->isChecked()) {
+            setRig (474200);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 25:
+        if (ui->cb80mDXp->isChecked()) {
+            setRig (3567000);
+            on_actionFT8_triggered();
+            setRig (3567000);
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 26:
+        if (ui->cb40mDXp->isChecked()) {
+            setRig (7056000);
+            on_actionFT8_triggered();
+            setRig (7056000);
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 27:
+        if (ui->cb30mDXp->isChecked()) {
+            setRig (10131000);
+            on_actionFT8_triggered();
+            setRig (10131000);
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 28:
+        if (ui->cb20mDXp->isChecked()) {
+            setRig (14090000);
+            on_actionFT8_triggered();
+            setRig (14090000);
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 29:
+        if (ui->cb17mDXp->isChecked()) {
+            setRig (18095000);
+            on_actionFT8_triggered();
+            setRig (18095000);
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 30:
+        if (ui->cb15mDXp->isChecked()) {
+            setRig (21091000);
+            on_actionFT8_triggered();
+            setRig (21091000);
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
+    case 31:
+        if (ui->cb10mDXp->isChecked()) {
+            setRig (28091000);
+            on_actionFT8_triggered();
+            setRig (28091000);
+            ui->pbBandHopping->setChecked(true);
+            startIndex = 0;
+            return;
+            bandHopping();
+        } else {
+            startIndex = 0;
+            bandHopping();
+        }
+    }
+  }
 }

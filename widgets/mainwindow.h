@@ -141,6 +141,8 @@ private:
 
 private slots:
   void initialize_fonts ();
+  void bandHoppingTimer();
+  void bandHopping();
   void on_houndButton_clicked(bool checked);
   void on_ft8Button_clicked();
   void on_ft4Button_clicked();
