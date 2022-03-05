@@ -2416,15 +2416,15 @@ void MainWindow::createStatusBar()                           //createStatusBar
   mode_label.setFrameStyle (QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget (&mode_label);
 
-  last_tx_label.setAlignment (Qt::AlignHCenter);
-  last_tx_label.setMinimumSize (QSize {150, 18});
-  last_tx_label.setFrameStyle (QFrame::Panel | QFrame::Sunken);
-  statusBar()->addWidget (&last_tx_label);
-
   ndecodes_label.setAlignment (Qt::AlignHCenter);
   ndecodes_label.setMinimumSize (QSize {30, 18});
   ndecodes_label.setFrameStyle (QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget (&ndecodes_label);
+
+  last_tx_label.setAlignment (Qt::AlignHCenter);
+  last_tx_label.setMinimumSize (QSize {150, 18});
+  last_tx_label.setFrameStyle (QFrame::Panel | QFrame::Sunken);
+  statusBar()->addWidget (&last_tx_label);
 
   band_hopping_label.setAlignment (Qt::AlignHCenter);
   band_hopping_label.setMinimumSize (QSize {90, 18});
