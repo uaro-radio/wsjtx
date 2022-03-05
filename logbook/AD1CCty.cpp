@@ -1,5 +1,4 @@
 #include "AD1CCty.hpp"
-
 #include <string>
 #include <stdexcept>
 #include <algorithm>
@@ -27,6 +26,7 @@ using namespace boost::multi_index;
 namespace
 {
   auto const file_name = "cty.dat";
+  auto const grid_file_name = "grid.dat";    // NJ0A
 }
 
 struct entity
@@ -67,6 +67,13 @@ struct entity
   int UTC_offset_;              // seconds
   QString primary_prefix_;
 };
+
+#define maxPrefix 25        //NJ0A
+#define maxIndex 100        //NJ0A
+
+QString gridPrefix [maxPrefix];        //NJ0A
+QString gridState [maxPrefix] [maxIndex];   //NJ0A
+int gridNumPrefix;          //NJ0A
 
 #if !defined (QT_NO_DEBUG_STREAM)
 QDebug operator << (QDebug dbg, entity const& e)
@@ -384,6 +391,77 @@ AD1CCty::AD1CCty (Configuration const * configuration)
             }
         }
     }
+
+  //NJ0A
+  gridNumPrefix = 0;
+
+  /*
+   * prefill array with **
+   */
+  for (int i = 0; i < maxPrefix ; i ++) {
+      for (int j = 0; j < maxIndex; j ++) {
+          gridState[i] [j] = "**";
+      }
+  }
+
+
+   QString path = dataPath.exists (grid_file_name)
+    ? dataPath.absoluteFilePath (grid_file_name) // user override
+    : configuration->data_dir ().absoluteFilePath (grid_file_name);          // or original in the resources FS
+
+
+  QFile file1 {path};
+
+  if (file1.open (QFile::ReadOnly))
+    {
+       int line_number {0};
+       QTextStream in {&file1};
+       while (!in.atEnd ())
+       {
+          auto const& entity_line = in.readLine ();
+          ++line_number;
+          if (!in.atEnd () && entity_line.length() > 0 && entity_line.contains("<"))
+          {
+              //std::cout << entity_line.toStdString() << '\n';
+              if (entity_line.contains("<")) {
+                auto const& entity_parts = entity_line.split ('<');
+                //std::cout << "Grid prefix: " << entity_parts[0].toStdString() << '\n';
+                gridPrefix[gridNumPrefix] = entity_parts[0];
+                gridNumPrefix++;
+                while (!in.atEnd()) {
+                    auto const& entity_grid_line = in.readLine();
+                    if (entity_grid_line.length()  > 1 &&
+                            entity_grid_line.contains(":") &&
+                            entity_grid_line.contains(",")) {
+                        auto const& entity_parts = entity_grid_line.split(":");
+                        //std::cout << "Grid Indxes: " << entity_parts[0].trimmed().toStdString() << " " ;
+
+                        auto const& entity_temp = entity_parts[1].split(",");
+                        auto const & entity_state = entity_temp[0];
+                        //std::cout << "State: " << entity_state.toStdString() << '\n';
+                        gridState[gridNumPrefix - 1] [entity_parts[0].toInt()] = entity_state;
+
+                    } else if (entity_grid_line.length()  > 1 &&
+                               entity_grid_line.contains(":") &&
+                               entity_grid_line.contains(">")) {
+                        auto const& entity_parts = entity_grid_line.split(":");
+                        //std::cout << "Grid Indxes: " <<  entity_parts[0].trimmed().toStdString() << " ";
+
+                        auto const& entity_temp = entity_parts[1].split(">");
+                        auto const & entity_state = entity_temp[0];
+                        //std::cout << "State: " << entity_state.toStdString() << '\n';
+                        gridState[gridNumPrefix - 1] [entity_parts[0].toInt()] = entity_state;
+
+
+                        break;
+
+                    }
+                }
+              }
+
+          }
+       }
+    }
 }
 
 AD1CCty::~AD1CCty ()
@@ -421,3 +499,26 @@ auto AD1CCty::lookup (QString const& call) const -> Record
     }
   return Record {};
 }
+
+// NJ0A
+auto AD1CCty::findState ( QString const& grid) const -> QString
+{
+
+
+    auto const& prefix = grid.left(2);
+    int gridIndex = grid.mid(2,2).toInt();
+    //if (gridIndex < 0 || gridIndex > maxIndex) {
+        //std::cout << "Prefix: " << prefix.toStdString() << " Index " << gridIndex << '\n';
+    //}
+    for (int i = 0; i < gridNumPrefix + 1; i ++) {
+        if (gridPrefix[i] == prefix) {
+            QString state = gridState[i] [gridIndex];
+            //if (state.length() < 2 ) {
+               // std::cout << "Prefix: " << prefix.toStdString() << " Index " << gridIndex << '\n';
+            //}
+            return state;
+        }
+    }
+
+    return "**";
+} // NJ0A

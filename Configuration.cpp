@@ -635,6 +635,8 @@ private:
   bool decodes_from_top_;
   bool insert_blank_;
   bool DXCC_;
+  bool gridMap_;
+  bool gridMapAll_;
   bool ppfx_;
   bool clear_DX_;
   bool miles_;
@@ -746,6 +748,8 @@ bool Configuration::autoLog() const {return m_->autoLog_;}
 bool Configuration::decodes_from_top () const {return m_->decodes_from_top_;}
 bool Configuration::insert_blank () const {return m_->insert_blank_;}
 bool Configuration::DXCC () const {return m_->DXCC_;}
+bool Configuration::GridMap() const { return m_->gridMap_;}
+bool Configuration::GridMapAll() const { return m_->gridMapAll_;}
 bool Configuration::ppfx() const {return m_->ppfx_;}
 bool Configuration::clear_DX () const {return m_->clear_DX_;}
 bool Configuration::miles () const {return m_->miles_;}
@@ -1349,6 +1353,8 @@ void Configuration::impl::initialize_models ()
   ui_->decodes_from_top_check_box->setChecked (decodes_from_top_);
   ui_->insert_blank_check_box->setChecked (insert_blank_);
   ui_->DXCC_check_box->setChecked (DXCC_);
+  ui_->Map_Grid_to_State->setChecked(gridMap_);
+  ui_->Map_All_Messages->setChecked(gridMapAll_);
   ui_->ppfx_check_box->setChecked (ppfx_);
   ui_->clear_DX_check_box->setChecked (clear_DX_);
   ui_->miles_check_box->setChecked (miles_);
@@ -1568,6 +1574,8 @@ void Configuration::impl::read_settings ()
   decodes_from_top_ = settings_->value ("DecodesFromTop", false).toBool ();
   insert_blank_ = settings_->value ("InsertBlank", false).toBool ();
   DXCC_ = settings_->value ("DXCCEntity", false).toBool ();
+  gridMap_ = settings_->value("MapGridEntity", false).toBool();
+  gridMapAll_ = settings_->value("MapGridAllEntity", false).toBool();
   ppfx_ = settings_->value ("PrincipalPrefix", false).toBool ();
   clear_DX_ = settings_->value ("ClearCallGrid", false).toBool ();
   miles_ = settings_->value ("Miles", false).toBool ();
@@ -1699,6 +1707,8 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("DecodesFromTop", decodes_from_top_);
   settings_->setValue ("InsertBlank", insert_blank_);
   settings_->setValue ("DXCCEntity", DXCC_);
+  settings_->setValue ("MapGridEntity", gridMap_);
+  settings_->setValue ("MapGridAllEntity", gridMapAll_);
   settings_->setValue ("PrincipalPrefix", ppfx_);
   settings_->setValue ("ClearCallGrid", clear_DX_);
   settings_->setValue ("Miles", miles_);
@@ -2134,6 +2144,8 @@ void Configuration::impl::accept ()
   decodes_from_top_ = ui_->decodes_from_top_check_box->isChecked ();
   insert_blank_ = ui_->insert_blank_check_box->isChecked ();
   DXCC_ = ui_->DXCC_check_box->isChecked ();
+  gridMap_= ui_->Map_Grid_to_State->isChecked ();
+  gridMapAll_ = ui_->Map_All_Messages->isChecked();
   ppfx_ = ui_->ppfx_check_box->isChecked ();
   clear_DX_ = ui_->clear_DX_check_box->isChecked ();
   miles_ = ui_->miles_check_box->isChecked ();

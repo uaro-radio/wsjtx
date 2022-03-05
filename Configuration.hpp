@@ -122,6 +122,8 @@ public:
   bool decodes_from_top () const;
   bool insert_blank () const;
   bool DXCC () const;
+  bool GridMap() const;
+  bool GridMapAll() const;
   bool ppfx() const;
   bool clear_DX () const;
   bool miles () const;

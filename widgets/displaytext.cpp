@@ -423,6 +423,18 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
   if(!dxGrid.contains(grid_regexp)) dxGrid="";
   message = message.left (message.indexOf (QChar::Nbsp)).trimmed (); // strip appended info
   QString extra;
+  QString state;    // NJ0A
+
+  if (displayDXCCEntity && dxGrid.length() > 0  && logBook.countries ()->lookup (dxCall).primary_prefix  == "K") {
+      //std::cout << dxCall << " -> " << dxGrid <<  " " << logBook.countries ()->lookup (dxCall).primary_prefix <<"\n";
+      if (m_config->GridMap()) {
+          if (CQcall || is_73 || m_config->GridMapAll()) {
+            state = logBook.countries ()->findState(dxGrid);
+          }
+      }
+  }
+  //NJ0A
+
   if (haveFSpread)
     {
       extra += QString {"%1"}.arg (fSpread, 5, 'f', fSpread < 0.95 ? 3 : 2) + QChar {' '};
@@ -473,6 +485,13 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
           set_colours (m_config, &bg, &fg, types);
         }
     }
+
+  if (ppfx) {               //NJ0A
+      extra = " ";
+  } else {
+      extra = "      ";
+  }
+  message = leftJustifyAppendage(message, state);    //NJ0A
 
   appendText (message.trimmed (), bg, fg, decodedText.call (), dxCall);
 }

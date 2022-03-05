@@ -533,17 +533,31 @@ quiet period when decoding is done.</string>
           <string>Additional features</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_17">
-          <item row="0" column="0">
+          <item row="0" column="1">
            <widget class="QCheckBox" name="cbEraseBandActivity">
             <property name="text">
              <string>Erase Band Activity window after band change</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="1" column="1">
            <widget class="QCheckBox" name="cbRxToTxAfterQSO">
             <property name="text">
              <string>Set Rx frequency to Tx frequency after QSO</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="Map_Grid_to_State">
+            <property name="text">
+             <string>Map Grid locator to U.S. State</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="Map_All_Messages">
+            <property name="text">
+             <string>Show U.S. States in all messages with grid</string>
             </property>
            </widget>
           </item>

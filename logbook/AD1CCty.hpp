@@ -45,6 +45,8 @@ public:
   ~AD1CCty ();
   Record lookup (QString const& call) const;
 
+  QString findState (QString const& grid) const;   //NJ0A
+
 private:
   class impl;
   pimpl<impl> m_;
