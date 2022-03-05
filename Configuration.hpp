@@ -100,6 +100,7 @@ public:
   QString my_grid () const;
   QString Field_Day_Exchange() const;
   QString RTTY_Exchange() const;
+  QString Contest_Name() const;
   void setEU_VHF_Contest();
   QFont text_font () const;
   QFont decoded_text_font () const;
@@ -193,6 +194,7 @@ public:
   bool clear_DXgrid () const;
   bool erase_BandActivity () const;
   bool set_RXtoTX () const;
+  bool Individual_Contest_Name() const;
 
   enum class SpecialOperatingActivity {NONE, NA_VHF, EU_VHF, FIELD_DAY, RTTY, WW_DIGI, FOX, HOUND};
   SpecialOperatingActivity special_op_id () const;
