@@ -4598,6 +4598,7 @@ void MainWindow::guiUpdate()
     QDateTime t = QDateTime::currentDateTimeUtc();
     QString utc = t.date().toString("yyyy MMM dd") + "\n " +
       t.time().toString() + " ";
+//    QString utc = t.time().toString();      // UR for AL version use this and disable the 2 lines above
     ui->labUTC->setText(utc);
     if(m_bBestSPArmed and (m_dateTimeBestSP.secsTo(t) >= 120)) on_pbBestSP_clicked(); //BestSP timeout
     if(!m_monitoring and !m_diskData) ui->signal_meter_widget->setValue(0,0);
