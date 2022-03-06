@@ -1821,7 +1821,7 @@ void Configuration::impl::read_settings ()
   highlight_by_mode_ = settings_->value("HighlightByMode", false).toBool ();
   highlight_only_fields_ = settings_->value("OnlyFieldsSought", false).toBool ();
   include_WAE_entities_ = settings_->value("IncludeWAEEntities", false).toBool ();
-  highlight_73_ = settings_->value("Highlight73", false).toBool ();
+  highlight_73_ = settings_->value("Highlight73", true).toBool ();
   LotW_days_since_upload_ = settings_->value ("LotWDaysSinceLastUpload", 365).toInt ();
   lotw_users_.set_age_constraint (LotW_days_since_upload_);
 
