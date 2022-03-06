@@ -756,7 +756,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   // Hook up working frequencies.
   ui->bandComboBox->setModel (m_config.frequencies ());
   ui->bandComboBox->setModelColumn (FrequencyList_v2::frequency_mhz_column);
-  ui->bandComboBox->view ()->setMinimumHeight (225);        // UR
+  ui->bandComboBox->view ()->setMinimumWidth (165);         // UR for AL version
+  ui->bandComboBox->view ()->setMinimumHeight (225);        // UR for AL version
 
   // Enable live band combo box entry validation and action.
   auto band_validator = new LiveFrequencyValidator {ui->bandComboBox
@@ -8741,11 +8742,9 @@ void MainWindow::on_cbCQonly_toggled(bool)
 
 void MainWindow::on_respondComboBox_currentIndexChanged (int n)
 {
-  if(n>0) {
-    ui->respondComboBox->setStyleSheet("color: red");
-  } else {
-    ui->respondComboBox->setStyleSheet ("");
-  }
+    if(n==0) ui->respondComboBox->setStyleSheet("");
+    if(n==1) ui->respondComboBox->setStyleSheet("color: blue");
+    if(n==2) ui->respondComboBox->setStyleSheet("color: red");
 }
 
 void MainWindow::on_cbAutoSeq_toggled(bool b)
