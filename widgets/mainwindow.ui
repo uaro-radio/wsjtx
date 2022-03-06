@@ -1271,7 +1271,7 @@ When not checked you can view the calibration results.</string>
                 <item>
                  <widget class="QTabWidget" name="tabWidget">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
