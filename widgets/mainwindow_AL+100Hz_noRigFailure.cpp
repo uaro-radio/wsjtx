@@ -6043,7 +6043,7 @@ void MainWindow::on_RoundRobin_currentTextChanged(QString text)
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {
   m_hisCall = call;
-  ui->dxGridEntry->clear();
+//  ui->dxGridEntry->clear();    // UR disabled because not useful with highlightDXCall/DXGrid feature
   statusChanged();
   statusUpdate ();
 }
