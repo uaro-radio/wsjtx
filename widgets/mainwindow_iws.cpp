@@ -1,6 +1,7 @@
 //---------------------------------------------------------- MainWindow
 #include "mainwindow.h"
 
+#include <QSound>
 #include <cinttypes>
 #include <cstring>
 #include <cmath>
@@ -60,6 +61,7 @@
 #include "fastgraph.h"
 #include "about.h"
 #include "messageaveraging.h"
+#include "activeStations.h"
 #include "colorhighlighting.h"
 #include "widegraph.h"
 #include "sleep.h"
@@ -179,6 +181,8 @@ extern "C" {
   void chk_samples_(int* m_ihsym,int* k, int* m_hsymStop);
 
   void save_dxbase_(char* dxbase, FCL len);
+
+  void indexx_(float arr[], int* n, int indx[]);
 }
 
 int volatile itone[MAX_NUM_SYMBOLS];   //Audio tones for all Tx symbols
@@ -421,7 +425,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         m_config.udp_interface_names (), m_config.udp_TTL (),
         this}},
   m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " iws"}.simplified ()},
-  m_manual {&m_network_manager},
+  m_manual {&m_network_manager},                                                         // UR
   m_block_udp_status_updates {false}
 {
   ui->setupUi(this);
@@ -755,6 +759,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   // Hook up working frequencies.
   ui->bandComboBox->setModel (m_config.frequencies ());
   ui->bandComboBox->setModelColumn (FrequencyList_v2::frequency_mhz_column);
+  ui->bandComboBox->view ()->setMinimumWidth (165);         // UR for AL version
+  ui->bandComboBox->view ()->setMinimumHeight (225);        // UR for AL version
 
   // Enable live band combo box entry validation and action.
   auto band_validator = new LiveFrequencyValidator {ui->bandComboBox
@@ -853,7 +859,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   }
   ui->respondComboBox->addItem("CQ: None");
   ui->respondComboBox->addItem("CQ: First");
-  ui->respondComboBox->addItem("CQ: Max Pts");
+  ui->respondComboBox->addItem("CQ: Max Dist");
 
   m_dateTimeRcvdRR73=QDateTime::currentDateTimeUtc();
   m_dateTimeSentTx3=QDateTime::currentDateTimeUtc();
@@ -1126,6 +1132,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("MsgAvgDisplayed", m_msgAvgWidget && m_msgAvgWidget->isVisible ());
   m_settings->setValue ("FoxLogDisplayed", m_foxLogWindow && m_foxLogWindow->isVisible ());
   m_settings->setValue ("ContestLogDisplayed", m_contestLogWindow && m_contestLogWindow->isVisible ());
+  m_settings->setValue ("ActiveStationsDisplayed", m_ActiveStationsWidget && m_ActiveStationsWidget->isVisible ());
   m_settings->setValue("RespondCQ",ui->respondComboBox->currentIndex());
   m_settings->setValue("HoundSort",ui->comboBoxHoundSort->currentIndex());
   m_settings->setValue("FoxNlist",ui->sbNlist->value());
@@ -1182,6 +1189,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("AutoClearAvg", ui->actionAuto_Clear_Avg->isChecked ());
   m_settings->setValue("SplitterState",ui->decodes_splitter->saveState());
   m_settings->setValue("Blanker",ui->sbNB->value());
+  m_settings->setValue("Score",m_score);
 
   {
     QList<QVariant> coeffs;     // suitable for QSettings
@@ -1257,6 +1265,7 @@ void MainWindow::readSettings()
   auto displayMsgAvg = m_settings->value ("MsgAvgDisplayed", false).toBool ();
   auto displayFoxLog = m_settings->value ("FoxLogDisplayed", false).toBool ();
   auto displayContestLog = m_settings->value ("ContestLogDisplayed", false).toBool ();
+  bool displayActiveStations = m_settings->value ("ActiveStationsDisplayed", false).toBool ();
   ui->respondComboBox->setCurrentIndex(m_settings->value("RespondCQ",0).toInt());
   ui->comboBoxHoundSort->setCurrentIndex(m_settings->value("HoundSort",3).toInt());
   ui->sbNlist->setValue(m_settings->value("FoxNlist",12).toInt());
@@ -1344,6 +1353,7 @@ void MainWindow::readSettings()
   ui->RoundRobin->setCurrentText(m_settings->value("RoundRobin",tr("Random")).toString());
   m_dBm=m_settings->value("dBm",37).toInt();
   m_send_RR73=m_settings->value("RR73",false).toBool();
+  m_score=m_settings->value("Score",0).toInt();
   if(m_send_RR73) {
     m_send_RR73=false;
     on_txrb4_doubleClicked();
@@ -1387,9 +1397,13 @@ void MainWindow::readSettings()
   m_settings->endGroup ();
 
   checkMSK144ContestType();
-  if(displayMsgAvg) on_actionMessage_averaging_triggered();
+  if (displayMsgAvg) on_actionMessage_averaging_triggered();
   if (displayFoxLog) on_fox_log_action_triggered ();
   if (displayContestLog) on_contest_log_action_triggered ();
+  if (displayActiveStations) {
+    on_actionActiveStations_triggered();
+//    QFile f {m_config.writeable_data_dir ().absoluteFilePath ("activeCalls.txt")};
+  }
 }
 
 void MainWindow::checkMSK144ContestType()
@@ -1560,8 +1574,8 @@ void MainWindow::dataSink(qint64 frames)
     freqcal_(&dec_data.d2[0], &k, &nkhz, &RxFreq, &ftol, &line[0], (FCL)80);
     QString t=QString::fromLatin1(line);
     DecodedText decodedtext {t};
-    ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC (),
-          m_logBook, m_currentBand, m_config.ppfx ());
+    ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign(),
+          m_mode, m_config.DXCC(), m_logBook, m_currentBand, m_config.ppfx());
     if (ui->measure_check_box->isChecked ()) {
       // Append results text to file "fmt.all".
       QFile f {m_config.writeable_data_dir ().absoluteFilePath ("fmt.all")};
@@ -2091,7 +2105,6 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
     }
   return;
     case Qt::Key_C:
-//    if(m_mode=="FT4" && e->modifiers() & Qt::AltModifier) {
     if(e->modifiers() & Qt::AltModifier) {
         int n=ui->respondComboBox->currentIndex()+1;
         if(n>2) n=0;
@@ -2817,6 +2830,21 @@ void MainWindow::on_actionMessage_averaging_triggered()
   m_msgAvgWidget->activateWindow();
 }
 
+void MainWindow::on_actionActiveStations_triggered()
+{
+  if(m_ActiveStationsWidget == NULL) {
+    m_ActiveStationsWidget.reset (new ActiveStations {m_settings, m_config.decoded_text_font ()});
+    // Connect signals from Message Averaging window
+    connect (this, &MainWindow::finished, m_ActiveStationsWidget.data (), &ActiveStations::close);
+  }
+  m_ActiveStationsWidget->showNormal();
+  m_ActiveStationsWidget->raise();
+  m_ActiveStationsWidget->activateWindow();
+  connect(m_ActiveStationsWidget.data(), SIGNAL(callSandP(int)),this,SLOT(callSandP2(int)));
+  connect(m_ActiveStationsWidget.data(), SIGNAL(activeStationsDisplay()),this,SLOT(ARRL_Digi_Display()));
+  m_ActiveStationsWidget->setScore(m_score);
+}
+
 void MainWindow::on_actionOpen_triggered()                     //Open File
 {
   monitor (false);
@@ -3302,6 +3330,8 @@ void MainWindow::decode()                                       //decode()
         decodeBusy(true);
       }
     }
+  if((m_mode=="FT4" or (m_mode=="FT8" and m_ihsym==41) or m_diskData) and
+     m_ActiveStationsWidget != NULL) m_ActiveStationsWidget->erase();
 }
 
 void::MainWindow::fast_decode_done()
@@ -3404,16 +3434,190 @@ void MainWindow::decodeDone ()
     MessageBox::information_message(this, tr("No more files to open."));
     m_bNoMoreFiles=false;
   }
+
+  if((m_mode=="FT4" or m_mode=="FT8")
+     and m_latestDecodeTime>=0 and m_ActiveStationsWidget!=NULL) ARRL_Digi_Display();  // Update the ARRL_DIGI display
+}
+
+void MainWindow::ARRL_Digi_Update(DecodedText dt)
+{
+  // Extract information relevant for the ARRL Digi contest
+  QString deCall;
+  QString deGrid;
+  dt.deCallAndGrid(/*out*/deCall,deGrid);
+  ActiveCall ac;
+  RecentCall rc;
+
+  if(deGrid.contains(grid_regexp)) {
+     if(!m_activeCall.contains(deCall) or deGrid!=m_activeCall.value(deCall).grid4) {
+       // Transmitting station's call is not already in QMap "m_activeCall", or grid has changed.
+       // Insert the call, grid, and associated fixed data into the list.
+
+       double utch=0.0;
+       int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
+       azdist_(const_cast <char *> (m_config.my_grid().left(4).toLatin1().constData()),
+               const_cast <char *> (deGrid.left(4).toLatin1().constData()),&utch,
+               &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,(FCL)6,(FCL)6);
+       int points=nDkm/500;
+       if(nDkm > 500*points) points += 1;
+       points += 1;
+       ac.grid4=deGrid;
+       ac.bands=".......";
+       ac.az=nAz;
+       ac.points=points;
+       m_activeCall[deCall]=ac;
+     }
+  }
+
+  m_points=-1;
+  if(m_activeCall.contains(deCall)) {
+
+// Don't display stations we already worked on this band.
+    QString band=m_config.bands()->find(m_freqNominal);
+    if(band=="160m" and m_activeCall[deCall].bands.indexOf("a")>=0) {m_recentCall.remove(deCall); return;}
+    if(band=="80m"  and m_activeCall[deCall].bands.indexOf("b")>=0) {m_recentCall.remove(deCall); return;}
+    if(band=="40m"  and m_activeCall[deCall].bands.indexOf("c")>=0) {m_recentCall.remove(deCall); return;}
+    if(band=="20m"  and m_activeCall[deCall].bands.indexOf("d")>=0) {m_recentCall.remove(deCall); return;}
+    if(band=="15m"  and m_activeCall[deCall].bands.indexOf("e")>=0) {m_recentCall.remove(deCall); return;}
+    if(band=="10m"  and m_activeCall[deCall].bands.indexOf("f")>=0) {m_recentCall.remove(deCall); return;}
+    if(band=="6m"   and m_activeCall[deCall].bands.indexOf("g")>=0) {m_recentCall.remove(deCall); return;}
+
+    // Update the variable data for this deCall
+    rc.dialFreq=m_freqNominal;
+    rc.audioFreq=dt.frequencyOffset();
+    rc.snr=dt.snr();
+    m_latestDecodeTime=dt.timeInSeconds();
+    rc.txEven = (m_latestDecodeTime % int(2*m_TRperiod)) > 0;
+    rc.ready2call=false;
+    bool bCQ=dt.messageWords()[0].left(3)=="CQ ";
+    if(bCQ or deGrid=="RR73" or deGrid=="73") rc.ready2call=true;
+    rc.decodeTime=m_latestDecodeTime;
+    m_recentCall[deCall]=rc;
+    m_points=m_activeCall.value(deCall).points;
+  }
+}
+
+void MainWindow::ARRL_Digi_Display()
+{
+  QMutableMapIterator<QString,RecentCall> icall(m_recentCall);
+  QString deCall,deGrid;
+  int age=0;
+  int i=0;
+  int maxAge=m_ActiveStationsWidget->maxAge();
+  int points=0;
+  int maxPoints=0;
+  int indx[1000];
+  float pts[1000];
+  QStringList list;
+
+  while (icall.hasNext()) {
+    icall.next();
+    deCall=icall.key();
+    age=int((m_latestDecodeTime - icall.value().decodeTime)/m_TRperiod + 0.5);
+    int itx=1;
+    if(icall.value().txEven) itx=0;
+    int snr=icall.value().snr;
+    int freq=icall.value().audioFreq;
+    if(age>maxAge) {
+      icall.remove();
+    } else {
+      bool bReady=false;
+      if(age==0 and m_recentCall.value(deCall).ready2call) bReady=true;
+
+      QString bands=m_activeCall[deCall].bands;
+      bool bWorkedOnBand=false;
+      if(m_currentBand=="160m" and bands.mid(0,1)!=".") bWorkedOnBand=true;
+      if(m_currentBand=="80m"  and bands.mid(1,1)!=".") bWorkedOnBand=true;
+      if(m_currentBand=="40m"  and bands.mid(2,1)!=".") bWorkedOnBand=true;
+      if(m_currentBand=="20m"  and bands.mid(3,1)!=".") bWorkedOnBand=true;
+      if(m_currentBand=="15m"  and bands.mid(4,1)!=".") bWorkedOnBand=true;
+      if(m_currentBand=="10m"  and bands.mid(5,1)!=".") bWorkedOnBand=true;
+      if(m_currentBand=="6m"   and bands.mid(6,1)!=".") bWorkedOnBand=true;
+
+      if((bReady or !m_ActiveStationsWidget->readyOnly()) and !bWorkedOnBand) {
+        i++;
+        int az=m_activeCall[deCall].az;
+        deGrid=m_activeCall[deCall].grid4;
+        points=m_activeCall[deCall].points;
+        if(points>maxPoints) maxPoints=points;
+        float x=float(age)/(maxAge+1);
+        if(x>1.0) x=0;
+        pts[i-1]=points - x;
+        QString t1;
+        if(!bReady) t1 = t1.asprintf("  %3d  %+2.2d  %4d  %1d %2d %4d",az,snr,freq,itx,age,points);
+        if(bReady)  t1 = t1.asprintf("  %3d  %+2.2d  %4d  %1d %2d*%4d",az,snr,freq,itx,age,points);
+//        t1 = (deCall + "   ").left(6) + "  " + m_activeCall[deCall].grid4 + t1 + "  " + bands;
+        t1 = (deCall + "   ").left(6) + "  " + m_activeCall[deCall].grid4 + t1;
+        list.append(t1);
+      }
+    }
+  }
+  if(i==0) return;
+  int jz=i;
+  m_ActiveStationsWidget->setClickOK(false);
+  int maxRecent=qMin(i,m_ActiveStationsWidget->maxRecent());
+  indexx_(pts,&jz,indx);
+  QString t;
+  i=0;
+  for(int j=jz-1; j>=0; j--) {
+    int k=indx[j]-1;
+    m_ready2call[i]=list[k];
+    i++;
+    QString t1=QString::number(i) + ".  ";
+    if(i<10) t1=" " + t1;
+    t += (t1 + list[k] + "\n");
+    if(i>=maxRecent) break;
+  }
+  if(m_ActiveStationsWidget!=NULL) m_ActiveStationsWidget->displayRecentStations(t);
+  m_ActiveStationsWidget->setClickOK(true);
+}
+
+void MainWindow::callSandP2(int n)
+{
+  if(m_ready2call[n]=="") return;
+  QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
+  m_deCall=w[0];
+  m_deGrid=w[1];
+  m_bDoubleClicked=true;               //### needed?
+  ui->dxCallEntry->setText(m_deCall);
+  ui->dxGridEntry->setText(m_deGrid);
+  genStdMsgs(w[3]);                   //### real SNR would be better here?
+  ui->RxFreqSpinBox->setValue(w[4].toInt());
+  setTxMsg(1);
+  m_txFirst = (w[5]=="0");
+  ui->txFirstCheckBox->setChecked(m_txFirst);
+  if (!ui->autoButton->isChecked()) ui->autoButton->click(); // Enable Tx
+  if(m_transmitting) m_restart=true;
+}
+
+void MainWindow::activeWorked(QString call, QString band)
+{
+  QString bands=m_activeCall[call].bands;
+  QByteArray ba=bands.toLatin1();
+  if(band=="160m") ba[0]='a';
+  if(band=="80m")  ba[1]='b';
+  if(band=="40m")  ba[2]='c';
+  if(band=="20m")  ba[3]='d';
+  if(band=="15m")  ba[4]='e';
+  if(band=="10m")  ba[5]='f';
+  if(band=="6m")   ba[6]='g';
+  m_activeCall[call].bands=QString::fromLatin1(ba);
 }
 
 void MainWindow::readFromStdout()                             //readFromStdout
 {
+  bool bDisplayPoints = false;
+  if(m_ActiveStationsWidget!=NULL) {
+    bDisplayPoints=(m_mode=="FT4" or m_mode=="FT8") and
+      (m_config.special_op_id()==SpecOp::ARRL_DIGI or m_ActiveStationsWidget->isVisible());
+  }
   while(proc_jt9.canReadLine()) {
     auto line_read = proc_jt9.readLine ();
     if (auto p = std::strpbrk (line_read.constData (), "\n\r")) {
       // truncate before line ending chars
       line_read = line_read.left (p - line_read.constData ());
     }
+    if(bDisplayPoints) line_read=line_read.replace("a7","  ");
     bool haveFSpread {false};
     bool blockUDP {false};                   // allow udp spotting (JTAlert) for all non-filtered messages
     float fSpread {0.};
@@ -3530,6 +3734,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
           }
         } else {
           DecodedText decodedtext1=decodedtext0;
+          if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
+            ARRL_Digi_Update(decodedtext1);
+          }
 
           // Filtering out messages with keywords from Blacklist
        if (SpecOp::NONE == m_config.special_op_id() && m_config.Blacklisted ()
@@ -3590,31 +3797,53 @@ void MainWindow::readFromStdout()                             //readFromStdout
                    || decodedtext.string().contains("/"))                 // any "/" call
                  && (decodedtext.string().contains("-26")            // for such SNRmin = -25 and -2.4 < dt <2.4
                    || decodedtext.string().contains("2.5")))
-              or (decodedtext.string().contains("-26") && decodedtext.string().contains("2."))     // extremely weak decodes with dt > 2)
-                  )  {
+              or ((decodedtext.string().contains("-26") || decodedtext.string().contains("-25")    // doubtful decodes with dt > 1
+                  || decodedtext.string().contains("? a")) &&        // for such SNRmin = -24 and -0.9 < dt <0.9
+                   (decodedtext.string().contains("2.") || decodedtext.string().contains("1.")))
+              or (((decodedtext.string().contains("/R") && decodedtext.string().contains("/R"))    // two times /R
+                 || (decodedtext.string().contains("/R") && decodedtext.string().contains("/P"))   // /R and /P
+                 || (decodedtext.string().contains("/R") && decodedtext.string().contains(" R"))   // /R and R
+                 || (decodedtext.string().contains("/R") && decodedtext.string().contains(" R"))   // /R and R
+                 || (decodedtext.string().contains(";") && decodedtext.string().contains(" R"))    // ; and P
+                 || (decodedtext.string().contains(";") && decodedtext.string().contains("/R"))    // ; and /R
+                 || (decodedtext.string().contains(";") && decodedtext.string().contains("/P")))   // ; and /P
+                 && (decodedtext.string().contains("-15") || decodedtext.string().contains("-16") ||
+                     decodedtext.string().contains("-17") || decodedtext.string().contains("-18") ||
+                     decodedtext.string().contains("-19") || decodedtext.string().contains("-20") ||
+                     decodedtext.string().contains("-21") || decodedtext.string().contains("-22") ||
+                     decodedtext.string().contains("-23") || decodedtext.string().contains("-24") ||
+                     decodedtext.string().contains("-25") || decodedtext.string().contains("-26")))  // for such SNRmin = -14
+                      )  {
                    blockUDP = true;                              // block udp spotting for false decodes (JTAlert)
               } else {
-                ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
-                    m_logBook, m_currentBand, m_config.ppfx (),
-                ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
-                    haveFSpread, fSpread);
+                  ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
+                                                              m_logBook, m_currentBand, m_config.ppfx (),
+                                                              ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
+                                                              haveFSpread, fSpread, bDisplayPoints, m_points);
               }
           } else {
-            ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
-                m_logBook, m_currentBand, m_config.ppfx (),
-            ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
-                haveFSpread, fSpread);
-            }
+              ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
+                                                          m_logBook, m_currentBand, m_config.ppfx (),
+                                                          ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
+                                                          haveFSpread, fSpread, bDisplayPoints, m_points);
+          }
        }
 
-          if (m_config.highlight_DXcall () && (m_hisCall!="") && ((decodedtext.string().contains(QRegularExpression {"(\\w+) " + m_hisCall}))
-               || (decodedtext.string().contains(QRegularExpression {"(\\w+) <" + m_hisCall +">"}))
-               || (decodedtext.string().contains(QRegularExpression {"<(\\w+)> " + m_hisCall}))))  {
-              ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true); // highlight dxCallEntry
-          }
-          if (m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
-              ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true); // highlight dxGridEntry
-          }
+       if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
+         QString deCall,deGrid;
+         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+         bool bWorkedOnBand=(ui->decodedTextBrowser->CQPriority()!="New Call on Band") and ui->decodedTextBrowser->CQPriority()!="";
+         if(bWorkedOnBand) activeWorked(deCall,m_currentBand);
+       }
+
+       if (m_config.highlight_DXcall () && (m_hisCall!="") && ((decodedtext.string().contains(QRegularExpression {"(\\w+) " + m_hisCall}))
+            || (decodedtext.string().contains(QRegularExpression {"(\\w+) <" + m_hisCall +">"}))
+            || (decodedtext.string().contains(QRegularExpression {"<(\\w+)> " + m_hisCall}))))  {
+           ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+       }
+       if (m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
+           ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true);
+       }
 
           if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
             QString messagePriority=ui->decodedTextBrowser->CQPriority();
@@ -3665,34 +3894,48 @@ void MainWindow::readFromStdout()                             //readFromStdout
               m_bAutoReply = true;
               processMessage (decodedtext);
             }
-            if(ui->respondComboBox->currentText()=="CQ: Max Pts") {
+
+            if(ui->respondComboBox->currentText()=="CQ: Max Dist") {
               QString deCall;
               QString deGrid;
               decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-              if(deGrid!="") {
-                double utch=0.0;
-                int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
-                azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1 ().constData ()),
-                        const_cast <char *> ((deGrid + "      ").left(6).toLatin1 ().constData ()),&utch,
-                        &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,(FCL)6,(FCL)6);
-                int npts=int((500+nDkm)/500);
-//                qDebug() << "aa" << decodedtext.string().mid(24,-1).trimmed()
-//                         << deGrid << nDkm << npts << m_maxPoints;
-                if(npts>m_maxPoints) {
-                  m_maxPoints=npts;
-                  m_deCall=deCall;
-                  m_deGrid=deGrid;
-                  m_bDoubleClicked=true;
-//                  m_bAutoReply = true;
-//                  qDebug() << "bb" << m_bDoubleClicked << m_bAutoReply;
-                  ui->dxCallEntry->setText(deCall);
-                  ui->dxGridEntry->setText(deGrid);
-                  genStdMsgs("-10");
-                  setTxMsg(3);
+              if(deGrid.contains(grid_regexp) or
+                 (deGrid.contains("+") or deGrid.contains("-"))) {
+                int points=0;
+                if(m_activeCall.contains(deCall)) {
+                  points=m_activeCall[deCall].points;
+                  deGrid=m_activeCall[deCall].grid4;
+                } else if(deGrid.contains(grid_regexp)) {
+                  double utch=0.0;
+                  int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
+                  azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1 ().constData ()),
+                          const_cast <char *> ((deGrid + "      ").left(6).toLatin1 ().constData ()),&utch,
+                          &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,(FCL)6,(FCL)6);
+                  points=nDkm/500;
+                  if(nDkm > 500*points) points += 1;
+                  points += 1;
                 }
-//                qDebug() << "cc" << m_deCall << m_deGrid << npts << m_maxPoints;
+                if(points>m_maxPoints) {
+                  m_maxPoints=points;
+                  m_deCall=deCall;
+                  m_bDoubleClicked=true;
+                  ui->dxCallEntry->setText(deCall);
+                  int ntx=2;
+                  bool bContest=m_config.special_op_id()==SpecOp::NA_VHF or m_config.special_op_id()==SpecOp::ARRL_DIGI;
+                  if(bContest) ntx=3;
+                  if(deGrid.contains(grid_regexp)) {
+                    m_deGrid=deGrid;
+                    ui->dxGridEntry->setText(deGrid);
+                  } else {
+                    ntx=3;
+                  }
+                  genStdMsgs(QString::number(decodedtext.snr()));
+                  ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+                  setTxMsg(ntx);
+                }
               }
             }
+
           }
           if(SpecOp::FOX==m_config.special_op_id() and decodedtext.string().contains(" DE ")) for_us=true; //Hound with compound callsign
           if(SpecOp::FOX==m_config.special_op_id() and for_us and (audioFreq<1000)) bDisplayRight=true;
@@ -3708,7 +3951,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         // or contains MyCall
         if(!m_bBestSPArmed or m_mode!="FT4") {
           ui->decodedTextBrowser2->displayDecodedText (decodedtext0, m_config.my_callsign (), m_mode, m_config.DXCC (),
-                m_logBook, m_currentBand, m_config.ppfx ());
+                m_logBook, m_currentBand, m_config.ppfx (), false, false, 0.0, bDisplayPoints, m_points);
         }
         m_QSOText = decodedtext.string ().trimmed ();
       }
@@ -4500,7 +4743,8 @@ void MainWindow::guiUpdate()
        (SpecOp::NA_VHF==m_config.special_op_id() or
         SpecOp::FIELD_DAY==m_config.special_op_id() or
         SpecOp::RTTY==m_config.special_op_id() or
-        SpecOp::WW_DIGI==m_config.special_op_id()) ) {
+        SpecOp::WW_DIGI==m_config.special_op_id() or
+        SpecOp::ARRL_DIGI==m_config.special_op_id()) ) {
       //We're in a contest-like mode other than EU_VHF: start QSO with Tx2.
       ui->tx1->setEnabled(false);
       ui->txb1->setEnabled(false);
@@ -4635,7 +4879,8 @@ void MainWindow::startTx2()
     t=ui->tx6->text();
     if(t.mid(0,1)=="#") snr=t.mid(1,5).toDouble();
     if(snr>0.0 or snr < -50.0) snr=99.0;
-    if((m_ntx==6 or m_ntx==7) and m_config.force_call_1st()) {
+    if((m_ntx==6 or m_ntx==7) and m_config.force_call_1st() and
+       ui->respondComboBox->currentIndex()==0) {
       ui->cbAutoSeq->setChecked(true);
       ui->respondComboBox->setCurrentIndex(1);
     }
@@ -5118,7 +5363,9 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
        && (message_words.at(3).contains(qso_partner_base_call) or m_bDoubleClicked
            or bEU_VHF_w2 or (m_QSOProgress==CALLING))) {
       if(message_words.at(4).contains(grid_regexp) and SpecOp::EU_VHF!=m_config.special_op_id()) {
-        if((SpecOp::NA_VHF==m_config.special_op_id() or SpecOp::WW_DIGI==m_config.special_op_id()) and bContestOK){
+        if((SpecOp::NA_VHF==m_config.special_op_id() or SpecOp::WW_DIGI==m_config.special_op_id() or
+            SpecOp::ARRL_DIGI==m_config.special_op_id() )
+           and bContestOK) {
           setTxMsg(3);
           m_QSOProgress=ROGER_REPORT;
         } else {
@@ -5495,6 +5742,7 @@ void MainWindow::genCQMsg ()
       if(SpecOp::FIELD_DAY == m_config.special_op_id()) m_cqStr="FD";
       if(SpecOp::RTTY == m_config.special_op_id())      m_cqStr="RU";
       if(SpecOp::WW_DIGI == m_config.special_op_id())   m_cqStr="WW";
+      if(SpecOp::ARRL_DIGI == m_config.special_op_id()) m_cqStr="TEST";
        }
       if( tlist.at(1)==my_callsign ) {
          t="CQ " + m_cqStr + " " + tlist.at(1) + " " + tlist.at(2); 
@@ -5605,6 +5853,7 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
       }
       if(SpecOp::NA_VHF==m_config.special_op_id()) sent=my_grid;
       if(SpecOp::WW_DIGI==m_config.special_op_id()) sent=my_grid;
+      if(SpecOp::ARRL_DIGI==m_config.special_op_id()) sent=my_grid;
       if(SpecOp::FIELD_DAY==m_config.special_op_id()) sent=m_config.Field_Day_Exchange();
       if(SpecOp::RTTY==m_config.special_op_id()) { 
         sent=rst + m_config.RTTY_Exchange();
@@ -6031,7 +6280,7 @@ void MainWindow::on_RoundRobin_currentTextChanged(QString text)
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {
   m_hisCall = call;
-  ui->dxGridEntry->clear();
+//  ui->dxGridEntry->clear();    // UR disabled because not useful with highlightDXCall/DXGrid feature
   statusChanged();
   statusUpdate ();
 }
@@ -6140,6 +6389,10 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
         m_xSent=m_config.my_grid().left(4);
         m_xRcvd=m_hisGrid;
         break;
+      case SpecOp::ARRL_DIGI:
+        m_xSent=m_config.my_grid().left(4);
+        m_xRcvd=m_hisGrid;
+        break;
       default: break;
     }
 
@@ -6189,6 +6442,32 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
   auto special_op = m_config.special_op_id ();
   if (SpecOp::NONE < special_op && special_op < SpecOp::FOX) { 
     ui->sbSerialNumber->setValue(ui->sbSerialNumber->value() + 1);
+  }
+
+  if(m_ActiveStationsWidget!=NULL) {
+    QString band=m_config.bands()->find(dial_freq);
+    activeWorked(call,band);
+    int points=m_activeCall[call].points;
+    m_score += points;
+    ARRL_logged al;
+    al.time=QDateTime::currentDateTimeUtc();
+    al.band=band;
+    al.points=points;
+    m_arrl_log.append(al);
+    int iz=m_arrl_log.size();
+    int rate=0;
+    int nbc=0;
+
+    for(int i=iz-1; i>=0; i--) {
+      double hrDiff = m_arrl_log[i].time.msecsTo(al.time)/3600000.0;
+      if(hrDiff > 1.0) break;
+      rate += m_arrl_log[i].points;
+      if(i<iz-1 and m_arrl_log[i].band != m_arrl_log[i+1].band) nbc += 1;
+    }
+
+    m_ActiveStationsWidget->setRate(rate);
+    m_ActiveStationsWidget->setScore(m_score);
+    m_ActiveStationsWidget->setBandChanges(nbc);
   }
 
   m_xSent.clear ();
@@ -6252,7 +6531,6 @@ void MainWindow::displayWidgets(qint64 n)
     if(i==25) ui->actionEnable_AP_JT65->setVisible (b);
     if(i==26) ui->actionEnable_AP_DXcall->setVisible (b);
     if(i==27) ui->respondComboBox->setVisible(b);
-    // if(i==28) ui->labNextCall->setVisible(b);
     if(i==29) ui->measure_check_box->setVisible(b);
     if(i==30) ui->labDXped->setVisible(b);
     if(i==31) ui->cbRxAll->setVisible(b);
@@ -6485,6 +6763,7 @@ void MainWindow::on_actionFT8_triggered()
     if(SpecOp::FIELD_DAY==m_config.special_op_id()) t0+="Field Day";
     if(SpecOp::RTTY==m_config.special_op_id()) t0+="RTTY";
     if(SpecOp::WW_DIGI==m_config.special_op_id()) t0+="WW_DIGI";
+    if(SpecOp::ARRL_DIGI==m_config.special_op_id()) t0+="ARRL_DIGI";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {
@@ -7064,6 +7343,9 @@ void MainWindow::on_reset_cabrillo_log_action_triggered ()
     {
       if(m_config.RTTY_Exchange()!="SCC") ui->sbSerialNumber->setValue(1);
       m_logBook.contest_log ()->reset ();
+      m_activeCall.clear();                      //Erase the QMap of active calls
+      m_score=0;
+      m_ActiveStationsWidget->setScore(0);
     }
 }
 
@@ -7429,6 +7711,12 @@ void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const&
           if (m_lastDialFreq != m_freqNominal &&
               (m_mode != "MSK144"
                || !(ui->cbCQTx->isEnabled () && ui->cbCQTx->isVisible () && ui->cbCQTx->isChecked()))) {
+
+            if (m_lastDialFreq != m_freqNominal and m_ActiveStationsWidget != NULL) {
+              m_recentCall.clear();
+              m_ActiveStationsWidget->erase();
+            }
+
             m_lastDialFreq = m_freqNominal;
             m_secBandChanged=QDateTime::currentMSecsSinceEpoch()/1000;
             pskSetLocal ();
@@ -7520,8 +7808,7 @@ void MainWindow::transmit (double snr)
            true, false, snr, m_TRperiod);
   }
 
-  if((m_mode=="FT4" or m_mode=="FT8") and m_maxPoints>0 and SpecOp::NA_VHF==m_config.special_op_id()) {
-    qDebug() << "dd" << m_maxPoints << m_deCall << m_deGrid;
+  if ((m_mode=="FT4" or m_mode=="FT8") and m_maxPoints>0 and SpecOp::ARRL_DIGI==m_config.special_op_id()) {
     ui->dxCallEntry->setText(m_deCall);
     ui->dxGridEntry->setText(m_deGrid);
     genStdMsgs("-10");
@@ -8726,7 +9013,6 @@ void MainWindow::on_cbCQonly_toggled(bool)
 
 void MainWindow::on_cbAutoSeq_toggled(bool b)
 {
-//  if(!b) ui->cbFirst->setChecked(false);
   ui->respondComboBox->setVisible((m_mode=="FT8" or m_mode=="FT4" or m_mode=="FST4"
                            or m_mode=="Q65") and b);
 }
@@ -9673,6 +9959,7 @@ void MainWindow::on_q65Button_clicked()
     ui->houndButton->setStyleSheet("");
     m_config.setSpecial_None();
     on_actionQ65_triggered();
+    ui->sbTR->setValue (m_settings->value ("TRPeriod", 30).toInt());
 }
 
 void MainWindow::on_jt65Button_clicked()
@@ -9681,6 +9968,23 @@ void MainWindow::on_jt65Button_clicked()
     ui->houndButton->setStyleSheet("");
     m_config.setSpecial_None();
     on_actionJT65_triggered();
+}
+
+void MainWindow::on_fst4Button_clicked()
+{
+    ui->houndButton->setChecked(false);
+    ui->houndButton->setStyleSheet("");
+    m_config.setSpecial_None();
+    on_actionFST4_triggered();
+    ui->sbTR->setValue (m_settings->value ("TRPeriod", 60).toInt());
+}
+
+void MainWindow::on_wsprButton_clicked()
+{
+    ui->houndButton->setChecked(false);
+    ui->houndButton->setStyleSheet("");
+    m_config.setSpecial_None();
+    on_actionWSPR_triggered();
 }
 
 void MainWindow::bandHoppingTimer()

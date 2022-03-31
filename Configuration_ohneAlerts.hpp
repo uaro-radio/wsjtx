@@ -223,7 +223,7 @@ public:
   bool Blacklisted() const;
   bool Whitelisted() const;
 
-  enum class SpecialOperatingActivity {NONE, NA_VHF, EU_VHF, FIELD_DAY, RTTY, WW_DIGI, FOX, HOUND};
+  enum class SpecialOperatingActivity {NONE, NA_VHF, EU_VHF, FIELD_DAY, RTTY, WW_DIGI, ARRL_DIGI, FOX, HOUND};
   SpecialOperatingActivity special_op_id () const;
 
   struct CalibrationParams

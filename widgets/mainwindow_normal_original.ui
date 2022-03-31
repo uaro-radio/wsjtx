@@ -3445,6 +3445,7 @@ QLabel[oob=&quot;true&quot;] {
     <addaction name="fox_log_action"/>
     <addaction name="actionColors"/>
     <addaction name="actionSWL_Mode"/>
+    <addaction name="actionActiveStations"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -4065,12 +4066,17 @@ QLabel[oob=&quot;true&quot;] {
     <string>Reduce false decodes</string>
    </property>
   </action>
+  <action name="actionActiveStations">
+   <property name="text">
+    <string>Active Stations</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>DisplayText</class>
-   <extends>QTextBrowser</extends>
+   <extends>QTextEdit</extends>
    <header>widgets/displaytext.h</header>
   </customwidget>
   <customwidget>

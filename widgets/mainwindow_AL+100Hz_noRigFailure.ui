@@ -2550,7 +2550,7 @@ Yellow when too low</string>
                 <enum>QTabWidget::Triangular</enum>
                </property>
                <property name="currentIndex">
-                <number>2</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="tab">
                 <attribute name="title">
@@ -3725,6 +3725,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="fox_log_action"/>
     <addaction name="actionColors"/>
     <addaction name="actionSWL_Mode"/>
+    <addaction name="actionActiveStations"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -4364,6 +4365,11 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>Split ALL.TXT yearly</string>
+   </property>
+  </action>
+  <action name="actionActiveStations">
+   <property name="text">
+    <string>Active Stations</string>
    </property>
   </action>
  </widget>

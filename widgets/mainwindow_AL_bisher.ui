@@ -1198,6 +1198,25 @@ Not available to nonstandard callsign holders.</string>
                       <number>0</number>
                      </property>
                      <item>
+                      <widget class="QPushButton" name="pbTxMode">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="toolTip">
+                        <string>Toggle Tx mode</string>
+                       </property>
+                       <property name="text">
+                        <string>Tx JT9 @</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
                       <widget class="QCheckBox" name="cbHoldTxFreq">
                        <property name="toolTip">
                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to keep Tx frequency fixed when double-clicking on decoded text.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -2550,7 +2569,7 @@ Yellow when too low</string>
                 <enum>QTabWidget::Triangular</enum>
                </property>
                <property name="currentIndex">
-                <number>2</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="tab">
                 <attribute name="title">
@@ -3725,6 +3744,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="fox_log_action"/>
     <addaction name="actionColors"/>
     <addaction name="actionSWL_Mode"/>
+    <addaction name="actionActiveStations"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -4364,6 +4384,11 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>Split ALL.TXT yearly</string>
+   </property>
+  </action>
+  <action name="actionActiveStations">
+   <property name="text">
+    <string>Active Stations</string>
    </property>
   </action>
  </widget>
