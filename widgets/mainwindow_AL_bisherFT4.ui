@@ -911,14 +911,14 @@ QLabel[oob=&quot;true&quot;] {
              <widget class="QPushButton" name="fst4Button">
               <property name="minimumSize">
                <size>
-                <width>38</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>16777215</height>
+                <width>38</width>
+                <height>25</height>
                </size>
               </property>
               <property name="toolTip">
@@ -933,14 +933,14 @@ QLabel[oob=&quot;true&quot;] {
              <widget class="QPushButton" name="houndButton">
               <property name="minimumSize">
                <size>
-                <width>38</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>16777215</height>
+                <width>38</width>
+                <height>25</height>
                </size>
               </property>
               <property name="toolTip">
@@ -958,14 +958,14 @@ QLabel[oob=&quot;true&quot;] {
              <widget class="QPushButton" name="wsprButton">
               <property name="minimumSize">
                <size>
-                <width>38</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>16777215</height>
+                <width>38</width>
+                <height>25</height>
                </size>
               </property>
               <property name="toolTip">
@@ -981,16 +981,10 @@ QLabel[oob=&quot;true&quot;] {
             </item>
             <item row="4" column="0" alignment="Qt::AlignLeft">
              <widget class="QPushButton" name="msk144Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>16777215</height>
+                <width>38</width>
+                <height>25</height>
                </size>
               </property>
               <property name="toolTip">
@@ -1005,14 +999,14 @@ QLabel[oob=&quot;true&quot;] {
              <widget class="QPushButton" name="jt65Button">
               <property name="minimumSize">
                <size>
-                <width>38</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>16777215</height>
+                <width>38</width>
+                <height>25</height>
                </size>
               </property>
               <property name="toolTip">
@@ -1027,14 +1021,14 @@ QLabel[oob=&quot;true&quot;] {
              <widget class="QPushButton" name="ft4Button">
               <property name="minimumSize">
                <size>
-                <width>38</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>16777215</height>
+                <width>38</width>
+                <height>25</height>
                </size>
               </property>
               <property name="toolTip">
@@ -1049,14 +1043,14 @@ QLabel[oob=&quot;true&quot;] {
              <widget class="QPushButton" name="ft8Button">
               <property name="minimumSize">
                <size>
-                <width>38</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>16777215</height>
+                <width>38</width>
+                <height>25</height>
                </size>
               </property>
               <property name="toolTip">
@@ -1069,16 +1063,10 @@ QLabel[oob=&quot;true&quot;] {
             </item>
             <item row="4" column="2" alignment="Qt::AlignHCenter">
              <widget class="QPushButton" name="q65Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
-                <height>16777215</height>
+                <width>38</width>
+                <height>25</height>
                </size>
               </property>
               <property name="toolTip">
@@ -1579,7 +1567,7 @@ When not checked you can view the calibration results.</string>
                         <string>Tx  </string>
                        </property>
                        <property name="minimum">
-                        <number>100</number>
+                        <number>200</number>
                        </property>
                        <property name="maximum">
                         <number>5000</number>
@@ -1695,7 +1683,7 @@ When not checked you can view the calibration results.</string>
                         <string>Rx  </string>
                        </property>
                        <property name="minimum">
-                        <number>100</number>
+                        <number>200</number>
                        </property>
                        <property name="maximum">
                         <number>5000</number>

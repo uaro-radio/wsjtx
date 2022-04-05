@@ -2231,12 +2231,12 @@ Double-click to reset to the standard 73 message</string>
                         </widget>
                        </item>
                        <item row="6" column="2">
-                        <widget class="QCheckBox" name="cb630mFST4">
+                        <widget class="QCheckBox" name="cb12mFT4">
                          <property name="toolTip">
-                          <string>630m FST4</string>
+                          <string>12m FT4</string>
                          </property>
                          <property name="text">
-                          <string>474 FST4</string>
+                          <string>12m FT4</string>
                          </property>
                         </widget>
                        </item>
@@ -2251,12 +2251,12 @@ Double-click to reset to the standard 73 message</string>
                         </widget>
                        </item>
                        <item row="5" column="2">
-                        <widget class="QCheckBox" name="cb2200mFST4">
+                        <widget class="QCheckBox" name="cb15mFT4">
                          <property name="toolTip">
-                          <string>2200m FST4</string>
+                          <string>15m FT4</string>
                          </property>
                          <property name="text">
-                          <string>136 FST4</string>
+                          <string>15m FT4</string>
                          </property>
                         </widget>
                        </item>
@@ -2281,12 +2281,12 @@ Double-click to reset to the standard 73 message</string>
                         </widget>
                        </item>
                        <item row="7" column="2">
-                        <widget class="QCheckBox" name="cb630m">
+                        <widget class="QCheckBox" name="cb10mFT4">
                          <property name="toolTip">
-                          <string>630m FT8</string>
+                          <string>10m FT4</string>
                          </property>
                          <property name="text">
-                          <string>474 FT8</string>
+                          <string>10m FT4</string>
                          </property>
                         </widget>
                        </item>
@@ -3296,9 +3296,15 @@ QLabel[oob=&quot;true&quot;] {
           <layout class="QVBoxLayout" name="verticalLayout_15">
            <item>
             <widget class="QPushButton" name="houndButton">
-             <property name="maximumSize">
+             <property name="minimumSize">
               <size>
                <width>32</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
                <height>16777215</height>
               </size>
              </property>
@@ -3315,9 +3321,15 @@ QLabel[oob=&quot;true&quot;] {
            </item>
            <item>
             <widget class="QPushButton" name="ft8Button">
-             <property name="maximumSize">
+             <property name="minimumSize">
               <size>
                <width>32</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
                <height>16777215</height>
               </size>
              </property>
@@ -3331,9 +3343,15 @@ QLabel[oob=&quot;true&quot;] {
            </item>
            <item>
             <widget class="QPushButton" name="ft4Button">
-             <property name="maximumSize">
+             <property name="minimumSize">
               <size>
                <width>32</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
                <height>16777215</height>
               </size>
              </property>
@@ -3347,9 +3365,15 @@ QLabel[oob=&quot;true&quot;] {
            </item>
            <item>
             <widget class="QPushButton" name="msk144Button">
-             <property name="maximumSize">
+             <property name="minimumSize">
               <size>
                <width>32</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
                <height>16777215</height>
               </size>
              </property>
@@ -3363,9 +3387,15 @@ QLabel[oob=&quot;true&quot;] {
            </item>
            <item>
             <widget class="QPushButton" name="q65Button">
-             <property name="maximumSize">
+             <property name="minimumSize">
               <size>
                <width>32</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
                <height>16777215</height>
               </size>
              </property>
@@ -3379,9 +3409,15 @@ QLabel[oob=&quot;true&quot;] {
            </item>
            <item>
             <widget class="QPushButton" name="jt65Button">
-             <property name="maximumSize">
+             <property name="minimumSize">
               <size>
                <width>32</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
                <height>16777215</height>
               </size>
              </property>

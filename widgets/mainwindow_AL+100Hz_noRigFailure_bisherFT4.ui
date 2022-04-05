@@ -1198,25 +1198,6 @@ Not available to nonstandard callsign holders.</string>
                       <number>0</number>
                      </property>
                      <item>
-                      <widget class="QPushButton" name="pbTxMode">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="toolTip">
-                        <string>Toggle Tx mode</string>
-                       </property>
-                       <property name="text">
-                        <string>Tx JT9 @</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
                       <widget class="QCheckBox" name="cbHoldTxFreq">
                        <property name="toolTip">
                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to keep Tx frequency fixed when double-clicking on decoded text.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1526,15 +1507,15 @@ When not checked you can view the calibration results.</string>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QCheckBox" name="cbFirst">
+                      <widget class="QComboBox" name="respondComboBox">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="toolTip">
-                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to call the first decoded responder to my CQ.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                       </property>
-                       <property name="accessibleDescription">
-                        <string>Check to call the first decoded responder to my CQ.</string>
-                       </property>
-                       <property name="text">
-                        <string>Call 1st</string>
+                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: First&lt;/span&gt; to respond automatically to the first decoded reply to your CQ. &lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max Pts&lt;/span&gt; to respond automatically to the reply yielding most points in the ARRL International Digital Contest.&lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: None&lt;/span&gt; to choose callers manually.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                        </property>
                       </widget>
                      </item>
@@ -1586,7 +1567,7 @@ When not checked you can view the calibration results.</string>
                         <string>Tx  </string>
                        </property>
                        <property name="minimum">
-                        <number>200</number>
+                        <number>100</number>
                        </property>
                        <property name="maximum">
                         <number>5000</number>
@@ -1702,7 +1683,7 @@ When not checked you can view the calibration results.</string>
                         <string>Rx  </string>
                        </property>
                        <property name="minimum">
-                        <number>200</number>
+                        <number>100</number>
                        </property>
                        <property name="maximum">
                         <number>5000</number>
@@ -3521,32 +3502,32 @@ Double-click to reset to the standard 73 message</string>
                      </widget>
                     </item>
                     <item row="4" column="2">
-                     <widget class="QCheckBox" name="cb2200mFST4">
+                     <widget class="QCheckBox" name="cb15mFT4">
                       <property name="toolTip">
-                       <string>2200m FST4</string>
+                       <string>15m FT4</string>
                       </property>
                       <property name="text">
-                       <string>136 FST4</string>
+                       <string>15m FT4</string>
                       </property>
                      </widget>
                     </item>
                     <item row="5" column="2">
-                     <widget class="QCheckBox" name="cb630mFST4">
+                     <widget class="QCheckBox" name="cb12mFT4">
                       <property name="toolTip">
-                       <string>630m FST4</string>
+                       <string>12m FT4</string>
                       </property>
                       <property name="text">
-                       <string>474 FST4</string>
+                       <string>12m FT4</string>
                       </property>
                      </widget>
                     </item>
                     <item row="6" column="2">
-                     <widget class="QCheckBox" name="cb630m">
+                     <widget class="QCheckBox" name="cb10mFT4">
                       <property name="toolTip">
-                       <string>630m FT8</string>
+                       <string>10m FT4</string>
                       </property>
                       <property name="text">
-                       <string>474 FT84</string>
+                       <string>10m FT4</string>
                       </property>
                      </widget>
                     </item>

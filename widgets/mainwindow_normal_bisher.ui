@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>905</width>
+    <width>901</width>
     <height>666</height>
    </rect>
   </property>
@@ -563,7 +563,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,0,0" columnstretch="0,0,1,0,2" columnminimumwidth="0,0,0,0,0">
+        <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,0,0" columnstretch="0,0,1,0,4" columnminimumwidth="0,0,0,0,0">
          <item row="0" column="2">
           <widget class="QLabel" name="labDialFreq">
            <property name="sizePolicy">
@@ -2533,12 +2533,12 @@ Double-click to reset to the standard 73 message</string>
                         </widget>
                        </item>
                        <item row="5" column="2">
-                        <widget class="QCheckBox" name="cb2200mFST4">
+                        <widget class="QCheckBox" name="cb15mFT4">
                          <property name="toolTip">
-                          <string>2200m FST4</string>
+                          <string>15m FT4</string>
                          </property>
                          <property name="text">
-                          <string>136 FST4</string>
+                          <string>15m FT4</string>
                          </property>
                         </widget>
                        </item>
@@ -2573,12 +2573,12 @@ Double-click to reset to the standard 73 message</string>
                         </widget>
                        </item>
                        <item row="7" column="2">
-                        <widget class="QCheckBox" name="cb630m">
+                        <widget class="QCheckBox" name="cb10mFT4">
                          <property name="toolTip">
-                          <string>630m FT8</string>
+                          <string>10m FT4</string>
                          </property>
                          <property name="text">
-                          <string>474 FT8</string>
+                          <string>10m FT4</string>
                          </property>
                         </widget>
                        </item>
@@ -2669,12 +2669,12 @@ Double-click to reset to the standard 73 message</string>
                         </widget>
                        </item>
                        <item row="6" column="2">
-                        <widget class="QCheckBox" name="cb630mFST4">
+                        <widget class="QCheckBox" name="cb12mFT4">
                          <property name="toolTip">
-                          <string>630m FST4</string>
+                          <string>12m FT4</string>
                          </property>
                          <property name="text">
-                          <string>474 FST4</string>
+                          <string>12m FT4</string>
                          </property>
                         </widget>
                        </item>
@@ -3265,14 +3265,14 @@ Double-click to reset to the standard 73 message</string>
             <widget class="QPushButton" name="houndButton">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>32</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>32</width>
-               <height>25</height>
+               <width>16777215</width>
+               <height>16777215</height>
               </size>
              </property>
              <property name="toolTip">
@@ -3290,14 +3290,14 @@ Double-click to reset to the standard 73 message</string>
             <widget class="QPushButton" name="ft8Button">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>32</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>32</width>
-               <height>25</height>
+               <width>16777215</width>
+               <height>16777215</height>
               </size>
              </property>
              <property name="toolTip">
@@ -3312,14 +3312,14 @@ Double-click to reset to the standard 73 message</string>
             <widget class="QPushButton" name="q65Button">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>32</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>32</width>
-               <height>25</height>
+               <width>16777215</width>
+               <height>16777215</height>
               </size>
              </property>
              <property name="toolTip">
@@ -3334,14 +3334,14 @@ Double-click to reset to the standard 73 message</string>
             <widget class="QPushButton" name="msk144Button">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>32</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>32</width>
-               <height>25</height>
+               <width>16777215</width>
+               <height>16777215</height>
               </size>
              </property>
              <property name="toolTip">
@@ -3356,14 +3356,14 @@ Double-click to reset to the standard 73 message</string>
             <widget class="QPushButton" name="ft4Button">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>32</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>32</width>
-               <height>25</height>
+               <width>16777215</width>
+               <height>16777215</height>
               </size>
              </property>
              <property name="toolTip">
@@ -3378,14 +3378,14 @@ Double-click to reset to the standard 73 message</string>
             <widget class="QPushButton" name="jt65Button">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>32</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>32</width>
-               <height>25</height>
+               <width>16777215</width>
+               <height>16777215</height>
               </size>
              </property>
              <property name="toolTip">
@@ -3410,7 +3410,7 @@ Double-click to reset to the standard 73 message</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>905</width>
+     <width>901</width>
      <height>21</height>
     </rect>
    </property>
