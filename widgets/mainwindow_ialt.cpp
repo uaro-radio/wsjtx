@@ -3665,7 +3665,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       }
 
 // Filtering out some false decodes, and don't write all.txt for such
-  if (line_read.contains("QRP")                                                     // pass all QRP stations
+  if (line_read.contains("QRP")                                                 // pass all QRP stations
       or (!(((line_read.contains("/R") && line_read.contains("/R"))                    // /R and /R
            || (line_read.contains("/R") && line_read.contains("/P"))                   // /R and /P
            || (line_read.contains("/P") && line_read.contains(" R"))                   // /P and R
@@ -3674,14 +3674,15 @@ void MainWindow::readFromStdout()                             //readFromStdout
            || (line_read.contains(";") && line_read.contains("/R"))                    // ; and /R
            || (line_read.contains(";") && line_read.contains("/P"))                    // ; and /P
            || line_read.contains("? a")                                                // ap decodes of low confidence
-           || line_read.contains("<...> <")                                            // two unresolved hash codes
-           || line_read.contains("> <...>")                                            // two unresolved hash codes
+           || line_read.contains("<...> <...>")                                        // two unresolved hash codes
            || (line_read.contains("<...>") && line_read.contains(" R"))                         // hash and R
+           || (line_read.contains("<...>") && line_read.contains("/P"))                         // hash and /P
            || (line_read.contains("<...>") && line_read.contains("\\s\\D\\D\\D"))               // hash and invalid prefix
+           || (line_read.contains("\\s\\D\\D\\D") && line_read.contains("\\d\\d\\d \\d\\d\\d")) // invalid prefix and contest call
            || (line_read.contains(";") && line_read.contains("\\d\\d\\d \\d\\d\\d"))            // ; and contest call
            || line_read.contains("2.") || line_read.contains("1."))                             //  -0.9 < dt <0.9
            && (line_read.contains("-24") || line_read.contains("-25") || line_read.contains("-26")
-               || line_read.contains("<...> <...>")))))                       // for such SNRmin = -23 and no two hash codes
+               || line_read.contains("<...> <...>")))))                         // for such SNRmin = -23 and no two hash codes
 {
     if (m_mode!="FT8" and m_mode!="FT4" and !m_mode.startsWith ("FST4") and m_mode!="Q65") {
       //Pad 22-char msg to at least 37 chars
@@ -3827,33 +3828,20 @@ void MainWindow::readFromStdout()                             //readFromStdout
           if (SpecOp::NONE == m_config.special_op_id() && ui->actionReduce_false_decodes->isChecked()
               && !decodedtext.string().contains("QRP")                    // pass all QRP stations
               ) {
-              if (((decodedtext.string().contains(m_baseCall+"/R")        // rover calls
-                   || decodedtext.string().contains("/R")                 // rover calls
+              if (((decodedtext.string().contains("/R")                   // rover calls
                    || decodedtext.string().contains(" R ")                // R in contest message
+                   || (decodedtext.string().contains("/R") && decodedtext.string().contains("/P"))   // /R and /P
                    || (decodedtext.string().contains("<...>")
-                       && (decodedtext.string().contains(QRegularExpression {"\\s\\D\\D\\D"})       // hash + invalid prefix
-                       || decodedtext.string().contains("/P")))                                     // hash + /P call
-                   || decodedtext.string().contains(QRegularExpression {"(\\w+)/P (\\w+)/P"})       // two /P calls
-                   || decodedtext.string().contains(QRegularExpression {"\\w\\w\\w\\w\\w\\w\\w\\w"})   // likely invalid calls
-                   || decodedtext.string().contains(QRegularExpression {"\\d\\d\\d \\d\\d\\d"})     // contest messages
-                    )                                                // for such SNRmin = -20 and -2 < dt <2
+                       && (decodedtext.string().contains(QRegularExpression {"\\s\\D\\D\\D"})        // hash + invalid prefix
+                       || decodedtext.string().contains("/P")))                                      // hash + /P call
+                   || decodedtext.string().contains(QRegularExpression {"(\\w+)/P (\\w+)/P"})        // two /P calls
+                   || decodedtext.string().contains(QRegularExpression {"\\w\\w\\w\\w\\w\\w\\w\\w"}) // likely invalid calls
+                   || decodedtext.string().contains(QRegularExpression {"\\d\\d\\d \\d\\d\\d"})      // contest messages
+                    )                                                // for such SNRmin = -20 and -0.9 < dt <0.9
                  && (decodedtext.string().contains("-21") || decodedtext.string().contains("-22") ||
                      decodedtext.string().contains("-23") || decodedtext.string().contains("-24") ||
                      decodedtext.string().contains("-25") || decodedtext.string().contains("-26")
                    || decodedtext.string().contains("2.") || decodedtext.string().contains("1.")))
-              or (((decodedtext.string().contains("/R") && decodedtext.string().contains("/R"))    // two times /R
-                 || (decodedtext.string().contains("/R") && decodedtext.string().contains("/P"))   // /R and /P
-                 || (decodedtext.string().contains("/R") && decodedtext.string().contains(" R"))   // /R and R
-                 || (decodedtext.string().contains("/R") && decodedtext.string().contains(" R"))   // /R and R
-                 || (decodedtext.string().contains(";") && decodedtext.string().contains(" R"))    // ; and P
-                 || (decodedtext.string().contains(";") && decodedtext.string().contains("/R"))    // ; and /R
-                 || (decodedtext.string().contains(";") && decodedtext.string().contains(QRegularExpression {"\\d\\d\\d \\d\\d\\d"})))             // ; and contest call
-                 && (decodedtext.string().contains("-15") || decodedtext.string().contains("-16") ||
-                     decodedtext.string().contains("-17") || decodedtext.string().contains("-18") ||
-                     decodedtext.string().contains("-19") || decodedtext.string().contains("-20") ||
-                     decodedtext.string().contains("-21") || decodedtext.string().contains("-22") ||
-                     decodedtext.string().contains("-23") || decodedtext.string().contains("-24") ||
-                     decodedtext.string().contains("-25") || decodedtext.string().contains("-26")))  // for such SNRmin = -14
                       )  {
                    blockUDP = true;                              // block udp spotting for false decodes (JTAlert)
               } else {
