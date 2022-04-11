@@ -1625,7 +1625,7 @@ void MainWindow::dataSink(qint64 frames)
   if(m_mode=="FT8") {
     to_jt9(m_ihsym,-1,-1);     //Allow jt9 to bail out early, if necessary
     if(m_ihsym==40 and m_decoderBusy) {
-      qDebug() << "Clearing hung decoder status";
+//      qDebug() << "Clearing hung decoder status";
       decodeDone();  //Clear a hung decoder status
     }
   }
@@ -3453,16 +3453,15 @@ void MainWindow::decodeDone ()
   }
 
   if((m_mode=="FT4" or m_mode=="FT8")
-          and m_latestDecodeTime>=0 and m_ActiveStationsWidget!=NULL) {
-         if(!m_diskData and (m_nDecodes==0)) {
-           m_latestDecodeTime = (QDateTime::currentMSecsSinceEpoch()/1000) % 86400;
-           m_latestDecodeTime =  int(m_latestDecodeTime/m_TRperiod);
-           m_latestDecodeTime =  int(m_latestDecodeTime*m_TRperiod);
-         }
-         qDebug() << "aa" << m_ihsym << m_latestDecodeTime << m_nDecodes;
-         ARRL_Digi_Display();  // Update the ARRL_DIGI display
-       }
-       if(m_mode!="FT8" or dec_data.params.nzhsym==50) m_nDecodes=0;
+     and m_latestDecodeTime>=0 and m_ActiveStationsWidget!=NULL) {
+    if(!m_diskData and (m_nDecodes==0)) {
+      m_latestDecodeTime = (QDateTime::currentMSecsSinceEpoch()/1000) % 86400;
+      m_latestDecodeTime =  int(m_latestDecodeTime/m_TRperiod);
+      m_latestDecodeTime =  int(m_latestDecodeTime*m_TRperiod);
+    }
+    ARRL_Digi_Display();  // Update the ARRL_DIGI display
+  }
+  if(m_mode!="FT8" or dec_data.params.nzhsym==50) m_nDecodes=0;
 }
 
 void MainWindow::ARRL_Digi_Update(DecodedText dt)
@@ -3521,6 +3520,7 @@ void MainWindow::ARRL_Digi_Update(DecodedText dt)
     m_recentCall[deCall]=rc;
     m_points=m_activeCall.value(deCall).points;
   }
+  updateRate();
 }
 
 void MainWindow::ARRL_Digi_Display()
@@ -3540,11 +3540,12 @@ void MainWindow::ARRL_Digi_Display()
     icall.next();
     deCall=icall.key();
     age=int((m_latestDecodeTime - icall.value().decodeTime)/m_TRperiod + 0.5);
+    if(age<0) age=age + int(86400/m_TRperiod);
     int itx=1;
     if(icall.value().txEven) itx=0;
     int snr=icall.value().snr;
     int freq=icall.value().audioFreq;
-    if(age>maxAge or age<0) {
+    if(age>maxAge) {
       icall.remove();
     } else {
       bool bReady=false;
@@ -3974,7 +3975,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   m_bDoubleClicked=true;
                   ui->dxCallEntry->setText(deCall);
                   int m_ntx=2;
-                  bool bContest=m_config.special_op_id()==SpecOp::NA_VHF or m_config.special_op_id()==SpecOp::ARRL_DIGI;
+                  bool bContest=m_config.special_op_id()==SpecOp::NA_VHF or m_config.special_op_id()==SpecOp::ARRL_DIGI or
+                      m_config.special_op_id()==SpecOp::WW_DIGI;
                   if(bContest) m_ntx=3;
                   if(deGrid.contains(grid_regexp)) {
                     m_deGrid=deGrid;
@@ -3982,8 +3984,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   } else {
                     m_ntx=3;
                   }
+                  if(deGrid.contains("R+") or deGrid.contains("R-") or deGrid.contains("R ")) m_ntx=4;
                   if(m_ntx==2) m_QSOProgress = REPORT;
                   if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
+                  if(m_ntx==4) m_QSOProgress = ROGERS;
                   genStdMsgs(QString::number(decodedtext.snr()));
                   ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
                   setTxMsg(m_ntx);
@@ -6526,12 +6530,30 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
     m_ActiveStationsWidget->setScore(m_score);
     m_ActiveStationsWidget->setBandChanges(nbc);
   }
-
+  updateRate();
   m_xSent.clear ();
   m_xRcvd.clear ();
   if (m_config.set_RXtoTX ()) on_pbT2R_clicked();   // Mod for WD5DHK
   if (m_config.clear_DXcall ()) ui->dxCallEntry->clear ();
   if (m_config.clear_DXgrid ()) ui->dxGridEntry->clear ();
+}
+
+void MainWindow::updateRate()
+{
+  int iz=m_arrl_log.size();
+  int rate=0;
+  int nbc=0;
+  double hrDiff;
+
+  for(int i=iz-1; i>=0; i--) {
+    hrDiff = m_arrl_log[i].time.msecsTo(QDateTime::currentDateTimeUtc())/3600000.0;
+    if(hrDiff > 1.0) break;
+    rate += m_arrl_log[i].points;
+    if(i<iz-1 and m_arrl_log[i].band != m_arrl_log[i+1].band) nbc += 1;
+  }
+  m_ActiveStationsWidget->setRate(rate);
+  m_ActiveStationsWidget->setScore(m_score);
+  m_ActiveStationsWidget->setBandChanges(nbc);
 }
 
 qint64 MainWindow::nWidgets(QString t)
@@ -7037,6 +7059,7 @@ void MainWindow::on_actionQ65_triggered()
     if(SpecOp::FIELD_DAY==m_config.special_op_id()) t0="Field Day";
     if(SpecOp::RTTY==m_config.special_op_id()) t0+="RTTY";
     if(SpecOp::WW_DIGI==m_config.special_op_id()) t0+="WW_DIGI";
+    if(SpecOp::ARRL_DIGI==m_config.special_op_id()) t0+="ARRL_DIGI";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {
