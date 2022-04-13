@@ -3926,18 +3926,18 @@ void MainWindow::readFromStdout()                             //readFromStdout
             }
           }
           if(m_bCallingCQ && !m_bAutoReply && for_us && SpecOp::FOX > m_config.special_op_id()) {
-            bool bActiveStations=false;
-            if(ui->respondComboBox->currentText()=="CQ: First") bActiveStations=true;
-
-            if(ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) bActiveStations=true;
-            if(m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible()) bActiveStations=true;
-            if(bActiveStations) {
+            bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
+                (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
+                (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
+            QString t=decodedtext.messageWords()[4];
+            if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
+            if(bProcessMsgNormally) {
               m_bDoubleClicked=true;
               m_bAutoReply = true;
               processMessage (decodedtext);
             }
 
-            if(!bActiveStations and m_ActiveStationsWidget and ui->respondComboBox->currentText()=="CQ: Max Dist") {
+            if(!bProcessMsgNormally and m_ActiveStationsWidget and ui->respondComboBox->currentText()=="CQ: Max Dist") {
               QString deCall;
               QString deGrid;
               decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -3963,8 +3963,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   m_bDoubleClicked=true;
                   ui->dxCallEntry->setText(deCall);
                   int m_ntx=2;
-                  bool bContest=m_config.special_op_id()==SpecOp::NA_VHF or m_config.special_op_id()==SpecOp::ARRL_DIGI or
-                      m_config.special_op_id()==SpecOp::WW_DIGI;
+                  bool bContest=m_config.special_op_id()==SpecOp::NA_VHF or m_config.special_op_id()==SpecOp::ARRL_DIGI;
                   if(bContest) m_ntx=3;
                   if(deGrid.contains(grid_regexp)) {
                     m_deGrid=deGrid;
@@ -3972,10 +3971,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   } else {
                     m_ntx=3;
                   }
-                  if(deGrid.contains("R+") or deGrid.contains("R-") or deGrid.contains("R ")) m_ntx=4;
                   if(m_ntx==2) m_QSOProgress = REPORT;
                   if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
-                  if(m_ntx==4) m_QSOProgress = ROGERS;
                   genStdMsgs(QString::number(decodedtext.snr()));
                   ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
                   setTxMsg(m_ntx);
@@ -6517,8 +6514,9 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
     m_ActiveStationsWidget->setRate(rate);
     m_ActiveStationsWidget->setScore(m_score);
     m_ActiveStationsWidget->setBandChanges(nbc);
+    updateRate();
   }
-  updateRate();
+
   m_xSent.clear ();
   m_xRcvd.clear ();
   if (m_config.set_RXtoTX ()) on_pbT2R_clicked();   // Mod for WD5DHK
@@ -6830,12 +6828,12 @@ void MainWindow::on_actionFT8_triggered()
 
   if (SpecOp::NONE < m_config.special_op_id () && SpecOp::FOX > m_config.special_op_id ()) {
     QString t0="";
-    if(SpecOp::NA_VHF==m_config.special_op_id()) t0+="NA VHF";
-    if(SpecOp::EU_VHF==m_config.special_op_id()) t0+="EU VHF";
-    if(SpecOp::FIELD_DAY==m_config.special_op_id()) t0+="Field Day";
-    if(SpecOp::RTTY==m_config.special_op_id()) t0+="RTTY";
-    if(SpecOp::WW_DIGI==m_config.special_op_id()) t0+="WW_DIGI";
-    if(SpecOp::ARRL_DIGI==m_config.special_op_id()) t0+="ARRL_DIGI";
+    if(SpecOp::NA_VHF==m_config.special_op_id()) t0="NA VHF";
+    if(SpecOp::EU_VHF==m_config.special_op_id()) t0="EU VHF";
+    if(SpecOp::FIELD_DAY==m_config.special_op_id()) t0="Field Day";
+    if(SpecOp::RTTY==m_config.special_op_id()) t0="RTTY";
+    if(SpecOp::WW_DIGI==m_config.special_op_id()) t0="WW_DIGI";
+    if(SpecOp::ARRL_DIGI==m_config.special_op_id()) t0="ARRL_DIGI";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {
@@ -7045,9 +7043,9 @@ void MainWindow::on_actionQ65_triggered()
     if(SpecOp::NA_VHF==m_config.special_op_id()) t0="NA VHF";
     if(SpecOp::EU_VHF==m_config.special_op_id()) t0="EU VHF";
     if(SpecOp::FIELD_DAY==m_config.special_op_id()) t0="Field Day";
-    if(SpecOp::RTTY==m_config.special_op_id()) t0+="RTTY";
-    if(SpecOp::WW_DIGI==m_config.special_op_id()) t0+="WW_DIGI";
-    if(SpecOp::ARRL_DIGI==m_config.special_op_id()) t0+="ARRL_DIGI";
+    if(SpecOp::RTTY==m_config.special_op_id()) t0="RTTY";
+    if(SpecOp::WW_DIGI==m_config.special_op_id()) t0="WW_DIGI";
+    if(SpecOp::ARRL_DIGI==m_config.special_op_id()) t0="ARRL_DIGI";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {
@@ -7119,8 +7117,8 @@ void MainWindow::on_actionMSK144_triggered()
   statusChanged();
 
   QString t0="";
-  if(SpecOp::NA_VHF==m_config.special_op_id()) t0+="NA VHF";
-  if(SpecOp::EU_VHF==m_config.special_op_id()) t0+="EU VHF";
+  if(SpecOp::NA_VHF==m_config.special_op_id()) t0="NA VHF";
+  if(SpecOp::EU_VHF==m_config.special_op_id()) t0="EU VHF";
   if(t0=="") {
     ui->labDXped->setVisible(false);
   } else {
@@ -9838,11 +9836,12 @@ void MainWindow::chkFT4()
 
   if (SpecOp::NONE < m_config.special_op_id () && SpecOp::FOX > m_config.special_op_id ()) {
     QString t0="";
-    if(SpecOp::NA_VHF==m_config.special_op_id()) t0+="NA VHF";
-    if(SpecOp::EU_VHF==m_config.special_op_id()) t0+="EU VHF";
-    if(SpecOp::FIELD_DAY==m_config.special_op_id()) t0+="Field Day";
-    if(SpecOp::RTTY==m_config.special_op_id()) t0+="RTTY";
-    if(SpecOp::WW_DIGI==m_config.special_op_id()) t0+="WW_DIGI";
+    if(SpecOp::NA_VHF==m_config.special_op_id()) t0="NA VHF";
+    if(SpecOp::EU_VHF==m_config.special_op_id()) t0="EU VHF";
+    if(SpecOp::FIELD_DAY==m_config.special_op_id()) t0="Field Day";
+    if(SpecOp::RTTY==m_config.special_op_id()) t0="RTTY";
+    if(SpecOp::WW_DIGI==m_config.special_op_id()) t0="WW_DIGI";
+    if(SpecOp::ARRL_DIGI==m_config.special_op_id()) t0="ARRL_DIGI";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {
@@ -10006,7 +10005,7 @@ void MainWindow::on_ft8Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    m_config.setSpecial_None();
+    if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
     on_actionFT8_triggered();
 }
 
@@ -10014,7 +10013,7 @@ void MainWindow::on_ft4Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    m_config.setSpecial_None();
+    if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
     on_actionFT4_triggered();
 }
 
@@ -10022,7 +10021,7 @@ void MainWindow::on_msk144Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    m_config.setSpecial_None();
+    if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
     on_actionMSK144_triggered();
 }
 
@@ -10030,7 +10029,7 @@ void MainWindow::on_q65Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    m_config.setSpecial_None();
+    if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
     on_actionQ65_triggered();
     ui->sbTR->setValue (m_settings->value ("TRPeriod", 30).toInt());
 }
@@ -10039,7 +10038,7 @@ void MainWindow::on_jt65Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    m_config.setSpecial_None();
+    if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
     on_actionJT65_triggered();
 }
 
@@ -10047,7 +10046,7 @@ void MainWindow::on_fst4Button_clicked()     // UR disable for normal + widescre
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    m_config.setSpecial_None();
+    if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
     on_actionFST4_triggered();
     ui->sbTR->setValue (m_settings->value ("TRPeriod", 60).toInt());
 }
@@ -10056,7 +10055,7 @@ void MainWindow::on_wsprButton_clicked()     // UR disable for normal + widescre
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    m_config.setSpecial_None();
+    if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
     on_actionWSPR_triggered();
 }
 
