@@ -3664,7 +3664,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
       }
 
- // Filtering out some false decodes, and don't write all.txt for such
+  // Filtering out some false decodes, and don't write all.txt for such
   if (line_read.contains("QRP")                                             // pass all QRP stations
       or (!((((line_read.contains("/R") && line_read.contains("/R"))               // /R and /R
            || (line_read.contains("/R") && line_read.contains("/P"))               // /R and /P
@@ -3676,7 +3676,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
            || line_read.contains("? a")                                            // ap decodes of low confidence
            || line_read.contains("<...> <...>")                                    // two unresolved hash codes
            || (line_read.contains("<...>") && line_read.contains(" R "))           // hash and R
+           || (line_read.contains("<...>") && line_read.contains("/R"))            // hash and /R
            || (line_read.contains("<...>") && line_read.contains("/P"))            // hash and /P
+           || (line_read.contains("<...>") && line_read.contains(";"))             // hash and ;
            || line_read.contains("2.") || line_read.contains("1."))                //  -0.9 < dt <0.9
            && (line_read.contains("-24") || line_read.contains("-25") || line_read.contains("-26")
                || line_read.contains("<...> <...>")))                       // for such SNRmin = -23 and no two hash codes
