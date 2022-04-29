@@ -3158,10 +3158,14 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 void MainWindow::on_ClrAvgButton_clicked()
 {
   m_nclearave=1;
-  if(m_msgAvgWidget != NULL) {
-    if(m_msgAvgWidget->isVisible()) m_msgAvgWidget->displayAvg("");
+  if(m_mode=="Echo") {
+    echocom_.nsum=0;
+  } else {
+    if(m_msgAvgWidget != NULL) {
+      if(m_msgAvgWidget->isVisible()) m_msgAvgWidget->displayAvg("");
+    }
+    if(m_mode=="Q65") ndecodes_label.setText("0  0");
   }
-  if(m_mode=="Q65") ndecodes_label.setText("0  0");
 }
 
 void MainWindow::msgAvgDecode2()
@@ -3664,27 +3668,27 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
       }
 
- // Filtering out some false decodes, and don't write all.txt for such
+  // Filtering out some false decodes, and don't write all.txt for such
   if (line_read.contains("QRP")                                             // pass all QRP stations
       or (!((((line_read.contains("/R") && line_read.contains("/R"))               // /R and /R
            || (line_read.contains("/R") && line_read.contains("/P"))               // /R and /P
            || (line_read.contains("/P") && line_read.contains(" R "))              // /P and R
            || (line_read.contains("/R") && line_read.contains(" R "))              // /R and R
-           || (line_read.contains(";") && line_read.contains(" R"))                // ; and P
            || (line_read.contains(";") && line_read.contains("/R"))                // ; and /R
            || (line_read.contains(";") && line_read.contains("/P"))                // ; and /P
            || line_read.contains("? a")                                            // ap decodes of low confidence
-           || line_read.contains("<...> <...>")                                    // two unresolved hash codes
            || (line_read.contains("<...>") && line_read.contains(" R "))           // hash and R
            || (line_read.contains("<...>") && line_read.contains("/R"))            // hash and /R
            || (line_read.contains("<...>") && line_read.contains("/P"))            // hash and /P
            || (line_read.contains("<...>") && line_read.contains(";"))             // hash and ;
            || line_read.contains("2.") || line_read.contains("1."))                //  -0.9 < dt <0.9
-           && (line_read.contains("-24") || line_read.contains("-25") || line_read.contains("-26")
-               || line_read.contains("<...> <...>")))                       // for such SNRmin = -23 and no two hash codes
+           && (line_read.contains("-24") || line_read.contains("-25")
+               || line_read.contains("-26")))                               // for such SNRmin = -23
            or (((line_read.contains("<...>") || line_read.contains(";")            // unresolved hash, F/H messages
                || line_read.contains("/R") || line_read.contains(" R ") )          // /R, contest calls
-               && line_read.contains("2."))))))                             // for such -1.9 < dt <1.9
+               && line_read.contains("2.")))
+           or (line_read.contains(";") && line_read.contains(" R "))        // don't allow such
+               || line_read.contains("<...> <...>"))))                      // no unresolved hash codes
   {
     if (m_mode!="FT8" and m_mode!="FT4" and !m_mode.startsWith ("FST4") and m_mode!="Q65") {
       //Pad 22-char msg to at least 37 chars
@@ -7186,7 +7190,7 @@ void MainWindow::on_actionEcho_triggered()
   WSPR_config(true);
   ui->lh_decodes_headings_label->setText("   UTC      N   Level    SNR     dBerr    DF    Width   Q");
   //                       01234567890123456789012345678901234567
-  displayWidgets(nWidgets("00000000000000000000001000000000000000"));
+  displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
   statusChanged();
 }
