@@ -6331,11 +6331,7 @@ void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 //  ui->dxGridEntry->clear();    // UR disabled because not useful with highlightDXCall/DXGrid feature
   statusChanged();
   statusUpdate ();
-  if (m_config.highlight_DXcall()) {
-      ui->decodedTextBrowser->DXCall(m_hisCall);   // UR disable this line for AL, widescreen and normal
-  } else {
-      ui->decodedTextBrowser->DXCall("");
-  }
+  ui->decodedTextBrowser->DXCall(m_hisCall);   // UR disable this line for AL, widescreen and normal
 }
 
 void MainWindow::on_dxCallEntry_editingFinished()
