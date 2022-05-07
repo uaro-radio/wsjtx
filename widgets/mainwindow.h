@@ -431,6 +431,7 @@ private:
   qint64  m_fullFoxCallTime;
 
   Frequency m_freqNominal;
+  Frequency m_freqNominalPeriod;
   Frequency m_freqTxNominal;
   Astro::Correction m_astroCorrection;
   bool m_reverse_Doppler;
@@ -648,6 +649,7 @@ private:
   QString m_xSent;               //Contest exchange sent
   QString m_xRcvd;               //Contest exchange received
   QString m_currentBand;
+  QString m_currentBandPeriod;
   QString m_nextCall;
   QString m_nextGrid;
   QString m_fileDateTime;

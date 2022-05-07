@@ -273,6 +273,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_msErase {0},
   m_secBandChanged {0},
   m_freqNominal {0},
+  m_freqNominalPeriod {0},
   m_freqTxNominal {0},
   m_reverse_Doppler {"1" == env.value ("WSJT_REVERSE_DOPPLER", "0")},
   m_tRemaining {0.},
@@ -1895,7 +1896,7 @@ void MainWindow::fastSink(qint64 frames)
         // idea to pass pointer to be processed in another thread
         m_saveWAVWatcher.setFuture (QtConcurrent::run (std::bind (&MainWindow::save_wave_file,
            this, m_fnameWE, &dec_data.d2[0], int(m_TRperiod*12000.0), m_config.my_callsign(),
-           m_config.my_grid(), m_mode, m_nSubMode, m_freqNominal, m_hisCall, m_hisGrid)));
+           m_config.my_grid(), m_mode, m_nSubMode, m_freqNominalPeriod, m_hisCall, m_hisGrid)));
       }
       if(m_mode!="MSK144") {
         killFileTimer.start (int(750.0*m_TRperiod)); //Kill 3/4 period from now
@@ -2348,6 +2349,11 @@ void MainWindow::displayDialFrequency ()
       m_wideGraph->setRxBand (band_name);
       m_lastBand = band_name;
       band_changed(dial_frequency);
+      // prevent wrong frequencies for all.txt, PSK Reporter and highlighting for late decodes after band changes
+      QTimer::singleShot (4500, [=] {
+          m_freqNominalPeriod = m_freqNominal;
+          m_currentBandPeriod = m_currentBand;
+      });
     }
 
   // search working frequencies for one we are within 10kHz of (1 Mhz
@@ -3375,7 +3381,7 @@ void::MainWindow::fast_decode_done()
     DecodedText decodedtext {message.replace (QChar::LineFeed, "")};
     if(!m_bFastDone) {
       ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC (),
-         m_logBook, m_currentBand, m_config.ppfx ());
+         m_logBook, m_currentBandPeriod, m_config.ppfx ());
     }
 
     t=message.mid(10,5).toFloat();
@@ -3855,13 +3861,13 @@ void MainWindow::readFromStdout()                             //readFromStdout
                    blockUDP = true;                              // block udp spotting for false decodes (JTAlert)
               } else {
                   ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
-                                                              m_logBook, m_currentBand, m_config.ppfx (),
+                                                              m_logBook, m_currentBandPeriod, m_config.ppfx (),
                                                               ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
                                                               haveFSpread, fSpread, bDisplayPoints, m_points);
               }
           } else {
               ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
-                                                          m_logBook, m_currentBand, m_config.ppfx (),
+                                                          m_logBook, m_currentBandPeriod, m_config.ppfx (),
                                                           ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
                                                           haveFSpread, fSpread, bDisplayPoints, m_points);
           }
@@ -4198,7 +4204,7 @@ void MainWindow::pskPost (DecodedText const& decodedtext)
     audioFrequency=decodedtext.string().mid(16,4).toInt();
   }
   int snr = decodedtext.snr();
-  Frequency frequency = m_freqNominal + audioFrequency;
+  Frequency frequency = m_freqNominalPeriod + audioFrequency;   // prevent spotting wrong band
   if(grid.contains (grid_regexp)) {
 //    qDebug() << "To PSKreporter:" << deCall << grid << frequency << msgmode << snr;
     if (!m_psk_Reporter.addRemoteStation (deCall, grid, frequency, msgmode, snr))
@@ -9804,7 +9810,7 @@ void MainWindow::write_all(QString txRx, QString message)
   auto time = QDateTime::currentDateTimeUtc ();
   if( txRx=="Rx" && !m_bFastMode ) time=m_dateTimeSeqStart;
 
-  t = t.asprintf("%10.3f ",m_freqNominal/1.e6);
+  t = t.asprintf("%10.3f ",m_freqNominalPeriod/1.e6);   // prevent writing of wrong frequencies
   if (m_diskData) {
     if (m_fileDateTime.size()==11) {
       line=m_fileDateTime + "  " + t + txRx + " " + mode_string + msg;
@@ -10083,9 +10089,7 @@ void MainWindow::bandHoppingTimer()
             startIndex = nextStartIndex;  // band hopping every other minute
             return;
     case 1:
-            on_stopButton_clicked();   // prevent spotting wrong band
-            if (m_config.spot_to_psk_reporter ()) m_psk_Reporter.sendReport();  // spot late decodes before changing band
-            QTimer::singleShot (500, this, SLOT (bandHopping()));   // delay to prevent spotting wrong band
+            bandHopping();
             startIndex = 0;
             return;
      }
