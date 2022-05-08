@@ -10368,7 +10368,7 @@ void MainWindow::bandHopping()
         if (ui->cb80mDXp->isChecked()) {
             setRig (3567000);
             on_actionFT8_triggered();
-            setRig (3567000);
+            QTimer::singleShot (200, [=] {setRig (3567000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -10380,7 +10380,7 @@ void MainWindow::bandHopping()
         if (ui->cb40mDXp->isChecked()) {
             setRig (7056000);
             on_actionFT8_triggered();
-            setRig (7056000);
+            QTimer::singleShot (200, [=] {setRig (7056000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -10392,7 +10392,7 @@ void MainWindow::bandHopping()
         if (ui->cb30mDXp->isChecked()) {
             setRig (10131000);
             on_actionFT8_triggered();
-            setRig (10131000);
+            QTimer::singleShot (200, [=] {setRig (10131000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -10404,7 +10404,7 @@ void MainWindow::bandHopping()
         if (ui->cb20mDXp->isChecked()) {
             setRig (14090000);
             on_actionFT8_triggered();
-            setRig (14090000);
+            QTimer::singleShot (200, [=] {setRig (14090000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -10416,7 +10416,7 @@ void MainWindow::bandHopping()
         if (ui->cb17mDXp->isChecked()) {
             setRig (18095000);
             on_actionFT8_triggered();
-            setRig (18095000);
+            QTimer::singleShot (200, [=] {setRig (18095000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -10428,7 +10428,7 @@ void MainWindow::bandHopping()
         if (ui->cb15mDXp->isChecked()) {
             setRig (21091000);
             on_actionFT8_triggered();
-            setRig (21091000);
+            QTimer::singleShot (200, [=] {setRig (21091000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -10440,7 +10440,7 @@ void MainWindow::bandHopping()
         if (ui->cb10mDXp->isChecked()) {
             setRig (28091000);
             on_actionFT8_triggered();
-            setRig (28091000);
+            QTimer::singleShot (200, [=] {setRig (28091000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = 0;
             return;
