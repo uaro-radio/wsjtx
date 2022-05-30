@@ -427,7 +427,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         m_config.udp_server_name (), m_config.udp_server_port (),
         m_config.udp_interface_names (), m_config.udp_TTL (),
         this}},
-  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " iws"}.simplified ()},     // UR
+  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " iws2"}.simplified ()},     // UR
   m_manual {&m_network_manager},
   m_block_udp_status_updates {false}
 {
@@ -3888,7 +3888,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
        if (m_config.highlight_DXcall () && (m_hisCall!="") && ((decodedtext.string().contains(QRegularExpression {"(\\w+) " + m_hisCall}))
             || (decodedtext.string().contains(QRegularExpression {"(\\w+) <" + m_hisCall +">"}))
             || (decodedtext.string().contains(QRegularExpression {"<(\\w+)> " + m_hisCall}))))  {
-           ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+           ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,116,244), QColor(0,0,0), true);  // UR Mod for G4GVB
            QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
                ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
                });
