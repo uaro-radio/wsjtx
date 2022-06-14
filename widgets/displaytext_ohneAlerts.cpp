@@ -230,16 +230,6 @@ void DisplayText::extend_vertical_scrollbar (int min, int max)
 
 void DisplayText::new_period ()
 {
-    alertsTimer.stop ();
-    disconnect (&alertsTimer, &QTimer::timeout, this, &DisplayText::AudioAlerts);
-    if((m_config->alert_Enabled()) && ((m_config->alert_DXCC()) || (m_config->alert_DXCCOB()) || (m_config->alert_Grid()) ||
-       (m_config->alert_GridOB()) || (m_config->alert_Continent()) || (m_config->alert_ContinentOB()) || (m_config->alert_CQZ()) ||
-       (m_config->alert_CQZOB()) || (m_config->alert_ITUZ()) || (m_config->alert_ITUZOB()) || (m_config->alert_CQ()))) {
-        connect (&alertsTimer, &QTimer::timeout, this, &DisplayText::AudioAlerts);
-        alertsTimer.setSingleShot (true);
-        alertsTimer.start (1000);
-    }
-
   extend_vertical_scrollbar (verticalScrollBar ()->minimum (), verticalScrollBar ()->maximum ());
   if (high_volume_ && m_config && m_config->decodes_from_top () && !vertical_scroll_connection_)
     {
