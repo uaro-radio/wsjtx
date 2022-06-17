@@ -71,7 +71,7 @@ message (STATUS "******************************************************")
 
 include (set_build_type)
 # RC 0 or omitted is a development build, GA is a General Availability release build
-set_build_type (GA)
+set_build_type (RC 1)
 set (wsjtx_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}${BUILD_TYPE_REVISION}")
 
 #
@@ -775,9 +775,9 @@ set_source_files_properties (lib/decoder.f90 PROPERTIES COMPILE_FLAGS "-Wno-unus
 set_source_files_properties (lib/filbig.f90 PROPERTIES COMPILE_FLAGS "-Wno-aliasing")
 
 ## disable Qt trace and warning messages from release configurations
-set_property (DIRECTORY APPEND PROPERTY
-  COMPILE_DEFINITIONS $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT;QT_NO_WARNING_OUTPUT>
-  )
+# set_property (DIRECTORY APPEND PROPERTY
+#  COMPILE_DEFINITIONS $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT;QT_NO_WARNING_OUTPUT>
+#  )
 
 set_property (SOURCE ${all_C_and_CXXSRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -include wsjtx_config.h")
 set_property (SOURCE ${all_C_and_CXXSRCS} APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/wsjtx_config.h)
@@ -1129,11 +1129,11 @@ target_link_libraries (jt4sim wsjt_fort wsjt_cxx)
 add_executable (jt65sim lib/jt65sim.f90)
 target_link_libraries (jt65sim wsjt_fort wsjt_cxx)
 
-add_executable (test_snr lib/test_snr.f90)
-target_link_libraries (test_snr wsjt_fort)
-
 add_executable (sumsim lib/sumsim.f90)
 target_link_libraries (sumsim wsjt_fort wsjt_cxx)
+
+add_executable (test_snr lib/test_snr.f90)
+target_link_libraries (test_snr wsjt_fort)
 
 add_executable (q65sim lib/qra/q65/q65sim.f90)
 target_link_libraries (q65sim wsjt_fort wsjt_cxx)
