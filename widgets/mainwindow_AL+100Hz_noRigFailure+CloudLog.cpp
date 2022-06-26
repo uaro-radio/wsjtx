@@ -255,6 +255,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui(new Ui::MainWindow),
   m_config {&m_network_manager, temp_directory, m_settings, &m_logBook, this},
   m_logBook {&m_config},
+  m_cloudlog {&m_config, &m_network_manager},
   m_WSPR_band_hopping {m_settings, &m_config, this},
   m_WSPR_tx_next {false},
   m_rigErrorMessageBox {MessageBox::Critical, tr ("Rig Control Error")
