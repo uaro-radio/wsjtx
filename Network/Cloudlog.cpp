@@ -16,6 +16,10 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QDebug>
+#include <QMessageBox>
+#include <QIcon>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include "pimpl_impl.hpp"
 
@@ -59,7 +63,8 @@ public:
 
     QNetworkRequest request(u);
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
-    network_manager_->post(request, data);
+    reply_ = network_manager_->post(request, data);
+    connect (reply_.data (), &QNetworkReply::finished, this, &Cloudlog::impl::reply_logqso);
 
   }
 
@@ -110,6 +115,25 @@ public:
             // fprintf(stderr, "API key invalid!\n");
 	    Q_EMIT self_->apikey_invalid ();
           }
+      }
+  }
+
+  void reply_logqso()
+  {
+    QString result;
+    if (reply_ && reply_->isFinished ())
+      {
+        result = reply_->readAll();
+        QJsonDocument data = QJsonDocument::fromJson(result.toUtf8());
+        QJsonObject obj = data.object();
+        if (obj["status"] == "failed") {
+          QMessageBox msgBox;
+          msgBox.setIcon(QMessageBox::Warning);
+	  msgBox.setWindowTitle("Cloudlog Error!");
+          msgBox.setText("QSO could not be sent to Cloudlog!\nPlease check your log.");
+          msgBox.setDetailedText("Reason: "+obj["reason"].toString());
+          msgBox.exec();
+        }
       }
   }
 
