@@ -496,6 +496,7 @@ private:
   Q_SLOT void on_test_CAT_push_button_clicked ();
   Q_SLOT void on_test_PTT_push_button_clicked (bool checked);
   Q_SLOT void on_pbTestCloudlog_clicked ();
+  Q_SLOT void on_gbCloudlog_clicked ();
   Q_SLOT void on_force_DTR_combo_box_currentIndexChanged (int);
   Q_SLOT void on_force_RTS_combo_box_currentIndexChanged (int);
   Q_SLOT void on_rig_combo_box_currentIndexChanged (int);
@@ -1662,6 +1663,8 @@ void Configuration::impl::initialize_models ()
   ui_->cbEraseBandActivity->setChecked(erase_BandActivity_);
   ui_->cbRxToTxAfterQSO->setChecked(set_RXtoTX_);
 
+  ui_->pbTestCloudlog->setStyleSheet ("QPushButton {background-color: none;}");
+
   set_rig_invariants ();
 }
 
@@ -2728,6 +2731,11 @@ void Configuration::impl::on_pbTestCloudlog_clicked ()
 {
   //fprintf(stderr, "API URL: %s\n", ui_->leCloudlogApiUrl->text().toStdString().c_str());
   cloudlog_.testApi(ui_->leCloudlogApiUrl->text(), ui_->leCloudlogApiKey->text());
+}
+
+void Configuration::impl::on_gbCloudlog_clicked ()
+{
+  ui_->pbTestCloudlog->setStyleSheet ("QPushButton {background-color: none;}");
 }
 
 void Configuration::impl::on_test_PTT_push_button_clicked (bool checked)
