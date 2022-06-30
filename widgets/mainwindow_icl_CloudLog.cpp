@@ -429,7 +429,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         m_config.udp_server_name (), m_config.udp_server_port (),
         m_config.udp_interface_names (), m_config.udp_TTL (),
         this}},
-  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " itql"}.simplified ()},     // UR
+  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " icl"}.simplified ()},     // UR
   m_manual {&m_network_manager},
   m_block_udp_status_updates {false}
 {
@@ -3892,7 +3892,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
             || (decodedtext.string().contains(QRegularExpression {"(\\w+) <" + m_hisCall +">"}))
             || (decodedtext.string().contains(QRegularExpression {"<(\\w+)> " + m_hisCall}))))  {
            ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-           if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
            QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
                ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
                });
@@ -3905,15 +3904,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
        }
        if (m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
            ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true);
-           if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
        }
-           QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
-               if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
-               QSound::play("./bin/sounds/DXcall.wav");
-               QSound::play("./sounds/DXcall.wav");             // UR for Linux
-               }
-               play_DXcall = false;
-           });
 
           if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
             QString messagePriority=ui->decodedTextBrowser->CQPriority();
@@ -6168,6 +6159,7 @@ void MainWindow::lookup()
 
 void MainWindow::on_lookupButton_clicked()                    //Lookup button
 {
+  ui->dxGridEntry->clear();   // UR clear dxGridEntry is required to let call3.txt lookup work.
   lookup();
 }
 

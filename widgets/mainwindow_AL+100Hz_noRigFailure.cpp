@@ -751,7 +751,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   // ensure a balanced layout of the mode buttons
 /*  qreal pointSize = m_config.text_font().pointSizeF();                // UR disable for AL
-  if (pointSize < 11) {
+  if (pointSize < 12) {
       ui->houndButton->setMaximumWidth(40);
       ui->ft8Button->setMaximumWidth(40);
       ui->ft4Button->setMaximumWidth(40);
@@ -759,12 +759,12 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
       ui->q65Button->setMaximumWidth(40);
       ui->jt65Button->setMaximumWidth(40);
   } else {
-      ui->houndButton->setMinimumWidth(50);
-      ui->ft8Button->setMinimumWidth(50);
-      ui->ft4Button->setMinimumWidth(50);
-      ui->msk144Button->setMinimumWidth(50);
-      ui->q65Button->setMinimumWidth(50);
-      ui->jt65Button->setMinimumWidth(50);
+      ui->houndButton->setMinimumWidth(0);
+      ui->ft8Button->setMinimumWidth(0);
+      ui->ft4Button->setMinimumWidth(0);
+      ui->msk144Button->setMinimumWidth(0);
+      ui->q65Button->setMinimumWidth(0);
+      ui->jt65Button->setMinimumWidth(0);
   }     */                                                              // UR disable for AL
 
   // hook up save WAV file exit handling
@@ -4707,12 +4707,14 @@ void MainWindow::guiUpdate()
 
     bool b=("FT8"==m_mode or "FT4"==m_mode or "Q65"==m_mode) and ui->cbAutoSeq->isVisible ()
         && ui->cbAutoSeq->isEnabled () && ui->cbAutoSeq->isChecked ();
-    if(is_73 and (m_config.disable_TX_on_73() or b)) {
+//    if(is_73 and (m_config.disable_TX_on_73() or b)) { // UR original code
+    if(is_73 and (m_config.disable_TX_on_73())) {        // UR disable this for any public release !!! Can be used as a robot
       m_nextCall="";  //### Temporary: disable use of "TU;" messages;
       if(m_nextCall!="") {
         useNextCall();
       } else {
-        auto_tx_mode (false);
+//        auto_tx_mode (false);  // UR original code
+        auto_tx_mode (true);     // UR disable this for any public release !!! Can be used as a robot
         if(b) {
           m_ntx=6;
           ui->txrb6->setChecked(true);
@@ -6166,6 +6168,7 @@ void MainWindow::lookup()
 
 void MainWindow::on_lookupButton_clicked()                    //Lookup button
 {
+  ui->dxGridEntry->clear();   // UR clear dxGridEntry is required to let call3.txt lookup work.
   lookup();
 }
 

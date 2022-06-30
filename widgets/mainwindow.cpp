@@ -6166,6 +6166,7 @@ void MainWindow::lookup()
 
 void MainWindow::on_lookupButton_clicked()                    //Lookup button
 {
+  ui->dxGridEntry->clear();   // UR clear dxGridEntry is required to let call3.txt lookup work.
   lookup();
 }
 
