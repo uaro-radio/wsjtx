@@ -10072,7 +10072,6 @@ void MainWindow::on_q65Button_clicked()
     ui->houndButton->setStyleSheet("");
     if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
     on_actionQ65_triggered();
-    ui->sbTR->setValue (m_settings->value ("TRPeriod", 30).toInt());
 }
 
 void MainWindow::on_jt65Button_clicked()
@@ -10282,7 +10281,6 @@ void MainWindow::bandHopping()
         if (ui->cb6mQ65->isChecked()) {
             setRig (50305000);
             on_actionQ65_triggered();
-            ui->sbTR->setValue (m_settings->value ("TRPeriod", 30).toInt());
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -10294,7 +10292,6 @@ void MainWindow::bandHopping()
         if (ui->cb2mQ65->isChecked()) {
             setRig (144170000);
             on_actionQ65_triggered();
-            ui->sbTR->setValue (m_settings->value ("TRPeriod", 30).toInt());
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
