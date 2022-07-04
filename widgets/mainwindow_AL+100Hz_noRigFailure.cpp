@@ -154,7 +154,7 @@ extern "C" {
 
   int savec2_(char const * fname, int* TR_seconds, double* dial_freq, fortran_charlen_t);
 
-  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1
+  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1,
                 float* level, float* sigdb, float* snr, float* dfreq,
                 float* width);
 
@@ -6713,7 +6713,8 @@ void MainWindow::on_actionFST4_triggered()
   switch_mode (Modes::FST4);
   m_wideGraph->setMode(m_mode);
   ui->sbTR->values ({15, 30, 60, 120, 300, 900, 1800});
-  on_sbTR_valueChanged (ui->sbTR->value());
+  ui->sbTR->setValue (m_settings->value ("TRPeriod_FST4", 60).toInt());    // remember sbTR settings by mode
+  QTimer::singleShot (50, [=] {on_sbTR_valueChanged (ui->sbTR->value());});
   statusChanged();
   m_bOK_to_chk=true;
   chk_FST4_freq_range();
@@ -7074,8 +7075,8 @@ void MainWindow::on_actionQ65_triggered()
   Q_EMIT FFTSize(m_FFTSize);
   m_hsymStop=49;
   ui->sbTR->values ({15, 30, 60, 120, 300});
-//  on_sbTR_valueChanged (ui->sbTR->value());
   ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());    // remember sbTR settings by mode
+  QTimer::singleShot (50, [=] {on_sbTR_valueChanged (ui->sbTR->value());});
 //  ui->sbSubmode->setValue(m_nSubMode);
   m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();
   QTimer::singleShot (100, [=] {ui->sbSubmode->setValue(m_nSubMode);});
@@ -7148,8 +7149,8 @@ void MainWindow::on_actionMSK144_triggered()
   m_bFastMode=true;
   m_bFast9=false;
   ui->sbTR->values ({5, 10, 15, 30});
-//  on_sbTR_valueChanged (ui->sbTR->value());
   ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 15).toInt());    // remember sbTR settings by mode
+  QTimer::singleShot (50, [=] {on_sbTR_valueChanged (ui->sbTR->value());});
   m_wideGraph->hide();
   m_fastGraph->showNormal();
   ui->TxFreqSpinBox->setValue(1500);

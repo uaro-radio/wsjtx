@@ -753,8 +753,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
           });
 
   // ensure a balanced layout of the mode buttons
-  qreal pointSize = m_config.text_font().pointSizeF();                // UR disable for AL
-  if (pointSize < 11) {
+/*  qreal pointSize = m_config.text_font().pointSizeF();                // UR disable for AL
+  if (pointSize < 12) {
       ui->houndButton->setMaximumWidth(40);
       ui->ft8Button->setMaximumWidth(40);
       ui->ft4Button->setMaximumWidth(40);
@@ -762,13 +762,13 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
       ui->q65Button->setMaximumWidth(40);
       ui->jt65Button->setMaximumWidth(40);
   } else {
-      ui->houndButton->setMinimumWidth(50);
-      ui->ft8Button->setMinimumWidth(50);
-      ui->ft4Button->setMinimumWidth(50);
-      ui->msk144Button->setMinimumWidth(50);
-      ui->q65Button->setMinimumWidth(50);
-      ui->jt65Button->setMinimumWidth(50);
-  }                                                                   // UR disable for AL
+      ui->houndButton->setMinimumWidth(0);
+      ui->ft8Button->setMinimumWidth(0);
+      ui->ft4Button->setMinimumWidth(0);
+      ui->msk144Button->setMinimumWidth(0);
+      ui->q65Button->setMinimumWidth(0);
+      ui->jt65Button->setMinimumWidth(0);
+  }     */                                                              // UR disable for AL
 
   // hook up save WAV file exit handling
   connect (&m_saveWAVWatcher, &QFutureWatcher<QString>::finished, [this] {
@@ -1048,7 +1048,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   if(QCoreApplication::applicationVersion().contains("-devel") or
      QCoreApplication::applicationVersion().contains("-rc")) {
-    QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));
+//    QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));     // UR
   }
 
   ui->pbBestSP->setVisible(m_mode=="FT4");
@@ -2372,7 +2372,7 @@ void MainWindow::displayDialFrequency ()
           m_currentBandPeriod = m_currentBand;
           m_displayBand = true;
       });
-    }
+  }
 
   // search working frequencies for one we are within 10kHz of (1 Mhz
   // of on VHF and up)
@@ -3922,10 +3922,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
            QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
                if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
                QSound::play("./bin/sounds/DXcall.wav");
-               QSound::play("./sounds/DXcall.wav");             // UR for Linux
+               QSound::play("./sounds/DXcall.wav");
                }
                play_DXcall = false;
-           });
+           });                                                  // UR delete for versions without alerts
 
           if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
             QString messagePriority=ui->decodedTextBrowser->CQPriority();
@@ -4235,7 +4235,7 @@ void MainWindow::pskPost (DecodedText const& decodedtext)
   int snr = decodedtext.snr();
   Frequency frequency = m_freqNominalPeriod + audioFrequency;   // prevent spotting wrong band
   if(grid.contains (grid_regexp)) {
-//    qDebug() << "To PSKreporter:" << deCall << grid << frequency << msgmode << snr;
+//    qDebug() << "To PSKreporter:" << deCall << grid << frequency << msgmode << snr
     if (!m_psk_Reporter.addRemoteStation (deCall, grid, frequency, msgmode, snr))
       {
         showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));
@@ -4727,6 +4727,7 @@ void MainWindow::guiUpdate()
         useNextCall();
       } else {
         auto_tx_mode (false);
+        cease_auto_Tx_after_QSO ();  // UR for Auto-CQ
         if(b) {
           m_ntx=6;
           ui->txrb6->setChecked(true);
@@ -4930,9 +4931,9 @@ void MainWindow::guiUpdate()
     }
 
     QDateTime t = QDateTime::currentDateTimeUtc();
-    QString utc = t.date().toString("yyyy MMM dd") + "\n " +
-      t.time().toString() + " ";
-//    QString utc = t.time().toString();      // UR for AL version use this and disable the 2 lines above
+//    QString utc = t.date().toString("yyyy MMM dd") + "\n " +
+//      t.time().toString() + " ";
+    QString utc = t.time().toString();      // UR for AL version use this and disable the 2 lines above
     ui->labUTC->setText(utc);
     if(m_bBestSPArmed and (m_dateTimeBestSP.secsTo(t) >= 120)) on_pbBestSP_clicked(); //BestSP timeout
     if(!m_monitoring and !m_diskData) ui->signal_meter_widget->setValue(0,0);
@@ -6180,7 +6181,6 @@ void MainWindow::lookup()
 
 void MainWindow::on_lookupButton_clicked()                    //Lookup button
 {
-  ui->dxGridEntry->clear();   // UR clear dxGridEntry is required to let call3.txt lookup work.
   lookup();
 }
 
@@ -6439,13 +6439,17 @@ void MainWindow::cease_auto_Tx_after_QSO ()
       // ensure that auto Tx is disabled even if disable Tx
       // on 73 is not checked, unless in Fox mode where it is allowed
       // to be a robot.
-      auto_tx_mode (false);
+//       auto_tx_mode (false);    // UR origial code
+      if (!m_config.disable_TX_on_73()) {   // UR remove this in any public release !!! Can be used as a robot!
+          auto_tx_mode (true);              // UR remove this in any public release !!! Can be used as a robot!
+          QTimer::singleShot (180000, [=] {auto_tx_mode (false);});   // Auto-CQ max 3 minutes
+      }
     }
 }
 
 void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
 {
-  cease_auto_Tx_after_QSO ();
+//  cease_auto_Tx_after_QSO ();   // UR disabled for Auto-CQ
 
   if (!m_hisCall.size ()) {
     MessageBox::warning_message (this, tr ("Warning:  DX Call field is empty."));
@@ -7292,7 +7296,7 @@ void MainWindow::switch_mode (Mode mode)
     ui->RxFreqSpinBox->setMaximum(1600);
     ui->RxFreqSpinBox->setSingleStep(25);
   } else {
-    ui->RxFreqSpinBox->setMinimum(200);     // UR 200->100
+    ui->RxFreqSpinBox->setMinimum(100);     // UR 200->100
     ui->RxFreqSpinBox->setMaximum(5000);
     ui->RxFreqSpinBox->setSingleStep(1);
   }
@@ -7300,14 +7304,14 @@ void MainWindow::switch_mode (Mode mode)
   ui->tabWidget->setVisible(!b);
   if(b) {
     ui->DX_controls_widget->setVisible(false);
-    ui->rh_decodes_widget->setVisible (false);     // UR disable for AL + widescreen versions
+//    ui->rh_decodes_widget->setVisible (false);     // UR disable for AL + widescreen versions
     ui->lh_decodes_title_label->setVisible(false);
   }
 }
 
 void MainWindow::WSPR_config(bool b)
 {
-  ui->rh_decodes_widget->setVisible(!b);     // UR disable for AL + widescreen version
+//  ui->rh_decodes_widget->setVisible(!b);     // UR disable for AL + widescreen version
   ui->controls_stack_widget->setCurrentIndex (b && m_mode != "Echo" ? 1 : 0);
   ui->QSO_controls_widget->setVisible (!b);
   ui->DX_controls_widget->setVisible (!b or (m_mode=="Echo"));
@@ -7880,7 +7884,11 @@ void MainWindow::rigFailure (QString const& reason)
     {
       // one automatic retry
       QTimer::singleShot (0, this, SLOT (rigOpen ()));
-      m_first_error = false;
+//      m_first_error = false;
+      ui->pbBandHopping->setChecked(false);  // UR stop BandHopping instead of rigErrorMessageBox
+      ui->stopTxButton->click();             // stop Tx instead of rigErrorMessageBox
+      monitor (false);                       // stop monitoring instead of rigErrorMessageBox
+      m_loopall=false;                       // stop monitoring instead of rigErrorMessageBox
     }
   else
     {
@@ -10109,6 +10117,22 @@ void MainWindow::on_jt65Button_clicked()
     ui->houndButton->setStyleSheet("");
     if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
     on_actionJT65_triggered();
+}
+
+void MainWindow::on_fst4Button_clicked()     // UR disable for normal + widescreen versions
+{
+    ui->houndButton->setChecked(false);
+    ui->houndButton->setStyleSheet("");
+    if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
+    on_actionFST4_triggered();
+}
+
+void MainWindow::on_wsprButton_clicked()     // UR disable for normal + widescreen versions
+{
+    ui->houndButton->setChecked(false);
+    ui->houndButton->setStyleSheet("");
+    if(m_config.special_op_id()==SpecOp::HOUND) m_config.setSpecial_None();
+    on_actionWSPR_triggered();
 }
 
 void MainWindow::bandHoppingTimer()
