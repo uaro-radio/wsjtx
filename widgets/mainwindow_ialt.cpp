@@ -1369,9 +1369,9 @@ void MainWindow::readSettings()
   m_bFast9=m_settings->value("Fast9",false).toBool();
   m_bFastMode=m_settings->value("FastMode",false).toBool();
 //  ui->sbTR->setValue (m_settings->value ("TRPeriod", 15).toInt());
-  if (m_mode=="Q65") ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 15).toInt());
+  if (m_mode=="Q65") ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());
   if (m_mode=="MSK144") ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 15).toInt());
-  if (m_mode=="FST4") ui->sbTR->setValue (m_settings->value ("TRPeriod_FST4", 15).toInt());
+  if (m_mode=="FST4") ui->sbTR->setValue (m_settings->value ("TRPeriod_FST4", 60).toInt());
   ui->sbMaxDrift->setValue (m_settings->value ("MaxDrift",0).toInt());
   ui->sbTR_FST4W->setValue (m_settings->value ("TRPeriod_FST4W", 15).toInt());
   m_lastMonitoredFrequency = m_settings->value ("DialFreq",
@@ -1643,7 +1643,7 @@ void MainWindow::dataSink(qint64 frames)
   if(m_mode=="FT8") {
     to_jt9(m_ihsym,-1,-1);     //Allow jt9 to bail out early, if necessary
     if(m_ihsym==40 and m_decoderBusy) {
-//      qDebug() << "Clearing hung decoder status";
+      qDebug() << "Clearing hung decoder status";
       decodeDone();  //Clear a hung decoder status
     }
   }
@@ -1722,7 +1722,7 @@ void MainWindow::dataSink(qint64 frames)
       // idea to pass pointer to be processed in another thread
       m_saveWAVWatcher.setFuture (QtConcurrent::run (std::bind (&MainWindow::save_wave_file,
             this, m_fnameWE, &dec_data.d2[0], samples, m_config.my_callsign(),
-            m_config.my_grid(), m_mode, m_nSubMode, m_freqNominal, m_hisCall, m_hisGrid)));
+            m_config.my_grid(), m_mode, m_nSubMode, m_freqNominalPeriod, m_hisCall, m_hisGrid)));
       if (m_mode=="WSPR") {
         auto c2name {(m_fnameWE + ".c2").toLocal8Bit ()};
         int nsec=120;
@@ -1912,7 +1912,7 @@ void MainWindow::fastSink(qint64 frames)
         // idea to pass pointer to be processed in another thread
         m_saveWAVWatcher.setFuture (QtConcurrent::run (std::bind (&MainWindow::save_wave_file,
            this, m_fnameWE, &dec_data.d2[0], int(m_TRperiod*12000.0), m_config.my_callsign(),
-           m_config.my_grid(), m_mode, m_nSubMode, m_freqNominalPeriod, m_hisCall, m_hisGrid)));
+           m_config.my_grid(), m_mode, m_nSubMode, m_freqNominal, m_hisCall, m_hisGrid)));
       }
       if(m_mode!="MSK144") {
         killFileTimer.start (int(750.0*m_TRperiod)); //Kill 3/4 period from now
