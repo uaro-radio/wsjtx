@@ -6671,6 +6671,7 @@ void MainWindow::on_actionFST4_triggered()
   QTimer::singleShot (50, [=] {
     ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
     ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+    on_sbSubmode_valueChanged(ui->sbSubmode->value());
   });
   m_mode="FST4";
   ui->actionFST4->setChecked(true);
@@ -6747,6 +6748,7 @@ void MainWindow::on_actionFT4_triggered()
   QTimer::singleShot (50, [=] {
     ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
     ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+    on_sbSubmode_valueChanged(ui->sbSubmode->value());
   });
   m_mode="FT4";
   m_TRperiod=7.5;
@@ -6794,6 +6796,7 @@ void MainWindow::on_actionFT8_triggered()
   QTimer::singleShot (50, [=] {
     ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
     ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+    on_sbSubmode_valueChanged(ui->sbSubmode->value());
   });
   m_mode="FT8";
   bool bVHF=m_config.enable_VHF_features();
@@ -6939,8 +6942,9 @@ void MainWindow::on_actionJT4_triggered()
   ui->rh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   if(bVHF) {
 //    ui->sbSubmode->setValue(m_nSubMode);
-    m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();
-    QTimer::singleShot (50, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT4",0).toInt());});
+    QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();});
+    QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT4",0).toInt());});
+    QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
   } else {
     ui->sbSubmode->setValue(0);
   }
@@ -6956,6 +6960,7 @@ void MainWindow::on_actionJT4_triggered()
 
 void MainWindow::on_actionJT9_triggered()
 {
+  QTimer::singleShot (50, [=] {on_sbSubmode_valueChanged(ui->sbSubmode->value());});
   m_mode="JT9";
   bool bVHF=m_config.enable_VHF_features();
   m_bFast9=ui->cbFast9->isChecked();
@@ -7046,8 +7051,9 @@ void MainWindow::on_actionJT65_triggered()
   ui->sbSubmode->setMaximum(2);
   if(bVHF) {
 //    ui->sbSubmode->setValue(m_nSubMode);
-      m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();
-      QTimer::singleShot (50, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT65",0).toInt());});
+      QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();});
+      QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT65",0).toInt());});
+      QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
       ui->lh_decodes_title_label->setText(tr ("Single-Period Decodes"));
     ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
   } else {
@@ -7090,8 +7096,9 @@ void MainWindow::on_actionQ65_triggered()
   ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());    // remember sbTR settings by mode
   QTimer::singleShot (50, [=] {on_sbTR_valueChanged (ui->sbTR->value());});
 //  ui->sbSubmode->setValue(m_nSubMode);
-  m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();
-  QTimer::singleShot (50, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_Q65",0).toInt());});
+  QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();});
+  QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_Q65",0).toInt());});
+  QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
   QString fname {QDir::toNativeSeparators(m_config.temp_dir().absoluteFilePath ("red.dat"))};
   m_wideGraph->setRedFile(fname);
   m_wideGraph->setMode(m_mode);
@@ -7162,7 +7169,10 @@ void MainWindow::on_actionMSK144_triggered()
   m_bFast9=false;
   ui->sbTR->values ({5, 10, 15, 30});
   ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 15).toInt());    // remember sbTR settings by mode
-  QTimer::singleShot (50, [=] {on_sbTR_valueChanged (ui->sbTR->value());});
+  QTimer::singleShot (50, [=] {
+      on_sbTR_valueChanged (ui->sbTR->value());
+      on_sbSubmode_valueChanged(ui->sbSubmode->value());
+  });
   m_wideGraph->hide();
   m_fastGraph->showNormal();
   ui->TxFreqSpinBox->setValue(1500);
@@ -8351,6 +8361,7 @@ void MainWindow::on_sbSubmode_valueChanged(int n)
     if(m_bFast9) ui->TxFreqSpinBox->setValue(700);
   }
   if(m_transmitting and m_bFast9 and m_nSubMode>=4) transmit (99.0);
+  if (m_mode !="Q65") ui->TxFreqSpinBox->setStyleSheet("");
   if (m_mode=="Q65") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_Q65",ui->sbSubmode->value());});}
   if (m_mode=="JT65") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_JT65",ui->sbSubmode->value());});}
   if (m_mode=="JT4") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_JT4",ui->sbSubmode->value());});}
