@@ -71,7 +71,7 @@ message (STATUS "******************************************************")
 
 include (set_build_type)
 # RC 0 or omitted is a development build, GA is a General Availability release build
-set_build_type (RC 2)
+set_build_type (RC 1)
 set (wsjtx_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}${BUILD_TYPE_REVISION}")
 
 #
@@ -1636,22 +1636,6 @@ install (DIRECTORY
   FILES_MATCHING REGEX "^.*[^~]$"
   #COMPONENT runtime
   )
-
-if (NOT UNIX)
-  install (DIRECTORY
-  ${PROJECT_SOURCE_DIR}/sounds
-  DESTINATION ${CMAKE_INSTALL_BINDIR}
-  #COMPONENT runtime
-  )
-  endif (NOT UNIX)
-	
-if (UNIX)
-  install (DIRECTORY
-  ${PROJECT_SOURCE_DIR}/sounds
-  DESTINATION $ENV{HOME}
-  #COMPONENT runtime
-  )
-  endif (UNIX)
 
 #
 # Mac installer files

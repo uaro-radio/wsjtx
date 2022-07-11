@@ -89,6 +89,7 @@
 #include "FoxLogWindow.hpp"
 #include "CabrilloLogWindow.hpp"
 #include "ExportCabrillo.h"
+#include "Network/Cloudlog.hpp"
 #include "ui_mainwindow.h"
 #include "moc_mainwindow.cpp"
 
@@ -254,6 +255,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui(new Ui::MainWindow),
   m_config {&m_network_manager, temp_directory, m_settings, &m_logBook, this},
   m_logBook {&m_config},
+  m_cloudlog {&m_config, &m_network_manager},
   m_WSPR_band_hopping {m_settings, &m_config, this},
   m_WSPR_tx_next {false},
   m_rigErrorMessageBox {MessageBox::Critical, tr ("Rig Control Error")
@@ -430,7 +432,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         m_config.udp_server_name (), m_config.udp_server_port (),
         m_config.udp_interface_names (), m_config.udp_TTL (),
         this}},
-  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " "}.simplified ()},     // UR
+  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " i+"}.simplified ()},     // UR
   m_manual {&m_network_manager},
   m_block_udp_status_updates {false}
 {
@@ -612,6 +614,11 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->actionSplit_ALL_TXT_yearly->setActionGroup(alltxtGroup);
   ui->actionSplit_ALL_TXT_monthly->setActionGroup(alltxtGroup);
   ui->actionDisable_writing_of_ALL_TXT->setActionGroup(alltxtGroup);
+
+  QActionGroup* EventLoggingGroup = new QActionGroup(this);
+  ui->actionDefault_event_logging->setActionGroup(EventLoggingGroup);
+  ui->actionDiagnostic_mode->setActionGroup(EventLoggingGroup);
+  ui->actionDisable_event_logging->setActionGroup(EventLoggingGroup);
 
   QActionGroup* DepthGroup = new QActionGroup(this);
   ui->actionQuickDecode->setActionGroup(DepthGroup);
@@ -1048,7 +1055,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   if(QCoreApplication::applicationVersion().contains("-devel") or
      QCoreApplication::applicationVersion().contains("-rc")) {
-    QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));
+//    QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));
   }
 
   ui->pbBestSP->setVisible(m_mode=="FT4");
@@ -1260,6 +1267,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("splitAllTxtYearly", ui->actionSplit_ALL_TXT_yearly->isChecked() );
   m_settings->setValue ("splitAllTxtMonthly", ui->actionSplit_ALL_TXT_monthly->isChecked() );
   m_settings->setValue ("disableWritingOfAllTxt", ui->actionDisable_writing_of_ALL_TXT->isChecked() );
+  m_settings->setValue ("DisableEventLogging", ui->actionDisable_event_logging->isChecked() );
   m_settings->endGroup();
 }
 
@@ -1340,6 +1348,7 @@ void MainWindow::readSettings()
   ui->actionSplit_ALL_TXT_yearly->setChecked(m_settings->value("splitAllTxtYearly", false).toBool());
   ui->actionSplit_ALL_TXT_monthly->setChecked(m_settings->value("splitAllTxtMonthly", false).toBool());
   ui->actionDisable_writing_of_ALL_TXT->setChecked(m_settings->value("disableWritingOfAllTxt", false).toBool());
+  ui->actionDisable_event_logging->setChecked(m_settings->value("DisableEventLogging", false).toBool());
   m_mode=m_settings->value("Mode","JT9").toString();
   ui->actionNone->setChecked(m_settings->value("SaveNone",true).toBool());
   ui->actionSave_decoded->setChecked(m_settings->value("SaveDecoded",false).toBool());
@@ -1437,6 +1446,7 @@ void MainWindow::readSettings()
     on_actionActiveStations_triggered();
 //    QFile f {m_config.writeable_data_dir ().absoluteFilePath ("activeCalls.txt")};
   }
+  if (!ui->actionDisable_event_logging->isChecked()) on_actionDefault_event_logging_triggered();
 }
 
 void MainWindow::checkMSK144ContestType()
@@ -6532,6 +6542,12 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
         }
     }
 
+  // Log to Cloudlog API if enabled
+  if (m_config.cloudlog_enabled())
+  {
+    m_cloudlog.logQso(ADIF);
+  }
+
   if(m_config.clear_DX () and SpecOp::HOUND != m_config.special_op_id()) clearDX ();
   m_dateTimeQSOOn = QDateTime {};
   auto special_op = m_config.special_op_id ();
@@ -6549,20 +6565,6 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
     al.band=band;
     al.points=points;
     m_arrl_log.append(al);
-    int iz=m_arrl_log.size();
-    int rate=0;
-    int nbc=0;
-
-    for(int i=iz-1; i>=0; i--) {
-      double hrDiff = m_arrl_log[i].time.msecsTo(al.time)/3600000.0;
-      if(hrDiff > 1.0) break;
-      rate += m_arrl_log[i].points;
-      if(i<iz-1 and m_arrl_log[i].band != m_arrl_log[i+1].band) nbc += 1;
-    }
-
-    m_ActiveStationsWidget->setRate(rate);
-    m_ActiveStationsWidget->setScore(m_score);
-    m_ActiveStationsWidget->setBandChanges(nbc);
     updateRate();
   }
 
@@ -6677,7 +6679,11 @@ void MainWindow::displayWidgets(qint64 n)
 
 void MainWindow::on_actionFST4_triggered()
 {
-  m_mode="FST4";
+  QTimer::singleShot (50, [=] {
+    ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
+    ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+    on_sbSubmode_valueChanged(ui->sbSubmode->value());
+  });
   m_mode="FST4";
   ui->actionFST4->setChecked(true);
   m_bFast9=false;
@@ -6750,6 +6756,11 @@ void MainWindow::on_actionFST4W_triggered()
 
 void MainWindow::on_actionFT4_triggered()
 {
+  QTimer::singleShot (50, [=] {
+    ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
+    ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+    on_sbSubmode_valueChanged(ui->sbSubmode->value());
+  });
   m_mode="FT4";
   m_TRperiod=7.5;
   bool bVHF=m_config.enable_VHF_features();
@@ -6793,6 +6804,11 @@ void MainWindow::on_actionFT4_triggered()
 
 void MainWindow::on_actionFT8_triggered()
 {
+  QTimer::singleShot (50, [=] {
+    ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
+    ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+    on_sbSubmode_valueChanged(ui->sbSubmode->value());
+  });
   m_mode="FT8";
   bool bVHF=m_config.enable_VHF_features();
   m_bFast9=false;
@@ -6906,6 +6922,10 @@ void MainWindow::on_actionFT8_triggered()
 
 void MainWindow::on_actionJT4_triggered()
 {
+  QTimer::singleShot (50, [=] {
+    ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
+    ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+  });
   m_mode="JT4";
   bool bVHF=m_config.enable_VHF_features();
   WSPR_config(false);
@@ -6933,8 +6953,9 @@ void MainWindow::on_actionJT4_triggered()
   ui->rh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   if(bVHF) {
 //    ui->sbSubmode->setValue(m_nSubMode);
-    m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();
-    QTimer::singleShot (50, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT4",0).toInt());});
+    QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();});
+    QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT4",0).toInt());});
+    QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
   } else {
     ui->sbSubmode->setValue(0);
   }
@@ -6950,6 +6971,7 @@ void MainWindow::on_actionJT4_triggered()
 
 void MainWindow::on_actionJT9_triggered()
 {
+  QTimer::singleShot (50, [=] {on_sbSubmode_valueChanged(ui->sbSubmode->value());});
   m_mode="JT9";
   bool bVHF=m_config.enable_VHF_features();
   m_bFast9=ui->cbFast9->isChecked();
@@ -7009,6 +7031,10 @@ void MainWindow::on_actionJT9_triggered()
 
 void MainWindow::on_actionJT65_triggered()
 {
+  QTimer::singleShot (50, [=] {
+    ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
+    ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+  });
   on_actionJT9_triggered();
   m_mode="JT65";
   bool bVHF=m_config.enable_VHF_features();
@@ -7036,8 +7062,9 @@ void MainWindow::on_actionJT65_triggered()
   ui->sbSubmode->setMaximum(2);
   if(bVHF) {
 //    ui->sbSubmode->setValue(m_nSubMode);
-      m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();
-      QTimer::singleShot (50, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT65",0).toInt());});
+      QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();});
+      QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT65",0).toInt());});
+      QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
       ui->lh_decodes_title_label->setText(tr ("Single-Period Decodes"));
     ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
   } else {
@@ -7061,6 +7088,10 @@ void MainWindow::on_actionJT65_triggered()
 
 void MainWindow::on_actionQ65_triggered()
 {
+  QTimer::singleShot (50, [=] {
+    ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
+    ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+  });
   m_mode="Q65";
   ui->actionQ65->setChecked(true);
   switch_mode(Modes::Q65);
@@ -7076,8 +7107,9 @@ void MainWindow::on_actionQ65_triggered()
   ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());    // remember sbTR settings by mode
   QTimer::singleShot (50, [=] {on_sbTR_valueChanged (ui->sbTR->value());});
 //  ui->sbSubmode->setValue(m_nSubMode);
-  m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();
-  QTimer::singleShot (50, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_Q65",0).toInt());});
+  QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();});
+  QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_Q65",0).toInt());});
+  QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
   QString fname {QDir::toNativeSeparators(m_config.temp_dir().absoluteFilePath ("red.dat"))};
   m_wideGraph->setRedFile(fname);
   m_wideGraph->setMode(m_mode);
@@ -7148,7 +7180,10 @@ void MainWindow::on_actionMSK144_triggered()
   m_bFast9=false;
   ui->sbTR->values ({5, 10, 15, 30});
   ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 15).toInt());    // remember sbTR settings by mode
-  QTimer::singleShot (50, [=] {on_sbTR_valueChanged (ui->sbTR->value());});
+  QTimer::singleShot (50, [=] {
+      on_sbTR_valueChanged (ui->sbTR->value());
+      on_sbSubmode_valueChanged(ui->sbSubmode->value());
+  });
   m_wideGraph->hide();
   m_fastGraph->showNormal();
   ui->TxFreqSpinBox->setValue(1500);
@@ -7368,7 +7403,9 @@ void MainWindow::on_TxFreqSpinBox_valueChanged(int n)
       ui->TxFreqSpinBox->setStyleSheet("");
     }
   }
-
+  if (m_mode != "MSK144" && m_mode != "FST4W" && m_mode != "WSPR" && m_mode != "Echo" && m_mode != "FreqCal") {
+      QTimer::singleShot (200, [=] {m_settings->setValue("TxFreq_old",ui->TxFreqSpinBox->value());});
+  }
   statusUpdate ();
 }
 
@@ -7377,6 +7414,9 @@ void MainWindow::on_RxFreqSpinBox_valueChanged(int n)
   m_wideGraph->setRxFreq(n);
   if (m_mode == "FreqCal") {
     setRig ();
+  }
+  if (m_mode != "MSK144" && m_mode != "FST4W" && m_mode != "WSPR" && m_mode != "Echo" && m_mode != "FreqCal") {
+      QTimer::singleShot (200, [=] {m_settings->setValue("RxFreq_old",ui->RxFreqSpinBox->value());});
   }
   statusUpdate ();
 }
@@ -8332,6 +8372,7 @@ void MainWindow::on_sbSubmode_valueChanged(int n)
     if(m_bFast9) ui->TxFreqSpinBox->setValue(700);
   }
   if(m_transmitting and m_bFast9 and m_nSubMode>=4) transmit (99.0);
+  if (m_mode !="Q65") ui->TxFreqSpinBox->setStyleSheet("");
   if (m_mode=="Q65") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_Q65",ui->sbSubmode->value());});}
   if (m_mode=="JT65") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_JT65",ui->sbSubmode->value());});}
   if (m_mode=="JT4") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_JT4",ui->sbSubmode->value());});}
@@ -10498,4 +10539,79 @@ void MainWindow::bandHopping()
         }
     }
   }
+}
+
+void MainWindow::on_actionDefault_event_logging_triggered()
+{
+    QFile::remove (QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx_log_config.ini"));
+}
+
+void MainWindow::on_actionDiagnostic_mode_triggered()
+{
+    static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx_log_config.ini")};
+    if(!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+      QMessageBox mb;
+      mb.setText("Cannot write wsjtx_log_config.ini file");
+      mb.exec();
+      return;
+    }
+    QString EventConfig = (
+            "\[Sinks.SYSLOG]\n"
+            "Destination=TextFile\n"
+            "Asynchronous=true\n"
+            "AutoFlush=true\n"
+            "FileName=\"${DesktopLocation}/logs/wsjtx_syslog.log\"\n"
+            "Append=true\n"
+            "Format=\"[%Channel%][%TimeStamp(format=\\\"%Y-%m-%d %H:%M:%S.%f\\\")%][%Uptime(format=\\\"%O:%M:%S.%f\\\")%][%Severity%] %Message%\"\n"
+            "Filter=\"%Severity% >= trace\"\n"
+            "\n"
+            "\[Sinks.RIGCTRL]\n"
+            "Destination=TextFile\n"
+            "Asynchronous=true\n"
+            "AutoFlush=true\n"
+            "FileName=\"${DesktopLocation}/logs/WSJT-X_RigControl.log\"\n"
+            "Append=true\n"
+            "Format=\"[%TimeStamp(format=\\\"%Y-%m-%d %H:%M:%S.%f\\\")%][%Uptime(format=\\\"%O:%M:%S.%f\\\")%][%Channel%:%Severity%] %Message%\"\n"
+            "Filter=\"%Channel% matches \\\"RIGCTRL\\\" | %Severity% >= info\""
+            );
+    QTextStream out(&f);
+    out << EventConfig;
+    f.close();
+    MessageBox::critical_message (this,
+            "                                     DIAGNOSTIC MODE\n"
+            "\n"
+            "You have switched to diagnostic mode. It allows you to collect data to\n"
+            "troubleshoot problems with WSJT-X, or its communication with your rig.\n"
+            "\n"
+            "The diagnostic mode is active after closing and restarting WSJT-X,\n"
+            "and is then automatically deactivated when the program is next closed.\n"
+            "In the diagnostic mode a new \"logs\" folder appears on your screen, and\n"
+            "in it two files are created: \"wsjtx_syslog.log\" and \"WSJT-X_RigControl.log\".\n"
+            "Open these files with a text editor and look for error messages,\n"
+            "or send these files to the development team for further analysis.\n"
+            "\n"
+            "In dagnostic mode, you should close the program as soon as the fault\n"
+            "has appeared, because the two log files grow to large sizes quickly.\n"
+            "\n"
+            "If you have accidentally switched to diagnostic mode, simply click\n"
+            "\"Default event logging\" again.");
+}
+
+void MainWindow::on_actionDisable_event_logging_triggered()
+{
+    static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx_log_config.ini")};
+    if(!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+      QMessageBox mb;
+      mb.setText("Cannot write wsjtx_log_config.ini file");
+      mb.exec();
+      return;
+    }
+    QString EventConfig = (
+            "\[Core]\n"
+            "DisableLogging=\"true\""
+            );
+    QTextStream out(&f);
+    out << EventConfig;
+    f.close();
+    QFile::remove (QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx_syslog.log"));
 }

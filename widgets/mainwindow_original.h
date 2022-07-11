@@ -78,6 +78,7 @@ class WideGraph;
 class LogQSO;
 class Transceiver;
 class MessageAveraging;
+class ActiveStations;
 class FoxLogWindow;
 class CabrilloLogWindow;
 class ColorHighlighting;
@@ -248,8 +249,7 @@ private slots:
                   , QString const& name, QDateTime const& QSO_date_on, QString const& operator_call
                   , QString const& my_call, QString const& my_grid
                   , QString const& exchange_sent, QString const& exchange_rcvd
-                  , QString const& propmode, QString const& satellite
-                  , QString const& freqRx, QByteArray const& ADIF);
+                  , QString const& propmode, QByteArray const& ADIF);
   void on_bandComboBox_currentIndexChanged (int index);
   void on_bandComboBox_editTextChanged (QString const& text);
   void on_bandComboBox_activated (int index);
@@ -268,6 +268,7 @@ private slots:
   void stopTuneATU();
   void auto_tx_mode(bool);
   void on_actionMessage_averaging_triggered();
+  void on_actionActiveStations_triggered();
   void on_contest_log_action_triggered ();
   void on_fox_log_action_triggered ();
   void on_actionColors_triggered();
@@ -282,7 +283,6 @@ private slots:
   void on_cbTx6_toggled(bool b);
   void on_cbMenus_toggled(bool b);
   void on_cbCQonly_toggled(bool b);
-  void on_respondComboBox_currentIndexChanged (int n);
   void on_cbAutoSeq_toggled(bool b);
   void networkError (QString const&);
   void on_ClrAvgButton_clicked();
@@ -334,6 +334,7 @@ private slots:
   void remote_configure (QString const& mode, quint32 frequency_tolerance, QString const& submode
                          , bool fast_mode, quint32 tr_period, quint32 rx_df, QString const& dx_call
                          , QString const& dx_grid, bool generate_messages);
+  void callSandP2(int nline);
 
 private:
   Q_SIGNAL void initializeAudioOutputStream (QAudioDeviceInfo,
@@ -399,6 +400,7 @@ private:
   QScopedPointer<HelpTextWindow> m_prefixes;
   QScopedPointer<HelpTextWindow> m_mouseCmnds;
   QScopedPointer<MessageAveraging> m_msgAvgWidget;
+  QScopedPointer<ActiveStations> m_ActiveStationsWidget;
   QScopedPointer<FoxLogWindow> m_foxLogWindow;
   QScopedPointer<CabrilloLogWindow> m_contestLogWindow;
   QScopedPointer<ColorHighlighting> m_colorHighlighting;
@@ -423,6 +425,7 @@ private:
   qint64  m_fullFoxCallTime;
 
   Frequency m_freqNominal;
+  Frequency m_freqNominalPeriod;
   Frequency m_freqTxNominal;
   Astro::Correction m_astroCorrection;
   bool m_reverse_Doppler;
@@ -458,6 +461,9 @@ private:
   qint32  m_secID;
   qint32  m_idleMinutes;
   qint32  m_nSubMode;
+  qint32  m_nSubMode_Q65;
+  qint32  m_nSubMode_JT65;
+  qint32  m_nSubMode_JT4;
   qint32  m_nclearave;
   qint32  m_minSync;
   qint32  m_dBm;
@@ -491,6 +497,9 @@ private:
   qint32  m_earlyDecode2=47;
   qint32  m_nDecodes=0;
   qint32  m_maxPoints=-1;
+  qint32  m_latestDecodeTime=-1;
+  qint32  m_points=-99;
+  qint32  m_score=0;
 
   bool    m_btxok;		//True if OK to transmit
   bool    m_diskData;
@@ -637,6 +646,7 @@ private:
   QString m_xSent;               //Contest exchange sent
   QString m_xRcvd;               //Contest exchange received
   QString m_currentBand;
+  QString m_currentBandPeriod;
   QString m_nextCall;
   QString m_nextGrid;
   QString m_fileDateTime;
@@ -644,6 +654,7 @@ private:
   QString m_BestCQpriority;
   QString m_deCall;
   QString m_deGrid;
+  QString m_ready2call[50];
 
   QSet<QString> m_pfx;
   QSet<QString> m_sfx;
@@ -670,6 +681,34 @@ private:
     QDateTime QSO_time;
   };
   QMap<QString,FixupQSO> m_fixupQSO;       //Key = HoundCall, value = info for QSO in progress
+
+  struct ActiveCall
+  {
+    QString grid4;
+    QString bands;
+    qint32 az;
+    qint32 points;
+  };
+  QMap<QString,ActiveCall> m_activeCall;   //Key = callsign, value = grid4, az, points for ARRL_DIGI
+
+  struct RecentCall
+  {
+    qint64 dialFreq;
+    qint32 audioFreq;
+    qint32 snr;
+    qint32 decodeTime;
+    bool   txEven;
+    bool   ready2call;
+  };
+  QMap<QString,RecentCall> m_recentCall;   //Key = callsign, value = snr, dialFreq, audioFreq, decodeTime
+
+  struct ARRL_logged
+  {
+    QDateTime time;
+    QString band;
+    qint32 points;
+  };
+  QList<ARRL_logged> m_arrl_log;
 
   QQueue<QString> m_houndQueue;        //Selected Hounds available for starting a QSO
   QQueue<QString> m_foxQSOinProgress;  //QSOs in progress: Fox has sent a report
@@ -751,6 +790,7 @@ private:
   void CQTxFreq();
   void useNextCall();
   void abortQSO();
+  void updateRate();
   void write_all(QString txRx, QString message);
   bool isWorked(int itype, QString key, float fMHz=0, QString="");
 
@@ -791,6 +831,9 @@ private:
   void to_jt9(qint32 n, qint32 istart, qint32 idone);
   bool is77BitMode () const;
   void cease_auto_Tx_after_QSO ();
+  Q_SLOT void ARRL_Digi_Display();
+  void ARRL_Digi_Update(DecodedText dt);
+  void activeWorked(QString call, QString band);
 };
 
 extern int killbyname(const char* progName);

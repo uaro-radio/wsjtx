@@ -22,6 +22,7 @@ class FrequencyList_v2;
 class StationList;
 class QStringListModel;
 class LotWUsers;
+class Cloudlog;
 class DecodeHighlightingModel;
 class LogBook;
 
@@ -142,6 +143,10 @@ public:
   bool monitor_last_used () const;
   bool log_as_RTTY () const;
   bool report_in_comments () const;
+  bool cloudlog_enabled () const;
+  QString cloudlog_api_url() const;
+  QString cloudlog_api_key() const;
+  qint32 cloudlog_api_station_id() const;
   bool prompt_to_log () const;
   bool autoLog() const;
   bool decodes_from_top () const;
@@ -185,6 +190,7 @@ public:
   port_type n1mm_server_port () const;
   bool valid_n1mm_info () const;
   bool broadcast_to_n1mm() const;
+  bool broadcast_to_cloudlog() const;
   bool lowSidelobes() const;
   bool accept_udp_requests () const;
   bool udpWindowToFront () const;
@@ -205,6 +211,7 @@ public:
   bool pwrBandTxMemory () const;
   bool pwrBandTuneMemory () const;
   LotWUsers const& lotw_users () const;
+  Cloudlog const& cloudlog () const;
   DecodeHighlightingModel const& decode_highlighting () const;
   bool highlight_by_mode () const;
   bool highlight_only_fields () const;

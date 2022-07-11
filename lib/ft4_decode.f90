@@ -349,7 +349,7 @@ contains
 !          7 : HOUND
 !
 ! Conditions that cause us to bail out of AP decoding
-                     napwid=80
+                     napwid=50
                      if(ncontest.le.5 .and. iaptype.ge.3 .and. (abs(f1-nfqso).gt.napwid) ) cycle
                      if(iaptype.ge.2 .and. apbits(1).gt.1) cycle  ! No, or nonstandard, mycall
                      if(iaptype.ge.3 .and. apbits(30).gt.1) cycle ! No, or nonstandard, dxcall

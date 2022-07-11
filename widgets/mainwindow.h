@@ -38,6 +38,7 @@
 #include "Transceiver/Transceiver.hpp"
 #include "DisplayManual.hpp"
 #include "Network/PSKReporter.hpp"
+#include "Network/Cloudlog.hpp"
 #include "logbook/logbook.h"
 #include "astro.h"
 #include "MessageBox.hpp"
@@ -95,6 +96,7 @@ class SampleDownloader;
 class MultiSettings;
 class EqualizationToolsDialog;
 class DecodedText;
+class Cloudlog;
 
 class MainWindow
   : public MultiGeometryWidget<3, QMainWindow>
@@ -177,6 +179,9 @@ private slots:
   void on_actionOpen_log_directory_triggered ();
   void on_actionNone_triggered();
   void on_actionSave_all_triggered();
+  void on_actionDefault_event_logging_triggered();
+  void on_actionDiagnostic_mode_triggered();
+  void on_actionDisable_event_logging_triggered();
   void on_actionKeyboard_shortcuts_triggered();
   void on_actionSpecial_mouse_commands_triggered();
   void on_actionSolve_FreqCal_triggered();
@@ -389,6 +394,7 @@ private:
 
   Configuration m_config;
   LogBook m_logBook;            // must be after Configuration construction
+  Cloudlog m_cloudlog;
   WSPRBandHopping m_WSPR_band_hopping;
   bool m_WSPR_tx_next;
   MessageBox m_rigErrorMessageBox;
@@ -465,6 +471,9 @@ private:
   qint32  m_secID;
   qint32  m_idleMinutes;
   qint32  m_nSubMode;
+  qint32  m_nSubMode_Q65;
+  qint32  m_nSubMode_JT65;
+  qint32  m_nSubMode_JT4;
   qint32  m_nclearave;
   qint32  m_minSync;
   qint32  m_dBm;

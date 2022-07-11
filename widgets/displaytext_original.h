@@ -7,7 +7,6 @@
 #include <QHash>
 #include <QPair>
 #include <QString>
-#include <QTimer>
 
 class QAction;
 class Configuration;
@@ -34,7 +33,6 @@ public:
                           bool haveFSpread = false, float fSpread = 0.0, bool bDisplayPoints=false, int points=-99);
   void displayTransmittedText(QString text, QString modeTx, qint32 txFreq, bool bFastMode, double TRperiod);
   void displayQSY(QString text);
-  void DXCall(QString text);
   void displayFoxToBeCalled(QString t, QColor bg = QColor {}, QColor fg = QColor {});
   void new_period ();
   QString CQPriority(){return m_CQPriority;};
@@ -50,8 +48,6 @@ public:
   Q_SLOT void highlight_callsign (QString const& callsign, QColor const& bg, QColor const& fg, bool last_period_only);
 
 private:
-  void AudioAlerts();
-  QTimer alertsTimer;
   QString leftJustifyAppendage (QString message, QString const& appendage) const;
   void mouseDoubleClickEvent (QMouseEvent *) override;
 

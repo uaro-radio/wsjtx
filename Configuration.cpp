@@ -192,6 +192,7 @@
 #include "validators/MaidenheadLocatorValidator.hpp"
 #include "validators/CallsignValidator.hpp"
 #include "Network/LotWUsers.hpp"
+#include "Network/Cloudlog.hpp"
 #include "models/DecodeHighlightingModel.hpp"
 #include "logbook/logbook.h"
 #include "widgets/LazyFillComboBox.hpp"
@@ -494,6 +495,8 @@ private:
   Q_SLOT void on_split_mode_button_group_buttonClicked (int);
   Q_SLOT void on_test_CAT_push_button_clicked ();
   Q_SLOT void on_test_PTT_push_button_clicked (bool checked);
+  Q_SLOT void on_pbTestCloudlog_clicked ();
+  Q_SLOT void on_gbCloudlog_clicked ();
   Q_SLOT void on_force_DTR_combo_box_currentIndexChanged (int);
   Q_SLOT void on_force_RTS_combo_box_currentIndexChanged (int);
   Q_SLOT void on_rig_combo_box_currentIndexChanged (int);
@@ -580,6 +583,7 @@ private:
   QFont next_decoded_text_font_;
 
   LotWUsers lotw_users_;
+  Cloudlog cloudlog_;
 
   bool restart_sound_input_device_;
   bool restart_sound_output_device_;
@@ -665,11 +669,14 @@ private:
   QString Whitelist10_;
   QString Whitelist11_;
   QString Whitelist12_;
+  QString cloudLogApiUrl_;
+  QString cloudLogApiKey_;
 
   qint32 id_interval_;
   qint32 ntrials_;
   qint32 aggressive_;
   qint32 RxBandwidth_;
+  qint32 cloudLogStationID_;
   double degrade_;
   double txDelay_;
   bool id_after_73_;
@@ -705,6 +712,7 @@ private:
   bool Blacklisted_;
   bool Whitelisted_;
   bool bSpecialOp_;
+  bool bCloudLog_;
   int  SelectedActivity_;
   bool x2ToneSpacing_;
   bool x4ToneSpacing_;
@@ -811,6 +819,10 @@ bool Configuration::monitor_off_at_startup () const {return m_->monitor_off_at_s
 bool Configuration::monitor_last_used () const {return m_->rig_is_dummy_ || m_->monitor_last_used_;}
 bool Configuration::log_as_RTTY () const {return m_->log_as_RTTY_;}
 bool Configuration::report_in_comments () const {return m_->report_in_comments_;}
+bool Configuration::cloudlog_enabled () const {return m_->bCloudLog_;}
+QString Configuration::cloudlog_api_url () const {return m_->cloudLogApiUrl_;}
+QString Configuration::cloudlog_api_key () const {return m_->cloudLogApiKey_;}
+qint32 Configuration::cloudlog_api_station_id () const {return m_->cloudLogStationID_;}
 bool Configuration::prompt_to_log () const {return m_->prompt_to_log_;}
 bool Configuration::autoLog() const {return m_->autoLog_;}
 bool Configuration::decodes_from_top () const {return m_->decodes_from_top_;}
@@ -848,6 +860,7 @@ bool Configuration::accept_udp_requests () const {return m_->accept_udp_requests
 QString Configuration::n1mm_server_name () const {return m_->n1mm_server_name_;}
 auto Configuration::n1mm_server_port () const -> port_type {return m_->n1mm_server_port_;}
 bool Configuration::broadcast_to_n1mm () const {return m_->broadcast_to_n1mm_;}
+bool Configuration::broadcast_to_cloudlog () const {return m_->bCloudLog_;}
 bool Configuration::lowSidelobes() const {return m_->bLowSidelobes_;}
 bool Configuration::udpWindowToFront () const {return m_->udpWindowToFront_;}
 bool Configuration::udpWindowRestore () const {return m_->udpWindowRestore_;}
@@ -1214,6 +1227,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   , temp_dir_ {temp_directory}
   , writeable_data_dir_ {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}
   , lotw_users_ {network_manager_}
+  , cloudlog_ {self, network_manager_}
   , restart_sound_input_device_ {false}
   , restart_sound_output_device_ {false}
   , frequencies_ {&bands_}
@@ -1321,6 +1335,20 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
       ui_->LotW_CSV_fetch_push_button->setEnabled (true);
     });
   lotw_users_.set_local_file_path (writeable_data_dir_.absoluteFilePath ("lotw-user-activity.csv"));
+
+  // set up Cloudlog API key test button
+  connect (&cloudlog_, &Cloudlog::apikey_ok, [this] () {
+      ui_->pbTestCloudlog->setStyleSheet ("QPushButton {background-color: green;}");
+      ui_->pbTestCloudlog->setToolTip (tr ("API key OK"));
+    });
+  connect (&cloudlog_, &Cloudlog::apikey_ro, [this] () {
+      ui_->pbTestCloudlog->setStyleSheet ("QPushButton {background-color: orange;}");
+      ui_->pbTestCloudlog->setToolTip (tr ("API key read-only"));
+    });
+  connect (&cloudlog_, &Cloudlog::apikey_invalid, [this] () {
+      ui_->pbTestCloudlog->setStyleSheet ("QPushButton {background-color: red;}");
+      ui_->pbTestCloudlog->setToolTip (tr ("API key invalid"));
+    });
 
   //
   // validation
@@ -1576,6 +1604,10 @@ void Configuration::impl::initialize_models ()
   ui_->cbBlacklist->setChecked(Blacklisted_);
   ui_->cbWhitelist->setChecked(Whitelisted_);
   ui_->gbSpecialOpActivity->setChecked(bSpecialOp_);
+  ui_->gbCloudlog->setChecked(bCloudLog_);
+  ui_->leCloudlogApiUrl->setText(cloudLogApiUrl_);
+  ui_->leCloudlogApiKey->setText(cloudLogApiKey_);
+  ui_->sbCloudlogStationID->setValue (cloudLogStationID_);
   ui_->special_op_activity_button_group->button (SelectedActivity_)->setChecked (true);
   ui_->cbx2ToneSpacing->setChecked(x2ToneSpacing_);
   ui_->cbx4ToneSpacing->setChecked(x4ToneSpacing_);
@@ -1672,6 +1704,8 @@ void Configuration::impl::initialize_models ()
   ui_->cbITUZOB->setChecked(alert_ITUZOB_);
   ui_->cbDXcall->setChecked(alert_DXcall_);
   ui_->pbAlerts->setChecked(alert_Enabled_);
+
+  ui_->pbTestCloudlog->setStyleSheet ("QPushButton {background-color: none;}");
 
   set_rig_invariants ();
 }
@@ -1865,6 +1899,10 @@ void Configuration::impl::read_settings ()
   Blacklisted_ = settings_->value("Blacklisted",false).toBool ();
   Whitelisted_ = settings_->value("Whitelisted",false).toBool ();
   bSpecialOp_ = settings_->value("SpecialOpActivity",false).toBool ();
+  bCloudLog_ = settings_->value("CloudLog",false).toBool ();
+  cloudLogApiUrl_ = settings_->value ("CloudLogApiUrl", QString {}).toString ();
+  cloudLogApiKey_ = settings_->value ("CloudLogApiKey", QString {}).toString ();
+  cloudLogStationID_ = settings_->value("CloudLogStationID",1).toInt ();
   SelectedActivity_ = settings_->value("SelectedActivity",1).toInt (); 
   x2ToneSpacing_ = settings_->value("x2ToneSpacing",false).toBool ();
   x4ToneSpacing_ = settings_->value("x4ToneSpacing",false).toBool ();
@@ -2049,6 +2087,10 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("Whitelisted", Whitelisted_);
   settings_->setValue ("SelectedActivity", SelectedActivity_);
   settings_->setValue ("SpecialOpActivity", bSpecialOp_);
+  settings_->setValue ("CloudLog", bCloudLog_);
+  settings_->setValue ("CloudLogApiUrl", cloudLogApiUrl_);
+  settings_->setValue ("CloudLogApiKey", cloudLogApiKey_);
+  settings_->setValue ("CloudLogStationID", cloudLogStationID_);
   settings_->setValue ("x2ToneSpacing", x2ToneSpacing_);
   settings_->setValue ("x4ToneSpacing", x4ToneSpacing_);
   settings_->setValue ("OpCall", opCall_);
@@ -2525,6 +2567,10 @@ void Configuration::impl::accept ()
   Blacklisted_ = ui_->cbBlacklist->isChecked ();
   Whitelisted_ = ui_->cbWhitelist->isChecked ();
   bSpecialOp_ = ui_->gbSpecialOpActivity->isChecked ();
+  bCloudLog_ = ui_->gbCloudlog->isChecked ();
+  cloudLogApiUrl_ = ui_->leCloudlogApiUrl->text ();
+  cloudLogApiKey_ = ui_->leCloudlogApiKey->text ();
+  cloudLogStationID_ = ui_->sbCloudlogStationID->value ();
   SelectedActivity_ = ui_->special_op_activity_button_group->checkedId();
   x2ToneSpacing_ = ui_->cbx2ToneSpacing->isChecked ();
   x4ToneSpacing_ = ui_->cbx4ToneSpacing->isChecked ();
@@ -2763,6 +2809,17 @@ void Configuration::impl::on_test_CAT_push_button_clicked ()
     }
 
   set_rig_invariants ();
+}
+
+void Configuration::impl::on_pbTestCloudlog_clicked ()
+{
+  //fprintf(stderr, "API URL: %s\n", ui_->leCloudlogApiUrl->text().toStdString().c_str());
+  cloudlog_.testApi(ui_->leCloudlogApiUrl->text(), ui_->leCloudlogApiKey->text());
+}
+
+void Configuration::impl::on_gbCloudlog_clicked ()
+{
+  ui_->pbTestCloudlog->setStyleSheet ("QPushButton {background-color: none;}");
 }
 
 void Configuration::impl::on_test_PTT_push_button_clicked (bool checked)

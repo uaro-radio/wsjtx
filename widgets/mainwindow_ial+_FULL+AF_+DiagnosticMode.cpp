@@ -6565,20 +6565,6 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
     al.band=band;
     al.points=points;
     m_arrl_log.append(al);
-    int iz=m_arrl_log.size();
-    int rate=0;
-    int nbc=0;
-
-    for(int i=iz-1; i>=0; i--) {
-      double hrDiff = m_arrl_log[i].time.msecsTo(al.time)/3600000.0;
-      if(hrDiff > 1.0) break;
-      rate += m_arrl_log[i].points;
-      if(i<iz-1 and m_arrl_log[i].band != m_arrl_log[i+1].band) nbc += 1;
-    }
-
-    m_ActiveStationsWidget->setRate(rate);
-    m_ActiveStationsWidget->setScore(m_score);
-    m_ActiveStationsWidget->setBandChanges(nbc);
     updateRate();
   }
 
@@ -10607,6 +10593,24 @@ void MainWindow::on_actionDiagnostic_mode_triggered()
     QTextStream out(&f);
     out << EventConfig;
     f.close();
+    MessageBox::critical_message (this,
+            "                                     DIAGNOSTIC MODE\n"
+            "\n"
+            "You have switched to diagnostic mode. It allows you to collect data to\n"
+            "troubleshoot problems with WSJT-X, or its communication with your rig.\n"
+            "\n"
+            "The diagnostic mode is active after closing and restarting WSJT-X,\n"
+            "and is then automatically deactivated when the program is next closed.\n"
+            "In the diagnostic mode a new \"logs\" folder appears on your screen, and\n"
+            "in it two files are created: \"wsjtx_syslog.log\" and \"WSJT-X_RigControl.log\".\n"
+            "Open these files with a text editor and look for error messages,\n"
+            "or send these files to the development team for further analysis.\n"
+            "\n"
+            "In dagnostic mode, you should close the program as soon as the fault\n"
+            "has appeared, because the two log files grow to large sizes quickly.\n"
+            "\n"
+            "If you have accidentally switched to diagnostic mode, simply click\n"
+            "\"Default event logging\" again.");
 }
 
 void MainWindow::on_actionDisable_event_logging_triggered()
