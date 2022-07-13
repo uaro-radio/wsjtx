@@ -760,7 +760,7 @@ QLabel[oob=&quot;true&quot;] {
              <item row="3" column="0">
               <widget class="QPushButton" name="lookupButton">
                <property name="toolTip">
-                <string>Search for callsign in database</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Search for callsign in database, doubleclick searches for callsign on QRZ.com.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>&amp;Lookup</string>

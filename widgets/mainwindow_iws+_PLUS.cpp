@@ -6190,8 +6190,14 @@ void MainWindow::lookup()
 
 void MainWindow::on_lookupButton_clicked()                    //Lookup button
 {
-  ui->dxGridEntry->clear();   // UR clear dxGridEntry is required to let call3.txt lookup work.
-  lookup();
+    qint64 ms=QDateTime::currentMSecsSinceEpoch();
+    ui->dxGridEntry->clear();   // UR clear dxGridEntry is required to let call3.txt lookup work.
+    lookup();
+    if((ms-m_msErase)<500) {
+        QString hisCall=ui->dxCallEntry->text();
+        QDesktopServices::openUrl (QUrl {"https://www.qrz.com/db/" + hisCall});
+    }
+    m_msErase=ms;
 }
 
 void MainWindow::on_addButton_clicked()                       //Add button
