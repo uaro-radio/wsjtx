@@ -1503,6 +1503,7 @@ void MainWindow::setDecodedTextFont (QFont const& font)
   }
   if (m_contestLogWindow) {
     m_contestLogWindow->set_log_view_font (font);
+    m_contestLogWindow->set_nQSO(m_logBook.contest_log()->n_qso());
   }
   if(m_ActiveStationsWidget != NULL) {
     m_ActiveStationsWidget->changeFont(font);
@@ -2859,6 +2860,9 @@ void MainWindow::on_contest_log_action_triggered()
   m_contestLogWindow->showNormal ();
   m_contestLogWindow->raise ();
   m_contestLogWindow->activateWindow ();
+  // connect signal from m_logBook.contest_log to m_contestLogWindow
+  connect(m_logBook.contest_log(), &CabrilloLog::qso_count_changed, m_contestLogWindow.data (), &CabrilloLogWindow::set_nQSO);
+  m_contestLogWindow->set_nQSO(m_logBook.contest_log()->n_qso());
 }
 
 void MainWindow::on_actionColors_triggered()
@@ -4245,7 +4249,7 @@ void MainWindow::pskPost (DecodedText const& decodedtext)
   int snr = decodedtext.snr();
   Frequency frequency = m_freqNominalPeriod + audioFrequency;   // prevent spotting wrong band
   if(grid.contains (grid_regexp)) {
-//    qDebug() << "To PSKreporter:" << deCall << grid << frequency << msgmode << snr
+//    qDebug() << "To PSKreporter:" << deCall << grid << frequency << msgmode << snr;
     if (!m_psk_Reporter.addRemoteStation (deCall, grid, frequency, msgmode, snr))
       {
         showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));

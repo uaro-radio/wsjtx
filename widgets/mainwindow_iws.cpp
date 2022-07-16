@@ -1501,6 +1501,7 @@ void MainWindow::setDecodedTextFont (QFont const& font)
   }
   if (m_contestLogWindow) {
     m_contestLogWindow->set_log_view_font (font);
+    m_contestLogWindow->set_nQSO(m_logBook.contest_log()->n_qso());
   }
   if(m_ActiveStationsWidget != NULL) {
     m_ActiveStationsWidget->changeFont(font);
@@ -2857,6 +2858,9 @@ void MainWindow::on_contest_log_action_triggered()
   m_contestLogWindow->showNormal ();
   m_contestLogWindow->raise ();
   m_contestLogWindow->activateWindow ();
+  // connect signal from m_logBook.contest_log to m_contestLogWindow
+  connect(m_logBook.contest_log(), &CabrilloLog::qso_count_changed, m_contestLogWindow.data (), &CabrilloLogWindow::set_nQSO);
+  m_contestLogWindow->set_nQSO(m_logBook.contest_log()->n_qso());
 }
 
 void MainWindow::on_actionColors_triggered()
