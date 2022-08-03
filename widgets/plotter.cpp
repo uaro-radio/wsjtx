@@ -24,7 +24,7 @@ extern dec_data dec_data;
 
 CPlotter::CPlotter(QWidget *parent) :                  //CPlotter Constructor
   QFrame {parent},
-  m_set_freq_action {new QAction {tr ("&Set Rx && Tx Offset"), this}},
+//  m_set_freq_action {new QAction {tr ("&Set Rx && Tx Offset"), this}},
   m_bScaleOK {false},
   m_bReference {false},
   m_bReference0 {false},
@@ -62,17 +62,17 @@ CPlotter::CPlotter(QWidget *parent) :                  //CPlotter Constructor
   m_bReplot=false;
 
   // contextual pop up menu
-  setContextMenuPolicy (Qt::CustomContextMenu);
-  connect (this, &QWidget::customContextMenuRequested, [this] (QPoint const& pos) {
-      QMenu menu {this};
-      menu.addAction (m_set_freq_action);
-      auto const& connection = connect (m_set_freq_action, &QAction::triggered, [this, pos] () {
-          int newFreq = FreqfromX (pos.x ()) + .5;
-          emit setFreq1 (newFreq, newFreq);
-        });
-      menu.exec (mapToGlobal (pos));
-      disconnect (connection);
-    });
+//  setContextMenuPolicy (Qt::CustomContextMenu);
+//  connect (this, &QWidget::customContextMenuRequested, [this] (QPoint const& pos) {
+//      QMenu menu {this};
+//      menu.addAction (m_set_freq_action);
+//      auto const& connection = connect (m_set_freq_action, &QAction::triggered, [this, pos] () {
+//          int newFreq = FreqfromX (pos.x ()) + .5;
+//          emit setFreq1 (newFreq, newFreq);
+//        });
+//      menu.exec (mapToGlobal (pos));
+//      disconnect (connection);
+//    });
 }
 
 CPlotter::~CPlotter() { }                                      // Destructor
@@ -595,7 +595,7 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
     painter0.drawLine(x2,yTxTop,x2,yTxTop+yh);
   }
 
-  if(m_dialFreq>10.13 and m_dialFreq< 10.15 and m_mode.mid(0,4)!="WSPR") {
+  if(m_dialFreq>10.13 and m_dialFreq< 10.15 and m_mode.mid(0,4)!="WSPR" and m_mode!="FST4W") {
     float f1=1.0e6*(10.1401 - m_dialFreq);
     float f2=f1+200.0;
     x1=XfromFreq(f1);
@@ -736,12 +736,18 @@ void CPlotter::mouseMoveEvent (QMouseEvent * event)
 
 void CPlotter::mouseReleaseEvent (QMouseEvent * event)
 {
-  if (Qt::LeftButton == event->button()) {
+  bool rightbutton = (event->button() & Qt::RightButton);
+  bool leftbutton = (event->button() & Qt::LeftButton);
+  bool shift = (event->modifiers() & Qt::ShiftModifier);
+  if (rightbutton) {
+     leftbutton = true;
+     shift = true;
+  }
+  if (leftbutton) {
     int x=event->x();
     if(x<0) x=0;
     if(x>m_Size.width()) x=m_Size.width();
     bool ctrl = (event->modifiers() & Qt::ControlModifier);
-    bool shift = (event->modifiers() & Qt::ShiftModifier);
     if(!shift and m_mode=="FST4W") return;
     int newFreq = int(FreqfromX(x)+0.5);
     int oldTxFreq = m_txFreq;
@@ -766,13 +772,24 @@ void CPlotter::mouseReleaseEvent (QMouseEvent * event)
 
 void CPlotter::mouseDoubleClickEvent (QMouseEvent * event)
 {
-  if (Qt::LeftButton == event->button ()) {
+    bool rightbutton = (event->button() & Qt::RightButton);
+    bool leftbutton = (event->button() & Qt::LeftButton);
     bool ctrl = (event->modifiers() & Qt::ControlModifier);
+  if (leftbutton) {
     int n=2;
     if(ctrl) n+=100;
     emit freezeDecode1(n);
+  } else if (rightbutton) {
+      int x=event->x();
+      if(x<0) x=0;
+      if(x>m_Size.width()) x=m_Size.width();
+      int newFreq = int(FreqfromX(x)+0.5);
+      if (m_mode!="FST4W") emit setFreq1 (newFreq, newFreq);
+      int n=1;
+      if(ctrl) n+=100;
+      emit freezeDecode1(n);
   } else {
-    event->ignore ();           // let parent handle
+      event->ignore ();           // let parent handle
   }
 }
 
