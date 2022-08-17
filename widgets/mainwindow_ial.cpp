@@ -154,7 +154,7 @@ extern "C" {
 
   int savec2_(char const * fname, int* TR_seconds, double* dial_freq, fortran_charlen_t);
 
-  void save_echo_params_(int* ndop, int* nfrit, float* f1, double* fspread, short id2[], int* idir);
+  void save_echo_params_(int* ndoptotal, int* ndop, int* nfrit, float* f1, float* fspread, short id2[], int* idir);
 
   void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1,
                 float* level, float* sigdb, float* snr, float* dfreq,
@@ -1678,39 +1678,42 @@ void MainWindow::dataSink(qint64 frames)
       float xlevel=0.0;
       float sigdb=0.0;
       float dfreq=0.0;
-      float width=0.0;
+      float width=m_fSpread;
       echocom_.nclearave=m_nclearave;
       int nDop=m_fAudioShift;
+      int nDopTotal=m_fDop;
       if(m_diskData) {
         int idir=-1;
-        save_echo_params_(&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
-        width=m_fSpread;
+        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
       }
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData);
-      QString t;
-      t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
-                dBerr,dfreq,nDop,width,nqual);
-      QString t0;
-      if(m_diskData) {
-        t0=t0.asprintf("%06d  ",m_UTCdisk);
-      } else {
-        t0=QDateTime::currentDateTimeUtc().toString("hhmmss  ");
-      }
-      t = t0 + t;
-      if (ui) ui->decodedTextBrowser->appendText(t);
-      if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
-      if(m_saveAll) {
-        int idir=1;
-        save_echo_params_(&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
-      }
-      m_nclearave=0;
-//Don't restart Monitor after an Echo transmission
+      //Don't restart Monitor after an Echo transmission
       if(m_bEchoTxed and !m_auto) {
         monitor(false);
         m_bEchoTxed=false;
       }
-//      return;
+      if(m_monitoring or m_auto or m_diskData) {
+        QString t;
+        t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
+                       dBerr,dfreq,nDopTotal,width,nqual);
+        QString t0;
+        if(m_diskData) {
+          t0=t0.asprintf("%06d  ",m_UTCdisk);
+        } else {
+          t0=QDateTime::currentDateTimeUtc().toString("hhmmss  ");
+        }
+        t = t0 + t;
+        if (ui) ui->decodedTextBrowser->appendText(t);
+      }
+      if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
+      if(m_saveAll) {
+        int idir=1;
+        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
+        m_fSpread=width;
+      }
+      m_nclearave=0;
+
     }
     if(m_mode=="FreqCal") {
       return;
@@ -4872,7 +4875,7 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec << int(m_config.special_op_id()) << int(m_specOp);
+//    qDebug() << "AAA" << nsec;
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -7289,7 +7292,7 @@ void MainWindow::on_actionEcho_triggered()
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
-  if(m_astroWidget) m_astroWidget->selectOnDxEcho();
+  if(m_astroWidget) m_astroWidget->selectOwnEcho();
   statusChanged();
 }
 
@@ -8122,7 +8125,6 @@ void MainWindow::transmit (double snr)
 #endif
     Q_EMIT sendMessage (m_mode, 27, 1024.0, 1500.0+m_fDither, 0.0, m_soundOutput,
                         m_config.audio_output_channel(), false, false, snr, m_TRperiod);
-//    qDebug() << "aa" << m_s6 << m_freqNominal << m_rigState.frequency() << m_fDither;
   }
 
 // In auto-sequencing mode, stop after 5 transmissions of "73" message.
@@ -8931,9 +8933,11 @@ void MainWindow::astroUpdate ()
            m_transmitting,m_auto,!m_config.tx_QSY_allowed (),m_TRperiod);
       m_fDop=correction.dop;
       m_fSpread=correction.width;
+//      qDebug() << "bb" << m_fDop << m_fSpread;
 
       if (m_transmitting && !m_config.tx_QSY_allowed ()) return;  // No Tx Doppler correction if rig can't do it
-      if (!m_astroWidget->doppler_tracking()) {                  // We are not using Doppler correction
+      if (!m_astroWidget->doppler_tracking() or m_astroWidget->DopplerMethod()==0) {
+        // We are not using RF Doppler correction
         m_fAudioShift=m_fDop;
         return;
       }
