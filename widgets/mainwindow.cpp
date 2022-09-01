@@ -1072,9 +1072,9 @@ void MainWindow::not_GA_warning_message ()
   MessageBox::critical_message (this,
                                 "This is a pre-release version of WSJT-X 2.6.0 made\n"
                                 "available for testing purposes.  By design it will\n"
-                                "be nonfunctional after Nov 30, 2022.");
+                                "be nonfunctional after Dec 31, 2022.");
   auto now = QDateTime::currentDateTimeUtc ();
-  if (now >= QDateTime {{2022, 11, 30}, {23, 59, 59, 999}, Qt::UTC}) {
+  if (now >= QDateTime {{2022, 12, 31}, {23, 59, 59, 999}, Qt::UTC}) {
     Q_EMIT finished ();
   }
 }
@@ -1697,10 +1697,11 @@ void MainWindow::dataSink(qint64 frames)
         monitor(false);
         m_bEchoTxed=false;
       }
+
       if(m_monitoring or m_auto or m_diskData) {
         QString t;
-        t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
-                       dBerr,dfreq,nDopTotal,width,nqual);
+        t = t.asprintf("%5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",xlevel,nDopTotal,width,echocom_.nsum,
+                       nqual,qRound(dfreq),sigdb,dBerr);
         QString t0;
         if(m_diskData) {
           t0=t0.asprintf("%06d  ",m_UTCdisk);
@@ -1710,19 +1711,18 @@ void MainWindow::dataSink(qint64 frames)
         t = t0 + t;
         if (ui) ui->decodedTextBrowser->appendText(t);
       }
+
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
-      if(m_saveAll) {
+      if(m_saveAll and !m_diskData) {
         int idir=1;
         save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
         m_fSpread=width;
       }
       m_nclearave=0;
+    }
+    if(m_mode=="FreqCal") return;
 
-    }
-    if(m_mode=="FreqCal") {
-      return;
-    }
-    if( m_dialFreqRxWSPR==0) m_dialFreqRxWSPR=m_freqNominal;
+    if(m_dialFreqRxWSPR==0) m_dialFreqRxWSPR=m_freqNominal;
     m_dataAvailable=true;
     dec_data.params.npts8=(m_ihsym*m_nsps)/16;
     dec_data.params.newdat=1;
@@ -7309,7 +7309,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC     N   Level    SNR     dBerr    DF   Doppler  Width   Q");
+  ui->lh_decodes_headings_label->setText("  UTC   Level  Doppler  Width       N       Q      DF    SNR    dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
@@ -10204,6 +10204,30 @@ void MainWindow::on_jt65Button_clicked()
       m_specOp=m_config.special_op_id();
     }
     on_actionJT65_triggered();
+}
+
+void MainWindow::on_actionCopy_to_WSJTX_txt_triggered()
+{
+  qDebug() << ui->decodedTextBrowser->toPlainText();
+
+  static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("WSJT-X.txt")};
+  if(!f.open(QIODevice::Text | QIODevice::WriteOnly)) {
+    MessageBox::warning_message (this, tr ("WSJT-X.txt file error"),
+                                 tr ("Cannot open \"%1\" for writing").arg (f.fileName ()),
+                                 tr ("Error: %1").arg (f.errorString ()));
+  } else {
+    QString t=ui->decodedTextBrowser->toPlainText();
+
+    QTextStream out(&f);
+    out << t <<
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+                 endl
+#else
+                 Qt::endl
+#endif
+                 ;
+    f.close();
+  }
 }
 
 void MainWindow::bandHoppingTimer()

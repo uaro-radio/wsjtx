@@ -386,6 +386,7 @@ set (wsjt_FSRCS
   lib/demod64a.f90
   lib/determ.f90
   lib/downsam9.f90
+  lib/echosim.f90
   lib/echo_snr.f90
   lib/encode232.f90
   lib/encode4.f90
@@ -420,6 +421,7 @@ set (wsjt_FSRCS
   lib/fmtmsg.f90
   lib/foldspec9f.f90
   lib/four2a.f90
+  lib/fspread_lorentz.f90
   lib/ft8/foxfilt.f90
   lib/ft8/foxgen.f90
   lib/ft8/foxgen_wrap.f90
@@ -733,6 +735,7 @@ set (PALETTE_FILES
   Palettes/Green2.pal
   Palettes/Jungle.pal
   Palettes/Linrad.pal
+  Palettes/W9MDB.pal
   Palettes/Negative.pal
   Palettes/Orange.pal
   Palettes/Pink.pal
@@ -1184,6 +1187,9 @@ target_link_libraries (ft8code wsjt_fort wsjt_cxx)
 
 add_executable (ft4code lib/ft4/ft4code.f90)
 target_link_libraries (ft4code wsjt_fort wsjt_cxx)
+
+add_executable (echosim lib/echosim.f90)
+target_link_libraries (echosim wsjt_fort wsjt_cxx)
 
 add_executable (ft8sim lib/ft8/ft8sim.f90)
 target_link_libraries (ft8sim wsjt_fort wsjt_cxx)

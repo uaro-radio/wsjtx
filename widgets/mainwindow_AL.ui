@@ -3706,6 +3706,8 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionOpen_next_in_directory"/>
     <addaction name="actionDecode_remaining_files_in_directory"/>
     <addaction name="separator"/>
+    <addaction name="actionCopy_to_WSJTX_txt"/>
+    <addaction name="separator"/>
     <addaction name="actionDelete_all_wav_files_in_SaveDir"/>
     <addaction name="actionErase_ALL_TXT"/>
     <addaction name="actionErase_wsjtx_log_adi"/>
@@ -3715,7 +3717,6 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionOpen_log_directory"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
-    <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -4407,6 +4408,11 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>Disable event logging</string>
+   </property>
+  </action>
+  <action name="actionCopy_to_WSJTX_txt">
+   <property name="text">
+    <string>Copy main text window to WSJT-X.txt</string>
    </property>
   </action>
  </widget>
