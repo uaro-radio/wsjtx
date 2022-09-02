@@ -2130,6 +2130,7 @@ void MainWindow::on_autoButton_clicked (bool checked)
     echocom_.nsum=0;
   }
   m_tAutoOn=QDateTime::currentMSecsSinceEpoch()/1000;
+  if(m_mode=="Echo") m_echoRunning=false;
 }
 
 void MainWindow::on_sbTxPercent_valueChanged (int n)
@@ -3231,6 +3232,7 @@ void MainWindow::on_ClrAvgButton_clicked()
   m_nclearave=1;
   if(m_mode=="Echo") {
     echocom_.nsum=0;
+    m_echoGraph->clearAvg();
   } else {
     if(m_msgAvgWidget != NULL) {
       if(m_msgAvgWidget->isVisible()) m_msgAvgWidget->displayAvg("");
@@ -4888,6 +4890,7 @@ void MainWindow::guiUpdate()
       ui->txb1->setEnabled(true);
     }
   }
+  if(m_mode=="Echo" and !m_monitoring and !m_auto and !m_diskData) m_echoRunning=false;
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
@@ -7309,7 +7312,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC   Level  Doppler  Width       N       Q      DF    SNR    dBerr");
+  ui->lh_decodes_headings_label->setText("  UTC     Tsec  Level  Doppler  Width       N       Q      DF    SNR    dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
@@ -10234,8 +10237,6 @@ void MainWindow::on_wsprButton_clicked()     // UR disable for normal + widescre
 
 void MainWindow::on_actionCopy_to_WSJTX_txt_triggered()
 {
-  qDebug() << ui->decodedTextBrowser->toPlainText();
-
   static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("WSJT-X.txt")};
   if(!f.open(QIODevice::Text | QIODevice::WriteOnly)) {
     MessageBox::warning_message (this, tr ("WSJT-X.txt file error"),
