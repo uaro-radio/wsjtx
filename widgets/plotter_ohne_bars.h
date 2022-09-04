@@ -74,8 +74,6 @@ public:
   qint32 breadth() const {return m_w;}
   float fSpan() const {return m_fSpan;}
   void setColours(QVector<QColor> const& cl);
-  void setBars(bool b);
-  void showFreq(bool b);
   void setFlatten(bool b1, bool b2);
   void setTol(int n);
   void setRxBand(QString band);
@@ -89,8 +87,8 @@ public:
   void setFST4_FreqRange(int fLow,int fHigh);
   void setSingleDecode(bool b);
   void setDiskUTC(int nutc);
-  bool scaleOK () const {return m_bScaleOK;}
 
+  bool scaleOK () const {return m_bScaleOK;}
 signals:
   void freezeDecode1(int n);
   void setFreq1(int rxFreq, int txFreq);
@@ -122,8 +120,7 @@ private:
   bool    m_bSingleDecode;
   bool    m_bFirst=true;
   bool    m_bResized;
-  bool	  m_bars;
-  bool    m_freq;
+
   float   m_fSpan;
 
   qint32  m_plotZero;
@@ -141,13 +138,11 @@ private:
   qint32  m_nfb;
   qint32  m_nUTC;
 
-  QPixmap m_DialOverlayPixmap;
-  QPixmap m_HoverOverlayPixmap;
   QPixmap m_WaterfallPixmap;
   QPixmap m_2DPixmap;
   QPixmap m_ScalePixmap;
   QPixmap m_OverlayPixmap;
-  QPoint  m_pos;
+
   QSize   m_Size;
   QString m_Str;
   QString m_HDivText[483];
@@ -188,14 +183,9 @@ private:
   qint32  m_fMax;
   qint32  m_startFreq;
   qint32  m_tol;
-  qint32  m_lastMouseX;
-  qint32  m_lastPaintedX;
   qint32  m_j;
+
   char    m_sutc[6];
-
-private slots:
-  void leaveEvent(QEvent *event);
-
 };
 
 extern QVector<QColor> g_ColorTbl;

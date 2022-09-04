@@ -33,8 +33,6 @@ WideGraph::WideGraph(QSettings * settings, QWidget *parent) :
   ui->widePlot->setCursor(Qt::CrossCursor);
   ui->widePlot->setMaximumHeight(800);
   ui->widePlot->setCurrent(false);
-  ui->cbControls->setCursor(Qt::ArrowCursor);
-  ui->cbBars->setCursor(Qt::ArrowCursor);
 
   connect(ui->widePlot, SIGNAL(freezeDecode1(int)),this,
           SLOT(wideFreezeDecode(int)));
@@ -54,12 +52,6 @@ WideGraph::WideGraph(QSettings * settings, QWidget *parent) :
     ui->gainSlider->setValue(ui->widePlot->plotGain());
     ui->gain2dSlider->setValue(ui->widePlot->plot2dGain());
     ui->zero2dSlider->setValue(ui->widePlot->plot2dZero());
-    m_bars=m_settings->value("Bars",false).toBool();
-    ui->cbBars->setChecked(m_bars);
-    ui->widePlot->setBars(m_bars);
-    m_freq=m_settings->value("Freq",true).toBool();
-    ui->cbFreq->setChecked(m_freq);
-    ui->widePlot->showFreq(m_freq);
     int n = m_settings->value("BinsPerPixel",2).toInt();
     m_bFlatten=m_settings->value("Flatten",true).toBool();
     m_bRef=m_settings->value("UseRef",false).toBool();
@@ -148,8 +140,6 @@ void WideGraph::saveSettings()                                           //saveS
   m_settings->setValue("Flatten",m_bFlatten);
   m_settings->setValue("UseRef",m_bRef);
   m_settings->setValue ("HideControls", ui->controls_widget->isHidden ());
-  m_settings->setValue ("Bars", m_bars);
-  m_settings->setValue ("Freq", m_freq);
   m_settings->setValue ("FminPerBand", m_fMinPerBand);
 }
 
@@ -434,18 +424,6 @@ void WideGraph::on_cbRef_toggled(bool b)
 void WideGraph::on_cbControls_toggled(bool b)
 {
   ui->controls_widget->setVisible(b);
-}
-
-void WideGraph::on_cbBars_toggled(bool b)
-{
-  m_bars = b;
-  ui->widePlot->setBars(m_bars);
-}
-
-void WideGraph::on_cbFreq_toggled(bool b)
-{
-  m_freq = b;
-  ui->widePlot->showFreq(m_freq);
 }
 
 void WideGraph::on_adjust_palette_push_button_clicked (bool)   //Adjust Palette

@@ -77,8 +77,6 @@ private slots:
   void on_cbFlatten_toggled(bool b);
   void on_cbRef_toggled(bool b);
   void on_cbControls_toggled(bool b);
-  void on_cbBars_toggled(bool b);
-  void on_cbFreq_toggled(bool b);
   void on_adjust_palette_push_button_clicked (bool);
   void on_gainSlider_valueChanged(int value);
   void on_zeroSlider_valueChanged(int value);
@@ -111,8 +109,6 @@ private:
   qint32 m_jz=MAX_SCREENSIZE;
   qint32 m_n;
 
-  bool	 m_bars;
-  bool	 m_freq;
   bool   m_bFlatten;
   bool   m_bRef;
   bool   m_bHaveTransmitted;    //Set true at end of a WSPR or FT4 transmission
