@@ -153,7 +153,7 @@ extern "C" {
 
   int savec2_(char const * fname, int* TR_seconds, double* dial_freq, fortran_charlen_t);
 
-  void save_echo_params_(int* ndop, int* nfrit, float* f1, double* fspread, short id2[], int* idir);
+  void save_echo_params_(int* ndoptotal, int* ndop, int* nfrit, float* f1, float* fspread, short id2[], int* idir);
 
   void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1,
                 float* level, float* sigdb, float* snr, float* dfreq,
@@ -871,8 +871,6 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   decodeBusy(false);
 
   m_msg[0][0]=0;
-  ui->labDXped->setVisible(false);
-  ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
 
   char const * const power[] = {"1 mW","2 mW","5 mW","10 mW","20 mW","50 mW","100 mW","200 mW","500 mW",
                   "1 W","2 W","5 W","10 W","20 W","50 W","100 W","200 W","500 W","1 kW"};
@@ -1049,6 +1047,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
     QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));
   }
 
+  m_specOp=m_config.special_op_id();
+  ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
+  ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   ui->pbBestSP->setVisible(m_mode=="FT4");
 
 // this must be the last statement of constructor
@@ -1060,9 +1061,9 @@ void MainWindow::not_GA_warning_message ()
   MessageBox::critical_message (this,
                                 "This is a pre-release version of WSJT-X 2.6.0 made\n"
                                 "available for testing purposes.  By design it will\n"
-                                "be nonfunctional after Nov 30, 2022.");
+                                "be nonfunctional after Dec 31, 2022.");
   auto now = QDateTime::currentDateTimeUtc ();
-  if (now >= QDateTime {{2022, 11, 30}, {23, 59, 59, 999}, Qt::UTC}) {
+  if (now >= QDateTime {{2022, 12, 31}, {23, 59, 59, 999}, Qt::UTC}) {
     Q_EMIT finished ();
   }
 }
@@ -1106,7 +1107,7 @@ void MainWindow::on_the_minute ()
 //--------------------------------------------------- MainWindow destructor
 MainWindow::~MainWindow()
 {
-  m_astroWidget.reset ();
+  if(m_astroWidget) m_astroWidget.reset ();
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir ().absoluteFilePath ("wsjtx_wisdom.dat"))};
   fftwf_export_wisdom_to_filename (fname.toLocal8Bit ());
   m_audioThread.quit ();
@@ -1212,6 +1213,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("SplitterState",ui->decodes_splitter->saveState());
   m_settings->setValue("Blanker",ui->sbNB->value());
   m_settings->setValue("Score",m_score);
+  m_settings->setValue("labDXpedText",ui->labDXped->text());
 
   {
     QList<QVariant> coeffs;     // suitable for QSettings
@@ -1268,6 +1270,7 @@ void MainWindow::readSettings()
   ui->actionAstronomical_data->setChecked (displayAstro);
 
   m_settings->beginGroup("Common");
+  ui->labDXped->setText(m_settings->value("labDXpedText",QString {}).toString ());
   ui->actionDon_t_split_ALL_TXT->setChecked(m_settings->value("actionDontSplitALLTXT", true).toBool());
   ui->actionSplit_ALL_TXT_yearly->setChecked(m_settings->value("splitAllTxtYearly", false).toBool());
   ui->actionSplit_ALL_TXT_monthly->setChecked(m_settings->value("splitAllTxtMonthly", false).toBool());
@@ -1599,47 +1602,58 @@ void MainWindow::dataSink(qint64 frames)
       float xlevel=0.0;
       float sigdb=0.0;
       float dfreq=0.0;
-      float width=0.0;
+      float width=m_fSpread;
       echocom_.nclearave=m_nclearave;
       int nDop=m_fAudioShift;
+      int nDopTotal=m_fDop;
       if(m_diskData) {
         int idir=-1;
-        save_echo_params_(&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
-        width=m_fSpread;
+        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
       }
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData);
-//      qDebug() << "bb" << m_s6 << f1 << nfrit << nDop << width;
-      QString t;
-//      t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d %7d %7d",echocom_.nsum,xlevel,sigdb,
-//                dBerr,dfreq,m_fDop,width,nqual,nDop,nfrit);
-      t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
-                dBerr,dfreq,m_fDop,width,nqual);
-      QString t0;
-      if(m_diskData) {
-        t0=t0.asprintf("%06d  ",m_UTCdisk);
-      } else {
-        t0=QDateTime::currentDateTimeUtc().toString("hhmmss  ");
-      }
-      t = t0 + t;
-      if (ui) ui->decodedTextBrowser->appendText(t);
-      if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
-      if(m_saveAll) {
-        int idir=1;
-        save_echo_params_(&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
-      }
-      m_nclearave=0;
-//Don't restart Monitor after an Echo transmission
+      //Don't restart Monitor after an Echo transmission
       if(m_bEchoTxed and !m_auto) {
         monitor(false);
         m_bEchoTxed=false;
       }
-//      return;
+
+      if(m_monitoring or m_auto or m_diskData) {
+        QString t0;
+        if(m_diskData) {
+          t0=t0.asprintf("%06d  ",m_UTCdisk);
+        } else {
+          QDateTime now=QDateTime::currentDateTimeUtc();
+          int ihr=now.toString("hh").toInt();
+          int imin=now.toString("mm").toInt();
+          int isec=now.toString("ss").toInt();
+          if(m_auto) isec=isec - isec%6;
+          if(!m_auto) isec=isec - isec%3;
+          t0=t0.asprintf("%02d%02d%02d  ",ihr,imin,isec);
+        }
+        int n=t0.toInt();
+        int nsec=((n/10000)*3600) + (((n/100)%100)*60) + (n%100);
+        if(!m_echoRunning) m_echoSec0=nsec;
+        n=(nsec-m_echoSec0 + 864000)%86400;
+        m_echoRunning=true;
+        QString t;
+        t = t.asprintf("%6d  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",n,xlevel,
+                       nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
+        t = t0 + t;
+        if (ui) ui->decodedTextBrowser->appendText(t);
+      }
+
+      if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
+      if(m_saveAll and !m_diskData) {
+        int idir=1;
+        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
+        m_fSpread=width;
+      }
+      m_nclearave=0;
     }
-    if(m_mode=="FreqCal") {
-      return;
-    }
-    if( m_dialFreqRxWSPR==0) m_dialFreqRxWSPR=m_freqNominal;
+    if(m_mode=="FreqCal") return;
+
+    if(m_dialFreqRxWSPR==0) m_dialFreqRxWSPR=m_freqNominal;
     m_dataAvailable=true;
     dec_data.params.npts8=(m_ihsym*m_nsps)/16;
     dec_data.params.newdat=1;
@@ -1684,6 +1698,7 @@ void MainWindow::dataSink(qint64 frames)
         if (err!=0) MessageBox::warning_message (this, tr ("Error saving c2 file"), c2name);
       }
     }
+
     if(m_mode=="WSPR") {
       QStringList t2;
       QStringList depth_args;
@@ -1707,6 +1722,7 @@ void MainWindow::dataSink(qint64 frames)
       m_decoderBusy = true;
       statusUpdate ();
     }
+
     m_rxDone=true;
   }
 }
@@ -1968,6 +1984,7 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
     if(m_specOp!=nContest0) {
       ui->tx1->setEnabled(true);
       ui->txb1->setEnabled(true);
+      set_mode(m_mode);
     }
     chkFT4();
     if(SpecOp::EU_VHF==m_specOp and m_config.my_grid().size()<6) {
@@ -1979,6 +1996,8 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
       MessageBox::information_message (this,
           "Fox-and-Hound operation is available only in FT8 mode.\nGo back and change your selection.");
     }
+    ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
+    set_mode(m_mode);
   }
 }
 
@@ -2005,6 +2024,7 @@ void MainWindow::on_monitorButton_clicked (bool checked)
   } else {
     ui->monitorButton->setChecked (false); // disallow
   }
+  if(m_mode=="Echo") m_echoRunning=false;
 }
 
 void MainWindow::monitor (bool state)
@@ -2037,16 +2057,12 @@ void MainWindow::on_autoButton_clicked (bool checked)
   if (!checked) m_bCallingCQ = false;
   statusUpdate ();
   m_bEchoTxOK=false;
-  if(m_mode=="Echo") {
-    if(m_auto) {
-      m_nclearave=1;
-      echocom_.nsum=0;
-      m_astroWidget->selectOwnEcho();
-    } else {
-      m_astroWidget->selectOnDxEcho();
-    }
+  if(m_mode=="Echo" and m_auto) {
+    m_nclearave=1;
+    echocom_.nsum=0;
   }
   m_tAutoOn=QDateTime::currentMSecsSinceEpoch()/1000;
+  if(m_mode=="Echo") m_echoRunning=false;
 }
 
 void MainWindow::on_sbTxPercent_valueChanged (int n)
@@ -2543,7 +2559,7 @@ void MainWindow::closeEvent(QCloseEvent * e)
   m_valid = false;              // suppresses subprocess errors
   m_config.transceiver_offline ();
   writeSettings ();
-  m_astroWidget.reset ();
+  if(m_astroWidget) m_astroWidget.reset ();
   m_guiTimer.stop ();
   m_prefixes.reset ();
   m_shortcuts.reset ();
@@ -3149,6 +3165,7 @@ void MainWindow::on_ClrAvgButton_clicked()
   m_nclearave=1;
   if(m_mode=="Echo") {
     echocom_.nsum=0;
+    m_echoGraph->clearAvg();
   } else {
     if(m_msgAvgWidget != NULL) {
       if(m_msgAvgWidget->isVisible()) m_msgAvgWidget->displayAvg("");
@@ -4226,7 +4243,7 @@ void MainWindow::guiUpdate()
 
 // Don't transmit another mode in the 30 m WSPR sub-band
     Frequency onAirFreq = m_freqNominal + ui->TxFreqSpinBox->value();
-    if ((onAirFreq > 10139900 and onAirFreq < 10140320) and m_mode!="WSPR") {
+    if ((onAirFreq > 10139900 and onAirFreq < 10140320) and m_mode!="WSPR" and m_mode!="FST4W") {
       m_bTxTime=false;
       if (m_auto) auto_tx_mode (false);
       if(onAirFreq!=m_onAirFreq0) {
@@ -4543,7 +4560,7 @@ void MainWindow::guiUpdate()
     }
     if(m_restart) {
       write_all("Tx",m_currentMessage);
-      if (m_config.TX_messages ()) {
+      if (m_config.TX_messages () and m_mode!="Echo") {
         ui->decodedTextBrowser2->displayTransmittedText(m_currentMessage.trimmed(),m_mode,
                      ui->TxFreqSpinBox->value(),m_bFastMode,m_TRperiod);
         }
@@ -4642,7 +4659,7 @@ void MainWindow::guiUpdate()
       m_msgSent0 = current_message;
     }
 
-    if (m_mode != "FST4W" && m_mode != "WSPR")
+    if (m_mode != "FST4W" && m_mode != "WSPR" && m_mode!="Echo")
       {
         if(!m_tune) write_all("Tx",m_currentMessage);
         if (m_config.TX_messages () && !m_tune && SpecOp::FOX!=m_specOp)
@@ -4703,10 +4720,11 @@ void MainWindow::guiUpdate()
       ui->txb1->setEnabled(true);
     }
   }
+  if(m_mode=="Echo" and !m_monitoring and !m_auto and !m_diskData) m_echoRunning=false;
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec;
+//    qDebug() << "AAA" << nsec << int(m_specOp) << ui->labDXped->text();
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -6720,6 +6738,7 @@ void MainWindow::on_actionFT8_triggered()
       ui->houndButton->setStyleSheet("");
   }
 
+  m_specOp=m_config.special_op_id();
   if(m_specOp!=SpecOp::NONE and m_specOp!=SpecOp::FOX and m_specOp!=SpecOp::HOUND) {
     QString t0="";
     if(SpecOp::NA_VHF==m_specOp) t0="NA VHF";
@@ -6799,7 +6818,6 @@ void MainWindow::on_actionJT4_triggered()
 
 void MainWindow::on_actionJT9_triggered()
 {
-  QTimer::singleShot (50, [=] {on_sbSubmode_valueChanged(ui->sbSubmode->value());});
   m_mode="JT9";
   bool bVHF=m_config.enable_VHF_features();
   m_bFast9=ui->cbFast9->isChecked();
@@ -6948,13 +6966,13 @@ void MainWindow::on_actionQ65_triggered()
   switch_mode (Modes::Q65);
 //                         01234567890123456789012345678901234567
   displayWidgets(nWidgets("11111101011011010011100000010000000011"));
-  ui->labDXped->setText("");
   ui->lh_decodes_title_label->setText(tr ("Single-Period Decodes"));
   ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
   ui->lh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   ui->rh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   statusChanged();
 
+  m_specOp=m_config.special_op_id();
   if(m_specOp!=SpecOp::NONE and m_specOp!=SpecOp::FOX and m_specOp!=SpecOp::HOUND) {
     QString t0="";
     if(SpecOp::NA_VHF==m_specOp) t0="NA VHF";
@@ -7103,12 +7121,13 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC     N   Level    SNR     dBerr    DF   Doppler  Width   Q");
+  ui->lh_decodes_headings_label->setText("  UTC     Tsec  Level  Doppler  Width       N       Q      DF    SNR    dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
-  m_astroWidget->selectOnDxEcho();
+  if(m_astroWidget) m_astroWidget->selectOwnEcho();
   statusChanged();
+  monitor(false);
 }
 
 void MainWindow::on_actionFreqCal_triggered()
@@ -7343,7 +7362,7 @@ void MainWindow::on_reset_cabrillo_log_action_triggered ()
       m_logBook.contest_log ()->reset ();
       m_activeCall.clear();                      //Erase the QMap of active calls
       m_score=0;
-      m_ActiveStationsWidget->setScore(0);
+      if (m_ActiveStationsWidget) m_ActiveStationsWidget->setScore(0);
     }
 }
 
@@ -7501,7 +7520,6 @@ void MainWindow::on_rptSpinBox_valueChanged(int n)
 
 void MainWindow::on_tuneButton_clicked (bool checked)
 {
-  if (!m_config.Tune_watchdog_disabled ()) tuneATU_Timer.start (90000); // tune watchdog (90s)
   static bool lastChecked = false;
   if (lastChecked == checked) return;
   lastChecked = checked;
@@ -7687,7 +7705,7 @@ void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const&
   if (old_state.online () == false && s.online () == true)
     {
       // initializing
-      on_monitorButton_clicked (!m_config.monitor_off_at_startup ());
+      on_monitorButton_clicked (!(m_config.monitor_off_at_startup() or m_mode=="Echo"));
     }
   if (s.frequency () != old_state.frequency () || s.split () != m_splitMode)
     {
@@ -7932,10 +7950,13 @@ void MainWindow::transmit (double snr)
 
   if(m_mode=="Echo") {
     m_fDither=0.;
-    if(m_astroWidget->bDither()) m_fDither = QRandomGenerator::global()->bounded(20.0) - 10.0; //Dither by +/- 10 Hz
+#if QT_VERSION >= QT_VERSION_CHECK (5, 15, 0)
+    if(m_astroWidget && m_astroWidget->bDither()) m_fDither = QRandomGenerator::global()->bounded(20.0) - 10.0; //Dither by +/- 10 Hz
+#else
+    if(m_astroWidget && m_astroWidget->bDither()) m_fDither = 20.0*(double(qrand())/RAND_MAX) - 10.0; //Dither by +/- 10 Hz
+#endif
     Q_EMIT sendMessage (m_mode, 27, 1024.0, 1500.0+m_fDither, 0.0, m_soundOutput,
                         m_config.audio_output_channel(), false, false, snr, m_TRperiod);
-//    qDebug() << "aa" << m_s6 << m_freqNominal << m_rigState.frequency() << m_fDither;
   }
 
 // In auto-sequencing mode, stop after 5 transmissions of "73" message.
@@ -8582,7 +8603,7 @@ void MainWindow::uploadWSPRSpots (bool direct_post, QString const& decode_text)
     wsprNet->abortOutstandingRequests ();
     m_uploading = false;
   }
-  QString rfreq = QString("%1").arg((m_dialFreqRxWSPR + m_wideGraph->rxFreq ()) / 1e6, 0, 'f', 6);
+  QString rfreq = QString("%1").arg((m_dialFreqRxWSPR + 1500) / 1e6, 0, 'f', 6);
   QString tfreq = QString("%1").arg((m_dialFreqRxWSPR +
                         ui->TxFreqSpinBox->value()) / 1e6, 0, 'f', 6);
   auto pct = QString::number (ui->autoButton->isChecked () ? ui->sbTxPercent->value () : 0);
@@ -8746,10 +8767,9 @@ void MainWindow::astroUpdate ()
       m_fSpread=correction.width;
 
       if (m_transmitting && !m_config.tx_QSY_allowed ()) return;  // No Tx Doppler correction if rig can't do it
-      if (!m_astroWidget->doppler_tracking()) {                  // We are not using Doppler correction
+      if (!m_astroWidget->doppler_tracking() or m_astroWidget->DopplerMethod()==0) {
+        // We are not using RF Doppler correction
         m_fAudioShift=m_fDop;
-//        qDebug() << "cc1" << m_hisGrid << m_auto << m_astroWidget->doppler_tracking()
-//                 << m_fSpread << m_fDop << correction.rx << m_fAudioShift;
         return;
       }
       if ((m_monitoring || m_transmitting)
@@ -8794,8 +8814,6 @@ void MainWindow::astroUpdate ()
         }
       setRig ();
       m_fAudioShift=m_fDop - correction.rx;
-//      qDebug() << "cc2" << m_hisGrid << m_auto << m_astroWidget->doppler_tracking()
-//               << m_fSpread << m_fDop << correction.rx << m_fAudioShift;
     }
 }
 
@@ -9774,6 +9792,7 @@ void MainWindow::chkFT4()
   ui->labDXped->setVisible(m_specOp!=SpecOp::NONE);
   ui->respondComboBox->setVisible(ui->cbAutoSeq->isChecked());
 
+  m_specOp=m_config.special_op_id();
   if(m_specOp!=SpecOp::NONE and m_specOp!=SpecOp::FOX and m_specOp!=SpecOp::HOUND) {
     QString t0="";
     if(SpecOp::NA_VHF==m_specOp) t0="NA VHF";
@@ -9931,21 +9950,25 @@ QString MainWindow::WSPR_message()
 
 void MainWindow::on_houndButton_clicked (bool checked)
 {
-   if (checked) {
-        ui->houndButton->setStyleSheet("background-color: #ff0000;");
-        m_config.setSpecial_Hound();
-   } else {
-       ui->houndButton->setStyleSheet("");
-       m_config.setSpecial_None();
-   }
-    on_actionFT8_triggered();
+  if (checked) {
+    ui->houndButton->setStyleSheet("background-color: #ff0000;");
+    m_config.setSpecial_Hound();
+  } else {
+    ui->houndButton->setStyleSheet("");
+    m_config.setSpecial_None();
+  }
+  m_specOp=m_config.special_op_id();
+  on_actionFT8_triggered();
 }
 
 void MainWindow::on_ft8Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    if(m_specOp==SpecOp::HOUND) m_config.setSpecial_None();
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
     on_actionFT8_triggered();
 }
 
@@ -9953,7 +9976,10 @@ void MainWindow::on_ft4Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    if(m_specOp==SpecOp::HOUND) m_config.setSpecial_None();
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
     on_actionFT4_triggered();
 }
 
@@ -9961,7 +9987,10 @@ void MainWindow::on_msk144Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    if(m_specOp==SpecOp::HOUND) m_config.setSpecial_None();
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
     on_actionMSK144_triggered();
 }
 
@@ -9969,7 +9998,10 @@ void MainWindow::on_q65Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    if(m_specOp==SpecOp::HOUND) m_config.setSpecial_None();
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
     on_actionQ65_triggered();
 }
 
@@ -9977,6 +10009,32 @@ void MainWindow::on_jt65Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    if(m_specOp==SpecOp::HOUND) m_config.setSpecial_None();
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
     on_actionJT65_triggered();
 }
+
+void MainWindow::on_actionCopy_to_WSJTX_txt_triggered()
+{
+  static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("WSJT-X.txt")};
+  if(!f.open(QIODevice::Text | QIODevice::WriteOnly)) {
+    MessageBox::warning_message (this, tr ("WSJT-X.txt file error"),
+                                 tr ("Cannot open \"%1\" for writing").arg (f.fileName ()),
+                                 tr ("Error: %1").arg (f.errorString ()));
+  } else {
+    QString t=ui->decodedTextBrowser->toPlainText();
+
+    QTextStream out(&f);
+    out << t <<
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+                 endl
+#else
+                 Qt::endl
+#endif
+                 ;
+    f.close();
+  }
+}
+

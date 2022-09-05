@@ -173,6 +173,7 @@ private slots:
   void on_actionOpen_next_in_directory_triggered();
   void on_actionDecode_remaining_files_in_directory_triggered();
   void on_actionDelete_all_wav_files_in_SaveDir_triggered();
+  void on_actionCopy_to_WSJTX_txt_triggered();
   void on_actionOpen_log_directory_triggered ();
   void on_actionNone_triggered();
   void on_actionSave_all_triggered();
@@ -506,6 +507,7 @@ private:
   qint32  m_points=-99;
   qint32  m_score=0;
   qint32  m_fDop=0;
+  qint32  m_echoSec0=0;
 
   bool    m_btxok;		//True if OK to transmit
   bool    m_diskData;
@@ -735,7 +737,8 @@ private:
   QThread::Priority m_audioThreadPriority;
   bool m_bandEdited;
   bool m_splitMode;
-  bool m_monitoring;
+  bool m_monitoring=false;
+  bool m_echoRunning=false;
   bool m_tx_when_ready;
   bool m_transmitting;
   bool m_tune;
