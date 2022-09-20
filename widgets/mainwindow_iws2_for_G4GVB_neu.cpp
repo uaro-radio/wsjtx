@@ -1445,6 +1445,7 @@ void MainWindow::readSettings()
   m_audioThreadPriority = static_cast<QThread::Priority> (m_settings->value ("Audio/ThreadPriority", QThread::TimeCriticalPriority).toInt () % 8);
   m_settings->endGroup ();
 
+  m_specOp=m_config.special_op_id();
   checkMSK144ContestType();
   if (displayMsgAvg) on_actionMessage_averaging_triggered();
   if (displayFoxLog) on_fox_log_action_triggered ();
@@ -1462,12 +1463,9 @@ void MainWindow::checkMSK144ContestType()
     {
       if(m_mode=="MSK144" && SpecOp::EU_VHF < m_specOp)
         {
-//          MessageBox::warning_message (this, tr ("Improper mode"),
-//          "Mode will be changed to FT8. MSK144 not available if Fox, Hound, Field Day, FT Roundup, WW Digi. or ARRL Digi contest is selected.");
-//          on_actionFT8_triggered();
-          m_config.setSpecial_None();   // UR SpecOp no longer remembered, therefore temporarily this solution
-          m_specOp=m_config.special_op_id();
-          on_actionMSK144_triggered();
+          MessageBox::warning_message (this, tr ("Improper mode"),
+          "Mode will be changed to FT8. MSK144 not available if Fox, Hound, Field Day, FT Roundup, WW Digi. or ARRL Digi contest is selected.");
+          on_actionFT8_triggered();
         }
     }
 }
@@ -1932,9 +1930,7 @@ void MainWindow::fastSink(qint64 frames)
           auto_tx_mode(true);
           QTimer::singleShot (int(6000.0*m_TRperiod), [=] {   // Wait & Call Tx max 6*TRperiod
               auto_tx_mode(false);
-              wait_and_call = false;
-              ui->DX_Call_Button->setChecked (false);
-              ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+              if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
           });
     }
     // CQ First for MSK144
@@ -2546,11 +2542,9 @@ void MainWindow::stopWRTimeout()
 void MainWindow::statusChanged()
 {
   QTimer::singleShot (50, [=] {       // only allow Wait & Call where it is appropriate
-      if(m_mode.startsWith("JT") or m_mode=="WSPR" or m_mode=="Echo" or m_mode=="FST4W" or m_specOp!=SpecOp::NONE
-         or !ui->cbAutoSeq->isChecked() or m_hisCall=="") {
-        ui->DX_Call_Button->setChecked (false);
-        ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
-      }
+      if((m_mode.startsWith("JT") or m_mode=="WSPR" or m_mode=="Echo" or m_mode=="FST4W" or m_specOp!=SpecOp::NONE
+         or !ui->cbAutoSeq->isChecked() or m_hisCall=="") && ui->DX_Call_Button->isChecked())
+          ui->DX_Call_Button->click ();
   });
   statusUpdate ();
   QFile f {m_config.temp_dir ().absoluteFilePath ("wsjtx_status.txt")};
@@ -2764,11 +2758,7 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
     MessageBox::information_message (this, tr ("Reference spectrum saved"));
     m_bRefSpec=false;
   }
-  if (ui->DX_Call_Button->isChecked()) {
-      wait_and_call = false;
-      ui->DX_Call_Button->setChecked (false);
-      ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
-  }
+  if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
 }
 
 void MainWindow::on_actionRelease_Notes_triggered ()
@@ -4007,9 +3997,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             auto_tx_mode(true);
             QTimer::singleShot (int(6000.0*m_TRperiod), [=] {   // Wait & Call Tx max 6*TRperiod
                 auto_tx_mode(false);
-                wait_and_call = false;
-                ui->DX_Call_Button->setChecked (false);
-                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+                if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
                 });
       }
 
@@ -6563,6 +6551,7 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
       ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ff0000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
   } else {
       wait_and_call = false;      // toggle Wait & Call off in any other case
+      ui->DX_Call_Button->setChecked (false);
       ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
   }
 }
@@ -6571,11 +6560,7 @@ void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {
   m_hisCall = call;
 //  ui->dxGridEntry->clear();    // UR disabled because not useful with highlightDXCall/DXGrid feature
-  if (ui->DX_Call_Button->isChecked()) {
-      wait_and_call = false;
-      ui->DX_Call_Button->setChecked (false);
-      ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
-  }
+  if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
   statusChanged();
   statusUpdate ();
 }
