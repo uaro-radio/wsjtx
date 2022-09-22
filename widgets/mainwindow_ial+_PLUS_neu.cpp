@@ -1917,7 +1917,7 @@ void MainWindow::fastSink(qint64 frames)
          m_logBook, m_currentBand, m_config.ppfx ());
 
     // Wait & Reply for MSK144
-    if (decodedtext.string().contains(m_config.my_callsign()) && decodedtext.string().contains(" " + m_hisCall + " ") &&
+    if (decodedtext.string().contains(m_config.my_callsign() + " " + m_hisCall) &&
        (m_hisCall!="") && !decodedtext.string().contains("73 ") && m_mode=="MSK144") {
           m_bDoubleClicked = true;
           processMessage(decodedtext);
@@ -3980,7 +3980,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
           // Wait & Reply
         if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") &&
-             (decodedtext.string().contains(m_config.my_callsign()) && decodedtext.string().contains(" " + m_hisCall + " ") &&
+             (decodedtext.string().contains(m_config.my_callsign() + " " + m_hisCall) &&
              (m_hisCall!="") && !decodedtext.string().contains("73 "))) {
                 m_bDoubleClicked = true;
                 processMessage(decodedtext0);
