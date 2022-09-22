@@ -1923,8 +1923,9 @@ void MainWindow::fastSink(qint64 frames)
           stopWRTimer.start(int(12000.0*m_TRperiod));      // Wait & Reply Tx max 12*TRperiod
     }
     // Wait & Call for MSK144
-    if (wait_and_call && decodedtext.string().contains(" " + m_hisCall + " ") && (m_hisCall!="") && m_mode=="MSK144" &&
-        (decodedtext.string().contains("CQ ") or decodedtext.string().contains("73 "))) {
+    if (m_mode=="MSK144" && wait_and_call && m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && (m_hisCall!="") &&
+        (decodedtext.string().contains("CQ " + m_hisCall) or decodedtext.string().contains(m_hisCall + " RR73")
+         or decodedtext.string().contains(m_hisCall + " RRR") or decodedtext.string().contains(m_hisCall + " 73"))) {
           m_bDoubleClicked = true;
           processMessage(decodedtext);
           auto_tx_mode(true);
@@ -2542,7 +2543,8 @@ void MainWindow::stopWRTimeout()
 void MainWindow::statusChanged()
 {
   QTimer::singleShot (50, [=] {       // only allow Wait & Call where it is appropriate
-      if((m_mode.startsWith("JT") or m_mode=="WSPR" or m_mode=="Echo" or m_mode=="FST4W" or m_specOp!=SpecOp::NONE
+      if((m_mode.startsWith("JT") or m_mode=="WSPR" or m_mode=="Echo" or m_mode=="FST4W"
+         or (m_specOp!=SpecOp::NONE and m_specOp!=SpecOp::HOUND)
          or !ui->cbAutoSeq->isChecked() or m_hisCall=="") && ui->DX_Call_Button->isChecked())
           ui->DX_Call_Button->click ();
   });
@@ -3987,12 +3989,12 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
         // Wait & Call
       if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && wait_and_call &&
-           m_specOp!=SpecOp::FOX && m_specOp!=SpecOp::HOUND && ui->cbAutoSeq->isChecked() &&
-          (decodedtext.string().contains(" " + m_hisCall + " ") && (m_hisCall!="") &&
-          (decodedtext.string().contains("CQ ") or decodedtext.string().contains("73 ")
-           or decodedtext.string().contains(" RRR")))) {
+           m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && (m_hisCall!="") &&
+          (decodedtext.string().contains("CQ " + m_hisCall) or decodedtext.string().contains(m_hisCall + " RR73")
+           or decodedtext.string().contains(m_hisCall + " RRR") or decodedtext.string().contains(m_hisCall + " 73"))) {
             if (!decodedtext.string().contains(m_config.my_callsign() + " " + m_hisCall))
                 block_right_display = true;   // prevent display of first message twice
+            if (m_specOp==SpecOp::HOUND) ui->TxFreqSpinBox->setValue(2300);
             m_bDoubleClicked = true;
             processMessage(decodedtext0);
             auto_tx_mode(true);
@@ -6547,7 +6549,7 @@ void MainWindow::on_RoundRobin_currentTextChanged(QString text)
 void MainWindow::on_DX_Call_Button_clicked (bool checked)
 {
   if((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
-     m_specOp==SpecOp::NONE && ui->cbAutoSeq->isChecked() && m_hisCall!="" && checked) {
+     (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && m_hisCall!="" && checked) {
       wait_and_call = true;       // toggle Wait & Call on when allowed
       ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ff0000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
   } else {
@@ -6946,6 +6948,7 @@ void MainWindow::on_actionFT4_triggered()
   m_wideGraph->setMode(m_mode);
   m_send_RR73=true;
   VHF_features_enabled(bVHF);
+  ui->cbAutoSeq->setChecked(true);
   m_fastGraph->hide();
   m_wideGraph->show();
   ui->rh_decodes_headings_label->setText("  UTC   dB   DT Freq    " + tr ("Message"));
@@ -7263,6 +7266,7 @@ void MainWindow::on_actionQ65_triggered()
   m_mode="Q65";
   ui->actionQ65->setChecked(true);
   switch_mode(Modes::Q65);
+  ui->cbAutoSeq->setChecked(true);
   fast_config(false);
   WSPR_config(false);
   setup_status_bar(true);
@@ -7344,6 +7348,7 @@ void MainWindow::on_actionMSK144_triggered()
   m_toneSpacing=0.0;
   WSPR_config(false);
   VHF_features_enabled(true);
+  ui->cbAutoSeq->setChecked(true);
   m_bFastMode=true;
   m_bFast9=false;
   ui->sbTR->values ({5, 10, 15, 30});
