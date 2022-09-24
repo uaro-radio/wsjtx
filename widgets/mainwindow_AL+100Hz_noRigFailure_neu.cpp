@@ -7882,7 +7882,8 @@ void MainWindow::on_rptSpinBox_valueChanged(int n)
 
 void MainWindow::on_tuneButton_clicked (bool checked)
 {
-  if (!(m_config.Tune_watchdog_disabled() || m_mode=="WSPR" || m_mode=="FST4W"))  tuneATU_Timer.start (120000); // tune watchdog (90s)
+  if (!(m_config.Tune_watchdog_disabled() || m_mode=="WSPR" || m_mode=="FST4W"))  tuneATU_Timer.start (120000); // tune watchdog
+  if (!checked) tuneATU_Timer.stop ();    // stop tune watchdog when stopping Tune manually
   static bool lastChecked = false;
   if (lastChecked == checked) return;
   lastChecked = checked;
