@@ -145,6 +145,8 @@ private:
 
 private slots:
   void initialize_fonts ();
+  void stopWRTimeout();
+  void stopWCTimeout();
   void bandHoppingTimer();
   void bandHopping();
   void on_houndButton_clicked(bool checked);
@@ -629,6 +631,7 @@ private:
 
   QTimer m_guiTimer;
   QTimer stopWRTimer;               //Wait & Reply
+  QTimer stopWCTimer;               //Wait & Call
   QTimer ptt1Timer;                 //StartTx delay
   QTimer ptt0Timer;                 //StopTx delay
   QTimer logQSOTimer;
@@ -784,7 +787,6 @@ private:
   void ba2msg(QByteArray ba, char* message);
   void msgtype(QString t, QLineEdit* tx);
   void stub();
-  void stopWRTimeout();
   void statusChanged();
   void fixStop();
   bool shortList(QString callsign) const;

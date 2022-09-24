@@ -143,6 +143,8 @@ private:
 
 private slots:
   void initialize_fonts ();
+  void stopWRTimeout();
+  void stopWCTimeout();
   void bandHoppingTimer();
   void bandHopping();
   void on_houndButton_clicked(bool checked);
@@ -781,8 +783,6 @@ private:
   void ba2msg(QByteArray ba, char* message);
   void msgtype(QString t, QLineEdit* tx);
   void stub();
-  void stopWRTimeout();
-  void stopWCTimeout();
   void statusChanged();
   void fixStop();
   bool shortList(QString callsign) const;

@@ -211,6 +211,7 @@ using SpecOp = Configuration::SpecialOperatingActivity;
 
 bool m_displayBand = false;
 bool wait_and_call = false;
+bool no_wait_and_call = false;
 
 namespace
 {
@@ -851,6 +852,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   stopWRTimer.setSingleShot(true);
   connect(&stopWRTimer, &QTimer::timeout, this, &MainWindow::stopWRTimeout);
+
+  stopWCTimer.setSingleShot(true);
+  connect(&stopWCTimer, &QTimer::timeout, this, &MainWindow::stopWCTimeout);
 
   ptt0Timer.setSingleShot(true);
   connect(&ptt0Timer, &QTimer::timeout, this, &MainWindow::stopTx2);
@@ -1916,25 +1920,25 @@ void MainWindow::fastSink(qint64 frames)
     ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC(),
          m_logBook, m_currentBand, m_config.ppfx ());
 
+    QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait & Reply/Call
+
     // Wait & Reply for MSK144
-    if (decodedtext.string().contains(m_config.my_callsign() + " " + m_hisCall) &&
-       (m_hisCall!="") && !decodedtext.string().contains("73 ") && m_mode=="MSK144") {
+    if (text.contains(m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
+        !decodedtext.string().contains("73 ") && m_mode=="MSK144") {
           m_bDoubleClicked = true;
           processMessage(decodedtext);
           auto_tx_mode(true);
-          stopWRTimer.start(int(12000.0*m_TRperiod));      // Wait & Reply Tx max 12*TRperiod
+          stopWRTimer.start(int(12000.0*m_TRperiod));     // Wait & Reply Tx max 12*TRperiod
     }
     // Wait & Call for MSK144
-    if (m_mode=="MSK144" && wait_and_call && m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && (m_hisCall!="") &&
-        (decodedtext.string().contains("CQ " + m_hisCall) or decodedtext.string().contains(m_hisCall + " RR73")
-         or decodedtext.string().contains(m_hisCall + " RRR") or decodedtext.string().contains(m_hisCall + " 73"))) {
+    if (m_mode=="MSK144" && wait_and_call && m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() &&
+        m_hisCall!="" && (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
+         or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))) {
           m_bDoubleClicked = true;
           processMessage(decodedtext);
           auto_tx_mode(true);
-          QTimer::singleShot (int(6000.0*m_TRperiod), [=] {   // Wait & Call Tx max 6*TRperiod
-              auto_tx_mode(false);
-              if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
-          });
+          no_wait_and_call = true;
+          stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
     }
     // CQ First for MSK144
     if (m_bCallingCQ && !m_bAutoReply && decodedtext.string().contains(m_config.my_callsign())
@@ -2208,8 +2212,13 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
 
 void MainWindow::on_autoButton_clicked (bool checked)
 {
-  QTimer::singleShot (3000, [=] {tuneATU_Timer.stop ();});  // Stop the Tune watchdog
-  stopWRTimer.stop();                                       // Stop any Wait & Reply timeout
+  QTimer::singleShot (3000, [=] {tuneATU_Timer.stop ();});  // stop the Tune watchdog
+  stopWRTimer.stop();                                       // stop any Wait & Reply timeout
+  if (!checked && ui->DX_Call_Button->isChecked()) {
+      stopWCTimer.stop();                                   // stop any Wait & Call timeout
+      ui->DX_Call_Button->click ();                         // disable Wait & Call
+      no_wait_and_call = false;                             // reset Wait & Call
+  }
   ui->pbBandHopping->setChecked(false); // disable band hopping when Tx is enabled
   m_auto = checked;
   m_maxPoints=-1;
@@ -2542,6 +2551,13 @@ void MainWindow::stopWRTimeout()
     auto_tx_mode(false);
 }
 
+void MainWindow::stopWCTimeout()
+{
+    auto_tx_mode(false);
+    if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
+    no_wait_and_call = false;
+}
+
 void MainWindow::statusChanged()
 {
   QTimer::singleShot (50, [=] {       // only allow Wait & Call where it is appropriate
@@ -2763,6 +2779,9 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
     m_bRefSpec=false;
   }
   if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
+  stopWRTimer.stop();           // Stop any Wait & Reply timeout
+  stopWCTimer.stop();           // Stop any Wait & Call timeout
+  no_wait_and_call = false;
 }
 
 void MainWindow::on_actionRelease_Notes_triggered ()
@@ -3978,32 +3997,31 @@ void MainWindow::readFromStdout()                             //readFromStdout
             ARRL_Digi_Update(decodedtext1);
         }
 
-          // Wait & Reply
-        if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") &&
-             (decodedtext.string().contains(m_config.my_callsign() + " " + m_hisCall) &&
-             (m_hisCall!="") && !decodedtext.string().contains("73 "))) {
+        QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait & Reply/Call
+
+        // Wait & Reply
+        if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && (m_hisCall!="") &&
+            (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))) {
                 m_bDoubleClicked = true;
                 processMessage(decodedtext0);
                 auto_tx_mode(true);
-                stopWRTimer.start(int(8000.0*m_TRperiod));     // Wait & Reply Tx max 8*TRperiod
+                stopWRTimer.start(int(8000.0*m_TRperiod));    // Wait & Reply Tx max 8*TRperiod
         }
 
-        // Wait & Call
-      if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && wait_and_call &&
-           m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && (m_hisCall!="") &&
-          (decodedtext.string().contains("CQ " + m_hisCall) or decodedtext.string().contains(m_hisCall + " RR73")
-           or decodedtext.string().contains(m_hisCall + " RRR") or decodedtext.string().contains(m_hisCall + " 73"))) {
-            if (!decodedtext.string().contains(m_config.my_callsign() + " " + m_hisCall))
-                block_right_display = true;   // prevent display of first message twice
-            if (m_specOp==SpecOp::HOUND) ui->TxFreqSpinBox->setValue(2300);
-            m_bDoubleClicked = true;
-            processMessage(decodedtext0);
-            auto_tx_mode(true);
-            QTimer::singleShot (int(6000.0*m_TRperiod), [=] {   // Wait & Call Tx max 6*TRperiod
-                auto_tx_mode(false);
-                if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
-                });
-      }
+          // Wait & Call
+        if (wait_and_call && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") &&
+            m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && m_hisCall!="" && !no_wait_and_call &&
+            (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
+             or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))) {
+              if (!text.contains(m_config.my_callsign() + " " + m_hisCall))
+                  block_right_display = true;                // prevent display of first message twice
+              if (m_specOp==SpecOp::HOUND) ui->TxFreqSpinBox->setValue(2300);
+              m_bDoubleClicked = true;
+              processMessage(decodedtext0);
+              auto_tx_mode(true);
+              no_wait_and_call = true;
+              stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
+        }
 
           // Filtering out messages with keywords from Blacklist
        if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
@@ -7925,11 +7943,10 @@ void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
   m_bCallingCQ = false;
   m_bAutoReply = false;         // ready for next
   m_maxPoints=-1;
-  if (ui->DX_Call_Button->isChecked()) {
-      wait_and_call = false;
-      ui->DX_Call_Button->setChecked (false);
-      ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
-  }
+  if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
+  stopWRTimer.stop();           // Stop any Wait & Reply timeout
+  stopWCTimer.stop();           // Stop any Wait & Call timeout
+  no_wait_and_call = false;
 }
 
 void MainWindow::rigOpen ()
