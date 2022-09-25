@@ -4100,10 +4100,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
          if(bWorkedOnBand) activeWorked(deCall,m_currentBand);
        }
 
-       if (m_config.highlight_DXcall () && (m_hisCall!="") && ((decodedtext.string().contains(QRegularExpression {"(\\w+) " + m_hisCall}))
-            || (decodedtext.string().contains(QRegularExpression {"(\\w+) <" + m_hisCall +">"}))
-            || (decodedtext.string().contains(QRegularExpression {"<(\\w+)> " + m_hisCall}))
-            || (decodedtext.string().contains(QRegularExpression {"<...> " + m_hisCall}))))  {
+       if (m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
+            || (decodedtext.string().contains("<...> " + m_hisCall))))  {
            ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
            if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
            QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
