@@ -38,7 +38,6 @@
 #include "Transceiver/Transceiver.hpp"
 #include "DisplayManual.hpp"
 #include "Network/PSKReporter.hpp"
-#include "Network/Cloudlog.hpp"
 #include "logbook/logbook.h"
 #include "astro.h"
 #include "MessageBox.hpp"
@@ -96,7 +95,6 @@ class SampleDownloader;
 class MultiSettings;
 class EqualizationToolsDialog;
 class DecodedText;
-class Cloudlog;
 
 class MainWindow
   : public MultiGeometryWidget<3, QMainWindow>
@@ -145,7 +143,6 @@ private:
 
 private slots:
   void initialize_fonts ();
-  void on_actionUse_Dark_Style_triggered (bool checked);
   void stopWRTimeout();
   void stopWCTimeout();
   void bandHoppingTimer();
@@ -156,6 +153,8 @@ private slots:
   void on_msk144Button_clicked();
   void on_q65Button_clicked();
   void on_jt65Button_clicked();
+  void on_fst4Button_clicked();
+  void on_wsprButton_clicked();
   void on_tx1_editingFinished();
   void on_tx2_editingFinished();
   void on_tx3_editingFinished();
@@ -385,7 +384,6 @@ private:
   void setColorHighlighting();
   void chkFT4();
   bool elide_tx1_not_allowed () const;
-  bool play_DXcall = false;
 
   QProcessEnvironment const& m_env;
   NetworkAccessManager m_network_manager;
@@ -400,7 +398,6 @@ private:
 
   Configuration m_config;
   LogBook m_logBook;            // must be after Configuration construction
-  Cloudlog m_cloudlog;
   WSPRBandHopping m_WSPR_band_hopping;
   bool m_WSPR_tx_next;
   MessageBox m_rigErrorMessageBox;
@@ -773,7 +770,6 @@ private:
   QByteArray m_geometryNoControls;
   QVector<double> m_phaseEqCoefficients;
   bool m_block_udp_status_updates;
-  bool m_useDarkStyle;
 
   //---------------------------------------------------- private functions
   void readSettings();

@@ -143,6 +143,7 @@ private:
 
 private slots:
   void initialize_fonts ();
+  void on_actionUse_Dark_Style_triggered (bool checked);
   void stopWRTimeout();
   void stopWCTimeout();
   void bandHoppingTimer();
@@ -768,6 +769,7 @@ private:
   QByteArray m_geometryNoControls;
   QVector<double> m_phaseEqCoefficients;
   bool m_block_udp_status_updates;
+  bool m_useDarkStyle;
 
   //---------------------------------------------------- private functions
   void readSettings();
