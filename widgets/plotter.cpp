@@ -428,12 +428,20 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
   Font.setPointSize(12);
   Font.setWeight(QFont::Normal);
   painter0.setFont(Font);
-  painter0.setPen(Qt::black);
+  if (m_useDarkStyle) {
+      painter0.setPen(Qt::white);
+  } else {
+      painter0.setPen(Qt::black);
+  }
 
   if(m_binsPerPixel < 1) m_binsPerPixel=1;
   m_hdivs = w*df/m_freqPerDiv + 0.9999;
 
-  m_ScalePixmap.fill(Qt::white);
+  if (m_useDarkStyle) {
+      m_ScalePixmap.fill(Qt::black);
+  } else {
+      m_ScalePixmap.fill(Qt::white);
+  }
   painter0.drawRect(0, 0, w, 30);
   MakeFrequencyStrs();
 
@@ -980,4 +988,11 @@ void CPlotter::showFreq(bool b)
 {
   setMouseTracking(b || m_bars);
   m_freq=b;
+}
+
+void CPlotter::setDarkStyle (bool b)     //set wide filter lines for Hound mode
+{
+  m_useDarkStyle=b;
+  DrawOverlay();
+  update();
 }

@@ -1478,21 +1478,63 @@ void MainWindow::checkMSK144ContestType()
 
 void MainWindow::set_application_font (QFont const& font)
 {
-  qApp->setFont (font);
-  // set font in the application style sheet as well in case it has
-  // been modified in the style sheet which has priority
-  QString ss;
-  if (qApp->styleSheet ().size ())
-    {
-      auto sheet = qApp->styleSheet ();
-      sheet.remove ("file:///");
-      QFile sf {sheet};
-      if (sf.open (QFile::ReadOnly | QFile::Text))
-        {
-          ss = sf.readAll () + ss;
-        }
-    }
-  qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
+  // check if dark style is enabled, this check is also effective during the program start
+  if (ui->actionUse_Dark_Style->isChecked()) {
+      QFile f(":qdarkstyle/style.qss");
+      if (!f.exists())   {
+          printf("Unable to set stylesheet, file not found\n");
+      } else {
+          qApp->setFont (font);
+          QString ss;
+          f.open(QFile::ReadOnly | QFile::Text);
+          QTextStream ts(&f);
+          qApp->setStyleSheet(ts.readAll() + "* {" + font_as_stylesheet (font) + '}');
+          m_useDarkStyle = true;
+          m_wideGraph->setDarkStyle(m_useDarkStyle);
+          ui->signal_meter_widget->setMinimumWidth(50);
+          ui->tabWidget->setMinimumHeight(250);                       // UR for normal + widescreen
+//          ui->tabWidget->setMaximumHeight(255);                       // UR for AL
+          qreal pointSize = m_config.text_font().pointSizeF();        // UR disable for AL
+          if (pointSize < 9) {
+              ui->signal_meter_widget->setMinimumWidth(60);
+          } else {
+              ui->signal_meter_widget->setMinimumWidth(70);
+          }                                                           // UR disable for AL
+      }
+  } else {
+      ui->tabWidget->setMinimumHeight(0);                             // UR for normal + widescreen
+//      ui->tabWidget->setMaximumHeight(210);                           // UR for AL
+      ui->signal_meter_widget->setMinimumWidth(0);
+      m_useDarkStyle = false;
+      m_wideGraph->setDarkStyle(m_useDarkStyle);
+      qApp->setFont (font);
+      // set font in the application style sheet as well in case it has
+      // been modified in the style sheet which has priority
+      QString ss;
+      if (qApp->styleSheet ().size ()) {
+         auto sheet = qApp->styleSheet ();
+         sheet.remove ("file:///");
+         QFile sf {sheet};
+         if (sf.open (QFile::ReadOnly | QFile::Text)) ss = sf.readAll () + ss;
+      }
+      qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
+  }
+  qreal pointSize = m_config.text_font().pointSizeF();                // UR disable for AL
+  if (pointSize < 11) {
+      ui->houndButton->setMaximumWidth(40);
+      ui->ft8Button->setMaximumWidth(40);
+      ui->ft4Button->setMaximumWidth(40);
+      ui->msk144Button->setMaximumWidth(40);
+      ui->q65Button->setMaximumWidth(40);
+      ui->jt65Button->setMaximumWidth(40);
+  } else {
+      ui->houndButton->setMinimumWidth(50);
+      ui->ft8Button->setMinimumWidth(50);
+      ui->ft4Button->setMinimumWidth(50);
+      ui->msk144Button->setMinimumWidth(50);
+      ui->q65Button->setMinimumWidth(50);
+      ui->jt65Button->setMinimumWidth(50);
+  }                                                                   // UR disable for AL
   for (auto& widget : qApp->topLevelWidgets ())
     {
       widget->updateGeometry ();
@@ -2499,6 +2541,7 @@ void MainWindow::bumpFqso(int n)                                 //bumpFqso()
 
 void MainWindow::displayDialFrequency ()
 {
+  if (ui->actionUse_Dark_Style->isChecked()) ui->bandComboBox->setStyleSheet("QLineEdit {background-color: #31363b}");  // initialize dark style at startup
   Frequency dial_frequency {m_rigState.ptt () && m_rigState.split () ?
       m_rigState.tx_frequency () : m_rigState.frequency ()};
 
@@ -10880,4 +10923,52 @@ void MainWindow::on_actionDisable_event_logging_triggered()
     out << EventConfig;
     f.close();
     QFile::remove (QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx_syslog.log"));
+}
+
+void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
+{
+    QFont font = m_config.text_font();
+    if (checked) {
+        QFile f(":qdarkstyle/style.qss");
+        if (!f.exists())   {
+            printf("Unable to set stylesheet, file not found\n");
+        } else {
+            qApp->setFont (font);
+            QString ss;
+            f.open(QFile::ReadOnly | QFile::Text);
+            QTextStream ts(&f);
+            qApp->setStyleSheet(ts.readAll() + "* {" + font_as_stylesheet (font) + '}');
+            m_useDarkStyle = true;
+            m_wideGraph->setDarkStyle(m_useDarkStyle);
+            ui->signal_meter_widget->setMinimumWidth(50);
+            ui->tabWidget->setMinimumHeight(250);                       // UR for normal + widescreen
+//            ui->tabWidget->setMaximumHeight(255);                       // UR for AL
+            qreal pointSize = m_config.text_font().pointSizeF();        // UR disable for AL
+            if (pointSize < 9) {
+                ui->signal_meter_widget->setMinimumWidth(60);
+            } else {
+                ui->signal_meter_widget->setMinimumWidth(70);
+            }                                                           // UR disable for AL
+        }
+    } else {
+//        ui->tabWidget->setMinimumHeight(0);                             // UR for normal + widescreen
+        ui->tabWidget->setMaximumHeight(210);                           // UR for AL
+        ui->signal_meter_widget->setMinimumWidth(0);
+        m_useDarkStyle = false;
+        m_wideGraph->setDarkStyle(m_useDarkStyle);
+        qApp->setFont (font);
+        QString ss;
+        if (qApp->styleSheet ().size ()) {
+           auto sheet = qApp->styleSheet ();
+           sheet.remove ("file:///");
+           QFile sf {sheet};
+           if (sf.open (QFile::ReadOnly | QFile::Text)) ss = sf.readAll () + ss;
+        }
+        qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
+    }
+    for (auto& widget : qApp->topLevelWidgets ())
+      {
+        widget->updateGeometry ();
+      }
+    guiUpdate();
 }

@@ -90,6 +90,7 @@ public:
   void setSingleDecode(bool b);
   void setDiskUTC(int nutc);
   bool scaleOK () const {return m_bScaleOK;}
+  void setDarkStyle(bool b);
 
 signals:
   void freezeDecode1(int n);
@@ -125,6 +126,7 @@ private:
   bool	  m_bars;
   bool    m_freq;
   float   m_fSpan;
+  bool	  m_useDarkStyle=false;
 
   qint32  m_plotZero;
   qint32  m_plotGain;

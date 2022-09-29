@@ -434,10 +434,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         m_config.udp_server_name (), m_config.udp_server_port (),
         m_config.udp_interface_names (), m_config.udp_TTL (),
         this}},
-  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " i"}.simplified ()},     // UR
+  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " iws"}.simplified ()},     // UR
   m_manual {&m_network_manager},
-  m_block_udp_status_updates {false},
-  m_useDarkStyle {false}
+  m_block_udp_status_updates {false}
 {
   ui->setupUi(this);
   setUnifiedTitleAndToolBarOnMac (true);
@@ -1125,7 +1124,7 @@ void MainWindow::on_the_minute ()
 //--------------------------------------------------- MainWindow destructor
 MainWindow::~MainWindow()
 {
-    if(m_astroWidget) m_astroWidget.reset ();
+  if(m_astroWidget) m_astroWidget.reset ();
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir ().absoluteFilePath ("wsjtx_wisdom.dat"))};
   fftwf_export_wisdom_to_filename (fname.toLocal8Bit ());
   m_audioThread.quit ();
@@ -1279,7 +1278,6 @@ void MainWindow::writeSettings()
   m_settings->setValue ("splitAllTxtMonthly", ui->actionSplit_ALL_TXT_monthly->isChecked() );
   m_settings->setValue ("disableWritingOfAllTxt", ui->actionDisable_writing_of_ALL_TXT->isChecked() );
   m_settings->setValue ("DisableEventLogging", ui->actionDisable_event_logging->isChecked() );
-  m_settings->setValue ("DarkStyle", ui->actionUse_Dark_Style->isChecked() );
   m_settings->endGroup();
 }
 
@@ -1362,7 +1360,6 @@ void MainWindow::readSettings()
   ui->actionSplit_ALL_TXT_monthly->setChecked(m_settings->value("splitAllTxtMonthly", false).toBool());
   ui->actionDisable_writing_of_ALL_TXT->setChecked(m_settings->value("disableWritingOfAllTxt", false).toBool());
   ui->actionDisable_event_logging->setChecked(m_settings->value("DisableEventLogging", false).toBool());
-  ui->actionUse_Dark_Style->setChecked(m_settings->value("DarkStyle", false).toBool());
   m_mode=m_settings->value("Mode","JT9").toString();
   ui->actionNone->setChecked(m_settings->value("SaveNone",true).toBool());
   ui->actionSave_decoded->setChecked(m_settings->value("SaveDecoded",false).toBool());
@@ -1479,63 +1476,21 @@ void MainWindow::checkMSK144ContestType()
 
 void MainWindow::set_application_font (QFont const& font)
 {
-  // check if dark style is enabled, this check is also effective during the program start
-  if (ui->actionUse_Dark_Style->isChecked()) {
-      QFile f(":qdarkstyle/style.qss");
-      if (!f.exists())   {
-          printf("Unable to set stylesheet, file not found\n");
-      } else {
-          qApp->setFont (font);
-          QString ss;
-          f.open(QFile::ReadOnly | QFile::Text);
-          QTextStream ts(&f);
-          qApp->setStyleSheet(ts.readAll() + "* {" + font_as_stylesheet (font) + '}');
-          m_useDarkStyle = true;
-          m_wideGraph->setDarkStyle(m_useDarkStyle);
-          ui->signal_meter_widget->setMinimumWidth(50);
-          ui->tabWidget->setMinimumHeight(250);                       // UR for normal + widescreen
-//          ui->tabWidget->setMaximumHeight(255);                       // UR for AL
-          qreal pointSize = m_config.text_font().pointSizeF();        // UR disable for AL
-          if (pointSize < 9) {
-              ui->signal_meter_widget->setMinimumWidth(60);
-          } else {
-              ui->signal_meter_widget->setMinimumWidth(70);
-          }                                                           // UR disable for AL
-      }
-  } else {
-      ui->tabWidget->setMinimumHeight(0);                             // UR for normal + widescreen
-//      ui->tabWidget->setMaximumHeight(210);                           // UR for AL
-      ui->signal_meter_widget->setMinimumWidth(0);
-      m_useDarkStyle = false;
-      m_wideGraph->setDarkStyle(m_useDarkStyle);
-      qApp->setFont (font);
-      // set font in the application style sheet as well in case it has
-      // been modified in the style sheet which has priority
-      QString ss;
-      if (qApp->styleSheet ().size ()) {
-         auto sheet = qApp->styleSheet ();
-         sheet.remove ("file:///");
-         QFile sf {sheet};
-         if (sf.open (QFile::ReadOnly | QFile::Text)) ss = sf.readAll () + ss;
-      }
-      qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
-  }
-  qreal pointSize = m_config.text_font().pointSizeF();                // UR disable for AL
-  if (pointSize < 11) {
-      ui->houndButton->setMaximumWidth(40);
-      ui->ft8Button->setMaximumWidth(40);
-      ui->ft4Button->setMaximumWidth(40);
-      ui->msk144Button->setMaximumWidth(40);
-      ui->q65Button->setMaximumWidth(40);
-      ui->jt65Button->setMaximumWidth(40);
-  } else {
-      ui->houndButton->setMinimumWidth(50);
-      ui->ft8Button->setMinimumWidth(50);
-      ui->ft4Button->setMinimumWidth(50);
-      ui->msk144Button->setMinimumWidth(50);
-      ui->q65Button->setMinimumWidth(50);
-      ui->jt65Button->setMinimumWidth(50);
-  }                                                                   // UR disable for AL
+  qApp->setFont (font);
+  // set font in the application style sheet as well in case it has
+  // been modified in the style sheet which has priority
+  QString ss;
+  if (qApp->styleSheet ().size ())
+    {
+      auto sheet = qApp->styleSheet ();
+      sheet.remove ("file:///");
+      QFile sf {sheet};
+      if (sf.open (QFile::ReadOnly | QFile::Text))
+        {
+          ss = sf.readAll () + ss;
+        }
+    }
+  qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
   for (auto& widget : qApp->topLevelWidgets ())
     {
       widget->updateGeometry ();
@@ -2542,7 +2497,6 @@ void MainWindow::bumpFqso(int n)                                 //bumpFqso()
 
 void MainWindow::displayDialFrequency ()
 {
-  if (ui->actionUse_Dark_Style->isChecked()) ui->bandComboBox->setStyleSheet("QLineEdit {background-color: #31363b}");  // initialize dark style at startup
   Frequency dial_frequency {m_rigState.ptt () && m_rigState.split () ?
       m_rigState.tx_frequency () : m_rigState.frequency ()};
 
@@ -2707,7 +2661,6 @@ void MainWindow::setup_status_bar (bool vhf)
   if (vhf && submode != QChar::Null) {
     QString t{m_mode + " " + submode};
     if(m_mode=="Q65") t=m_mode + "-" + QString::number(m_TRperiod) + submode;
-
     mode_label.setText (t);
   } else {
     mode_label.setText (m_mode);
@@ -4147,22 +4100,22 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
        if (m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
             || (decodedtext.string().contains("<...> " + m_hisCall))))  {
-           ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+           ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,116,244), QColor(0,0,0), true);  // UR Mod for G4GVB
            QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
-               ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+               ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,116,244), QColor(0,0,0), true);
                });
            QTimer::singleShot (1000, [=] {                      // repeated highlighting to override JTAlert
-               ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+               ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,116,244), QColor(0,0,0), true);
                });
            QTimer::singleShot (2500, [=] {                      // repeated highlighting to override JTAlert
-               ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+               ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,116,244), QColor(0,0,0), true);
                });
        }
        if (m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
            ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true);
        }
 
-          if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
+       if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
             QString messagePriority=ui->decodedTextBrowser->CQPriority();
             if(messagePriority!="") {
               if(messagePriority=="New Call on Band"
@@ -7573,14 +7526,14 @@ void MainWindow::switch_mode (Mode mode)
   ui->tabWidget->setVisible(!b);
   if(b) {
     ui->DX_controls_widget->setVisible(false);
-    ui->rh_decodes_widget->setVisible (false);     // UR disable for AL + widescreen versions
+//    ui->rh_decodes_widget->setVisible (false);     // UR disable for AL + widescreen versions
     ui->lh_decodes_title_label->setVisible(false);
   }
 }
 
 void MainWindow::WSPR_config(bool b)
 {
-  ui->rh_decodes_widget->setVisible(!b);     // UR disable for AL + widescreen version
+//  ui->rh_decodes_widget->setVisible(!b);     // UR disable for AL + widescreen version
   ui->controls_stack_widget->setCurrentIndex (b && m_mode != "Echo" ? 1 : 0);
   ui->QSO_controls_widget->setVisible (!b);
   ui->DX_controls_widget->setVisible (!b or (m_mode=="Echo"));
@@ -10909,52 +10862,4 @@ void MainWindow::on_actionDisable_event_logging_triggered()
     out << EventConfig;
     f.close();
     QFile::remove (QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx_syslog.log"));
-}
-
-void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
-{
-    QFont font = m_config.text_font();
-    if (checked) {
-        QFile f(":qdarkstyle/style.qss");
-        if (!f.exists())   {
-            printf("Unable to set stylesheet, file not found\n");
-        } else {
-            qApp->setFont (font);
-            QString ss;
-            f.open(QFile::ReadOnly | QFile::Text);
-            QTextStream ts(&f);
-            qApp->setStyleSheet(ts.readAll() + "* {" + font_as_stylesheet (font) + '}');
-            m_useDarkStyle = true;
-            m_wideGraph->setDarkStyle(m_useDarkStyle);
-            ui->signal_meter_widget->setMinimumWidth(50);
-            ui->tabWidget->setMinimumHeight(250);                       // UR for normal + widescreen
-//            ui->tabWidget->setMaximumHeight(255);                       // UR for AL
-            qreal pointSize = m_config.text_font().pointSizeF();        // UR disable for AL
-            if (pointSize < 9) {
-                ui->signal_meter_widget->setMinimumWidth(60);
-            } else {
-                ui->signal_meter_widget->setMinimumWidth(70);
-            }                                                           // UR disable for AL
-        }
-    } else {
-//        ui->tabWidget->setMinimumHeight(0);                             // UR for normal + widescreen
-        ui->tabWidget->setMaximumHeight(210);                           // UR for AL
-        ui->signal_meter_widget->setMinimumWidth(0);
-        m_useDarkStyle = false;
-        m_wideGraph->setDarkStyle(m_useDarkStyle);
-        qApp->setFont (font);
-        QString ss;
-        if (qApp->styleSheet ().size ()) {
-           auto sheet = qApp->styleSheet ();
-           sheet.remove ("file:///");
-           QFile sf {sheet};
-           if (sf.open (QFile::ReadOnly | QFile::Text)) ss = sf.readAll () + ss;
-        }
-        qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
-    }
-    for (auto& widget : qApp->topLevelWidgets ())
-      {
-        widget->updateGeometry ();
-      }
-    guiUpdate();
 }

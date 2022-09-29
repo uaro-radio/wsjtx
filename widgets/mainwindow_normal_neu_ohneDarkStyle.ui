@@ -3417,7 +3417,6 @@ QLabel[oob=&quot;true&quot;] {
     <addaction name="actionColors"/>
     <addaction name="actionActiveStations"/>
     <addaction name="actionSWL_Mode"/>
-    <addaction name="actionUse_Dark_Style"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -4085,14 +4084,6 @@ QLabel[oob=&quot;true&quot;] {
   <action name="actionCopy_to_WSJTX_txt">
    <property name="text">
     <string>Copy main text window to WSJT-X.txt</string>
-   </property>
-  </action>
-  <action name="actionUse_Dark_Style">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Use Dark Style</string>
    </property>
   </action>
  </widget>

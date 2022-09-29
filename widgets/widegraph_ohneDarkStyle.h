@@ -51,7 +51,6 @@ public:
   void   setFST4_FreqRange(int fLow,int fHigh);
   void   setSingleDecode(bool b);
   void   setDiskUTC(int nutc);
-  void	 setDarkStyle(bool b);
 
 signals:
   void freezeDecode2(int n);

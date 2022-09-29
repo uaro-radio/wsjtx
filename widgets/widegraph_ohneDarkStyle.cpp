@@ -562,8 +562,3 @@ void WideGraph::setDiskUTC(int nutc)
 {
   ui->widePlot->setDiskUTC(nutc);
 }
-
-void WideGraph::setDarkStyle(bool b)
-{
-  ui->widePlot->setDarkStyle(b);
-}
