@@ -1494,22 +1494,15 @@ void MainWindow::set_application_font (QFont const& font)
           qApp->setStyleSheet(ts.readAll() + "* {" + font_as_stylesheet (font) + '}');
           m_useDarkStyle = true;
           m_wideGraph->setDarkStyle(m_useDarkStyle);
-          ui->signal_meter_widget->setMinimumWidth(50);
-//          ui->tabWidget->setMinimumHeight(250);                       // UR for normal + widescreen
-          ui->tabWidget->setMaximumHeight(255);                       // UR for AL
-/*
-          qreal pointSize = m_config.text_font().pointSizeF();        // UR disable for AL
-          if (pointSize < 9) {
-              ui->signal_meter_widget->setMinimumWidth(60);
-          } else {
-              ui->signal_meter_widget->setMinimumWidth(70);
-          }                                                           // UR disable for AL
-*/
+//          ui->signal_meter_widget->setMinimumWidth(50);               // UR for normal + widescreen
+//          qreal pointSize = m_config.text_font().pointSizeF();        // UR for normal + widescreen
+//          if (pointSize < 9) {                                        // UR for normal + widescreen
+//              ui->signal_meter_widget->setMinimumWidth(60);           // UR for normal + widescreen
+//          } else {                                                    // UR for normal + widescreen
+//              ui->signal_meter_widget->setMinimumWidth(70);           // UR for normal + widescreen
+//          }                                                           // UR for normal + widescreen
       }
-  } else {
-//      ui->tabWidget->setMinimumHeight(0);                             // UR for normal + widescreen
-      ui->tabWidget->setMaximumHeight(210);                           // UR for AL
-      ui->signal_meter_widget->setMinimumWidth(0);
+   } else {
       m_useDarkStyle = false;
       m_wideGraph->setDarkStyle(m_useDarkStyle);
       qApp->setFont (font);
@@ -1524,24 +1517,27 @@ void MainWindow::set_application_font (QFont const& font)
       }
       qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
   }
-/*
-  qreal pointSize = m_config.text_font().pointSizeF();                // UR disable for AL
+
+  qreal pointSize = m_config.text_font().pointSizeF();
   if (pointSize < 11) {
-      ui->houndButton->setMaximumWidth(40);
-      ui->ft8Button->setMaximumWidth(40);
-      ui->ft4Button->setMaximumWidth(40);
-      ui->msk144Button->setMaximumWidth(40);
-      ui->q65Button->setMaximumWidth(40);
-      ui->jt65Button->setMaximumWidth(40);
+      ui->tabWidget->setMaximumHeight(210);                           // UR for AL
+//      if (ui->actionUse_Dark_Style->isChecked()) ui->tabWidget->setMaximumHeight(225);  // UR for normal + widescreen
+//      ui->houndButton->setMaximumWidth(40);                           // UR for normal + widescreen
+//      ui->ft8Button->setMaximumWidth(40);                             // UR for normal + widescreen
+//      ui->ft4Button->setMaximumWidth(40);                             // UR for normal + widescreen
+//      ui->msk144Button->setMaximumWidth(40);                          // UR for normal + widescreen
+//      ui->q65Button->setMaximumWidth(40);                             // UR for normal + widescreen
+//      ui->jt65Button->setMaximumWidth(40);                            // UR for normal + widescreen
   } else {
-      ui->houndButton->setMinimumWidth(50);
-      ui->ft8Button->setMinimumWidth(50);
-      ui->ft4Button->setMinimumWidth(50);
-      ui->msk144Button->setMinimumWidth(50);
-      ui->q65Button->setMinimumWidth(50);
-      ui->jt65Button->setMinimumWidth(50);
-  }                                                                   // UR disable for AL
-*/
+      ui->tabWidget->setMaximumHeight(255);                           // UR for AL
+//      ui->tabWidget->setMaximumHeight(500);                           // UR for normal + widescreen
+//      ui->houndButton->setMinimumWidth(50);                           // UR for normal + widescreen
+//      ui->ft8Button->setMinimumWidth(50);                             // UR for normal + widescreen
+//      ui->ft4Button->setMinimumWidth(50);                             // UR for normal + widescreen
+//      ui->msk144Button->setMinimumWidth(50);                          // UR for normal + widescreen
+//      ui->q65Button->setMinimumWidth(50);                             // UR for normal + widescreen
+//      ui->jt65Button->setMinimumWidth(50);                            // UR for normal + widescreen
+  }
   for (auto& widget : qApp->topLevelWidgets ())
     {
       widget->updateGeometry ();
@@ -10976,22 +10972,15 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
             qApp->setStyleSheet(ts.readAll() + "* {" + font_as_stylesheet (font) + '}');
             m_useDarkStyle = true;
             m_wideGraph->setDarkStyle(m_useDarkStyle);
-            ui->signal_meter_widget->setMinimumWidth(50);
-//            ui->tabWidget->setMinimumHeight(250);                       // UR for normal + widescreen
-            ui->tabWidget->setMaximumHeight(255);                       // UR for AL
-/*
-            qreal pointSize = m_config.text_font().pointSizeF();        // UR disable for AL
-            if (pointSize < 9) {
-                ui->signal_meter_widget->setMinimumWidth(60);
-            } else {
-                ui->signal_meter_widget->setMinimumWidth(70);
-            }                                                           // UR disable for AL
-*/
+//            ui->signal_meter_widget->setMinimumWidth(50);               // UR for normal + widescreen
+//            qreal pointSize = m_config.text_font().pointSizeF();        // UR for normal + widescreen
+//            if (pointSize < 9) {                                        // UR for normal + widescreen
+//                ui->signal_meter_widget->setMinimumWidth(60);           // UR for normal + widescreen
+//            } else {                                                    // UR for normal + widescreen
+//                ui->signal_meter_widget->setMinimumWidth(70);           // UR for normal + widescreen
+//            }                                                           // UR for normal + widescreen
         }
     } else {
-//        ui->tabWidget->setMinimumHeight(0);                             // UR for normal + widescreen
-        ui->tabWidget->setMaximumHeight(210);                           // UR for AL
-        ui->signal_meter_widget->setMinimumWidth(0);
         m_useDarkStyle = false;
         m_wideGraph->setDarkStyle(m_useDarkStyle);
         qApp->setFont (font);
@@ -11003,6 +10992,14 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
            if (sf.open (QFile::ReadOnly | QFile::Text)) ss = sf.readAll () + ss;
         }
         qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
+    }
+    qreal pointSize = m_config.text_font().pointSizeF();
+    if (pointSize < 11) {
+        ui->tabWidget->setMaximumHeight(210);                         // UR for AL
+//        if (ui->actionUse_Dark_Style->isChecked()) ui->tabWidget->setMaximumHeight(225);  // UR for normal + widescreen
+    } else {
+        ui->tabWidget->setMaximumHeight(255);                         // UR for AL
+//        ui->tabWidget->setMaximumHeight(500);                         // UR for normal + widescreen
     }
     for (auto& widget : qApp->topLevelWidgets ())
       {
