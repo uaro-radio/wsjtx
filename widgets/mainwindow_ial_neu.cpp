@@ -4002,7 +4002,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
                 or m_displayBand) {
               band = ' ' + m_config.bands ()->find (m_freqNominal);
             }
-            ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
+            if (ui->actionUse_Dark_Style->isChecked()) {
+                ui->decodedTextBrowser->appendText(band.rightJustified(40, '-'), "#a2a2a2", "#000000");
+            } else {
+                ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
+            }
           }
         m_tBlankLine = line_read.left(ntime);
       }
