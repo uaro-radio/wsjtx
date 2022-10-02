@@ -1491,6 +1491,7 @@ void MainWindow::set_application_font (QFont const& font)
           qApp->setStyleSheet(ts.readAll() + "* {" + font_as_stylesheet (font) + '}');
           m_useDarkStyle = true;
           m_wideGraph->setDarkStyle(m_useDarkStyle);
+          ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
           ui->signal_meter_widget->setMinimumWidth(50);               // UR for normal + widescreen
           qreal pointSize = m_config.text_font().pointSizeF();        // UR for normal + widescreen
           if (pointSize < 9) {                                        // UR for normal + widescreen
@@ -1502,6 +1503,7 @@ void MainWindow::set_application_font (QFont const& font)
    } else {
       m_useDarkStyle = false;
       m_wideGraph->setDarkStyle(m_useDarkStyle);
+      ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
       qApp->setFont (font);
       // set font in the application style sheet as well in case it has
       // been modified in the style sheet which has priority
@@ -6629,7 +6631,11 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
   } else {
       wait_and_call = false;      // toggle Wait & Call off in any other case
       ui->DX_Call_Button->setChecked (false);
-      ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+      if (ui->actionUse_Dark_Style->isChecked()) {
+         ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+      } else {
+         ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+      }
   }
 }
 
@@ -10948,6 +10954,7 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
             qApp->setStyleSheet(ts.readAll() + "* {" + font_as_stylesheet (font) + '}');
             m_useDarkStyle = true;
             m_wideGraph->setDarkStyle(m_useDarkStyle);
+            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
             ui->signal_meter_widget->setMinimumWidth(50);               // UR for normal + widescreen
             qreal pointSize = m_config.text_font().pointSizeF();        // UR for normal + widescreen
             if (pointSize < 9) {                                        // UR for normal + widescreen
@@ -10959,6 +10966,7 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
     } else {
         m_useDarkStyle = false;
         m_wideGraph->setDarkStyle(m_useDarkStyle);
+        ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
         qApp->setFont (font);
         QString ss;
         if (qApp->styleSheet ().size ()) {
