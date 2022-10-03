@@ -1474,11 +1474,13 @@ void MainWindow::set_application_font (QFont const& font)
           m_useDarkStyle = true;
           m_wideGraph->setDarkStyle(m_useDarkStyle);
           ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+          ui->tabWidget->setTabShape(QTabWidget::Rounded);
       }
    } else {
       m_useDarkStyle = false;
       m_wideGraph->setDarkStyle(m_useDarkStyle);
       ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+      ui->tabWidget->setTabShape(QTabWidget::Triangular);
       qApp->setFont (font);
       // set font in the application style sheet as well in case it has
       // been modified in the style sheet which has priority
@@ -10936,11 +10938,13 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
             m_useDarkStyle = true;
             m_wideGraph->setDarkStyle(m_useDarkStyle);
             ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+            ui->tabWidget->setTabShape(QTabWidget::Rounded);
         }
     } else {
         m_useDarkStyle = false;
         m_wideGraph->setDarkStyle(m_useDarkStyle);
         ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+        ui->tabWidget->setTabShape(QTabWidget::Triangular);
         qApp->setFont (font);
         QString ss;
         if (qApp->styleSheet ().size ()) {
