@@ -762,24 +762,6 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
               }
           });
 
-  // ensure a balanced layout of the mode buttons
-  qreal pointSize = m_config.text_font().pointSizeF();                // UR disable for AL
-  if (pointSize < 11) {
-      ui->houndButton->setMaximumWidth(40);
-      ui->ft8Button->setMaximumWidth(40);
-      ui->ft4Button->setMaximumWidth(40);
-      ui->msk144Button->setMaximumWidth(40);
-      ui->q65Button->setMaximumWidth(40);
-      ui->jt65Button->setMaximumWidth(40);
-  } else {
-      ui->houndButton->setMinimumWidth(50);
-      ui->ft8Button->setMinimumWidth(50);
-      ui->ft4Button->setMinimumWidth(50);
-      ui->msk144Button->setMinimumWidth(50);
-      ui->q65Button->setMinimumWidth(50);
-      ui->jt65Button->setMinimumWidth(50);
-  }                                                                   // UR disable for AL
-
   // hook up save WAV file exit handling
   connect (&m_saveWAVWatcher, &QFutureWatcher<QString>::finished, [this] {
       // extract the promise from the future
@@ -1493,13 +1475,6 @@ void MainWindow::set_application_font (QFont const& font)
           m_useDarkStyle = true;
           m_wideGraph->setDarkStyle(m_useDarkStyle);
           ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-          ui->signal_meter_widget->setMinimumWidth(50);               // UR for normal + widescreen
-          qreal pointSize = m_config.text_font().pointSizeF();        // UR for normal + widescreen
-          if (pointSize < 9) {                                        // UR for normal + widescreen
-              ui->signal_meter_widget->setMinimumWidth(60);           // UR for normal + widescreen
-          } else {                                                    // UR for normal + widescreen
-              ui->signal_meter_widget->setMinimumWidth(70);           // UR for normal + widescreen
-          }                                                           // UR for normal + widescreen
       }
    } else {
       m_useDarkStyle = false;
@@ -1518,6 +1493,7 @@ void MainWindow::set_application_font (QFont const& font)
       qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
   }
 
+  // ensure a balanced layout of the mode buttons
   qreal pointSize = m_config.text_font().pointSizeF();
   if (pointSize < 11) {
 //      ui->tabWidget->setMaximumHeight(210);                           // UR for AL
@@ -1528,6 +1504,12 @@ void MainWindow::set_application_font (QFont const& font)
       ui->msk144Button->setMaximumWidth(40);                          // UR for normal + widescreen
       ui->q65Button->setMaximumWidth(40);                             // UR for normal + widescreen
       ui->jt65Button->setMaximumWidth(40);                            // UR for normal + widescreen
+      ui->houndButton->setMinimumWidth(0);                            // UR for normal + widescreen
+      ui->ft8Button->setMinimumWidth(0);                              // UR for normal + widescreen
+      ui->ft4Button->setMinimumWidth(0);                              // UR for normal + widescreen
+      ui->msk144Button->setMinimumWidth(0);                           // UR for normal + widescreen
+      ui->q65Button->setMinimumWidth(0);                              // UR for normal + widescreen
+      ui->jt65Button->setMinimumWidth(0);                             // UR for normal + widescreen
   } else {
 //      ui->tabWidget->setMaximumHeight(255);                           // UR for AL
       ui->tabWidget->setMaximumHeight(500);                           // UR for normal + widescreen
@@ -10941,13 +10923,6 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
             m_useDarkStyle = true;
             m_wideGraph->setDarkStyle(m_useDarkStyle);
             ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-            ui->signal_meter_widget->setMinimumWidth(50);               // UR for normal + widescreen
-            qreal pointSize = m_config.text_font().pointSizeF();        // UR for normal + widescreen
-            if (pointSize < 9) {                                        // UR for normal + widescreen
-                ui->signal_meter_widget->setMinimumWidth(60);           // UR for normal + widescreen
-            } else {                                                    // UR for normal + widescreen
-                ui->signal_meter_widget->setMinimumWidth(70);           // UR for normal + widescreen
-            }                                                           // UR for normal + widescreen
         }
     } else {
         m_useDarkStyle = false;
