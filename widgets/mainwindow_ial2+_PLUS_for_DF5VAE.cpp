@@ -157,7 +157,7 @@ extern "C" {
 
   void save_echo_params_(int* ndoptotal, int* ndop, int* nfrit, float* f1, float* fspread, short id2[], int* idir);
 
-  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1,
+  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* navg, int* nqual, float* f1,
                 float* level, float* sigdb, float* snr, float* dfreq,
                 float* width, bool* bDiskData);
 
@@ -1224,6 +1224,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("Blanker",ui->sbNB->value());
   m_settings->setValue("Score",m_score);
   m_settings->setValue("labDXpedText",ui->labDXped->text());
+  m_settings->setValue("EchoAvg",ui->sbEchoAvg->value());
 
   {
     QList<QVariant> coeffs;     // suitable for QSettings
@@ -1427,6 +1428,7 @@ void MainWindow::readSettings()
   ui->actionAuto_Clear_Avg->setChecked (m_settings->value ("AutoClearAvg", false).toBool());
   ui->decodes_splitter->restoreState(m_settings->value("SplitterState").toByteArray());
   ui->sbNB->setValue(m_settings->value("Blanker",0).toInt());
+  ui->sbEchoAvg->setValue(m_settings->value("EchoAvg",10).toInt());
   {
     auto const& coeffs = m_settings->value ("PhaseEqualizationCoefficients"
                                             , QList<QVariant> {0., 0., 0., 0., 0.}).toList ();
@@ -1663,7 +1665,7 @@ void MainWindow::dataSink(qint64 frames)
   if(m_ihsym <=0) return;
   if(ui) ui->signal_meter_widget->setValue(m_px,m_pxmax); // Update thermometer
   if(m_monitoring || m_diskData) {
-    m_wideGraph->dataSink2(s,m_df3,m_ihsym,m_diskData);
+    m_wideGraph->dataSink2(s,m_df3,m_ihsym,m_diskData,m_px);
   }
   if(m_mode=="MSK144") return;
 
@@ -1738,11 +1740,12 @@ void MainWindow::dataSink(qint64 frames)
       echocom_.nclearave=m_nclearave;
       int nDop=m_fAudioShift;
       int nDopTotal=m_fDop;
+      int navg=ui->sbEchoAvg->value();
       if(m_diskData) {
         int idir=-1;
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
       }
-      avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
+      avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData);
       //Don't restart Monitor after an Echo transmission
       if(m_bEchoTxed and !m_auto) {
@@ -1751,7 +1754,7 @@ void MainWindow::dataSink(qint64 frames)
       }
 
       if(m_monitoring or m_auto or m_diskData) {
-        QString t0;
+        QString t0,t1;
         if(m_diskData) {
           t0=t0.asprintf("%06d  ",m_UTCdisk);
         } else {
@@ -1762,17 +1765,20 @@ void MainWindow::dataSink(qint64 frames)
           if(m_auto) isec=isec - isec%6;
           if(!m_auto) isec=isec - isec%3;
           t0=t0.asprintf("%02d%02d%02d  ",ihr,imin,isec);
+          t1=now.toString("yyMMdd_");
         }
         int n=t0.toInt();
         int nsec=((n/10000)*3600) + (((n/100)%100)*60) + (n%100);
-        if(!m_echoRunning) m_echoSec0=nsec;
-        n=(nsec-m_echoSec0 + 864000)%86400;
+        if(!m_echoRunning or echocom_.nsum<2) m_echoSec0=nsec;
+        float hour=n/10000 + ((n/100)%100)/60.0 + (n%100)/3600.0;
         m_echoRunning=true;
         QString t;
-        t = t.asprintf("%6d  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",n,xlevel,
+        t = t.asprintf("%9.6f  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",hour,xlevel,
                        nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
         t = t0 + t;
         if (ui) ui->decodedTextBrowser->appendText(t);
+        t=t1+t;
+        write_all("Rx",t);
       }
 
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
@@ -3405,6 +3411,7 @@ void MainWindow::on_ClrAvgButton_clicked()
   if(m_mode=="Echo") {
     echocom_.nsum=0;
     m_echoGraph->clearAvg();
+    m_wideGraph->restartTotalPower();
   } else {
     if(m_msgAvgWidget != NULL) {
       if(m_msgAvgWidget->isVisible()) m_msgAvgWidget->displayAvg("");
@@ -6925,6 +6932,7 @@ void MainWindow::displayWidgets(qint64 n)
       (m_config.RTTY_Exchange()=="DX" or m_config.RTTY_Exchange()=="#") );
   }
   if(m_mode=="MSK144") b=SpecOp::EU_VHF==m_specOp;
+  ui->sbEchoAvg->setVisible(m_mode=="Echo");
   ui->sbSerialNumber->setVisible(b);
   m_lastCallsign.clear ();     // ensures Tx5 is updated for new modes
   b=m_mode.startsWith("FST4");
@@ -7533,11 +7541,12 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC     Tsec  Level  Doppler  Width       N       Q      DF    SNR    dBerr");
+  ui->lh_decodes_headings_label->setText("  UTC      Hour    Level  Doppler  Width       N       Q      DF     SNR    dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
   if(m_astroWidget) m_astroWidget->selectOwnEcho();
+  ui->sbEchoAvg->values ({1, 2, 5, 10, 20, 50, 100});
   statusChanged();
   monitor(false);
 }
@@ -10143,49 +10152,55 @@ void MainWindow::write_all(QString txRx, QString message)
   QString t;
   QString msg;
   QString mode_string;
+  QString file_name="ALL.TXT";
 
-  if (message.size () > 5 && message[4]==' ') {
-     msg=message.mid(4,-1);
-  } else {
-     msg=message.mid(6,-1);
-  }
+  if(m_mode!="Echo") {
+    if (message.size () > 5 && message[4]==' ') {
+      msg=message.mid(4,-1);
+    } else {
+      msg=message.mid(6,-1);
+    }
 
-  if (message.size () > 19 && message[19]=='#') {
-     mode_string="JT65  ";
-  } else if (message.size () > 19 && message[19]=='@') {
-     mode_string="JT9   ";
-  } else if(m_mode=="Q65") {
-    mode_string=mode_label.text();
-  } else {
-     mode_string=m_mode.leftJustified(6,' ');
-  }
+    if (message.size () > 19 && message[19]=='#') {
+      mode_string="JT65  ";
+    } else if (message.size () > 19 && message[19]=='@') {
+      mode_string="JT9   ";
+    } else if(m_mode=="Q65") {
+      mode_string=mode_label.text();
+    } else {
+      mode_string=m_mode.leftJustified(6,' ');
+    }
 
-  msg=msg.mid(0,15) + msg.mid(18,-1);
+   msg=msg.mid(0,15) + msg.mid(18,-1);
 
-  t = t.asprintf("%5d",ui->TxFreqSpinBox->value());
-  if (txRx=="Tx") msg="   0  0.0" + t + " " + message;
-  auto time = QDateTime::currentDateTimeUtc ();
-  if( txRx=="Rx" && !m_bFastMode ) time=m_dateTimeSeqStart;
+    t = t.asprintf("%5d",ui->TxFreqSpinBox->value());
+    if (txRx=="Tx") msg="   0  0.0" + t + " " + message;
+    auto time = QDateTime::currentDateTimeUtc ();
+    if( txRx=="Rx" && !m_bFastMode ) time=m_dateTimeSeqStart;
 
   if (txRx=="Rx") {
      t = t.asprintf("%10.3f ",m_freqNominalPeriod/1.e6);   // prevent writing of wrong frequencies
   } else {
      t = t.asprintf("%10.3f ",m_freqNominal/1.e6);
   }
-  if (m_diskData) {
-    if (m_fileDateTime.size()==11) {
-      line=m_fileDateTime + "  " + t + txRx + " " + mode_string + msg;
+    if (m_diskData) {
+      if (m_fileDateTime.size()==11) {
+        line=m_fileDateTime + "  " + t + txRx + " " + mode_string + msg;
+      } else {
+        line=m_fileDateTime + t + txRx + " " + mode_string + msg;
+      }
     } else {
-      line=m_fileDateTime + t + txRx + " " + mode_string + msg;
-    } 
+      line=time.toString("yyMMdd_hhmmss") + t + txRx + " " + mode_string + msg;
+    }
+
+    if (ui->actionSplit_ALL_TXT_yearly->isChecked()) file_name=(time.toString("yyyy") + "-" + "ALL.TXT");
+    if (ui->actionSplit_ALL_TXT_monthly->isChecked()) file_name=(time.toString("yyyy-MM") + "-" + "ALL.TXT");
+    if (m_mode=="WSPR") file_name="ALL_WSPR.TXT";
   } else {
-    line=time.toString("yyMMdd_hhmmss") + t + txRx + " " + mode_string + msg;
+    file_name="all_echo.txt";
+    line=message;
   }
 
-  QString file_name="ALL.TXT";
-  if (ui->actionSplit_ALL_TXT_yearly->isChecked()) file_name=(time.toString("yyyy") + "-" + "ALL.TXT");
-  if (ui->actionSplit_ALL_TXT_monthly->isChecked()) file_name=(time.toString("yyyy-MM") + "-" + "ALL.TXT");
-  if (m_mode=="WSPR") file_name="ALL_WSPR.TXT";
   QFile f{m_config.writeable_data_dir().absoluteFilePath(file_name)};
   if (f.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
     QTextStream out(&f);
@@ -10459,28 +10474,6 @@ void MainWindow::on_wsprButton_clicked()     // UR disable for normal + widescre
       m_specOp=m_config.special_op_id();
     }
     on_actionWSPR_triggered();
-}
-
-void MainWindow::on_actionCopy_to_WSJTX_txt_triggered()
-{
-  static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("WSJT-X.txt")};
-  if(!f.open(QIODevice::Text | QIODevice::WriteOnly)) {
-    MessageBox::warning_message (this, tr ("WSJT-X.txt file error"),
-                                 tr ("Cannot open \"%1\" for writing").arg (f.fileName ()),
-                                 tr ("Error: %1").arg (f.errorString ()));
-  } else {
-    QString t=ui->decodedTextBrowser->toPlainText();
-
-    QTextStream out(&f);
-    out << t <<
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                 endl
-#else
-                 Qt::endl
-#endif
-                 ;
-    f.close();
-  }
 }
 
 void MainWindow::bandHoppingTimer()
