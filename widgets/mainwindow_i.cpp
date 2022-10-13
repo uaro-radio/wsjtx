@@ -774,9 +774,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   // Hook up working frequencies.
   ui->bandComboBox->setModel (m_config.frequencies ());
-  ui->bandComboBox->setModelColumn (FrequencyList_v2::frequency_mhz_column);
-  ui->bandComboBox->view ()->setMinimumWidth (165);         // UR for AL version
-  ui->bandComboBox->view ()->setMinimumHeight (225);        // UR for AL version
+  ui->bandComboBox->setModelColumn (FrequencyList_v2_101::frequency_mhz_column);
 
   // Enable live band combo box entry validation and action.
   auto band_validator = new LiveFrequencyValidator {ui->bandComboBox
@@ -1035,6 +1033,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   connect (&minuteTimer, &QTimer::timeout, this, &MainWindow::bandHoppingTimer);
   connect (&minuteTimer, &QTimer::timeout, this, &MainWindow::on_the_minute);
+  connect (&minuteTimer, &QTimer::timeout, this, &MainWindow::invalidate_frequencies_filter);
+
   minuteTimer.setSingleShot (true);
   minuteTimer.start (ms_minute_error () + 60 * 1000);
 
@@ -1077,6 +1077,14 @@ void MainWindow::initialize_fonts ()
 void MainWindow::splash_done ()
 {
   m_splash && m_splash->close ();
+}
+
+void MainWindow::invalidate_frequencies_filter ()
+{
+  // every interval, invalidate the frequency filter, so that if any
+  // working frequency goes in/out of scope, we pick it up.
+  m_config.frequencies ()->filter_refresh ();
+  ui->bandComboBox->update ();
 }
 
 void MainWindow::on_the_minute ()
@@ -7547,7 +7555,7 @@ void MainWindow::on_actionFreqCal_triggered()
 void MainWindow::switch_mode (Mode mode)
 {
   m_fastGraph->setMode(m_mode);
-  m_config.frequencies ()->filter (m_config.region (), mode);
+  m_config.frequencies ()->filter (m_config.region (), mode, true); // filter on current time
   auto const& row = m_config.frequencies ()->best_working_frequency (m_freqNominal);
   ui->bandComboBox->setCurrentIndex (row);
   if (row >= 0) {
@@ -7792,7 +7800,7 @@ void MainWindow::on_actionOpen_log_directory_triggered ()
 void MainWindow::on_bandComboBox_currentIndexChanged (int index)
 {
   auto const& frequencies = m_config.frequencies ();
-  auto const& source_index = frequencies->mapToSource (frequencies->index (index, FrequencyList_v2::frequency_column));
+  auto const& source_index = frequencies->mapToSource (frequencies->index (index, FrequencyList_v2_101::frequency_column));
   Frequency frequency {m_freqNominal};
   if (source_index.isValid ())
     {
@@ -7820,7 +7828,7 @@ void MainWindow::on_bandComboBox_editTextChanged (QString const& text)
 void MainWindow::on_bandComboBox_activated (int index)
 {
   auto const& frequencies = m_config.frequencies ();
-  auto const& source_index = frequencies->mapToSource (frequencies->index (index, FrequencyList_v2::frequency_column));
+  auto const& source_index = frequencies->mapToSource (frequencies->index (index, FrequencyList_v2_101::frequency_column));
   Frequency frequency {m_freqNominal};
   if (source_index.isValid ())
     {

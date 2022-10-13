@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>756</width>
-    <height>667</height>
+    <width>748</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -304,9 +304,9 @@
          </layout>
         </item>
         <item>
-         <layout class="QGridLayout" name="gridLayout_4">
+         <layout class="QGridLayout" name="gridLayout_4" rowstretch="0">
           <item row="0" column="0">
-           <widget class="QComboBox" name="bandComboBox">
+           <widget class="BandComboBox" name="bandComboBox">
             <property name="maximumSize">
              <size>
               <width>70</width>
@@ -325,8 +325,14 @@
             <property name="editable">
              <bool>true</bool>
             </property>
+            <property name="maxVisibleItems">
+             <number>25</number>
+            </property>
             <property name="insertPolicy">
              <enum>QComboBox::NoInsert</enum>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
             </property>
            </widget>
           </item>
@@ -1792,7 +1798,7 @@ When not checked you can view the calibration results.</string>
                          <widget class="QSpinBox" name="WSPRfreqSpinBox">
                           <property name="maximumSize">
                            <size>
-                            <width>86</width>
+                            <width>16777215</width>
                             <height>16777215</height>
                            </size>
                           </property>
@@ -1820,7 +1826,7 @@ When not checked you can view the calibration results.</string>
                          <widget class="QSpinBox" name="sbFST4W_RxFreq">
                           <property name="maximumSize">
                            <size>
-                            <width>86</width>
+                            <width>16777215</width>
                             <height>16777215</height>
                            </size>
                           </property>
@@ -1851,7 +1857,7 @@ When not checked you can view the calibration results.</string>
                          <widget class="HintedSpinBox" name="sbFST4W_FTol">
                           <property name="maximumSize">
                            <size>
-                            <width>86</width>
+                            <width>16777215</width>
                             <height>16777215</height>
                            </size>
                           </property>
@@ -1879,7 +1885,7 @@ When not checked you can view the calibration results.</string>
                          <widget class="QComboBox" name="RoundRobin">
                           <property name="maximumSize">
                            <size>
-                            <width>86</width>
+                            <width>16777215</width>
                             <height>16777215</height>
                            </size>
                           </property>
@@ -2000,7 +2006,7 @@ When not checked you can view the calibration results.</string>
                          <widget class="QSpinBox" name="sbTxPercent">
                           <property name="maximumSize">
                            <size>
-                            <width>86</width>
+                            <width>16777215</width>
                             <height>16777215</height>
                            </size>
                           </property>
@@ -2031,7 +2037,7 @@ When not checked you can view the calibration results.</string>
                          <widget class="RestrictedSpinBox" name="sbTR_FST4W">
                           <property name="maximumSize">
                            <size>
-                            <width>86</width>
+                            <width>16777215</width>
                             <height>16777215</height>
                            </size>
                           </property>
@@ -2056,7 +2062,7 @@ When not checked you can view the calibration results.</string>
                          <widget class="QGroupBox" name="band_hopping_group_box">
                           <property name="maximumSize">
                            <size>
-                            <width>86</width>
+                            <width>16777215</width>
                             <height>50</height>
                            </size>
                           </property>
@@ -2122,7 +2128,7 @@ When not checked you can view the calibration results.</string>
                              <widget class="QCheckBox" name="cbUploadWSPR_Spots">
                               <property name="maximumSize">
                                <size>
-                                <width>86</width>
+                                <width>16777215</width>
                                 <height>16777215</height>
                                </size>
                               </property>
@@ -2146,7 +2152,7 @@ When not checked you can view the calibration results.</string>
                            <widget class="QCheckBox" name="WSPR_prefer_type_1_check_box">
                             <property name="maximumSize">
                              <size>
-                              <width>86</width>
+                              <width>16777215</width>
                               <height>16777215</height>
                              </size>
                             </property>
@@ -2168,7 +2174,7 @@ When not checked you can view the calibration results.</string>
                            <widget class="QCheckBox" name="cbNoOwnCall">
                             <property name="maximumSize">
                              <size>
-                              <width>86</width>
+                              <width>16777215</width>
                               <height>16777215</height>
                              </size>
                             </property>
@@ -2187,7 +2193,7 @@ When not checked you can view the calibration results.</string>
                             </property>
                             <property name="maximumSize">
                              <size>
-                              <width>86</width>
+                              <width>16777215</width>
                               <height>16777215</height>
                              </size>
                             </property>
@@ -2217,7 +2223,7 @@ When not checked you can view the calibration results.</string>
                              <widget class="QPushButton" name="pbTxNext">
                               <property name="maximumSize">
                                <size>
-                                <width>86</width>
+                                <width>16777215</width>
                                 <height>16777215</height>
                                </size>
                               </property>
@@ -2255,7 +2261,7 @@ When not checked you can view the calibration results.</string>
                              <widget class="QComboBox" name="TxPowerComboBox">
                               <property name="maximumSize">
                                <size>
-                                <width>86</width>
+                                <width>16777215</width>
                                 <height>16777215</height>
                                </size>
                               </property>
@@ -3645,7 +3651,7 @@ Double-click to reset to the standard 73 message</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>756</width>
+     <width>748</width>
      <height>22</height>
     </rect>
    </property>
@@ -4417,13 +4423,96 @@ Double-click to reset to the standard 73 message</string>
    <extends>QPushButton</extends>
    <header>widgets/DoubleClickablePushButton.hpp</header>
   </customwidget>
+  <customwidget>
+   <class>BandComboBox</class>
+   <extends>QComboBox</extends>
+   <header>widgets/BandComboBox.hpp</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>decodedTextBrowser</tabstop>
+  <tabstop>decodedTextBrowser2</tabstop>
+  <tabstop>cbCQonly</tabstop>
+  <tabstop>logQSOButton</tabstop>
+  <tabstop>stopButton</tabstop>
+  <tabstop>monitorButton</tabstop>
   <tabstop>EraseButton</tabstop>
+  <tabstop>ClrAvgButton</tabstop>
+  <tabstop>DecodeButton</tabstop>
   <tabstop>autoButton</tabstop>
   <tabstop>stopTxButton</tabstop>
   <tabstop>tuneButton</tabstop>
-  <tabstop>decodedTextBrowser</tabstop>
+  <tabstop>cbMenus</tabstop>
+  <tabstop>bandComboBox</tabstop>
+  <tabstop>sbNB</tabstop>
+  <tabstop>dxCallEntry</tabstop>
+  <tabstop>dxGridEntry</tabstop>
+  <tabstop>txFirstCheckBox</tabstop>
+  <tabstop>TxFreqSpinBox</tabstop>
+  <tabstop>pbR2T</tabstop>
+  <tabstop>sbFtol</tabstop>
+  <tabstop>pbT2R</tabstop>
+  <tabstop>RxFreqSpinBox</tabstop>
+  <tabstop>rptSpinBox</tabstop>
+  <tabstop>sbTR</tabstop>
+  <tabstop>cbHoldTxFreq</tabstop>
+  <tabstop>sbF_Low</tabstop>
+  <tabstop>sbF_High</tabstop>
+  <tabstop>sbSubmode</tabstop>
+  <tabstop>syncSpinBox</tabstop>
+  <tabstop>sbCQTxFreq</tabstop>
+  <tabstop>cbCQTx</tabstop>
+  <tabstop>cbRxAll</tabstop>
+  <tabstop>cbShMsgs</tabstop>
+  <tabstop>cbFast9</tabstop>
+  <tabstop>cbAutoSeq</tabstop>
+  <tabstop>cbTx6</tabstop>
+  <tabstop>cbSWL</tabstop>
+  <tabstop>pbBestSP</tabstop>
+  <tabstop>measure_check_box</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>genStdMsgsPushButton</tabstop>
+  <tabstop>tx1</tabstop>
+  <tabstop>txrb1</tabstop>
+  <tabstop>txb1</tabstop>
+  <tabstop>tx2</tabstop>
+  <tabstop>txrb2</tabstop>
+  <tabstop>txb2</tabstop>
+  <tabstop>tx3</tabstop>
+  <tabstop>txrb3</tabstop>
+  <tabstop>txb3</tabstop>
+  <tabstop>tx4</tabstop>
+  <tabstop>txrb4</tabstop>
+  <tabstop>txb4</tabstop>
+  <tabstop>tx5</tabstop>
+  <tabstop>txrb5</tabstop>
+  <tabstop>txb5</tabstop>
+  <tabstop>tx6</tabstop>
+  <tabstop>txrb6</tabstop>
+  <tabstop>txb6</tabstop>
+  <tabstop>textBrowser4</tabstop>
+  <tabstop>comboBoxHoundSort</tabstop>
+  <tabstop>sbNlist</tabstop>
+  <tabstop>sbMax_dB</tabstop>
+  <tabstop>sbNslots</tabstop>
+  <tabstop>comboBoxCQ</tabstop>
+  <tabstop>cbMoreCQs</tabstop>
+  <tabstop>pbFoxReset</tabstop>
+  <tabstop>WSPRfreqSpinBox</tabstop>
+  <tabstop>sbFST4W_RxFreq</tabstop>
+  <tabstop>sbFST4W_FTol</tabstop>
+  <tabstop>RoundRobin</tabstop>
+  <tabstop>sbTxPercent</tabstop>
+  <tabstop>sbTR_FST4W</tabstop>
+  <tabstop>band_hopping_group_box</tabstop>
+  <tabstop>band_hopping_schedule_push_button</tabstop>
+  <tabstop>cbUploadWSPR_Spots</tabstop>
+  <tabstop>WSPR_prefer_type_1_check_box</tabstop>
+  <tabstop>cbNoOwnCall</tabstop>
+  <tabstop>pbTxNext</tabstop>
+  <tabstop>TxPowerComboBox</tabstop>
+  <tabstop>outAttenuation</tabstop>
+  <tabstop>sbSerialNumber</tabstop>
  </tabstops>
  <resources/>
  <connections/>
