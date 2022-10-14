@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>WSJT-X   by K1JT</string>
   </property>
-  <property name="toolTip">
-   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Wait &amp;amp; Call on/off. Wait &amp;amp; Call turns on Enable Tx as soon as the callsign from the DX Call box is decoded, and calls it a maximum of three times. Auto Seq must be enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-  </property>
   <property name="styleSheet">
    <string notr="true"/>
   </property>
@@ -323,7 +320,7 @@
             <number>0</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,2,2,2,2,2,0,2,2,2,2,1">
+            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,2,2,2,2,0,2,2,2,2,2,1">
              <item>
               <widget class="QCheckBox" name="cbCQonly">
                <property name="text">
@@ -417,22 +414,6 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="ClrAvgButton">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clear the accumulating message average.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="accessibleDescription">
-                <string>Clear the accumulating message average.</string>
-               </property>
-               <property name="text">
-                <string>Clear Avg</string>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="HintedSpinBox" name="sbEchoAvg">
                <property name="prefix">
                 <string>Avg </string>
@@ -445,6 +426,22 @@
                </property>
                <property name="value">
                 <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="ClrAvgButton">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clear the accumulating message average.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="accessibleDescription">
+                <string>Clear the accumulating message average.</string>
+               </property>
+               <property name="text">
+                <string>Clear Avg</string>
                </property>
               </widget>
              </item>
@@ -573,7 +570,7 @@
             </layout>
            </item>
            <item>
-            <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,0,0" columnstretch="0,0,0,1,3,0">
+            <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,0,0" columnstretch="0,0,1,1,5,0">
              <item row="0" column="5">
               <widget class="QLabel" name="label">
                <property name="text">
@@ -2833,6 +2830,12 @@ Double-click to reset to the standard 73 message</string>
              </item>
              <item row="0" column="0">
               <widget class="BandComboBox" name="bandComboBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="maximumSize">
                 <size>
                  <width>100</width>
@@ -2866,6 +2869,12 @@ Double-click to reset to the standard 73 message</string>
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <item>
                 <widget class="QSpinBox" name="sbNB">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>100</width>
@@ -2890,38 +2899,64 @@ Double-click to reset to the standard 73 message</string>
                 </widget>
                </item>
                <item>
-                <widget class="SignalMeter" name="signal_meter_widget">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                <layout class="QHBoxLayout" name="horizontalLayout">
+                 <property name="spacing">
+                  <number>0</number>
                  </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>100</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;30dB recommended when only noise present&lt;br/&gt;Green when good&lt;br/&gt;Red when clipping may occur&lt;br/&gt;Yellow when too low&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="accessibleName">
-                  <string>Rx Signal</string>
-                 </property>
-                 <property name="accessibleDescription">
-                  <string>30dB recommended when only noise present
+                 <item>
+                  <widget class="SignalMeter" name="signal_meter_widget">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;30dB recommended when only noise present&lt;br/&gt;Green when good&lt;br/&gt;Red when clipping may occur&lt;br/&gt;Yellow when too low&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   </property>
+                   <property name="accessibleName">
+                    <string>Rx Signal</string>
+                   </property>
+                   <property name="accessibleDescription">
+                    <string>30dB recommended when only noise present
 Green when good
 Red when clipping may occur
 Yellow when too low</string>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::Panel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Sunken</enum>
-                 </property>
-                </widget>
+                   </property>
+                   <property name="frameShape">
+                    <enum>QFrame::Panel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Sunken</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
                </item>
               </layout>
              </item>
@@ -2946,7 +2981,7 @@ Yellow when too low</string>
                 <property name="bottomMargin">
                  <number>0</number>
                 </property>
-                <item row="0" column="1">
+                <item row="1" column="1">
                  <widget class="QLabel" name="label_4">
                   <property name="palette">
                    <palette>
@@ -3032,7 +3067,7 @@ Yellow when too low</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="2" column="0">
                  <widget class="QLineEdit" name="dxCallEntry">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -3051,29 +3086,7 @@ Yellow when too low</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="dxGridEntry">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                   <string>Locator of station to be worked</string>
-                  </property>
-                  <property name="text">
-                   <string>`</string>
-                  </property>
-                  <property name="maxLength">
-                   <number>6</number>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0" colspan="2">
+                <item row="3" column="0" colspan="2">
                  <layout class="QGridLayout" name="gridLayout_4">
                   <item row="1" column="0">
                    <widget class="QPushButton" name="lookupButton">
@@ -3113,13 +3126,38 @@ Yellow when too low</string>
                   </item>
                  </layout>
                 </item>
-                <item row="0" column="0">
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="dxGridEntry">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>Locator of station to be worked</string>
+                  </property>
+                  <property name="text">
+                   <string>`</string>
+                  </property>
+                  <property name="maxLength">
+                   <number>6</number>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
                  <widget class="QPushButton" name="DX_Call_Button">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Wait &amp;amp; Call on/off. Wait &amp;amp; Call turns on Enable Tx as soon as the callsign from the DX Call box is decoded, and calls it a maximum of three times. Auto Seq must be enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton {
@@ -4062,6 +4100,14 @@ QLabel[oob=&quot;true&quot;] {
   <action name="actionActiveStations">
    <property name="text">
     <string>Active Stations</string>
+   </property>
+  </action>
+  <action name="actionEnable_trace_logging">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable trace logging</string>
    </property>
   </action>
   <action name="actionDefault_event_logging">

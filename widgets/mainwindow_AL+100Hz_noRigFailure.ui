@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>814</width>
+    <width>817</width>
     <height>689</height>
    </rect>
   </property>
@@ -2439,7 +2439,7 @@ When not checked you can view the calibration results.</string>
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_18">
+            <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="0,1,0">
              <property name="spacing">
               <number>3</number>
              </property>
@@ -3667,7 +3667,7 @@ Double-click to reset to the standard 73 message</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>814</width>
+     <width>817</width>
      <height>22</height>
     </rect>
    </property>

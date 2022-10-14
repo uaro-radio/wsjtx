@@ -574,7 +574,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,0,0" columnstretch="0,0,0,1,3,0">
+        <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,0,0" columnstretch="0,0,1,1,5,0">
          <item row="0" column="5">
           <widget class="QLabel" name="label">
            <property name="text">
@@ -2834,6 +2834,12 @@ Double-click to reset to the standard 73 message</string>
          </item>
          <item row="0" column="0">
           <widget class="BandComboBox" name="bandComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
              <width>100</width>
@@ -2867,6 +2873,12 @@ Double-click to reset to the standard 73 message</string>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
             <widget class="QSpinBox" name="sbNB">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="maximumSize">
               <size>
                <width>100</width>
@@ -2891,38 +2903,64 @@ Double-click to reset to the standard 73 message</string>
             </widget>
            </item>
            <item>
-            <widget class="SignalMeter" name="signal_meter_widget">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="spacing">
+              <number>0</number>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;30dB recommended when only noise present&lt;br/&gt;Green when good&lt;br/&gt;Red when clipping may occur&lt;br/&gt;Yellow when too low&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="accessibleName">
-              <string>Rx Signal</string>
-             </property>
-             <property name="accessibleDescription">
-              <string>30dB recommended when only noise present
+             <item>
+              <widget class="SignalMeter" name="signal_meter_widget">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;30dB recommended when only noise present&lt;br/&gt;Green when good&lt;br/&gt;Red when clipping may occur&lt;br/&gt;Yellow when too low&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="accessibleName">
+                <string>Rx Signal</string>
+               </property>
+               <property name="accessibleDescription">
+                <string>30dB recommended when only noise present
 Green when good
 Red when clipping may occur
 Yellow when too low</string>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::Panel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
-             </property>
-            </widget>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Panel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
