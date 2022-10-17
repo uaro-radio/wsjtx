@@ -6641,6 +6641,14 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
   }
 }
 
+void MainWindow::mousePressEvent(QMouseEvent *event)    // mousePressEvents
+{
+  if(ui->DX_Call_Button->hasFocus() && (event->button() & Qt::RightButton)) {  // DX_Call_Button
+      ui->dxCallEntry->clear();   // clear dxCallEntry on right-click.
+      ui->dxGridEntry->clear();   // clear dxGridEntry on right-click.
+  }
+}
+
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {
   m_hisCall = call;
