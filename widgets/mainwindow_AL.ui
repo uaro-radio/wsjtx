@@ -2194,6 +2194,9 @@ When not checked you can view the calibration results.</string>
                               <height>16777215</height>
                              </size>
                             </property>
+                            <property name="toolTip">
+                             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;No own call decodes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                            </property>
                             <property name="text">
                              <string>No own call decodes</string>
                             </property>

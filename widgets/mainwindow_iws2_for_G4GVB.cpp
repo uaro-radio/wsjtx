@@ -2269,7 +2269,10 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
 
 void MainWindow::on_autoButton_clicked (bool checked)
 {
-  QTimer::singleShot (3000, [=] {tuneATU_Timer.stop ();});  // stop the Tune watchdog
+  QTimer::singleShot (3000, [=] {
+      tuneATU_Timer.stop ();                                // stop the Tune watchdog
+      if (ui->tuneButton->isChecked()) ui->tuneButton->click (); // uncheck the Tune button
+  });
   stopWRTimer.stop();                                       // stop any Wait & Reply timeout
   if (!checked && ui->DX_Call_Button->isChecked()) {
       stopWCTimer.stop();                                   // stop any Wait & Call timeout
@@ -5103,6 +5106,12 @@ void MainWindow::guiUpdate()
 //Once per second (onesec)
   if(nsec != m_sec0) {
 //    qDebug() << "AAA" << nsec << int(m_specOp) << ui->labDXped->text();
+
+    if (m_tune && !(m_config.Tune_watchdog_disabled() || m_mode=="WSPR" || m_mode=="FST4W")) {
+        QString remtime;
+        remtime = QString::asprintf("%.0f s",tuneATU_Timer.remainingTime()/1000.0);
+        ui->tuneButton->setText(remtime);  // display Tune watchdog countdog
+    }
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -7943,8 +7952,13 @@ void MainWindow::on_rptSpinBox_valueChanged(int n)
 
 void MainWindow::on_tuneButton_clicked (bool checked)
 {
-  if (checked && !(m_config.Tune_watchdog_disabled() || m_mode=="WSPR" || m_mode=="FST4W"))  tuneATU_Timer.start (120000); // tune watchdog
-  if (!checked) tuneATU_Timer.stop ();    // stop tune watchdog when stopping Tune manually
+  if (checked && !(m_config.Tune_watchdog_disabled() || m_mode=="WSPR" || m_mode=="FST4W")) {
+      tuneATU_Timer.start (90000); // tune watchdog
+  }
+  if (!checked) {
+      tuneATU_Timer.stop ();    // stop tune watchdog when stopping Tune manually
+      ui->tuneButton->setText("Tune");
+  }
   static bool lastChecked = false;
   if (lastChecked == checked) return;
   lastChecked = checked;
@@ -7995,6 +8009,7 @@ void MainWindow::stopTuneATU()
 {
   on_tuneButton_clicked(false);
   m_bTxTime=false;
+  ui->tuneButton->setText("Tune");
 }
 
 void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
