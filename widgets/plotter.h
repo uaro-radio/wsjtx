@@ -204,7 +204,7 @@ private:
   char    m_sutc[6];
 
 private slots:
-  void leaveEvent(QEvent *event);
+  void leaveEvent(QEvent *event) override;
 
 };
 
