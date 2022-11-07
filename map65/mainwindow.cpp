@@ -1119,6 +1119,9 @@ void MainWindow::diskDat()                                   //diskDat()
   //These may be redundant??
   m_diskData=true;
   datcom_.newdat=1;
+  if(m_wide_graph_window->m_bForceCenterFreq) {
+    datcom_.fcenter=m_wide_graph_window->m_dForceCenterFreq;
+  }
 
   if(m_fs96000) hsym=2048.0*96000.0/11025.0;   //Samples per JT65 half-symbol
   if(!m_fs96000) hsym=2048.0*95238.1/11025.0;
@@ -1403,6 +1406,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
       decodeBusy(false);
       return;
     }
+
+    read_log();
 
     if(t.indexOf("!") >= 0) {
       int n=t.length();
@@ -2343,4 +2348,25 @@ bool MainWindow::isGrid4(QString g)
   if(g.mid(2,1)<'0' or g.mid(2,1)>'9') return false;
   if(g.mid(3,1)<'0' or g.mid(3,1)>'9') return false;
   return true;
+}
+
+void MainWindow::read_log()
+{
+  // Update "m_worked" by reading wsjtx.log
+  m_worked.clear();                     //Start from scratch
+  QFile f("wsjtx.log");
+  f.open(QIODevice::ReadOnly);
+  if(f.isOpen()) {
+    QTextStream in(&f);
+    QString line,callsign;
+    for(int i=0; i<99999; i++) {
+      line=in.readLine();
+      if(line.length()<=0) break;
+      callsign=line.mid(40,6);
+      int n=callsign.indexOf(",");
+      if(n>0) callsign=callsign.left(n);
+      m_worked[callsign]=true;
+    }
+    f.close();
+  }
 }
