@@ -213,6 +213,7 @@ using SpecOp = Configuration::SpecialOperatingActivity;
 bool m_displayBand = false;
 bool wait_and_call = false;
 bool no_wait_and_call = false;
+bool no_a7_decodes = false;
 
 namespace
 {
@@ -3960,7 +3961,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                || line_read.contains("/R") || line_read.contains(" R ") )          // /R, contest calls
                && (line_read.contains("3.") || line_read.contains("2."))))         // not in time
            or (line_read.contains(";") && line_read.contains(" R "))        // don't allow such
-               || line_read.contains("<...> <...>"))))                      // no unresolved hash codes
+           or line_read.contains("<...> <...>")
+           or (no_a7_decodes && line_read.contains("a7")))))                // no a7 decodes during first period
   {
     if (m_mode!="FT8" and m_mode!="FT4" and !m_mode.startsWith ("FST4") and m_mode!="Q65") {
       //Pad 22-char msg to at least 37 chars
@@ -7907,6 +7909,10 @@ void MainWindow::on_bandComboBox_activated (int index)
 
 void MainWindow::band_changed (Frequency f)
 {
+  // Don't allow a7 decodes during the first period because they can be leftovers from the previous band
+  no_a7_decodes = true;
+  QTimer::singleShot ((int(1000.0*m_TRperiod)), [=] {no_a7_decodes = false;});
+
   // Set the attenuation value if options are checked
   if (m_config.pwrBandTxMemory() && !m_tune) {
     auto const&curBand = ui->bandComboBox->currentText();
