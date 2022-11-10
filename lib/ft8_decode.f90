@@ -173,7 +173,7 @@ contains
       if(ndepth.eq.1) syncmin=1.6
       if(ndepth.eq.2) syncmin=1.4
 !      if(nzhsym.eq.41.or.ipass.eq.1) syncmin=2.0
-!      if(nzhsym.eq.41) syncmin=2.0
+      if(nzhsym.eq.41) syncmin=2.0
       if(ipass.eq.1) then
         lsubtract=.true.
         ndeep=ndepth
