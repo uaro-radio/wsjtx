@@ -1,4 +1,4 @@
-subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,nzhsym,candidate,   &
+subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,s,candidate,   &
      ncand,sbase)
 
   include 'ft8_params.f90'
@@ -73,10 +73,6 @@ subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,nzhsym,candidate,   &
               t0c=t0c + sum(s(i:i+nfos*6:nfos,m+nssy*72))
            endif
         enddo
-        t=ta+tb
-        t0=t0a+t0b
-        t0=(t0-t)/6.0
-        sync_ab=t/t0
         t=ta+tb+tc
         t0=t0a+t0b+t0c
         t0=(t0-t)/6.0
@@ -85,20 +81,13 @@ subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,nzhsym,candidate,   &
         t0=t0b+t0c
         t0=(t0-t)/6.0
         sync_bc=t/t0
-        if(j.le.-12) then
-           sync2d(i,j)=sync_bc
-        elseif(j.gt.-12 .and. j.lt. 49) then
-           if(nzhsym.eq.41) sync2d(i,j)=sync_ab
-           if(nzhsym.eq.50) sync2d(i,j)=max(sync_abc,sync_bc)
-        elseif(j.ge.49) then
-           sync2d(i,j)=sync_ab
-        endif
+        sync2d(i,j)=max(sync_abc,sync_bc)
      enddo
   enddo
 
   red=0.
   red2=0.
-  mlag=10
+  mlag=20
   mlag2=JZ
   do i=ia,ib
      ii=maxloc(sync2d(i,-mlag:mlag)) - 1 - mlag 
@@ -121,11 +110,12 @@ subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,nzhsym,candidate,   &
   base=red(ibase)
   red=red/base
   call indexx(red2(ia:ib),iz,indx2)
-  ibase2=indx2(npctile) - 1 + ia
-  if(ibase2.lt.1) ibase2=1
-  if(ibase2.gt.nh1) ibase2=nh1
-  base2=red2(ibase2)
+  ibase=indx2(npctile) - 1 + ia
+  if(ibase.lt.1) ibase=1
+  if(ibase.gt.nh1) ibase=nh1
+  base2=red2(ibase)
   red2=red2/base2
+
   do i=1,min(MAXPRECAND,iz)
      n=ia + indx(iz+1-i) - 1
      if(k.ge.MAXPRECAND) exit
