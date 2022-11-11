@@ -3939,9 +3939,13 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
       }
 
+  // Don't allow a7 decodes during the first period because they can be leftovers from the previous band
+  if (!(no_a7_decodes && line_read.contains("a7"))
+
   // Filtering out some false decodes, and don't write all.txt for such
-  if (line_read.contains("QRP")                                             // pass all QRP stations
-      or (!((((line_read.contains("/R") && line_read.contains("/R"))               // /R and /R
+      or line_read.contains("QRP")                                          // pass all QRP stations
+      or (!(SpecOp::NONE==m_specOp && ui->actionReduce_false_decodes->isChecked() &&
+           ((((line_read.contains("/R") && line_read.contains("/R"))               // /R and /R
            || (line_read.contains("/R") && line_read.contains("/P"))               // /R and /P
            || (line_read.contains("/P") && line_read.contains(" R "))              // /P and R
            || (line_read.contains("/R") && line_read.contains(" R "))              // /R and R
@@ -3959,9 +3963,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                || line_read.contains("/R") || line_read.contains(" R ") )          // /R, contest calls
                && (line_read.contains("3.") || line_read.contains("2."))))         // not in time
            or (line_read.contains(";") && line_read.contains(" R "))        // don't allow such
-           or line_read.contains("<...> <...>")
-           or (no_a7_decodes && line_read.contains("a7")))))                // no a7 decodes during first period
-  {
+           or line_read.contains("<...> <...>")))))                         // two unsesolved hash
+    {
     if (m_mode!="FT8" and m_mode!="FT4" and !m_mode.startsWith ("FST4") and m_mode!="Q65") {
       //Pad 22-char msg to at least 37 chars
       line_read = line_read.left(44) + "              " + line_read.mid(44);
@@ -4032,7 +4035,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
           }
         m_tBlankLine = line_read.left(ntime);
       }
-} // Filtering out some false decodes, and don't write all.txt for such
+    }   // Filtering out some false decodes, and don't write all.txt for such
 
       if ("FST4W" == m_mode)
         {
@@ -4137,10 +4140,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
           if (SpecOp::NONE==m_specOp && ui->actionReduce_false_decodes->isChecked()
               && !decodedtext.string().contains("QRP")                    // pass all QRP stations
               ) {
-              if (((decodedtext.string().contains("/R")                   // rover calls
-                   || decodedtext.string().contains(" R ")                // R in contest message
-                   || (decodedtext.string().contains("/R") && decodedtext.string().contains("/P"))     // /R and /P
-                   || (decodedtext.string().contains("<...>")
+              if ((((decodedtext.string().contains("<...>")
                        && (decodedtext.string().contains(QRegularExpression {"\\s\\D\\D\\D"})          // hash + invalid prefix
                        || decodedtext.string().contains("/P")))                                        // hash + /P call
                    || decodedtext.string().contains(QRegularExpression {"(\\w+)/P (\\w+)/P"})          // two /P calls
