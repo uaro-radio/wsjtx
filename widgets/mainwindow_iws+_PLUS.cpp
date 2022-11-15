@@ -3955,10 +3955,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
   if ((!(no_a7_decodes && line_read.contains("a7")))
 
   // Filtering out some false decodes, and don't write all.txt for such
-      and (!line_read.contains("QRP"))                                      // pass all QRP stations
-      and (!((line_read.contains("2.") || line_read.contains("3."))         // FDR step 1 (always enabled)
-           && (line_read.contains("-25") || line_read.contains("-26"))))    // -1.9 < dt < 1.9 for SNR < -24
-      and (!line_read.contains("<...> <...>"))                           // two unsesolved hash
       and (!(SpecOp::NONE==m_specOp && ui->actionReduce_false_decodes->isChecked() &&   // FDR step 2
            ((((line_read.contains("/P") && line_read.contains(" R "))              // /P and R
            || (line_read.contains(";") && line_read.contains("/R"))                // ; and /R
@@ -3969,12 +3965,15 @@ void MainWindow::readFromStdout()                             //readFromStdout
            || (line_read.contains("<...>") && line_read.contains(";"))             // hash and ;
            || line_read.contains("3.") || line_read.contains("2.") || line_read.contains("1."))    // -0.9 < dt <  0.9
            && (line_read.contains("-24") || line_read.contains("-25")
-               || line_read.contains("-26")))                               // for such SNRmin = -23
-           or (line_read.contains("/R") && line_read.contains("-2"))        // SNR > -20 for /R calls
+               || line_read.contains("-26")))                                 // for such SNRmin = -23
+           or (line_read.contains("/R") && line_read.contains("-2"))          // SNR > -20 for /R calls
            or (((line_read.contains("<...>") || line_read.contains(";")            // unresolved hash, F/H messages
                || line_read.contains("/R") || line_read.contains(" R ") )          // /R, contest calls
                && (line_read.contains("3.") || line_read.contains("2."))))         // -1.9 < dt < 1.9
-           or (line_read.contains(";") && line_read.contains(" R "))))))        // don't allow such at all
+           or (line_read.contains(";") && line_read.contains(" R "))))        // don't allow such at all
+           or ((line_read.contains("2.") || line_read.contains("3."))              // -1.9 < dt < 1.9
+           && (line_read.contains("-25") || line_read.contains("-26")))            // for SNR < -24
+           or (line_read.contains("<...> <...>"))))                           // don't allow two unsesolved hashs
     {
     if (m_mode!="FT8" and m_mode!="FT4" and !m_mode.startsWith ("FST4") and m_mode!="Q65") {
       //Pad 22-char msg to at least 37 chars
