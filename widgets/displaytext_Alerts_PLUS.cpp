@@ -102,7 +102,7 @@ void DisplayText::mouseDoubleClickEvent(QMouseEvent *e)
 
 void DisplayText::insertLineSpacer(QString const& line)
 {
-  appendText (line, "#d3d3d3");
+  insertText (line, "#d3d3d3");
 }
 
 namespace
@@ -139,11 +139,11 @@ namespace
   }
 }
 
-void DisplayText::appendText(QString const& text, QColor bg, QColor fg
-                             , QString const& call1, QString const& call2)
+void DisplayText::insertText(QString const& text, QColor bg, QColor fg
+                             , QString const& call1, QString const& call2, QTextCursor::MoveOperation location)
 {
   auto cursor = textCursor ();
-  cursor.movePosition (QTextCursor::End);
+  cursor.movePosition (location);
   auto block_format = cursor.blockFormat ();
   auto format = cursor.blockCharFormat ();
   format.setFont (char_font_);
@@ -540,7 +540,38 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
     }
   else
     {
-      message = leftJustifyAppendage (message, extra);
+      if (m_config->show_country_names())
+        {
+          auto const& looked_up = logBook.countries ()->lookup (dxCall);
+          auto countryName = looked_up.entity_name;
+
+          // do some obvious abbreviations
+          countryName.replace ("Islands", "Is.");
+          countryName.replace ("Island", "Is.");
+          countryName.replace ("North ", "N. ");
+          countryName.replace ("Northern ", "N. ");
+          countryName.replace ("South ", "S. ");
+          countryName.replace ("East ", "E. ");
+          countryName.replace ("Eastern ", "E. ");
+          countryName.replace ("West ", "W. ");
+          countryName.replace ("Western ", "W. ");
+          countryName.replace ("Central ", "C. ");
+          countryName.replace (" and ", " & ");
+          countryName.replace ("Republic", "Rep.");
+          countryName.replace ("United States", "U.S.A.");
+          countryName.replace ("Fed. Rep. of ", "");
+          countryName.replace ("French ", "Fr.");
+          countryName.replace ("Asiatic", "AS");
+          countryName.replace ("European", "EU");
+          countryName.replace ("African", "AF");
+
+          extra += countryName;
+          message = leftJustifyAppendage(message, extra);
+        }
+      else
+        {
+          message = leftJustifyAppendage (message, extra);
+        }
     }
 
   if (myCall.size ())
@@ -569,7 +600,7 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
       message = leftJustifyAppendage(message, state);    //NJ0A
   }
 
-  appendText (message.trimmed (), bg, fg, decodedText.call (), dxCall);
+  insertText (message.trimmed (), bg, fg, decodedText.call (), dxCall);
 }
 
 
@@ -601,18 +632,19 @@ void DisplayText::displayTransmittedText(QString text, QString modeTx, qint32 tx
     QColor fg;
     highlight_types types {Highlight::Tx};
     set_colours (m_config, &bg, &fg, types);
-    appendText (t, bg, fg);
+    insertText (t, bg, fg);
 }
 
 void DisplayText::displayQSY(QString text)
 {
   QString t = QDateTime::currentDateTimeUtc().toString("hhmmss") + "            " + text;
-  appendText (t, "hotpink");
+  insertText (t, "hotpink");
 }
 
-void DisplayText::displayFoxToBeCalled(QString t, QColor bg, QColor fg)
+void DisplayText::displayHoundToBeCalled(QString t, bool bAtTop, QColor bg, QColor fg)
 {
-  appendText (t, bg, fg);
+  if (bAtTop)  t = t + "\n"; // need a newline when insertion at top
+  insertText(t, bg, fg, "", "", bAtTop ? QTextCursor::Start : QTextCursor::End);
 }
 
 namespace
