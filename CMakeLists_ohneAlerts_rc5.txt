@@ -77,10 +77,10 @@ set (wsjtx_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_
 #
 # project information
 #
-set (PROJECT_BUNDLE_NAME "WSJT-X")
-set (PROJECT_VENDOR "Joe Taylor, K1JT")
-set (PROJECT_CONTACT "Joe Taylor <k1jt@arrl.net>")
-set (PROJECT_COPYRIGHT "Copyright (C) 2001-2021 by Joe Taylor, K1JT")
+set (PROJECT_BUNDLE_NAME "WSJT-X-improved")
+set (PROJECT_VENDOR "Uwe Risse, DG2YCB")
+set (PROJECT_CONTACT "dg2ycb@gmx.de")
+set (PROJECT_COPYRIGHT "Copyright (C) 2001-2022 by Joe Taylor, K1JT")
 set (PROJECT_HOMEPAGE https://www.physics.princeton.edu/pulsar/K1JT/wsjtx.html)
 set (PROJECT_MANUAL wsjtx-main)
 set (PROJECT_MANUAL_DIRECTORY_URL https://www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/)
