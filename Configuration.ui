@@ -2347,6 +2347,26 @@ Right click for insert and delete options.</string>
           <string>Decode Highlightling</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
+          <item row="1" column="0" colspan="2">
+           <widget class="QPushButton" name="reset_highlighting_to_defaults_push_button">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Push to reset all highlight items above to default values and priorities.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Reset Highlighting</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="only_fields_check_box">
+            <property name="toolTip">
+             <string>Check to for grid highlighting to only apply to unworked grid fields</string>
+            </property>
+            <property name="text">
+             <string>Only grid Fields sought</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_15">
             <item>
@@ -2374,30 +2394,10 @@ Right click for insert and delete options.</string>
             </item>
            </layout>
           </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QPushButton" name="reset_highlighting_to_defaults_push_button">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Push to reset all highlight items above to default values and priorities.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
+          <item row="5" column="0">
+           <widget class="QCheckBox" name="highlight_73_check_box">
             <property name="text">
-             <string>Reset Highlighting</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="include_WAE_check_box">
-            <property name="text">
-             <string>Include extra WAE entities</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="only_fields_check_box">
-            <property name="toolTip">
-             <string>Check to for grid highlighting to only apply to unworked grid fields</string>
-            </property>
-            <property name="text">
-             <string>Only grid Fields sought</string>
+             <string>Highlight also messages with 73 or RR73</string>
             </property>
            </widget>
           </item>
@@ -2438,6 +2438,13 @@ Right click for insert and delete options.</string>
             </property>
            </widget>
           </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="include_WAE_check_box">
+            <property name="text">
+             <string>Include extra WAE entities</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="0">
            <widget class="QCheckBox" name="highlight_by_mode_check_box">
             <property name="toolTip">
@@ -2448,10 +2455,10 @@ Right click for insert and delete options.</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QCheckBox" name="highlight_73_check_box">
+          <item row="6" column="0">
+           <widget class="QCheckBox" name="show_country_names_check_box">
             <property name="text">
-             <string>Highlight also messages with 73 or RR73</string>
+             <string>Show country information for all messages</string>
             </property>
            </widget>
           </item>
@@ -3199,21 +3206,21 @@ Right click for insert and delete options.</string>
           <item row="0" column="0">
            <layout class="QGridLayout" name="gridLayout_21">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_16">
+             <widget class="QLabel" name="api_url_label">
               <property name="text">
                <string>API URL: </string>
               </property>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_17">
+             <widget class="QLabel" name="api_key_label">
               <property name="text">
                <string>API Key: </string>
               </property>
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_19">
+             <widget class="QLabel" name="station_id_label">
               <property name="text">
                <string>Station ID: </string>
               </property>
@@ -3222,7 +3229,7 @@ Right click for insert and delete options.</string>
             <item row="2" column="1">
              <widget class="QSpinBox" name="sbCloudlogStationID">
               <property name="enabled">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <property name="minimumSize">
                <size>
@@ -3932,12 +3939,12 @@ Right click for insert and delete options.</string>
  </connections>
  <buttongroups>
   <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
   <buttongroup name="split_mode_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
-  <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
  </buttongroups>
 </ui>
