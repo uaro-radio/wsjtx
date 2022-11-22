@@ -218,7 +218,7 @@ public:
   bool include_WAE_entities () const;
   bool highlight_73 () const;
   bool show_country_names () const;
-  bool erase_like_JTDX () const;
+  bool alternate_erase_button () const;
   void setSpecial_Hound();
   void setSpecial_Fox();
   void setSpecial_None();

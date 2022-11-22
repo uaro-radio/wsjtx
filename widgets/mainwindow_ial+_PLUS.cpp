@@ -4551,10 +4551,13 @@ void MainWindow::killFile ()
 
 void MainWindow::on_EraseButton_clicked ()
 {
-  if (m_config.erase_like_JTDX()) {
+  qint64 ms=QDateTime::currentMSecsSinceEpoch();
+  if (m_config.alternate_erase_button()) {
      ui->decodedTextBrowser->erase ();
+     if((ms-m_msErase)<500) {
+       ui->decodedTextBrowser2->erase ();
+     }
   } else {
-     qint64 ms=QDateTime::currentMSecsSinceEpoch();
      ui->decodedTextBrowser2->erase ();
      if(m_mode=="WSPR" or m_mode=="Echo" or m_mode=="FST4W") {
        ui->decodedTextBrowser->erase ();
@@ -4563,8 +4566,8 @@ void MainWindow::on_EraseButton_clicked ()
          ui->decodedTextBrowser->erase ();
        }
      }
-     m_msErase=ms;
   }
+  m_msErase=ms;
 }
 
 void MainWindow::band_activity_cleared ()
@@ -6703,7 +6706,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mousePressEvents
       ui->dxCallEntry->clear();   // clear dxCallEntry on right-click.
       ui->dxGridEntry->clear();   // clear dxGridEntry on right-click.
   }
-  if (m_config.erase_like_JTDX() && ui->EraseButton->hasFocus() && (event->button() & Qt::RightButton)) {
+  if (m_config.alternate_erase_button() && ui->EraseButton->hasFocus() && (event->button() & Qt::RightButton)) {
      ui->decodedTextBrowser2->erase ();
   }
 }
