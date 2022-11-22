@@ -26,7 +26,7 @@ namespace
 
 QString revision (QString const& scs_rev_string)
 {
-  return "fb0122";
+  return "f77a24";
   QString result;
   auto revision_from_scs = revision_extract_number (scs_rev_string);
 
