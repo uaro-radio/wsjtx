@@ -4339,7 +4339,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                               "Stop transmitting, exit Fox mode for a few minutes,\n"
                               "and check the incoming FT8 messages.");
                            no_Fox_alert = true;
-                           QTimer::singleShot (600000, [=] {   // No further Fox alerts for 10 minutes
+                           QTimer::singleShot (3600000, [=] {   // No further Fox warnings for 60 minutes
                                no_Fox_alert = false;
                                first_Fox_alert = true;
                                second_Fox_alert = true;
