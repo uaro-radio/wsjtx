@@ -10027,8 +10027,14 @@ list1Done:
     m_foxQSO[hc].tFoxRrpt = -1;           //Have not received R+rpt
     m_foxQSO[hc].tFoxTxRR73 = -1;         //Have not sent RR73
     rm_tb4(hc);                           //Remove this Hound from tb4
-    if(list2.size()==m_Nslots) goto list2Done;
-    if(m_foxQSO.count()>=2*m_Nslots) goto list2Done;
+
+    if(list2.size()==m_Nslots) {
+      break;
+    }
+
+    if(m_foxQSO.count()>=5*3 /* could have 5 slots * 3 states ([0-2],4,5) */) {
+      break;
+    }
   }
 
 list2Done:
