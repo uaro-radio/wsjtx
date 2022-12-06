@@ -2024,8 +2024,12 @@ void MainWindow::fastSink(qint64 frames)
       bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
           (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
           (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
-      QString t=decodedtext.messageWords()[4];
-      if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
+      if (decodedtext.messageWords().length() >= 3) {
+          QString t=decodedtext.messageWords()[2];
+          if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
+      } else {
+          bProcessMsgNormally=true;
+      }
       if(bProcessMsgNormally) {
         m_bDoubleClicked=true;
         m_bAutoReply = true;
@@ -4255,12 +4259,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
             bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
                 (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
                 (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
-                 if (decodedtext.messageWords().length() >= 2) {
-              QString t=decodedtext.messageWords()[2];
-              if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
-            }
-            else {
-              bProcessMsgNormally=true;
+            if (decodedtext.messageWords().length() >= 3) {
+                QString t=decodedtext.messageWords()[2];
+                if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
+            } else {
+                bProcessMsgNormally=true;
             }
             if(bProcessMsgNormally) {
               m_bDoubleClicked=true;
@@ -10022,23 +10025,15 @@ list1Done:
     m_foxQSO[hc].tFoxRrpt = -1;           //Have not received R+rpt
     m_foxQSO[hc].tFoxTxRR73 = -1;         //Have not sent RR73
     rm_tb4(hc);                           //Remove this Hound from tb4
-
-    if(list2.size()==m_Nslots) {
-      break;
-    }
-
-    if(m_foxQSO.count()>=5*3 /* could have 5 slots * 3 states ([0-2],4,5) */) {
-      break;
-    }
+    if(list2.size()==m_Nslots) goto list2Done;
+    if(m_foxQSO.count()>=2*m_Nslots) goto list2Done;
   }
 
 list2Done:
-
   n1=list1.size();
   n2=list2.size();
   n3=qMax(n1,n2);
   if(n3>m_Nslots) n3=m_Nslots;
-
   for(int i=0; i<n3; i++) {
     hc1="";
     fm="";

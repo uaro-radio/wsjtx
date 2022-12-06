@@ -2020,8 +2020,12 @@ void MainWindow::fastSink(qint64 frames)
       bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
           (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
           (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
-      QString t=decodedtext.messageWords()[4];
-      if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
+      if (decodedtext.messageWords().length() >= 3) {
+          QString t=decodedtext.messageWords()[2];
+          if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
+      } else {
+          bProcessMsgNormally=true;
+      }
       if(bProcessMsgNormally) {
         m_bDoubleClicked=true;
         m_bAutoReply = true;
@@ -4251,12 +4255,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
             bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
                 (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
                 (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
-                 if (decodedtext.messageWords().length() >= 2) {
-              QString t=decodedtext.messageWords()[2];
-              if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
-            }
-            else {
-              bProcessMsgNormally=true;
+            if (decodedtext.messageWords().length() >= 3) {
+                QString t=decodedtext.messageWords()[2];
+                if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
+            } else {
+                bProcessMsgNormally=true;
             }
             if(bProcessMsgNormally) {
               m_bDoubleClicked=true;
