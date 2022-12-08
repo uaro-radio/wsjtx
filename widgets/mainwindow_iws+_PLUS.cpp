@@ -1195,7 +1195,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("FST4_FHigh",ui->sbF_High->value());
 //  m_settings->setValue("SubMode",ui->sbSubmode->value());
   m_settings->setValue("DTtol",m_DTtol);
-  m_settings->setValue("Ftol", ui->sbFtol->value ());
+//  m_settings->setValue("Ftol", ui->sbFtol->value ());
   m_settings->setValue("MinSync",m_minSync);
   m_settings->setValue ("AutoSeq", ui->cbAutoSeq->isChecked ());
   m_settings->setValue ("RxAll", ui->cbRxAll->isChecked ());
@@ -1378,7 +1378,11 @@ void MainWindow::readSettings()
   if (m_mode=="Q65") ui->sbSubmode->setValue(m_nSubMode_Q65);
   if (m_mode=="JT65") ui->sbSubmode->setValue(m_nSubMode_JT65);
   if (m_mode=="JT4") ui->sbSubmode->setValue(m_nSubMode_JT4);
-  ui->sbFtol->setValue (m_settings->value("Ftol", 50).toInt());
+//  ui->sbFtol->setValue (m_settings->value("Ftol", 50).toInt());
+  if (m_mode=="Q65") ui->sbFtol->setValue (m_settings->value("Ftol_Q65", 50).toInt());
+  if (m_mode=="MSK144") ui->sbFtol->setValue (m_settings->value("Ftol_MSK144",50).toInt());
+  if (m_mode=="JT65") ui->sbFtol->setValue (m_settings->value("Ftol_JT65", 50).toInt());
+  if (m_mode=="JT4") ui->sbFtol->setValue (m_settings->value("Ftol_JT4", 50).toInt());
   ui->sbFST4W_FTol->setValue(m_settings->value("FST4W_FTol",100).toInt());
   m_minSync=m_settings->value("MinSync",0).toInt();
   ui->syncSpinBox->setValue(m_minSync);
@@ -7322,6 +7326,8 @@ void MainWindow::on_actionJT4_triggered()
     QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();});
     QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT4",0).toInt());});
     QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
+    ui->sbFtol->setValue (m_settings->value ("Ftol_JT4", 50).toInt());       // remember FTol settings by mode
+    QTimer::singleShot (50, [=] {on_sbFtol_valueChanged (ui->sbFtol->value());});
   } else {
     ui->sbSubmode->setValue(0);
   }
@@ -7431,7 +7437,9 @@ void MainWindow::on_actionJT65_triggered()
       QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT65",0).toInt());});
       QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
       ui->lh_decodes_title_label->setText(tr ("Single-Period Decodes"));
-    ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
+      ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
+      ui->sbFtol->setValue (m_settings->value ("Ftol_JT65", 50).toInt());       // remember FTol settings by mode
+      QTimer::singleShot (50, [=] {on_sbFtol_valueChanged (ui->sbFtol->value());});
   } else {
     ui->sbSubmode->setValue(0);
     ui->lh_decodes_title_label->setText(tr ("Band Activity"));
@@ -7472,6 +7480,8 @@ void MainWindow::on_actionQ65_triggered()
   ui->sbTR->values ({15, 30, 60, 120, 300});
   ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());    // remember sbTR settings by mode
   QTimer::singleShot (50, [=] {on_sbTR_valueChanged (ui->sbTR->value());});
+  ui->sbFtol->setValue (m_settings->value ("Ftol_Q65", 50).toInt());       // remember FTol settings by mode
+  QTimer::singleShot (50, [=] {on_sbFtol_valueChanged (ui->sbFtol->value());});
 //  ui->sbSubmode->setValue(m_nSubMode);
   QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();});
   QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_Q65",0).toInt());});
@@ -7551,6 +7561,8 @@ void MainWindow::on_actionMSK144_triggered()
       on_sbTR_valueChanged (ui->sbTR->value());
       on_sbSubmode_valueChanged(ui->sbSubmode->value());
   });
+  ui->sbFtol->setValue (m_settings->value ("Ftol_MSK144", 50).toInt());       // remember FTol settings by mode
+  QTimer::singleShot (50, [=] {on_sbFtol_valueChanged (ui->sbFtol->value());});
   m_wideGraph->hide();
   m_fastGraph->showNormal();
   ui->TxFreqSpinBox->setValue(1500);
@@ -8641,6 +8653,18 @@ void MainWindow::on_sbFtol_valueChanged(int value)
 {
   m_wideGraph->setTol (value);
   statusUpdate ();
+  if (m_mode=="Q65") {
+      QTimer::singleShot (200, [=] {m_settings->setValue ("Ftol_Q65", ui->sbFtol->value ());});
+  }
+  if (m_mode=="MSK144") {
+      QTimer::singleShot (200, [=] {m_settings->setValue ("Ftol_MSK144", ui->sbFtol->value ());});
+  }
+  if (m_mode=="JT65") {
+      QTimer::singleShot (200, [=] {m_settings->setValue ("Ftol_JT65", ui->sbFtol->value ());});
+  }
+  if (m_mode=="JT4") {
+      QTimer::singleShot (200, [=] {m_settings->setValue ("Ftol_JT4", ui->sbFtol->value ());});
+  }
 }
 
 void::MainWindow::VHF_features_enabled(bool b)
