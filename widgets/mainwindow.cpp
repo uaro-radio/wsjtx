@@ -442,7 +442,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         m_config.udp_server_name (), m_config.udp_server_port (),
         m_config.udp_interface_names (), m_config.udp_TTL (),
         this}},
-  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " i+"}.simplified ()},     // UR
+  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " "}.simplified ()},     // UR
   m_manual {&m_network_manager},
   m_block_udp_status_updates {false},
   m_useDarkStyle {false}
@@ -1053,7 +1053,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   if(QCoreApplication::applicationVersion().contains("-devel") or
      QCoreApplication::applicationVersion().contains("-rc")) {
-//    QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));
+//    QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));     // UR
   }
 
   m_specOp=m_config.special_op_id();
@@ -1525,44 +1525,44 @@ void MainWindow::set_application_font (QFont const& font)
 
   // ensure a balanced layout
   qreal pointSize = m_config.text_font().pointSizeF();
-//  if (pointSize < 9) ui->controls_stack_widget->setMaximumWidth(180);   // UR for AL
-//  if (pointSize == 9) ui->controls_stack_widget->setMaximumWidth(200);  // UR for AL
-//  if (pointSize == 10) ui->controls_stack_widget->setMaximumWidth(220); // UR for AL
-//  if (pointSize > 10) ui->controls_stack_widget->setMaximumWidth(240);  // UR for AL
+  if (pointSize < 9) ui->controls_stack_widget->setMaximumWidth(180);   // UR for AL
+  if (pointSize == 9) ui->controls_stack_widget->setMaximumWidth(200);  // UR for AL
+  if (pointSize == 10) ui->controls_stack_widget->setMaximumWidth(220); // UR for AL
+  if (pointSize > 10) ui->controls_stack_widget->setMaximumWidth(240);  // UR for AL
   if (pointSize < 11) {
-//      ui->tabWidget->setMaximumHeight(210);                           // UR for AL
-      if (ui->actionUse_Dark_Style->isChecked()) {
-          ui->tabWidget->setMaximumHeight(225);                       // UR for normal + widescreen
-          ui->houndButton->setMinimumWidth(50);                       // UR for normal + widescreen
-          ui->ft8Button->setMinimumWidth(50);                         // UR for normal + widescreen
-          ui->ft4Button->setMinimumWidth(50);                         // UR for normal + widescreen
-          ui->msk144Button->setMinimumWidth(50);                      // UR for normal + widescreen
-          ui->q65Button->setMinimumWidth(50);                         // UR for normal + widescreen
-          ui->jt65Button->setMinimumWidth(50);                        // UR for normal + widescreen
-      } else {
-          ui->tabWidget->setMaximumHeight(225);                       // UR for normal + widescreen
-          ui->houndButton->setMaximumWidth(40);                       // UR for normal + widescreen
-          ui->ft8Button->setMaximumWidth(40);                         // UR for normal + widescreen
-          ui->ft4Button->setMaximumWidth(40);                         // UR for normal + widescreen
-          ui->msk144Button->setMaximumWidth(40);                      // UR for normal + widescreen
-          ui->q65Button->setMaximumWidth(40);                         // UR for normal + widescreen
-          ui->jt65Button->setMaximumWidth(40);                        // UR for normal + widescreen
-          ui->houndButton->setMinimumWidth(0);                        // UR for normal + widescreen
-          ui->ft8Button->setMinimumWidth(0);                          // UR for normal + widescreen
-          ui->ft4Button->setMinimumWidth(0);                          // UR for normal + widescreen
-          ui->msk144Button->setMinimumWidth(0);                       // UR for normal + widescreen
-          ui->q65Button->setMinimumWidth(0);                          // UR for normal + widescreen
-          ui->jt65Button->setMinimumWidth(0);                         // UR for normal + widescreen
-      }
+      ui->tabWidget->setMaximumHeight(210);                           // UR for AL
+//      if (ui->actionUse_Dark_Style->isChecked()) {
+//          ui->tabWidget->setMaximumHeight(225);                       // UR for normal + widescreen
+//          ui->houndButton->setMinimumWidth(50);                       // UR for normal + widescreen
+//          ui->ft8Button->setMinimumWidth(50);                         // UR for normal + widescreen
+//          ui->ft4Button->setMinimumWidth(50);                         // UR for normal + widescreen
+//          ui->msk144Button->setMinimumWidth(50);                      // UR for normal + widescreen
+//          ui->q65Button->setMinimumWidth(50);                         // UR for normal + widescreen
+//          ui->jt65Button->setMinimumWidth(50);                        // UR for normal + widescreen
+//      } else {
+//          ui->tabWidget->setMaximumHeight(225);                       // UR for normal + widescreen
+//          ui->houndButton->setMaximumWidth(40);                       // UR for normal + widescreen
+//          ui->ft8Button->setMaximumWidth(40);                         // UR for normal + widescreen
+//          ui->ft4Button->setMaximumWidth(40);                         // UR for normal + widescreen
+//          ui->msk144Button->setMaximumWidth(40);                      // UR for normal + widescreen
+//          ui->q65Button->setMaximumWidth(40);                         // UR for normal + widescreen
+//          ui->jt65Button->setMaximumWidth(40);                        // UR for normal + widescreen
+//          ui->houndButton->setMinimumWidth(0);                        // UR for normal + widescreen
+//          ui->ft8Button->setMinimumWidth(0);                          // UR for normal + widescreen
+//          ui->ft4Button->setMinimumWidth(0);                          // UR for normal + widescreen
+//          ui->msk144Button->setMinimumWidth(0);                       // UR for normal + widescreen
+//          ui->q65Button->setMinimumWidth(0);                          // UR for normal + widescreen
+//          ui->jt65Button->setMinimumWidth(0);                         // UR for normal + widescreen
+//      }
   } else {
-//      ui->tabWidget->setMaximumHeight(255);                           // UR for AL
-      ui->tabWidget->setMaximumHeight(500);                           // UR for normal + widescreen
-      ui->houndButton->setMinimumWidth(50);                           // UR for normal + widescreen
-      ui->ft8Button->setMinimumWidth(50);                             // UR for normal + widescreen
-      ui->ft4Button->setMinimumWidth(50);                             // UR for normal + widescreen
-      ui->msk144Button->setMinimumWidth(50);                          // UR for normal + widescreen
-      ui->q65Button->setMinimumWidth(50);                             // UR for normal + widescreen
-      ui->jt65Button->setMinimumWidth(50);                            // UR for normal + widescreen
+      ui->tabWidget->setMaximumHeight(255);                           // UR for AL
+//      ui->tabWidget->setMaximumHeight(500);                           // UR for normal + widescreen
+//      ui->houndButton->setMinimumWidth(50);                           // UR for normal + widescreen
+//      ui->ft8Button->setMinimumWidth(50);                             // UR for normal + widescreen
+//      ui->ft4Button->setMinimumWidth(50);                             // UR for normal + widescreen
+//      ui->msk144Button->setMinimumWidth(50);                          // UR for normal + widescreen
+//      ui->q65Button->setMinimumWidth(50);                             // UR for normal + widescreen
+//      ui->jt65Button->setMinimumWidth(50);                            // UR for normal + widescreen
   }
   for (auto& widget : qApp->topLevelWidgets ())
     {
@@ -2613,7 +2613,7 @@ void MainWindow::displayDialFrequency ()
           m_currentBandPeriod = m_currentBand;
           m_displayBand = true;
       });
-    }
+  }
 
   // search working frequencies for one we are within 10kHz of (1 Mhz
   // of on VHF and up)
@@ -4098,31 +4098,31 @@ void MainWindow::readFromStdout()                             //readFromStdout
             ARRL_Digi_Update(decodedtext1);
           }
 
-        QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait & Reply/Call
+          QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait & Reply/Call
 
-        // Wait & Reply
-        if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && (m_hisCall!="") &&
-            (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))) {
+          // Wait & Reply
+          if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && (m_hisCall!="") &&
+              (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))) {
+                  m_bDoubleClicked = true;
+                  processMessage(decodedtext0);
+                  auto_tx_mode(true);
+                  stopWRTimer.start(int(8000.0*m_TRperiod));    // Wait & Reply Tx max 8*TRperiod
+          }
+
+            // Wait & Call
+          if (wait_and_call && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") &&
+              m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && m_hisCall!="" && !no_wait_and_call &&
+              (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
+               or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))) {
+                if (!text.contains(m_config.my_callsign() + " " + m_hisCall))
+                    block_right_display = true;                // prevent display of first message twice
+                if (m_specOp==SpecOp::HOUND) ui->TxFreqSpinBox->setValue(2300);
                 m_bDoubleClicked = true;
                 processMessage(decodedtext0);
                 auto_tx_mode(true);
-                stopWRTimer.start(int(8000.0*m_TRperiod));    // Wait & Reply Tx max 8*TRperiod
-        }
-
-          // Wait & Call
-        if (wait_and_call && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") &&
-            m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && m_hisCall!="" && !no_wait_and_call &&
-            (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
-             or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))) {
-              if (!text.contains(m_config.my_callsign() + " " + m_hisCall))
-                  block_right_display = true;                // prevent display of first message twice
-              if (m_specOp==SpecOp::HOUND) ui->TxFreqSpinBox->setValue(2300);
-              m_bDoubleClicked = true;
-              processMessage(decodedtext0);
-              auto_tx_mode(true);
-              no_wait_and_call = true;
-              stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
-        }
+                no_wait_and_call = true;
+                stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
+          }
 
           // Filtering out messages with keywords from Blacklist
        if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
@@ -4218,10 +4218,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
            QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
                if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
                QSound::play("./bin/sounds/DXcall.wav");
-               QSound::play("./sounds/DXcall.wav");             // UR for Linux
+               QSound::play("./sounds/DXcall.wav");
                }
                play_DXcall = false;
-           });
+           });                                                  // UR delete for versions without alerts
 
           if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
             QString messagePriority=ui->decodedTextBrowser->CQPriority();
@@ -5277,9 +5277,9 @@ void MainWindow::guiUpdate()
     }
 
     QDateTime t = QDateTime::currentDateTimeUtc();
-    QString utc = t.date().toString("yyyy MMM dd") + "\n " +
-      t.time().toString() + " ";
-//    QString utc = t.time().toString();      // UR for AL version use this and disable the 2 lines above
+//    QString utc = t.date().toString("yyyy MMM dd") + "\n " +
+//      t.time().toString() + " ";
+    QString utc = t.time().toString();      // UR for AL version use this and disable the 2 lines above
     ui->labUTC->setText(utc);
     if(m_bBestSPArmed and (m_dateTimeBestSP.secsTo(t) >= 120)) on_pbBestSP_clicked(); //BestSP timeout
     if(!m_monitoring and !m_diskData) ui->signal_meter_widget->setValue(0,0);
@@ -7717,7 +7717,7 @@ void MainWindow::switch_mode (Mode mode)
     ui->RxFreqSpinBox->setMaximum(1600);
     ui->RxFreqSpinBox->setSingleStep(25);
   } else {
-    ui->RxFreqSpinBox->setMinimum(200);     // UR 200->100
+    ui->RxFreqSpinBox->setMinimum(100);     // UR 200->100
     ui->RxFreqSpinBox->setMaximum(5000);
     ui->RxFreqSpinBox->setSingleStep(1);
   }
@@ -7725,14 +7725,14 @@ void MainWindow::switch_mode (Mode mode)
   ui->tabWidget->setVisible(!b);
   if(b) {
     ui->DX_controls_widget->setVisible(false);
-    ui->rh_decodes_widget->setVisible (false);     // UR disable for AL + widescreen versions
+//    ui->rh_decodes_widget->setVisible (false);     // UR disable for AL + widescreen versions
     ui->lh_decodes_title_label->setVisible(false);
   }
 }
 
 void MainWindow::WSPR_config(bool b)
 {
-  ui->rh_decodes_widget->setVisible(!b);     // UR disable for AL + widescreen version
+//  ui->rh_decodes_widget->setVisible(!b);     // UR disable for AL + widescreen version
   ui->controls_stack_widget->setCurrentIndex (b && m_mode != "Echo" ? 1 : 0);
   ui->QSO_controls_widget->setVisible (!b);
   ui->DX_controls_widget->setVisible (!b or (m_mode=="Echo"));
@@ -8003,7 +8003,7 @@ void MainWindow::band_changed (Frequency f)
   }
 
   if (m_bandEdited) {
-    if (m_mode!="WSPR" && !ui->pbBandHopping->isChecked() && !ui->DX_Call_Button->isChecked()) { // preserves auto Tx
+    if (m_mode!="WSPR"&& !ui->pbBandHopping->isChecked() && !ui->DX_Call_Button->isChecked()) { // preserves auto Tx
       if (f + m_wideGraph->nStartFreq () > m_freqNominal + ui->TxFreqSpinBox->value ()
           || f + m_wideGraph->nStartFreq () + m_wideGraph->fSpan () <=
           m_freqNominal + ui->TxFreqSpinBox->value ()) {
@@ -8325,7 +8325,11 @@ void MainWindow::rigFailure (QString const& reason)
     {
       // one automatic retry
       QTimer::singleShot (0, this, SLOT (rigOpen ()));
-      m_first_error = false;
+//      m_first_error = false;
+      ui->pbBandHopping->setChecked(false);  // UR stop BandHopping instead of rigErrorMessageBox
+      ui->stopTxButton->click();             // stop Tx instead of rigErrorMessageBox
+      monitor (false);                       // stop monitoring instead of rigErrorMessageBox
+      m_loopall=false;                       // stop monitoring instead of rigErrorMessageBox
     }
   else
     {
@@ -10717,6 +10721,28 @@ void MainWindow::on_jt65Button_clicked()
     on_actionJT65_triggered();
 }
 
+void MainWindow::on_fst4Button_clicked()     // UR disable for normal + widescreen versions
+{
+    ui->houndButton->setChecked(false);
+    ui->houndButton->setStyleSheet("");
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
+    on_actionFST4_triggered();
+}
+
+void MainWindow::on_wsprButton_clicked()     // UR disable for normal + widescreen versions
+{
+    ui->houndButton->setChecked(false);
+    ui->houndButton->setStyleSheet("");
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
+    on_actionWSPR_triggered();
+}
+
 void MainWindow::bandHoppingTimer()
 {
     if(ui->pbBandHopping->isChecked()) {
@@ -11119,7 +11145,7 @@ void MainWindow::on_actionDiagnostic_mode_triggered()
 {
 #if defined(Q_OS_WIN)
     static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx_log_config.ini")};
-#else
+#else 
     static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::ConfigLocation)}.absoluteFilePath ("wsjtx_log_config.ini")};
 #endif
     if(!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -11228,18 +11254,18 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
     }
     // ensure a balanced layout
     qreal pointSize = m_config.text_font().pointSizeF();
-//    if (pointSize < 9) ui->controls_stack_widget->setMaximumWidth(180);     // UR for AL
-//    if (pointSize == 9) ui->controls_stack_widget->setMaximumWidth(200);    // UR for AL
-//    if (pointSize == 10) ui->controls_stack_widget->setMaximumWidth(220);   // UR for AL
-//    if (pointSize > 10) ui->controls_stack_widget->setMaximumWidth(240);    // UR for AL
+    if (pointSize < 9) ui->controls_stack_widget->setMaximumWidth(180);     // UR for AL
+    if (pointSize == 9) ui->controls_stack_widget->setMaximumWidth(200);    // UR for AL
+    if (pointSize == 10) ui->controls_stack_widget->setMaximumWidth(220);   // UR for AL
+    if (pointSize > 10) ui->controls_stack_widget->setMaximumWidth(240);    // UR for AL
     if (pointSize < 11) {
-//        ui->tabWidget->setMaximumHeight(210);                               // UR for AL
-//        ui->controls_stack_widget->setMaximumHeight(200);                   // UR for AL
-        if (ui->actionUse_Dark_Style->isChecked()) ui->tabWidget->setMaximumHeight(225);  // UR for normal + widescreen
+        ui->tabWidget->setMaximumHeight(210);                               // UR for AL
+        ui->controls_stack_widget->setMaximumHeight(200);                   // UR for AL
+//        if (ui->actionUse_Dark_Style->isChecked()) ui->tabWidget->setMaximumHeight(225);  // UR for normal + widescreen
     } else {
-//        ui->tabWidget->setMaximumHeight(255);                               // UR for AL
-//        ui->controls_stack_widget->setMaximumHeight(225);                   // UR for AL
-        ui->tabWidget->setMaximumHeight(500);                               // UR for normal + widescreen
+        ui->tabWidget->setMaximumHeight(255);                               // UR for AL
+        ui->controls_stack_widget->setMaximumHeight(225);                   // UR for AL
+//        ui->tabWidget->setMaximumHeight(500);                               // UR for normal + widescreen
     }
     for (auto& widget : qApp->topLevelWidgets ())
       {

@@ -16,7 +16,7 @@ CAboutDlg::CAboutDlg(QWidget *parent) :
   ui->labelTxt->setText ("<h2>" + QString {"WSJT-X v"
                                              + QCoreApplication::applicationVersion ()
                                              + " " + revision ()}.simplified () + "<br />"
-                                             + "improved PLUS</h2>"
+                                             + "improved AL PLUS</h2>"
 
     "<h3> In memory of G4WJS, Bill Somerville (1956-2021),<br />"
     "who gave so much of himself to the WSJT project. </h3>"
