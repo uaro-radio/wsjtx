@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1298</width>
-    <height>690</height>
+    <width>1165</width>
+    <height>685</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>950</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>WSJT-X   by K1JT</string>
@@ -305,6 +311,12 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>700</width>
+            <height>0</height>
+           </size>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <property name="leftMargin">
@@ -1177,7 +1189,7 @@ When not checked you can view the calibration results.</string>
                         <item>
                          <widget class="QCheckBox" name="txFirstCheckBox">
                           <property name="toolTip">
-                           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to Tx in even-numbered minutes or sequences, starting at 0; uncheck for odd sequences. In MSK144 mode, right-click to freeze the state of the checkbox to avoid starting a QSO with a station operating in the same time slot.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to Tx in even-numbered minutes or sequences, starting at 0; uncheck for odd sequences. In MSK144 mode, right-click to freeze the state of the checkbox to avoid starting a QSO with a station operating in the same time slot. Click on any mode button to unfreeze.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                           </property>
                           <property name="accessibleDescription">
                            <string>Check to Tx in even-numbered minutes or sequences, starting at 0; uncheck for odd sequences.</string>
@@ -3482,7 +3494,7 @@ QPushButton[state=&quot;ok&quot;] {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1298</width>
+     <width>1165</width>
      <height>22</height>
     </rect>
    </property>
