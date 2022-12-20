@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>817</width>
-    <height>688</height>
+    <width>840</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -648,7 +648,7 @@ QLabel[oob=&quot;true&quot;] {
          </widget>
         </item>
         <item>
-         <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,0" columnstretch="0,1,1">
+         <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,0" columnstretch="0,2,3">
           <property name="sizeConstraint">
            <enum>QLayout::SetMinimumSize</enum>
           </property>
@@ -870,195 +870,6 @@ QLabel[oob=&quot;true&quot;] {
             </layout>
            </widget>
           </item>
-          <item row="0" column="1">
-           <layout class="QGridLayout" name="gridLayout">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <item row="0" column="2" alignment="Qt::AlignHCenter">
-             <widget class="QPushButton" name="ft8Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Switch to FT8 mode</string>
-              </property>
-              <property name="text">
-               <string>FT8</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="3" alignment="Qt::AlignHCenter">
-             <widget class="QPushButton" name="jt65Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Switch to JT65 mode</string>
-              </property>
-              <property name="text">
-               <string>JT65</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="2" alignment="Qt::AlignHCenter">
-             <widget class="QPushButton" name="q65Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Switch to Q65 mode</string>
-              </property>
-              <property name="text">
-               <string>Q65</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" alignment="Qt::AlignLeft">
-             <widget class="QPushButton" name="houndButton">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Toggle FT8 hound mode on/off</string>
-              </property>
-              <property name="text">
-               <string>H</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="4" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="fst4Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Switch to FST4 mode</string>
-              </property>
-              <property name="text">
-               <string>FST4</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="4" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="wsprButton">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Switch to WSPR mode</string>
-              </property>
-              <property name="whatsThis">
-               <string/>
-              </property>
-              <property name="text">
-               <string>WSPR</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0" alignment="Qt::AlignLeft">
-             <widget class="QPushButton" name="msk144Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Switch to MSK144 mode</string>
-              </property>
-              <property name="text">
-               <string>MSK</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="3" alignment="Qt::AlignHCenter">
-             <widget class="QPushButton" name="ft4Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Switch to FT4 mode</string>
-              </property>
-              <property name="text">
-               <string>FT4</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="0" column="2" rowspan="3">
            <widget class="QStackedWidget" name="controls_stack_widget">
             <property name="sizePolicy">
@@ -1067,9 +878,15 @@ QLabel[oob=&quot;true&quot;] {
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="maximumSize">
+            <property name="minimumSize">
              <size>
               <width>180</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
               <height>200</height>
              </size>
             </property>
@@ -1112,7 +929,7 @@ QLabel[oob=&quot;true&quot;] {
                   <number>0</number>
                  </property>
                  <item>
-                  <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,0">
+                  <layout class="QGridLayout" name="gridLayout_3" columnstretch="2,1">
                    <property name="spacing">
                     <number>0</number>
                    </property>
@@ -1558,14 +1375,14 @@ When not checked you can view the calibration results.</string>
                       </widget>
                      </item>
                      <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_4">
+                      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,3,0">
                        <property name="spacing">
                         <number>0</number>
                        </property>
                        <item>
                         <widget class="QPushButton" name="pbR2T">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -1595,6 +1412,12 @@ When not checked you can view the calibration results.</string>
                        </item>
                        <item>
                         <widget class="HintedSpinBox" name="sbFtol">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
                          <property name="toolTip">
                           <string>Frequency tolerance (Hz)</string>
                          </property>
@@ -1618,7 +1441,7 @@ When not checked you can view the calibration results.</string>
                        <item>
                         <widget class="QPushButton" name="pbT2R">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -2206,7 +2029,7 @@ When not checked you can view the calibration results.</string>
                            <widget class="QSpinBox" name="sbNB">
                             <property name="minimumSize">
                              <size>
-                              <width>86</width>
+                              <width>0</width>
                               <height>0</height>
                              </size>
                             </property>
@@ -2306,6 +2129,195 @@ When not checked you can view the calibration results.</string>
              </layout>
             </widget>
            </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QGridLayout" name="gridLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item row="0" column="2" alignment="Qt::AlignHCenter">
+             <widget class="QPushButton" name="ft8Button">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Switch to FT8 mode</string>
+              </property>
+              <property name="text">
+               <string>FT8</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="3" alignment="Qt::AlignHCenter">
+             <widget class="QPushButton" name="jt65Button">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Switch to JT65 mode</string>
+              </property>
+              <property name="text">
+               <string>JT65</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2" alignment="Qt::AlignHCenter">
+             <widget class="QPushButton" name="q65Button">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Switch to Q65 mode</string>
+              </property>
+              <property name="text">
+               <string>Q65</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" alignment="Qt::AlignLeft">
+             <widget class="QPushButton" name="houndButton">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Toggle FT8 hound mode on/off</string>
+              </property>
+              <property name="text">
+               <string>H</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="4" alignment="Qt::AlignRight">
+             <widget class="QPushButton" name="fst4Button">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Switch to FST4 mode</string>
+              </property>
+              <property name="text">
+               <string>FST4</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4" alignment="Qt::AlignRight">
+             <widget class="QPushButton" name="wsprButton">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Switch to WSPR mode</string>
+              </property>
+              <property name="whatsThis">
+               <string/>
+              </property>
+              <property name="text">
+               <string>WSPR</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" alignment="Qt::AlignLeft">
+             <widget class="QPushButton" name="msk144Button">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Switch to MSK144 mode</string>
+              </property>
+              <property name="text">
+               <string>MSK</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3" alignment="Qt::AlignHCenter">
+             <widget class="QPushButton" name="ft4Button">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Switch to FT4 mode</string>
+              </property>
+              <property name="text">
+               <string>FT4</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
@@ -3739,7 +3751,7 @@ Double-click to reset to the standard 73 message</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>817</width>
+     <width>840</width>
      <height>22</height>
     </rect>
    </property>

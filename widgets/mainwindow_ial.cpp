@@ -1525,10 +1525,6 @@ void MainWindow::set_application_font (QFont const& font)
 
   // ensure a balanced layout
   qreal pointSize = m_config.text_font().pointSizeF();
-  if (pointSize < 9) ui->controls_stack_widget->setMaximumWidth(180);   // UR for AL
-  if (pointSize == 9) ui->controls_stack_widget->setMaximumWidth(200);  // UR for AL
-  if (pointSize == 10) ui->controls_stack_widget->setMaximumWidth(220); // UR for AL
-  if (pointSize > 10) ui->controls_stack_widget->setMaximumWidth(240);  // UR for AL
   if (pointSize < 11) {
       ui->tabWidget->setMaximumHeight(210);                           // UR for AL
 //      if (ui->actionUse_Dark_Style->isChecked()) {
