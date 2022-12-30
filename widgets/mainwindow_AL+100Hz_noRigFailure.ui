@@ -1559,7 +1559,7 @@ When not checked you can view the calibration results.</string>
              </layout>
             </widget>
             <widget class="QWidget" name="page_2">
-             <layout class="QVBoxLayout" name="verticalLayout_5">
+             <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0">
               <property name="spacing">
                <number>0</number>
               </property>
@@ -1624,7 +1624,7 @@ When not checked you can view the calibration results.</string>
                      <number>0</number>
                     </property>
                     <item row="0" column="0">
-                     <layout class="QHBoxLayout" name="horizontalLayout_12">
+                     <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="2,1">
                       <property name="spacing">
                        <number>0</number>
                       </property>

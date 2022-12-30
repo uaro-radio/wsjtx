@@ -220,7 +220,7 @@ bool no_Fox_alert = false;
 
 namespace
 {
-  Radio::Frequency constexpr default_frequency {14076000};
+  Radio::Frequency constexpr default_frequency {14074000};
   QRegExp message_alphabet {"[- @A-Za-z0-9+./?#<>;$]*"};
   // grid exact match excluding RR73
   QRegularExpression grid_regexp {"\\A(?![Rr]{2}73)[A-Ra-r]{2}[0-9]{2}([A-Xa-x]{2}){0,1}\\z"};
@@ -362,7 +362,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_appDir {QApplication::applicationDirPath ()},
   m_cqStr {""},
   m_palette {"Linrad"},
-  m_mode {"JT9"},
+  m_mode {"FT8"},
   m_rpt {"-15"},
   m_pfx {
     "1A", "1S",
@@ -816,6 +816,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         config_label.hide ();
       }
       statusUpdate ();
+      QTimer::singleShot (250, [=] {setRig (m_lastMonitoredFrequency);});   // This is needed for Hamradio Deluxe
     });
   m_multi_settings->create_menu_actions (this, ui->menuConfig);
   m_configurations_button = m_rigErrorMessageBox.addButton (tr ("Configurations...")
@@ -1361,7 +1362,7 @@ void MainWindow::readSettings()
   ui->actionDisable_writing_of_ALL_TXT->setChecked(m_settings->value("disableWritingOfAllTxt", false).toBool());
   ui->actionDisable_event_logging->setChecked(m_settings->value("DisableEventLogging", false).toBool());
   ui->actionUse_Dark_Style->setChecked(m_settings->value("DarkStyle", false).toBool());
-  m_mode=m_settings->value("Mode","JT9").toString();
+  m_mode=m_settings->value("Mode","FT8").toString();
   ui->actionNone->setChecked(m_settings->value("SaveNone",true).toBool());
   ui->actionSave_decoded->setChecked(m_settings->value("SaveDecoded",false).toBool());
   ui->actionSave_all->setChecked(m_settings->value("SaveAll",false).toBool());
@@ -2881,27 +2882,27 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
 
 void MainWindow::on_actionRelease_Notes_triggered ()
 {
-  QDesktopServices::openUrl (QUrl {"http://physics.princeton.edu/pulsar/k1jt/Release_Notes.txt"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Release_Notes.txt"});
 }
 
 void MainWindow::on_actionFT8_DXpedition_Mode_User_Guide_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"http://physics.princeton.edu/pulsar/k1jt/FT8_DXpedition_Mode.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/FT8_DXpedition_Mode.pdf"});
 }
 
 void MainWindow::on_actionQSG_FST4_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/FST4_Quick_Start.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/FST4_Quick_Start.pdf"});
 }
 
 void MainWindow::on_actionQSG_Q65_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/Q65_Quick_Start.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Q65_Quick_Start.pdf"});
 }
 
 void MainWindow::on_actionQSG_X250_M3_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/WSJTX_2.5.0_MAP65_3.0_Quick_Start.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/WSJTX_2.5.0_MAP65_3.0_Quick_Start.pdf"});
 }
 
 void MainWindow::on_actionOnline_User_Guide_triggered()      //Display manual
