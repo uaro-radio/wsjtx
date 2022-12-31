@@ -81,9 +81,9 @@ set (PROJECT_BUNDLE_NAME "WSJT-X-improved")
 set (PROJECT_VENDOR "Uwe Risse, DG2YCB")
 set (PROJECT_CONTACT "dg2ycb@gmx.de")
 set (PROJECT_COPYRIGHT "Copyright (C) 2001-2023 by Joe Taylor, K1JT")
-set (PROJECT_HOMEPAGE https://www.physics.princeton.edu/pulsar/K1JT/wsjtx.html)
+set (PROJECT_HOMEPAGE https://wsjt.sourceforge.io/wsjtx.html)
 set (PROJECT_MANUAL wsjtx-main)
-set (PROJECT_MANUAL_DIRECTORY_URL https://www.physics.princeton.edu/pulsar/K1JT/wsjtx-doc/)
+set (PROJECT_MANUAL_DIRECTORY_URL https://wsjt.sourceforge.io/wsjtx-doc/)
 set (PROJECT_SAMPLES_URL http://downloads.sourceforge.net/project/wsjt/)
 set (PROJECT_SAMPLES_UPLOAD_DEST frs.sourceforge.net:/home/frs/project/wsjt/)
 
@@ -1591,7 +1591,7 @@ install (TARGETS jt9 wsprd fmtave fcal fmeasure
 
 if(WSJT_BUILD_UTILS)
 install (TARGETS ft8code jt65code jt9code jt4code msk144code 
-  q65code fst4sim q65sim
+  q65code fst4sim q65sim echosim
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   )
