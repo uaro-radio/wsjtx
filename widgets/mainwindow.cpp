@@ -677,9 +677,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect (ui->decodedTextBrowser2, &DisplayText::erased, this, &MainWindow::rx_frequency_activity_cleared);
 
   // initialize decoded text font and hook up font change signals
-  // defer initialization until after construction otherwise menu
-  // fonts do not get set
-  QTimer::singleShot (0, this, SLOT (initialize_fonts ()));
+  // defer initialization until after construction otherwise menu fonts do not get set
+  // with 50 ms delay we are on the save side
+  QTimer::singleShot (50, this, SLOT (initialize_fonts ()));
   connect (&m_config, &Configuration::text_font_changed, [this] (QFont const& font) {
       set_application_font (font);
     });
@@ -7520,7 +7520,6 @@ void MainWindow::on_actionQ65_triggered()
   ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
   ui->lh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   ui->rh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
-  fast_config(m_bFastMode);
   statusChanged();
 
   m_specOp=m_config.special_op_id();
@@ -10959,8 +10958,8 @@ void MainWindow::bandHopping()
         Q_FALLTHROUGH();
     case 14:
         if (ui->cb6mQ65->isChecked()) {
-            setRig (50305000);
-            on_actionQ65_triggered();
+            setRig (10489540000);
+            on_actionFT8_triggered();
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -10970,8 +10969,8 @@ void MainWindow::bandHopping()
         Q_FALLTHROUGH();
     case 15:
         if (ui->cb2mQ65->isChecked()) {
-            setRig (144170000);
-            on_actionQ65_triggered();
+            setRig (10489540000);
+            on_actionFT4_triggered();
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
