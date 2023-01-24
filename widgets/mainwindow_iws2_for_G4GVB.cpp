@@ -888,6 +888,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->respondComboBox->addItem("CQ: None");
   ui->respondComboBox->addItem("CQ: First");
   ui->respondComboBox->addItem("CQ: Max Dist");
+  ui->respondComboBox->addItem("CQ: Max dB");
 
   m_dateTimeRcvdRR73=QDateTime::currentDateTimeUtc();
   m_dateTimeSentTx3=QDateTime::currentDateTimeUtc();
@@ -2090,6 +2091,37 @@ void MainWindow::fastSink(qint64 frames)
         }
        }
       }
+    // CQ Max dB for MSK144
+    if(!bProcessMsgNormally and ui->respondComboBox->currentText()=="CQ: Max dB") {
+      QString deCall;
+      QString deGrid;
+      decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+      // if they dont' send their grid we'll use ours and assume dx=0
+      if (deGrid.length() == 0) deGrid = m_config.my_grid();
+      int points=0;
+      points=decodedtext.string().mid(7,3).toInt();
+      if(points>m_maxPoints) {
+          m_maxPoints=points;
+          m_deCall=deCall;
+          m_bDoubleClicked=true;
+          ui->dxCallEntry->setText(deCall);
+          int m_ntx=2;
+          bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
+          if(bContest) m_ntx=3;
+          if(deGrid.contains(grid_regexp)) {
+            m_deGrid=deGrid;
+            ui->dxGridEntry->setText(deGrid);
+          } else {
+            m_ntx=3;
+          }
+          if(m_ntx==2) m_QSOProgress = REPORT;
+          if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
+          genStdMsgs(QString::number(decodedtext.snr()));
+          ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+          setTxMsg(m_ntx);
+          m_currentMessageType=m_ntx;
+      }
+     }
     }
 
     m_bDecoded=true;
@@ -4325,6 +4357,37 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   setTxMsg(m_ntx);
                   m_currentMessageType=m_ntx;
                 }
+              }
+            }
+
+            if(!bProcessMsgNormally and ui->respondComboBox->currentText()=="CQ: Max dB") {
+              QString deCall;
+              QString deGrid;
+              decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+              // if they dont' send their grid we'll use ours and assume dx=0
+              if (deGrid.length() == 0) deGrid = m_config.my_grid();
+              int points=0;
+              points=decodedtext.string().mid(7,3).toInt();
+              if(points>m_maxPoints) {
+                  m_maxPoints=points;
+                  m_deCall=deCall;
+                  m_bDoubleClicked=true;
+                  ui->dxCallEntry->setText(deCall);
+                  int m_ntx=2;
+                  bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
+                  if(bContest) m_ntx=3;
+                  if(deGrid.contains(grid_regexp)) {
+                    m_deGrid=deGrid;
+                    ui->dxGridEntry->setText(deGrid);
+                  } else {
+                    m_ntx=3;
+                  }
+                  if(m_ntx==2) m_QSOProgress = REPORT;
+                  if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
+                  genStdMsgs(QString::number(decodedtext.snr()));
+                  ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+                  setTxMsg(m_ntx);
+                  m_currentMessageType=m_ntx;
               }
             }
 
@@ -6827,9 +6890,14 @@ void MainWindow::on_dxGridEntry_textChanged (QString const& grid)
   }
 }
 
-void MainWindow::on_genStdMsgsPushButton_clicked()         //genStdMsgs button
+void MainWindow::on_genStdMsgsPushButton_clicked()          //genStdMsgs button
 {
   genStdMsgs(m_rpt);
+  if (ui->tx1->isEnabled ()) {
+      QTimer::singleShot (0, ui->txrb1, SLOT (click ()));   // Go to Tx1
+  } else {
+      QTimer::singleShot (0, ui->txrb2, SLOT (click ()));   // Go to Tx2 if Tx1 is disabled
+  }
 }
 
 void MainWindow::cease_auto_Tx_after_QSO ()
