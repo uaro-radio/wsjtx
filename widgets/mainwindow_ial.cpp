@@ -2096,7 +2096,7 @@ void MainWindow::fastSink(qint64 frames)
       decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
       // if they dont' send their grid we'll use ours and assume dx=0
       if (deGrid.length() == 0) deGrid = m_config.my_grid();
-      dBpoints=decodedtext.string().mid(7,3).toInt();
+      if (!decodedtext.string().contains(" 73")) dBpoints=decodedtext.string().mid(7,3).toInt();
       if(dBpoints>maxdBPoints) {
           maxdBPoints=dBpoints;
           m_deCall=deCall;
@@ -4364,7 +4364,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
               decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
               // if they dont' send their grid we'll use ours and assume dx=0
               if (deGrid.length() == 0) deGrid = m_config.my_grid();
-              dBpoints=decodedtext.string().mid(7,3).toInt();
+              if (!decodedtext.string().contains(" 73")) dBpoints=decodedtext.string().mid(7,3).toInt();
               if(dBpoints>maxdBPoints) {
                   maxdBPoints=dBpoints;
                   m_deCall=deCall;
