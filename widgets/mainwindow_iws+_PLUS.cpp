@@ -2093,30 +2093,30 @@ void MainWindow::fastSink(qint64 frames)
       QString deCall;
       QString deGrid;
       decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-      // if they dont' send their grid we'll use ours and assume dx=0
-      if (deGrid.length() == 0) deGrid = m_config.my_grid();
-      if (!decodedtext.string().contains(" 73")) dBpoints=decodedtext.string().mid(7,3).toInt();
-      if(dBpoints>maxdBPoints) {
-          maxdBPoints=dBpoints;
-          m_deCall=deCall;
-          m_bDoubleClicked=true;
-          ui->dxCallEntry->setText(deCall);
-          int m_ntx=2;
-          bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
-          if(bContest) m_ntx=3;
-          if(deGrid.contains(grid_regexp)) {
-            m_deGrid=deGrid;
-            ui->dxGridEntry->setText(deGrid);
-          } else {
-            m_ntx=3;
-          }
-          if(m_ntx==2) m_QSOProgress = REPORT;
-          if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
-          genStdMsgs(QString::number(decodedtext.snr()));
-          ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
-          setTxMsg(m_ntx);
-          m_currentMessageType=m_ntx;
-      }
+      if (!decodedtext.string().contains(" 73")) {
+          dBpoints=decodedtext.string().mid(7,3).toInt();
+          if(dBpoints>maxdBPoints) {
+            maxdBPoints=dBpoints;
+            m_deCall=deCall;
+            m_bDoubleClicked=true;
+            ui->dxCallEntry->setText(deCall);
+            int m_ntx=2;
+            bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
+            if(bContest) m_ntx=3;
+            if(deGrid.contains(grid_regexp)) {
+              m_deGrid=deGrid;
+              ui->dxGridEntry->setText(deGrid);
+            } else {
+              m_ntx=3;
+            }
+            if(m_ntx==2) m_QSOProgress = REPORT;
+            if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
+            genStdMsgs(QString::number(decodedtext.snr()));
+            ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+            setTxMsg(m_ntx);
+            m_currentMessageType=m_ntx;
+         }
+       }
      }
     }
 
@@ -4370,29 +4370,29 @@ void MainWindow::readFromStdout()                             //readFromStdout
               QString deCall;
               QString deGrid;
               decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-              // if they dont' send their grid we'll use ours and assume dx=0
-              if (deGrid.length() == 0) deGrid = m_config.my_grid();
-              if (!decodedtext.string().contains(" 73")) dBpoints=decodedtext.string().mid(7,3).toInt();
-              if(dBpoints>maxdBPoints) {
-                  maxdBPoints=dBpoints;
-                  m_deCall=deCall;
-                  m_bDoubleClicked=true;
-                  ui->dxCallEntry->setText(deCall);
-                  int m_ntx=2;
-                  bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
-                  if(bContest) m_ntx=3;
-                  if(deGrid.contains(grid_regexp)) {
-                    m_deGrid=deGrid;
-                    ui->dxGridEntry->setText(deGrid);
-                  } else {
-                    m_ntx=3;
-                  }
-                  if(m_ntx==2) m_QSOProgress = REPORT;
-                  if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
-                  genStdMsgs(QString::number(decodedtext.snr()));
-                  ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
-                  setTxMsg(m_ntx);
-                  m_currentMessageType=m_ntx;
+              if (!decodedtext.string().contains(" 73")) {
+                  dBpoints=decodedtext.string().mid(7,3).toInt();
+                  if(dBpoints>maxdBPoints) {
+                    maxdBPoints=dBpoints;
+                    m_deCall=deCall;
+                    m_bDoubleClicked=true;
+                    ui->dxCallEntry->setText(deCall);
+                    int m_ntx=2;
+                    bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
+                    if(bContest) m_ntx=3;
+                    if(deGrid.contains(grid_regexp)) {
+                      m_deGrid=deGrid;
+                      ui->dxGridEntry->setText(deGrid);
+                    } else {
+                      m_ntx=3;
+                    }
+                    if(m_ntx==2) m_QSOProgress = REPORT;
+                    if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
+                    genStdMsgs(QString::number(decodedtext.snr()));
+                    ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+                    setTxMsg(m_ntx);
+                    m_currentMessageType=m_ntx;
+                 }
               }
             }
 
@@ -6169,7 +6169,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
     }
     // his base call different or his call more qualified
     // i.e. compound version of same base call
-    ui->dxCallEntry->setText (hiscall);
+    if (!(s2.contains(" 73") && ui->respondComboBox->currentText()=="CQ: Max dB")) ui->dxCallEntry->setText (hiscall);
   }
   if (hisgrid.contains (grid_regexp)) {
     if(ui->dxGridEntry->text().mid(0,4) != hisgrid) ui->dxGridEntry->setText(hisgrid);
@@ -6837,8 +6837,7 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
 void MainWindow::mousePressEvent(QMouseEvent *event)    // mousePressEvents
 {
   if(ui->DX_Call_Button->hasFocus() && (event->button() & Qt::RightButton)) {  // DX_Call_Button
-      ui->dxCallEntry->clear();   // clear dxCallEntry on right-click.
-      ui->dxGridEntry->clear();   // clear dxGridEntry on right-click.
+      clearDX();   // clear dxCallEntry on right-click.
   }
   if (m_config.alternate_erase_button() && ui->EraseButton->hasFocus() && (event->button() & Qt::RightButton)) {
      ui->decodedTextBrowser2->erase ();
