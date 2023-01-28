@@ -11359,7 +11359,7 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
 
 void MainWindow::check_DX_Call_button_color()
 {
-    // set the DX Call button to yellow backgraund when the rig can transmit automatically
+    // Yellow background for the DX Call button when the rig is allowed to Tx automatically
     if (m_hisCall!="" && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144")) {
         ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none;}");
     } else {
