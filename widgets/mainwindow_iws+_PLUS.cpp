@@ -1072,7 +1072,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   ui->pbBestSP->setVisible(m_mode=="FT4");
 
-  check_DX_Call_button_color();
+  check_button_color();
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
@@ -1510,13 +1510,13 @@ void MainWindow::set_application_font (QFont const& font)
           qApp->setStyleSheet(ts.readAll() + "* {" + font_as_stylesheet (font) + '}');
           m_useDarkStyle = true;
           m_wideGraph->setDarkStyle(m_useDarkStyle);
-          check_DX_Call_button_color();
+          check_button_color();
           ui->tabWidget->setTabShape(QTabWidget::Rounded);
       }
    } else {
       m_useDarkStyle = false;
       m_wideGraph->setDarkStyle(m_useDarkStyle);
-      check_DX_Call_button_color();
+      check_button_color();
       ui->tabWidget->setTabShape(QTabWidget::Triangular);
       qApp->setFont (font);
       // set font in the application style sheet as well in case it has
@@ -2364,6 +2364,7 @@ void MainWindow::on_autoButton_clicked (bool checked)
   }
   m_tAutoOn=QDateTime::currentMSecsSinceEpoch()/1000;
   if(m_mode=="Echo") m_echoRunning=false;
+  check_button_color();
 }
 
 void MainWindow::on_sbTxPercent_valueChanged (int n)
@@ -6828,7 +6829,7 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
   } else {
       wait_and_call = false;      // toggle Wait & Call off in any other case
       ui->DX_Call_Button->setChecked (false);
-      check_DX_Call_button_color();
+      check_button_color();
   }
 }
 
@@ -6852,7 +6853,7 @@ void MainWindow::on_dxCallEntry_textChanged (QString const& call)
   if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
   statusChanged();
   statusUpdate ();
-  check_DX_Call_button_color();
+  check_button_color();
 }
 
 void MainWindow::on_dxCallEntry_editingFinished()
@@ -7836,7 +7837,7 @@ void MainWindow::switch_mode (Mode mode)
   } else {
     ui->actionAstronomical_data->setChecked (false);
   }
-  check_DX_Call_button_color();
+  check_button_color();
 }
 
 void MainWindow::WSPR_config(bool b)
@@ -11331,13 +11332,13 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
             qApp->setStyleSheet(ts.readAll() + "* {" + font_as_stylesheet (font) + '}');
             m_useDarkStyle = true;
             m_wideGraph->setDarkStyle(m_useDarkStyle);
-            check_DX_Call_button_color();
+            check_button_color();
             ui->tabWidget->setTabShape(QTabWidget::Rounded);
         }
     } else {
         m_useDarkStyle = false;
         m_wideGraph->setDarkStyle(m_useDarkStyle);
-        check_DX_Call_button_color();
+        check_button_color();
         ui->tabWidget->setTabShape(QTabWidget::Triangular);
         qApp->setFont (font);
         QString ss;
@@ -11371,16 +11372,25 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
     guiUpdate();
 }
 
-void MainWindow::check_DX_Call_button_color()
+void MainWindow::check_button_color()
 {
-    // Yellow background for the DX Call button when the rig is allowed to Tx automatically
+    // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
     if (m_hisCall!="" && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144")) {
         ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none;}");
+        if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
+        if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
     } else {
         if (m_useDarkStyle) {
-            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
+            if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+            if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         } else {
             ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+            if (!m_auto) {
+                ui->autoButton->setStyleSheet("");
+                ui->autoButton->setStyleSheet("QPushButton {min-width: 5em;}");
+            }
+            if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         }
     }
 }
