@@ -6825,12 +6825,11 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
   if((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
      (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && m_hisCall!="" && checked) {
       wait_and_call = true;       // toggle Wait & Call on when allowed
-      ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ff0000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
   } else {
       wait_and_call = false;      // toggle Wait & Call off in any other case
       ui->DX_Call_Button->setChecked (false);
-      check_button_color();
   }
+  check_button_color();
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)    // mousePressEvents
@@ -11375,13 +11374,14 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
 void MainWindow::check_button_color()
 {
     // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
-    if (m_hisCall!="" && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144")) {
+    if((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
+       (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && m_hisCall!="") {
         ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none;}");
         if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
         if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
     } else {
         if (m_useDarkStyle) {
-            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
+            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
             if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
             if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         } else {
