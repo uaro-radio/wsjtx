@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>727</width>
-    <height>753</height>
+    <width>771</width>
+    <height>727</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -171,6 +171,20 @@
           <string>Display</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
+          <item row="5" column="0">
+           <widget class="QCheckBox" name="cbHighlightDXcall">
+            <property name="text">
+             <string>Highlight DX Call in message</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QCheckBox" name="ppfx_check_box">
+            <property name="text">
+             <string>Show principal prefix instead of country name        </string>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="0">
            <widget class="QCheckBox" name="TX_messages_check_box">
             <property name="toolTip">
@@ -181,28 +195,41 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QCheckBox" name="ppfx_check_box">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="decodes_from_top_check_box">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to have decodes for a new period start at the top of the Band Activity window and not scroll off the top when the window is full.&lt;/p&gt;&lt;p&gt;This is to aid selecting decodes to double-click while decoding is still in progress. Use the Band Activity vertical scroll bar to reveal decodes past the bottom of the window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
-             <string>Show principal prefix instead of country name</string>
+             <string>Start new period decodes at top</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" rowspan="4">
-           <layout class="QHBoxLayout" name="horizontalLayout_21">
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
+          <item row="4" column="0">
+           <widget class="QCheckBox" name="DXCC_check_box">
+            <property name="toolTip">
+             <string>Show if decoded stations are new DXCC entities or worked before.</string>
+            </property>
+            <property name="text">
+             <string>Show &amp;DXCC, grid, and worked-before status    </string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QCheckBox" name="cbHighlightDXgrid">
+            <property name="text">
+             <string>Highlight DX Grid in message</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" rowspan="4">
+           <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="0">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
+            </property>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
@@ -242,13 +269,6 @@
             </item>
            </layout>
           </item>
-          <item row="5" column="0">
-           <widget class="QCheckBox" name="cbHighlightDXcall">
-            <property name="text">
-             <string>Highlight DX Call in message</string>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0">
            <widget class="QCheckBox" name="miles_check_box">
             <property name="toolTip">
@@ -259,29 +279,6 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="DXCC_check_box">
-            <property name="toolTip">
-             <string>Show if decoded stations are new DXCC entities or worked before.</string>
-            </property>
-            <property name="text">
-             <string>Show &amp;DXCC, grid, and worked-before status</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="decodes_from_top_check_box">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to have decodes for a new period start at the top of the Band Activity window and not scroll off the top when the window is full.&lt;/p&gt;&lt;p&gt;This is to aid selecting decodes to double-click while decoding is still in progress. Use the Band Activity vertical scroll bar to reveal decodes past the bottom of the window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Start new period decodes at top</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="insert_blank_check_box">
             <property name="toolTip">
@@ -289,13 +286,6 @@
             </property>
             <property name="text">
              <string>&amp;Blank line between decoding periods</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QCheckBox" name="cbHighlightDXgrid">
-            <property name="text">
-             <string>Highlight DX Grid in message</string>
             </property>
            </widget>
           </item>
@@ -315,6 +305,37 @@
           <string>Behavior</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_8">
+          <item row="7" column="0">
+           <widget class="QCheckBox" name="alternate_bindings_check_box">
+            <property name="text">
+             <string>Alternate F1-F6 bindings</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QCheckBox" name="force_call_1st_check_box">
+            <property name="text">
+             <string>Calling CQ forces Call 1st</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QCheckBox" name="single_decode_check_box">
+            <property name="text">
+             <string>Single decode</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QCheckBox" name="tx_QSY_check_box">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Some rigs are not able to process CAT commands while transmitting. This means that if you are operating in split mode you may have to uncheck this option.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Allow Tx frequency changes while transmitting</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QCheckBox" name="monitor_off_check_box">
             <property name="toolTip">
@@ -328,13 +349,17 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="tx_QSY_check_box">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Some rigs are not able to process CAT commands while transmitting. This means that if you are operating in split mode you may have to uncheck this option.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
+          <item row="3" column="2">
+           <widget class="QCheckBox" name="decode_at_52s_check_box">
             <property name="text">
-             <string>Allow Tx frequency changes while transmitting</string>
+             <string>Decode after EME delay</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QCheckBox" name="enable_VHF_features_check_box">
+            <property name="text">
+             <string>Enable VHF and submode features</string>
             </property>
            </widget>
           </item>
@@ -349,14 +374,7 @@ text message.</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="force_call_1st_check_box">
-            <property name="text">
-             <string>Calling CQ forces Call 1st</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0" colspan="2">
+          <item row="7" column="2" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_9">
             <item>
              <widget class="QCheckBox" name="CW_id_after_73_check_box">
@@ -409,17 +427,13 @@ quiet period when decoding is done.</string>
             </item>
            </layout>
           </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="decode_at_52s_check_box">
-            <property name="text">
-             <string>Decode after EME delay</string>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="monitor_last_used_check_box">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check this if you wish to automatically return to the last monitored frequency when monitor is enabled, leave it unchecked if you wish to have the current rig frequency maintained.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QCheckBox" name="alternate_bindings_check_box">
             <property name="text">
-             <string>Alternate F1-F6 bindings</string>
+             <string>Monitor returns to last used frequency</string>
             </property>
            </widget>
           </item>
@@ -433,24 +447,7 @@ quiet period when decoding is done.</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="enable_VHF_features_check_box">
-            <property name="text">
-             <string>Enable VHF and submode features</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="monitor_last_used_check_box">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check this if you wish to automatically return to the last monitored frequency when monitor is enabled, leave it unchecked if you wish to have the current rig frequency maintained.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Monitor returns to last used frequency</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
+          <item row="5" column="2" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_12">
             <item>
              <widget class="QCheckBox" name="disable_Tune_watchdog_check_box">
@@ -506,19 +503,21 @@ quiet period when decoding is done.</string>
             </item>
            </layout>
           </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="single_decode_check_box">
-            <property name="text">
-             <string>Single decode</string>
+          <item row="1" column="1">
+           <spacer name="horizontalSpacer_14">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QCheckBox" name="alternate_erase_button_check_box">
-            <property name="text">
-             <string>Alternate Erase button behavior</string>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
             </property>
-           </widget>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -536,45 +535,66 @@ quiet period when decoding is done.</string>
           <string>Additional features</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_17">
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="cbRxToTxAfterQSO">
-            <property name="text">
-             <string>Set Rx frequency to Tx frequency after QSO</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="cbEraseBandActivity">
-            <property name="text">
-             <string>Erase Band Activity window after band change</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QCheckBox" name="Map_Grid_to_State">
             <property name="text">
              <string>Map Grid locator to U.S. State</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="Map_All_Messages">
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="cbRxToTxAfterQSO">
             <property name="text">
-             <string>Show U.S. States in all messages with grid</string>
+             <string>Set Rx frequency to Tx frequency after QSO</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="cbClearDXgrid">
+            <property name="text">
+             <string>Clear DX Grid after QSO</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="cbEraseBandActivity">
+            <property name="text">
+             <string>Erase Band Activity window after band change</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
            <widget class="QCheckBox" name="cbClearDXcall">
             <property name="text">
              <string>Clear DX Call after QSO</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbClearDXgrid">
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="Map_All_Messages">
             <property name="text">
-             <string>Clear DX Grid after QSO</string>
+             <string>Show U.S. States in all messages with grid</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QCheckBox" name="disable_Tx_warning_check_box">
+            <property name="text">
+             <string>Disable Tx warning</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QCheckBox" name="enable_Wait_features_check_box">
+            <property name="text">
+             <string>Enable Wait features</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QCheckBox" name="alternate_erase_button_check_box">
+            <property name="text">
+             <string>Alternate Erase button behavior</string>
             </property>
            </widget>
           </item>
@@ -3773,15 +3793,12 @@ Right click for insert and delete options.</string>
   <tabstop>miles_check_box</tabstop>
   <tabstop>TX_messages_check_box</tabstop>
   <tabstop>DXCC_check_box</tabstop>
-  <tabstop>ppfx_check_box</tabstop>
   <tabstop>font_push_button</tabstop>
   <tabstop>decoded_text_font_push_button</tabstop>
   <tabstop>monitor_off_check_box</tabstop>
   <tabstop>monitor_last_used_check_box</tabstop>
   <tabstop>quick_call_check_box</tabstop>
   <tabstop>disable_TX_on_73_check_box</tabstop>
-  <tabstop>force_call_1st_check_box</tabstop>
-  <tabstop>alternate_bindings_check_box</tabstop>
   <tabstop>CW_id_after_73_check_box</tabstop>
   <tabstop>enable_VHF_features_check_box</tabstop>
   <tabstop>tx_QSY_check_box</tabstop>
@@ -3951,13 +3968,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
-  <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="CAT_stop_bits_button_group"/>
-  <buttongroup name="TX_audio_source_button_group"/>
   <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="TX_mode_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="TX_audio_source_button_group"/>
  </buttongroups>
 </ui>

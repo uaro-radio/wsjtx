@@ -162,6 +162,8 @@ public:
   bool enable_VHF_features () const;
   bool decode_at_52s () const;
   bool Tune_watchdog_disabled () const;
+  bool Tx_warning_disabled () const;
+  bool Wait_features_enabled () const;
   bool single_decode () const;
   bool twoPass() const;
   bool bFox() const;

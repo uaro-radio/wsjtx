@@ -2014,7 +2014,7 @@ void MainWindow::fastSink(qint64 frames)
 
     // Wait & Reply for MSK144
     if (text.contains(m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
-        !decodedtext.string().contains("73 ") && m_mode=="MSK144") {
+        !decodedtext.string().contains("73 ") && m_mode=="MSK144" && m_config.Wait_features_enabled()) {
           m_bDoubleClicked = true;
           processMessage(decodedtext);
           auto_tx_mode(true);
@@ -2023,7 +2023,7 @@ void MainWindow::fastSink(qint64 frames)
     // Wait & Call for MSK144
     if (m_mode=="MSK144" && wait_and_call && m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() &&
         m_hisCall!="" && (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
-         or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))) {
+         or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73")) && m_config.Wait_features_enabled()) {
           m_bDoubleClicked = true;
           processMessage(decodedtext);
           auto_tx_mode(true);
@@ -4144,7 +4144,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
         // Wait & Reply
         if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && (m_hisCall!="") &&
-            (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))) {
+            (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))
+            && m_config.Wait_features_enabled()) {
                 m_bDoubleClicked = true;
                 processMessage(decodedtext0);
                 auto_tx_mode(true);
@@ -4155,7 +4156,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
         if (wait_and_call && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") &&
             m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && m_hisCall!="" && !no_wait_and_call &&
             (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
-             or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))) {
+             or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))
+            && m_config.Wait_features_enabled()) {
               if (!text.contains(m_config.my_callsign() + " " + m_hisCall))
                   block_right_display = true;                // prevent display of first message twice
               if (m_specOp==SpecOp::HOUND) ui->TxFreqSpinBox->setValue(2300);
@@ -6827,7 +6829,8 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
 void MainWindow::mousePressEvent(QMouseEvent *event)    // mousePressEvents
 {
   if(ui->DX_Call_Button->hasFocus() && (event->button() & Qt::RightButton)) {  // DX_Call_Button
-      clearDX();   // clear dxCallEntry on right-click.
+      clearDX();                     // clear dxCallEntry
+      ui->tx5->setCurrentText("");   // clear tx5
   }
   if (m_config.alternate_erase_button() && ui->EraseButton->hasFocus() && (event->button() & Qt::RightButton)) {
      ui->decodedTextBrowser2->erase ();
@@ -9723,6 +9726,7 @@ void MainWindow::on_cbAutoSeq_toggled(bool b)
 {
   ui->respondComboBox->setVisible((m_mode=="FT8" or m_mode=="FT4" or m_mode=="FST4"
                            or m_mode=="Q65" or m_mode=="MSK144") and b);
+  check_button_color();
 }
 
 void MainWindow::on_measure_check_box_stateChanged (int state)
@@ -10768,6 +10772,7 @@ void MainWindow::on_houndButton_clicked (bool checked)
   }
   m_specOp=m_config.special_op_id();
   on_actionFT8_triggered();
+  check_button_color();
 }
 
 void MainWindow::on_ft8Button_clicked()
@@ -11380,24 +11385,74 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
 
 void MainWindow::check_button_color()
 {
-    // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
-    if((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
-       (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && m_hisCall!="") {
-        ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none;}");
-        if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
-        if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
-    } else {
-        if (m_useDarkStyle) {
-            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-            if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+    if (!m_config.Tx_warning_disabled()) {
+        // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
+        if((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
+           (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && m_hisCall!=""
+           && m_config.Wait_features_enabled()) {
+            if (ui->DX_Call_Button->isChecked()) {
+                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ff0000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
+            } else {
+                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none;}");
+            }
+            if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
             if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         } else {
-            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
-            if (!m_auto) {
+            ui->DX_Call_Button->setChecked(false);
+            if (m_useDarkStyle) {
+                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+                if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+                if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+            } else {
+                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+                if (!m_auto) {
+                    ui->autoButton->setStyleSheet("");
+                    ui->autoButton->setStyleSheet("QPushButton {min-width: 5em;}");
+                }
+                if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+            }
+        }
+    } else {
+        if((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
+           (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && m_hisCall!=""
+            && ui->DX_Call_Button->isChecked() && m_config.Wait_features_enabled()) {
+            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ff0000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
+        } else {
+            ui->DX_Call_Button->setChecked(false);
+            if (ui->actionUse_Dark_Style->isChecked()) {
+               ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+            } else {
+               ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+            }
+        }
+        if (m_auto) {
+            ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+        } else {
+            if (m_useDarkStyle) {
+                ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+            } else {
                 ui->autoButton->setStyleSheet("");
                 ui->autoButton->setStyleSheet("QPushButton {min-width: 5em;}");
             }
-            if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         }
+    }
+    if (m_config.Wait_features_enabled()) {
+        ui->DX_Call_Button->setToolTip("DX Call button: yellow when Wait & Reply is active, red when\n"
+                                       "Wait & Call has been switched on.\n\n"
+                                       "When the DX Call button is yellow, AutoSeq replies to messages\n"
+                                       "from the callsign in the DX Call box directed to you. Right-click\n"
+                                       "on the DX Call button to disable and to clear the DX Call box.\n\n"
+                                       "Left-click on the DX Call button to toggle Wait & Call on/off.\n"
+                                       "Wait & Call turns on Enable Tx as soon as the callsign from the\n"
+                                       "DX Call box is decoded, and calls it a maximum of three times.\n"
+                                       "Auto Seq must be enabled.\n\n"
+                                       "Attention: your rig may be set to Tx when the DX Call button is\n"
+                                       "red or yellow!");
+        ui->autoButton->setToolTip("Toggle Auto-Tx On/Off.\n\n"
+                                   "Attention: your rig may be set to Tx when the\n"
+                                   "DX Call button is yellow!");
+    } else {
+        ui->DX_Call_Button->setToolTip("Right-click to clear the DX Call box");
+        ui->autoButton->setToolTip("Toggle Auto-Tx On/Off");
     }
 }
