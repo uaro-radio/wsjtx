@@ -5129,8 +5129,8 @@ void MainWindow::guiUpdate()
         {
           // always stop Tx after sending 73
           if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65") && m_ntx != 4) cease_auto_Tx_after_QSO ();
-          // send RR73 up to 5 times
-          if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65")) stopWRTimer.start(int(9000.0*m_TRperiod));
+          // send RR73 up to 10 times
+          if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65")) stopWRTimer.start(int(20000.0*m_TRperiod));
           logQSOTimer.start(0);
         }
       else
@@ -11386,9 +11386,9 @@ void MainWindow::check_button_color()
 {
     if (!m_config.Tx_warning_disabled()) {
         // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
-        if((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
-           (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && m_hisCall!=""
-           && m_config.Wait_features_enabled()) {
+        if((((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
+              m_specOp==SpecOp::NONE && ui->cbAutoSeq->isChecked() && ui->cbAutoSeq->isChecked()
+              && m_config.Wait_features_enabled()) or m_specOp==SpecOp::HOUND) && m_hisCall!="") {
             if (ui->DX_Call_Button->isChecked()) {
                 ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ff0000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
             } else {
@@ -11435,23 +11435,18 @@ void MainWindow::check_button_color()
             }
         }
     }
+    ui->autoButton->setToolTip("Toggle Auto-Tx On/Off");
     if (m_config.Wait_features_enabled()) {
-        ui->DX_Call_Button->setToolTip("DX Call button: yellow when Wait & Reply is active, red when\n"
-                                       "Wait & Call has been switched on.\n\n"
-                                       "When the DX Call button is yellow, AutoSeq replies to messages\n"
-                                       "from the callsign in the DX Call box directed to you. Right-click\n"
-                                       "on the DX Call button to disable and to clear the DX Call box.\n\n"
-                                       "Left-click on the DX Call button to toggle Wait & Call on/off.\n"
-                                       "Wait & Call turns on Enable Tx as soon as the callsign from the\n"
-                                       "DX Call box is decoded, and calls it a maximum of three times.\n"
-                                       "Auto Seq must be enabled.\n\n"
-                                       "Attention: your rig may be set to Tx when the DX Call button is\n"
-                                       "red or yellow!");
-        ui->autoButton->setToolTip("Toggle Auto-Tx On/Off.\n\n"
-                                   "Attention: your rig may be set to Tx when the\n"
-                                   "DX Call button is yellow!");
+        ui->DX_Call_Button->setToolTip("Toggle Wait & Call On/Off.\n"
+                                       "Right-click to clear the DX Call box.");
     } else {
         ui->DX_Call_Button->setToolTip("Right-click to clear the DX Call box");
-        ui->autoButton->setToolTip("Toggle Auto-Tx On/Off");
+    }
+    if (m_config.alternate_erase_button()) {
+        ui->EraseButton->setToolTip("Left-click to erase left window.\n"
+                                    "Right-click to erase right window.");
+    } else {
+        ui->EraseButton->setToolTip("Erase right window.\n"
+                                    "Double-click to erase both windows.");
     }
 }

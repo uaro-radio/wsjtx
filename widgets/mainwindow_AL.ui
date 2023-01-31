@@ -850,6 +850,9 @@ QLabel[oob=&quot;true&quot;] {
                  <height>0</height>
                 </size>
                </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Wait &amp;amp; Call On/Off. Right-click to clear the DX Call box.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton {
 	background-color: #9fafd5;
@@ -2216,7 +2219,7 @@ When not checked you can view the calibration results.</string>
                </size>
               </property>
               <property name="toolTip">
-               <string>Toggle FT8 hound mode on/off</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle FT8 hound mode On/Off&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>H</string>
@@ -2372,7 +2375,7 @@ When not checked you can view the calibration results.</string>
                 </size>
                </property>
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Auto-Tx On/Off&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Attention:&lt;/span&gt; your rig may be set to Tx when the DX Call button is  yellow!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Auto-Tx On/Off&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="accessibleDescription">
                 <string>Toggle Auto-Tx On/Off</string>

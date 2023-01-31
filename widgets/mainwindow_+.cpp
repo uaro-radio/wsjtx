@@ -89,6 +89,7 @@
 #include "FoxLogWindow.hpp"
 #include "CabrilloLogWindow.hpp"
 #include "ExportCabrillo.h"
+#include "Network/Cloudlog.hpp"
 #include "ui_mainwindow.h"
 #include "moc_mainwindow.cpp"
 #include "Logger.hpp"
@@ -266,6 +267,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui(new Ui::MainWindow),
   m_config {&m_network_manager, temp_directory, m_settings, &m_logBook, this},
   m_logBook {&m_config},
+  m_cloudlog {&m_config, &m_network_manager},
   m_WSPR_band_hopping {m_settings, &m_config, this},
   m_WSPR_tx_next {false},
   m_rigErrorMessageBox {MessageBox::Critical, tr ("Rig Control Error")
@@ -442,7 +444,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         m_config.udp_server_name (), m_config.udp_server_port (),
         m_config.udp_interface_names (), m_config.udp_TTL (),
         this}},
-  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " i"}.simplified ()},     // UR
+  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " i+"}.simplified ()},     // UR
   m_manual {&m_network_manager},
   m_block_udp_status_updates {false},
   m_useDarkStyle {false}
@@ -1136,7 +1138,7 @@ void MainWindow::on_the_minute ()
 //--------------------------------------------------- MainWindow destructor
 MainWindow::~MainWindow()
 {
-    if(m_astroWidget) m_astroWidget.reset ();
+  if(m_astroWidget) m_astroWidget.reset ();
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir ().absoluteFilePath ("wsjtx_wisdom.dat"))};
   fftwf_export_wisdom_to_filename (fname.toLocal8Bit ());
   m_audioThread.quit ();
@@ -2799,7 +2801,6 @@ void MainWindow::setup_status_bar (bool vhf)
   if (vhf && submode != QChar::Null) {
     QString t{m_mode + " " + submode};
     if(m_mode=="Q65") t=m_mode + "-" + QString::number(m_TRperiod) + submode;
-
     mode_label.setText (t);
   } else {
     mode_label.setText (m_mode);
@@ -4245,6 +4246,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
        if (m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
             || (decodedtext.string().contains("<...> " + m_hisCall))))  {
            ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+           if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
            QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
                ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
                });
@@ -4257,7 +4259,15 @@ void MainWindow::readFromStdout()                             //readFromStdout
        }
        if (m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
            ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true);
+           if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
        }
+           QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
+               if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
+               QSound::play("./bin/sounds/DXcall.wav");
+               QSound::play("./sounds/DXcall.wav");             // UR for Linux
+               }
+               play_DXcall = false;
+           });
 
           if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
             QString messagePriority=ui->decodedTextBrowser->CQPriority();
@@ -5117,10 +5127,10 @@ void MainWindow::guiUpdate()
       }
       if((m_config.prompt_to_log() or m_config.autoLog()) && !m_tune && CALLING != m_QSOProgress)
         {
-          // always stop Tx after sending 73
+          // always stop Tx after sending 73   // URUR
           if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65") && m_ntx != 4) cease_auto_Tx_after_QSO ();
-          // send RR73 up to 10 times
-          if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65")) stopWRTimer.start(int(20000.0*m_TRperiod));
+          // send RR73 up to 5 times   // URUR
+          if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65")) stopWRTimer.start(int(9000.0*m_TRperiod));
           logQSOTimer.start(0);
         }
       else
@@ -6926,7 +6936,7 @@ void MainWindow::cease_auto_Tx_after_QSO ()
 
 void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
 {
-  if (!m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65")) cease_auto_Tx_after_QSO ();
+  if (!m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65")) cease_auto_Tx_after_QSO (); // URUR
 
   if (!m_hisCall.size ()) {
     MessageBox::warning_message (this, tr ("Warning:  DX Call field is empty."));
@@ -7012,6 +7022,12 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
                                        tr ("Write returned \"%1\"").arg (sock.errorString ()));
         }
     }
+
+  // Log to Cloudlog API if enabled
+  if (m_config.cloudlog_enabled())
+  {
+    m_cloudlog.logQso(ADIF);
+  }
 
   if(m_config.clear_DX () and SpecOp::HOUND != m_specOp) clearDX ();
   m_dateTimeQSOOn = QDateTime {};
@@ -11370,9 +11386,9 @@ void MainWindow::check_button_color()
 {
     if (!m_config.Tx_warning_disabled()) {
         // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
-        if((((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
-              m_specOp==SpecOp::NONE && ui->cbAutoSeq->isChecked() && ui->cbAutoSeq->isChecked()
-              && m_config.Wait_features_enabled()) or m_specOp==SpecOp::HOUND) && m_hisCall!="") {
+        if((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
+           (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && m_hisCall!=""
+           && m_config.Wait_features_enabled()) {
             if (ui->DX_Call_Button->isChecked()) {
                 ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ff0000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
             } else {
@@ -11419,18 +11435,23 @@ void MainWindow::check_button_color()
             }
         }
     }
-    ui->autoButton->setToolTip("Toggle Auto-Tx On/Off");
     if (m_config.Wait_features_enabled()) {
-        ui->DX_Call_Button->setToolTip("Toggle Wait & Call On/Off.\n"
-                                       "Right-click to clear the DX Call box.");
+        ui->DX_Call_Button->setToolTip("DX Call button: yellow when Wait & Reply is active, red when\n"
+                                       "Wait & Call has been switched on.\n\n"
+                                       "When the DX Call button is yellow, AutoSeq replies to messages\n"
+                                       "from the callsign in the DX Call box directed to you. Right-click\n"
+                                       "on the DX Call button to disable and to clear the DX Call box.\n\n"
+                                       "Left-click on the DX Call button to toggle Wait & Call on/off.\n"
+                                       "Wait & Call turns on Enable Tx as soon as the callsign from the\n"
+                                       "DX Call box is decoded, and calls it a maximum of three times.\n"
+                                       "Auto Seq must be enabled.\n\n"
+                                       "Attention: your rig may be set to Tx when the DX Call button is\n"
+                                       "red or yellow!");
+        ui->autoButton->setToolTip("Toggle Auto-Tx On/Off.\n\n"
+                                   "Attention: your rig may be set to Tx when the\n"
+                                   "DX Call button is yellow!");
     } else {
         ui->DX_Call_Button->setToolTip("Right-click to clear the DX Call box");
-    }
-    if (m_config.alternate_erase_button()) {
-        ui->EraseButton->setToolTip("Left-click to erase left window.\n"
-                                    "Right-click to erase right window.");
-    } else {
-        ui->EraseButton->setToolTip("Erase right window.\n"
-                                    "Double-click to erase both windows.");
+        ui->autoButton->setToolTip("Toggle Auto-Tx On/Off");
     }
 }

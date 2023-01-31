@@ -19,6 +19,9 @@
   <property name="windowTitle">
    <string>WSJT-X   by K1JT</string>
   </property>
+  <property name="toolTip">
+   <string/>
+  </property>
   <property name="styleSheet">
    <string notr="true"/>
   </property>
@@ -498,7 +501,7 @@
             </size>
            </property>
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Auto-Tx On/Off&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Auto-Tx On/Off&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Attention:&lt;/span&gt; your rig may be set to Tx when the DX Call button is  yellow!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="accessibleDescription">
             <string>Toggle Auto-Tx On/Off</string>
@@ -776,9 +779,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Wait &amp;amp; Call On/Off. Right-click to clear the DX Call box.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="styleSheet">
                <string notr="true">QPushButton {
@@ -3218,25 +3218,6 @@ QLabel[oob=&quot;true&quot;] {
          <item row="1" column="3" rowspan="2">
           <layout class="QVBoxLayout" name="verticalLayout_15">
            <item>
-            <widget class="QPushButton" name="foxButton">
-             <property name="minimumSize">
-              <size>
-               <width>32</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle FT8 fox mode On/Off&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="text">
-              <string>F</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="houndButton">
              <property name="minimumSize">
               <size>
@@ -3251,7 +3232,7 @@ QLabel[oob=&quot;true&quot;] {
               </size>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle FT8 hound mode On/Off&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>Toggle FT8 hound mode On/Off</string>
              </property>
              <property name="text">
               <string>H</string>
