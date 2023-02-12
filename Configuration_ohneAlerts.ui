@@ -2622,6 +2622,22 @@ Right click for insert and delete options.</string>
        <string>Advanced</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_9">
+       <item row="2" column="0" colspan="2">
+        <spacer name="verticalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="0" column="1">
         <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
@@ -3138,22 +3154,6 @@ Right click for insert and delete options.</string>
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
-        <spacer name="verticalSpacer_8">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_6">
          <property name="toolTip">
@@ -3609,13 +3609,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="split_mode_button_group"/>
   <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="TX_audio_source_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
+  <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="TX_mode_button_group"/>
  </buttongroups>
 </ui>
