@@ -241,6 +241,52 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
 
   using SpOp = Configuration::SpecialOperatingActivity;
   auto special_op = m_config->special_op_id ();
+
+  // put contest name in comments
+  if (SpOp::NONE != special_op && SpOp::HOUND != special_op && SpOp::FOX != special_op
+      && m_config->Individual_Contest_Name() && !m_config->report_in_comments()
+      && m_config->Contest_Name() !="" && !ui->cbComments->isChecked()) {
+    QString Contest_Name = (m_config->Contest_Name() + " Contest");
+    ui->comments->setCurrentIndex(0);
+    ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
+  }
+  if (SpOp::NA_VHF == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
+      && !ui->cbComments->isChecked()) {
+    QString Contest_Name = ("NA VHF Contest");
+    ui->comments->setCurrentIndex(0);
+    ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
+  }
+  if (SpOp::EU_VHF == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
+      && !ui->cbComments->isChecked()) {
+    QString Contest_Name = ("EU VHF Contest");
+    ui->comments->setCurrentIndex(0);
+    ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
+  }
+  if (SpOp::WW_DIGI == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
+      && !ui->cbComments->isChecked()) {
+    QString Contest_Name = ("WW Digi Contest");
+    ui->comments->setCurrentIndex(0);
+    ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
+  }
+  if (SpOp::FIELD_DAY == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
+      && !ui->cbComments->isChecked()) {
+    QString Contest_Name = ("ARRL Fieldday");
+    ui->comments->setCurrentIndex(0);
+    ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
+  }
+  if (SpOp::RTTY == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
+      && !ui->cbComments->isChecked()) {
+    QString Contest_Name = ("FT Roundup");
+    ui->comments->setCurrentIndex(0);
+    ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
+  }
+  if (SpOp::ARRL_DIGI == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
+      && !ui->cbComments->isChecked()) {
+    QString Contest_Name = ("ARRL Digi Contest");
+    ui->comments->setCurrentIndex(0);
+    ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
+  }
+
   if (SpOp::FOX == special_op
       || (m_config->autoLog ()
           && SpOp::NONE < special_op && special_op < SpOp::FOX))
@@ -252,16 +298,6 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
     {
       show();
     }
-
-  // put contest name in comments
-  if (SpOp::NONE != special_op && SpOp::HOUND != special_op && SpOp::FOX != special_op
-      && m_config->Individual_Contest_Name() && !m_config->report_in_comments()
-      && m_config->Contest_Name() !="" && !ui->cbComments->isChecked()) {
-    QString Contest_Name = (m_config->Contest_Name() + " Contest");
-    ui->comments->setCurrentIndex(0);
-    ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
-  }
-
 }
 
 void LogQSO::accept()
