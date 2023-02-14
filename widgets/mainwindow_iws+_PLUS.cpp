@@ -6937,6 +6937,7 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
 
   if (!m_hisCall.size ()) {
     MessageBox::warning_message (this, tr ("Warning:  DX Call field is empty."));
+    if(SpecOp::NA_VHF == m_specOp or SpecOp::WW_DIGI == m_specOp) return;  // prevent program crash
   }
   // m_dateTimeQSOOn should really already be set but we'll ensure it gets set to something just in case
   if (!m_dateTimeQSOOn.isValid ()) {
