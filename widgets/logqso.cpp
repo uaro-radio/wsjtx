@@ -245,44 +245,50 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
   // put contest name in comments
   if (SpOp::NONE != special_op && SpOp::HOUND != special_op && SpOp::FOX != special_op
       && m_config->Individual_Contest_Name() && !m_config->report_in_comments()
-      && m_config->Contest_Name() !="" && !ui->cbComments->isChecked()) {
+      && m_config->Contest_Name() !="" && !ui->cbComments->isChecked() && m_config->specOp_in_comments()) {
     QString Contest_Name = (m_config->Contest_Name() + " Contest");
     ui->comments->setCurrentIndex(0);
     ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
   }
   if (SpOp::NA_VHF == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
-      && !ui->cbComments->isChecked()) {
+      && !ui->cbComments->isChecked() && m_config->specOp_in_comments()) {
     QString Contest_Name = ("NA VHF Contest");
     ui->comments->setCurrentIndex(0);
     ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
   }
   if (SpOp::EU_VHF == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
-      && !ui->cbComments->isChecked()) {
+      && !ui->cbComments->isChecked() && m_config->specOp_in_comments()) {
     QString Contest_Name = ("EU VHF Contest");
     ui->comments->setCurrentIndex(0);
     ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
   }
   if (SpOp::WW_DIGI == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
-      && !ui->cbComments->isChecked()) {
+      && !ui->cbComments->isChecked() && m_config->specOp_in_comments()) {
     QString Contest_Name = ("WW Digi Contest");
     ui->comments->setCurrentIndex(0);
     ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
   }
   if (SpOp::FIELD_DAY == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
-      && !ui->cbComments->isChecked()) {
-    QString Contest_Name = ("ARRL Fieldday");
+      && !ui->cbComments->isChecked() && m_config->specOp_in_comments()) {
+    QString Contest_Name = ("ARRL Field Day");
     ui->comments->setCurrentIndex(0);
     ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
   }
   if (SpOp::RTTY == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
-      && !ui->cbComments->isChecked()) {
-    QString Contest_Name = ("FT Roundup");
+      && !ui->cbComments->isChecked() && m_config->specOp_in_comments()) {
+    QString Contest_Name = ("FT Roundup messages");
     ui->comments->setCurrentIndex(0);
     ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
   }
   if (SpOp::ARRL_DIGI == special_op && !m_config->Individual_Contest_Name() && !m_config->report_in_comments()
-      && !ui->cbComments->isChecked()) {
+      && !ui->cbComments->isChecked() && m_config->specOp_in_comments()) {
     QString Contest_Name = ("ARRL Digi Contest");
+    ui->comments->setCurrentIndex(0);
+    ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
+  }
+  if (SpOp::HOUND == special_op && !m_config->report_in_comments()
+      && !ui->cbComments->isChecked() && m_config->specOp_in_comments()) {
+    QString Contest_Name = ("F/H mode");
     ui->comments->setCurrentIndex(0);
     ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
   }

@@ -143,6 +143,7 @@ public:
   bool monitor_last_used () const;
   bool log_as_RTTY () const;
   bool report_in_comments () const;
+  bool specOp_in_comments () const;
   bool cloudlog_enabled () const;
   QString cloudlog_api_url() const;
   QString cloudlog_api_key() const;

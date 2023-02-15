@@ -142,6 +142,7 @@ public:
   bool monitor_last_used () const;
   bool log_as_RTTY () const;
   bool report_in_comments () const;
+  bool specOp_in_comments () const;
   bool prompt_to_log () const;
   bool autoLog() const;
   bool decodes_from_top () const;

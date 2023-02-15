@@ -750,6 +750,7 @@ private:
   bool monitor_last_used_;
   bool log_as_RTTY_;
   bool report_in_comments_;
+  bool specOp_in_comments_;
   bool prompt_to_log_;
   bool autoLog_;
   bool decodes_from_top_;
@@ -885,6 +886,7 @@ bool Configuration::monitor_off_at_startup () const {return m_->monitor_off_at_s
 bool Configuration::monitor_last_used () const {return m_->rig_is_dummy_ || m_->monitor_last_used_;}
 bool Configuration::log_as_RTTY () const {return m_->log_as_RTTY_;}
 bool Configuration::report_in_comments () const {return m_->report_in_comments_;}
+bool Configuration::specOp_in_comments () const {return m_->specOp_in_comments_;}
 bool Configuration::cloudlog_enabled () const {return m_->bCloudLog_;}
 QString Configuration::cloudlog_api_url () const {return m_->cloudLogApiUrl_;}
 QString Configuration::cloudlog_api_key () const {return m_->cloudLogApiKey_;}
@@ -1655,6 +1657,7 @@ void Configuration::impl::initialize_models ()
   ui_->monitor_last_used_check_box->setChecked (monitor_last_used_);
   ui_->log_as_RTTY_check_box->setChecked (log_as_RTTY_);
   ui_->report_in_comments_check_box->setChecked (report_in_comments_);
+  ui_->specOp_in_comments_check_box->setChecked (specOp_in_comments_);
   ui_->prompt_to_log_check_box->setChecked (prompt_to_log_);
   ui_->cbAutoLog->setChecked(autoLog_);
   ui_->decodes_from_top_check_box->setChecked (decodes_from_top_);
@@ -1983,6 +1986,7 @@ void Configuration::impl::read_settings ()
 
   log_as_RTTY_ = settings_->value ("toRTTY", false).toBool ();
   report_in_comments_ = settings_->value("dBtoComments", false).toBool ();
+  specOp_in_comments_ = settings_->value("specOptoComments", false).toBool ();
   rig_params_.rig_name = settings_->value ("Rig", TransceiverFactory::basic_transceiver_name_).toString ();
   rig_is_dummy_ = TransceiverFactory::basic_transceiver_name_ == rig_params_.rig_name;
   rig_params_.network_port = settings_->value ("CATNetworkPort").toString ();
@@ -2176,6 +2180,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("LotWDaysSinceLastUpload", LotW_days_since_upload_);
   settings_->setValue ("toRTTY", log_as_RTTY_);
   settings_->setValue ("dBtoComments", report_in_comments_);
+  settings_->setValue ("specOptoComments", specOp_in_comments_);
   settings_->setValue ("Rig", rig_params_.rig_name);
   settings_->setValue ("CATNetworkPort", rig_params_.network_port);
   settings_->setValue ("CATUSBPort", rig_params_.usb_port);
@@ -2672,6 +2677,7 @@ void Configuration::impl::accept ()
   type_2_msg_gen_ = static_cast<Type2MsgGen> (ui_->type_2_msg_gen_combo_box->currentIndex ());
   log_as_RTTY_ = ui_->log_as_RTTY_check_box->isChecked ();
   report_in_comments_ = ui_->report_in_comments_check_box->isChecked ();
+  specOp_in_comments_ = ui_->specOp_in_comments_check_box->isChecked ();
   prompt_to_log_ = ui_->prompt_to_log_check_box->isChecked ();
   autoLog_ = ui_->cbAutoLog->isChecked();
   decodes_from_top_ = ui_->decodes_from_top_check_box->isChecked ();
