@@ -4209,7 +4209,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
            QString deCall;
            QString grid;
            decodedtext.deCallAndGrid(deCall,grid);
-           if ((m_config.showDistance() || m_config.showBearing()) && grid.contains(grid_regexp)) {
+           if ((m_config.showDistance() || m_config.showAzimuth()) && grid.contains(grid_regexp)) {
                double utch=0.0;
                int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
                azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1().constData()),
@@ -4222,7 +4222,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                    if(m_config.miles()) distance += " mi";
                    if(!m_config.miles()) distance += " km";
                }
-               if (m_config.showBearing()) {
+               if (m_config.showAzimuth()) {
                    if (distance.length()) distance += " / ";
                    distance += QString::number(nAz) + "°";
                }

@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="configuration_tabs">
      <property name="currentIndex">
-      <number>0</number>
+      <number>7</number>
      </property>
      <widget class="QWidget" name="general_tab">
       <attribute name="title">
@@ -537,7 +537,7 @@ quiet period when decoding is done.</string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_8">
+        <widget class="QGroupBox" name="additional_features_box">
          <property name="title">
           <string>Additional features</string>
          </property>
@@ -616,12 +616,12 @@ quiet period when decoding is done.</string>
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QCheckBox" name="cb_showBearing">
+           <widget class="QCheckBox" name="cb_showAzimuth">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If a station sends locator, calculate and show the beaming in Band Activity pane.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If a station sends a valid Maidenhead locator, calculate and show the great-circle azimuth in Band Activity pane.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Show beaming in messages with grid</string>
+             <string>Show azimuth in messages with grid</string>
             </property>
            </widget>
           </item>
@@ -4005,13 +4005,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="TX_audio_source_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
-  <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="special_op_activity_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
+  <buttongroup name="TX_mode_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
  </buttongroups>
 </ui>

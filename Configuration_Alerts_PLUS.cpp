@@ -773,7 +773,7 @@ private:
   bool Tx_warning_disabled_;
   bool Wait_features_enabled_;
   bool showDistance_;
-  bool showBearing_;
+  bool showAzimuth_;
   bool repeat_Tx_;
   bool single_decode_;
   bool twoPass_;
@@ -915,7 +915,7 @@ bool Configuration::Tune_watchdog_disabled () const {return m_->Tune_watchdog_di
 bool Configuration::Tx_warning_disabled () const {return m_->Tx_warning_disabled_;}
 bool Configuration::Wait_features_enabled () const {return m_->Wait_features_enabled_;}
 bool Configuration::showDistance() const {return m_->showDistance_;}
-bool Configuration::showBearing() const {return m_->showBearing_;}
+bool Configuration::showAzimuth() const {return m_->showAzimuth_;}
 bool Configuration::repeat_Tx () const {return m_->repeat_Tx_;}
 bool Configuration::single_decode () const {return m_->single_decode_;}
 bool Configuration::twoPass() const {return m_->twoPass_;}
@@ -1684,7 +1684,7 @@ void Configuration::impl::initialize_models ()
   ui_->disable_Tx_warning_check_box->setChecked(Tx_warning_disabled_);
   ui_->enable_Wait_features_check_box->setChecked(Wait_features_enabled_);
   ui_->cb_showDistance->setChecked(showDistance_);
-  ui_->cb_showBearing->setChecked(showBearing_);
+  ui_->cb_showAzimuth->setChecked(showAzimuth_);
   ui_->repeat_Tx_check_box->setChecked(repeat_Tx_);
   ui_->single_decode_check_box->setChecked(single_decode_);
   ui_->cbTwoPass->setChecked(twoPass_);
@@ -2035,7 +2035,7 @@ void Configuration::impl::read_settings ()
   Tx_warning_disabled_ = settings_->value("TxWarningDisabled",false).toBool ();
   Wait_features_enabled_ = settings_->value("WaitFeaturesEnabled",true).toBool ();
   showDistance_ = settings_->value("showDistance", false).toBool();
-  showBearing_ = settings_->value("showBearing", false).toBool();
+  showAzimuth_ = settings_->value("showAzimuth", false).toBool();
   repeat_Tx_ = settings_->value("RepeatTx",false).toBool ();
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
   twoPass_ = settings_->value("TwoPass",true).toBool ();
@@ -2230,7 +2230,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("TxWarningDisabled", Tx_warning_disabled_);
   settings_->setValue ("WaitFeaturesEnabled", Wait_features_enabled_);
   settings_->setValue ("showDistance", showDistance_);
-  settings_->setValue ("showBearing", showBearing_);
+  settings_->setValue ("showAzimuth", showAzimuth_);
   settings_->setValue ("RepeatTx", repeat_Tx_);
   settings_->setValue ("SingleDecode", single_decode_);
   settings_->setValue ("TwoPass", twoPass_);
@@ -2716,7 +2716,7 @@ void Configuration::impl::accept ()
   Tx_warning_disabled_ = ui_->disable_Tx_warning_check_box->isChecked ();
   Wait_features_enabled_ = ui_->enable_Wait_features_check_box->isChecked ();
   showDistance_ = ui_->cb_showDistance->isChecked();
-  showBearing_ = ui_->cb_showBearing->isChecked();
+  showAzimuth_ = ui_->cb_showAzimuth->isChecked();
   repeat_Tx_ = ui_->repeat_Tx_check_box->isChecked ();
   single_decode_ = ui_->single_decode_check_box->isChecked ();
   twoPass_ = ui_->cbTwoPass->isChecked ();
