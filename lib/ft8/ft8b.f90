@@ -457,7 +457,7 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
        nbadcrc=1
        return
     endif
-    if(xsnr .lt. -24.0) xsnr=-25.0
+    if(xsnr .lt. -24.0) xsnr=-24.0
     return
   enddo
   return

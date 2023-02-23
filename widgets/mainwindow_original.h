@@ -127,6 +127,7 @@ public slots:
   void doubleClickOnCall (Qt::KeyboardModifiers);
   void doubleClickOnCall2(Qt::KeyboardModifiers);
   void doubleClickOnFoxQueue(Qt::KeyboardModifiers);
+  void doubleClickOnFoxInProgress(Qt::KeyboardModifiers modifiers);
   void readFromStdout();
   void p1ReadFromStdout();
   void setXIT(int n, Frequency base = 0u);
@@ -166,6 +167,7 @@ private slots:
   void on_actionQSG_FST4_triggered();
   void on_actionQSG_Q65_triggered();
   void on_actionQSG_X250_M3_triggered();
+  void on_actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP_triggered();
   void on_actionOnline_User_Guide_triggered();
   void on_actionLocal_User_Guide_triggered();
   void on_actionWide_Waterfall_triggered();
@@ -173,7 +175,6 @@ private slots:
   void on_actionOpen_next_in_directory_triggered();
   void on_actionDecode_remaining_files_in_directory_triggered();
   void on_actionDelete_all_wav_files_in_SaveDir_triggered();
-  void on_actionCopy_to_WSJTX_txt_triggered();
   void on_actionOpen_log_directory_triggered ();
   void on_actionNone_triggered();
   void on_actionSave_all_triggered();
@@ -211,6 +212,7 @@ private slots:
   void on_txb6_clicked();
   void on_lookupButton_clicked();
   void on_addButton_clicked();
+  void mousePressEvent(QMouseEvent *event) override;
   void on_dxCallEntry_textChanged (QString const&);
   void on_dxGridEntry_textChanged (QString const&);
   void on_dxCallEntry_editingFinished();
@@ -373,6 +375,7 @@ private:
   void setColorHighlighting();
   void chkFT4();
   bool elide_tx1_not_allowed () const;
+  void readWidebandDecodes();
 
   QProcessEnvironment const& m_env;
   NetworkAccessManager m_network_manager;
@@ -477,7 +480,7 @@ private:
   qint32  m_k0;
   qint32  m_kdone;
   qint32  m_nPick;
-  FrequencyList_v2::const_iterator m_frequency_list_fcal_iter;
+  FrequencyList_v2_101::const_iterator m_frequency_list_fcal_iter;
   qint32  m_nTx73;
   qint32  m_UTCdisk;
   qint32  m_wait;
@@ -508,6 +511,7 @@ private:
   qint32  m_score=0;
   qint32  m_fDop=0;
   qint32  m_echoSec0=0;
+  qint32  m_fetched=0;
 
   bool    m_btxok;		//True if OK to transmit
   bool    m_diskData;
@@ -665,6 +669,7 @@ private:
   QString m_deCall;
   QString m_deGrid;
   QString m_ready2call[50];
+  QString m_callers[40];
 
   QSet<QString> m_pfx;
   QSet<QString> m_sfx;
@@ -700,6 +705,19 @@ private:
     qint32 points;
   };
   QMap<QString,ActiveCall> m_activeCall;   //Key = callsign, value = grid4, az, points for ARRL_DIGI
+
+  struct EMECall
+  {
+    QString grid4;
+    double frx;
+    double fsked;
+    qint32 nsnr;
+    qint32 t;
+    bool worked;
+  };
+  QMap<QString,EMECall> m_EMECall;
+
+  QMap<QString,bool> m_EMEworked;
 
   struct RecentCall
   {
@@ -824,6 +842,7 @@ private:
   void subProcessError (QProcess *, QProcess::ProcessError);
   void statusUpdate () const;
   void update_watchdog_label ();
+  void invalidate_frequencies_filter ();
   void on_the_minute ();
   void add_child_to_event_filter (QObject *);
   void remove_child_from_event_filter (QObject *);
@@ -833,8 +852,10 @@ private:
   void displayWidgets(qint64 n);
   QChar current_submode () const; // returns QChar {0} if submode is not appropriate
   void write_transmit_entry (QString const& file_name);
-  void selectHound(QString t);
+  void selectHound(QString t, bool bTopQueue);
   void houndCallers();
+  void updateFoxQSOsInProgressDisplay();
+  void foxQueueTopCallCommand();
   void foxRxSequencer(QString msg, QString houndCall, QString rptRcvd);
   void foxTxSequencer();
   void foxGenWaveform(int i,QString fm);
@@ -845,6 +866,7 @@ private:
   Q_SLOT void ARRL_Digi_Display();
   void ARRL_Digi_Update(DecodedText dt);
   void activeWorked(QString call, QString band);
+  void read_log();
 };
 
 extern int killbyname(const char* progName);

@@ -2197,7 +2197,7 @@ When not checked you can view the calibration results.</string>
                </size>
               </property>
               <property name="toolTip">
-               <string>Switch to Q65 mode</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to Q65 mode. Right-click to toggle Q65 Pileup mode On/Off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Q65</string>
@@ -3838,6 +3838,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionQSG_FST4"/>
     <addaction name="actionQSG_Q65"/>
     <addaction name="actionQSG_X250_M3"/>
+    <addaction name="actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP"/>
     <addaction name="download_samples_action"/>
     <addaction name="separator"/>
     <addaction name="actionKeyboard_shortcuts"/>
@@ -4440,6 +4441,11 @@ Double-click to reset to the standard 73 message</string>
   <action name="actionActiveStations">
    <property name="text">
     <string>Active Stations</string>
+   </property>
+  </action>
+  <action name="actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP">
+   <property name="text">
+    <string>Quick-Start Guide to WSJT-X 2.7.0 and QMAP</string>
    </property>
   </action>
   <action name="actionDiagnostic_mode">

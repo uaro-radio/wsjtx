@@ -625,6 +625,16 @@ quiet period when decoding is done.</string>
             </property>
            </widget>
           </item>
+          <item row="4" column="2">
+           <widget class="QCheckBox" name="cb_Align">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align the text for DXCC, distance and azimuth.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Align DXCC / distance / azimuth</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -2652,6 +2662,22 @@ Right click for insert and delete options.</string>
        <string>Advanced</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_9">
+       <item row="2" column="0" colspan="2">
+        <spacer name="verticalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="1" column="0" colspan="2">
         <widget class="QGroupBox" name="gbSpecialOpActivity">
          <property name="title">
@@ -2993,24 +3019,27 @@ Right click for insert and delete options.</string>
             </attribute>
            </widget>
           </item>
+          <item row="4" column="0">
+           <widget class="QRadioButton" name="rbQ65pileup">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>18</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exchange 4-character locator instead of signal report.  Provides q3-level sensitivities for the DX operator.  Especially useful for 6m EME DXpeditions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Q65 Pileup</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">special_op_activity_button_group</string>
+            </attribute>
+           </widget>
+          </item>
          </layout>
         </widget>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <spacer name="verticalSpacer_8">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item row="0" column="1">
         <widget class="QGroupBox" name="groupBox_5">
@@ -3641,11 +3670,11 @@ Right click for insert and delete options.</string>
  <buttongroups>
   <buttongroup name="TX_audio_source_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
-  <buttongroup name="TX_mode_button_group"/>
   <buttongroup name="split_mode_button_group"/>
   <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
   <buttongroup name="CAT_handshake_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
+  <buttongroup name="TX_mode_button_group"/>
  </buttongroups>
 </ui>

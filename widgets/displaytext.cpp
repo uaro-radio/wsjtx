@@ -618,8 +618,29 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
       message = leftJustifyAppendage(message, state);    //NJ0A
   }
 
+  // display distance and azimuth
   if (distance.length() > 0) {
-      message = leftJustifyAppendage (message, "[" + distance + "]");
+      if (m_config->align()) {
+          if (!displayDXCCEntity) {
+              message = leftJustifyAppendage (message, "[" + distance + "]");
+          } else {
+              if (m_bPrincipalPrefix) {
+                  if (message.length() < 50) {
+                      message = leftJustifyAppendage ((message + "                    ").left(49), "[" + distance + "]");
+                  } else {
+                      message = leftJustifyAppendage (message, " [" + distance + "]");
+                  }
+              } else {
+                  if (message.length() < 56) {
+                      message = leftJustifyAppendage ((message + "                    ").left(56), "[" + distance + "]");
+                  } else {
+                      message = leftJustifyAppendage (message, "[" + distance + "]");
+                  }
+              }
+          }
+      } else {
+         message = leftJustifyAppendage (message, "[" + distance + "]");
+      }
   }
 
   insertText (message.trimmed (), bg, fg, decodedText.call (), dxCall);

@@ -774,6 +774,7 @@ private:
   bool Wait_features_enabled_;
   bool showDistance_;
   bool showAzimuth_;
+  bool align_;
   bool repeat_Tx_;
   bool single_decode_;
   bool twoPass_;
@@ -916,6 +917,7 @@ bool Configuration::Tx_warning_disabled () const {return m_->Tx_warning_disabled
 bool Configuration::Wait_features_enabled () const {return m_->Wait_features_enabled_;}
 bool Configuration::showDistance() const {return m_->showDistance_;}
 bool Configuration::showAzimuth() const {return m_->showAzimuth_;}
+bool Configuration::align() const {return m_->align_;}
 bool Configuration::repeat_Tx () const {return m_->repeat_Tx_;}
 bool Configuration::single_decode () const {return m_->single_decode_;}
 bool Configuration::twoPass() const {return m_->twoPass_;}
@@ -1231,6 +1233,15 @@ void Configuration::set_location (QString const& grid_descriptor)
   m_->dynamic_grid_ = grid_descriptor.trimmed ();
 }
 
+void Configuration::setSpecial_Q65_Pileup()
+{
+  m_->bSpecialOp_=true;
+  m_->ui_->gbSpecialOpActivity->setChecked(m_->bSpecialOp_);
+  m_->ui_->rbQ65pileup->setChecked(true);
+  m_->SelectedActivity_ = static_cast<int> (SpecialOperatingActivity::Q65_PILEUP);
+  m_->write_settings();
+}
+
 void Configuration::setSpecial_Hound()
 {
   m_->bSpecialOp_=true;
@@ -1478,6 +1489,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   ui_->special_op_activity_button_group->setId (ui_->rbARRL_Digi, static_cast<int> (SpecialOperatingActivity::ARRL_DIGI));
   ui_->special_op_activity_button_group->setId (ui_->rbFox, static_cast<int> (SpecialOperatingActivity::FOX));
   ui_->special_op_activity_button_group->setId (ui_->rbHound, static_cast<int> (SpecialOperatingActivity::HOUND));
+  ui_->special_op_activity_button_group->setId (ui_->rbQ65pileup, static_cast<int> (SpecialOperatingActivity::Q65_PILEUP));
 
   //
   // setup PTT port combo box drop down content
@@ -1685,6 +1697,7 @@ void Configuration::impl::initialize_models ()
   ui_->enable_Wait_features_check_box->setChecked(Wait_features_enabled_);
   ui_->cb_showDistance->setChecked(showDistance_);
   ui_->cb_showAzimuth->setChecked(showAzimuth_);
+  ui_->cb_Align->setChecked(align_);
   ui_->repeat_Tx_check_box->setChecked(repeat_Tx_);
   ui_->single_decode_check_box->setChecked(single_decode_);
   ui_->cbTwoPass->setChecked(twoPass_);
@@ -2036,6 +2049,7 @@ void Configuration::impl::read_settings ()
   Wait_features_enabled_ = settings_->value("WaitFeaturesEnabled",true).toBool ();
   showDistance_ = settings_->value("showDistance", false).toBool();
   showAzimuth_ = settings_->value("showAzimuth", false).toBool();
+  align_ = settings_->value("AlignDistanceAzimuth", false).toBool();
   repeat_Tx_ = settings_->value("RepeatTx",false).toBool ();
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
   twoPass_ = settings_->value("TwoPass",true).toBool ();
@@ -2231,6 +2245,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("WaitFeaturesEnabled", Wait_features_enabled_);
   settings_->setValue ("showDistance", showDistance_);
   settings_->setValue ("showAzimuth", showAzimuth_);
+  settings_->setValue ("AlignDistanceAzimuth", align_);
   settings_->setValue ("RepeatTx", repeat_Tx_);
   settings_->setValue ("SingleDecode", single_decode_);
   settings_->setValue ("TwoPass", twoPass_);
@@ -2717,6 +2732,7 @@ void Configuration::impl::accept ()
   Wait_features_enabled_ = ui_->enable_Wait_features_check_box->isChecked ();
   showDistance_ = ui_->cb_showDistance->isChecked();
   showAzimuth_ = ui_->cb_showAzimuth->isChecked();
+  align_ = ui_->cb_Align->isChecked();
   repeat_Tx_ = ui_->repeat_Tx_check_box->isChecked ();
   single_decode_ = ui_->single_decode_check_box->isChecked ();
   twoPass_ = ui_->cbTwoPass->isChecked ();
