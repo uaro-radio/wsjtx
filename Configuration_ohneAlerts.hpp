@@ -167,6 +167,7 @@ public:
   bool Wait_features_enabled () const;
   bool showDistance() const ;
   bool showAzimuth() const ;
+  bool align() const;
   bool repeat_Tx () const;
   bool single_decode () const;
   bool twoPass() const;
