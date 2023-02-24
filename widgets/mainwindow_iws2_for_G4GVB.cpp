@@ -7100,7 +7100,7 @@ void MainWindow::on_dxGridEntry_textChanged (QString const& grid)
 void MainWindow::on_genStdMsgsPushButton_clicked()          //genStdMsgs button
 {
   genStdMsgs(m_rpt);
-  if (m_hisCall!="") {
+  if (!m_bDoubleClicked && m_hisCall!="") {
       if (ui->tx1->isEnabled ()) {
           QTimer::singleShot (0, ui->txrb1, SLOT (click ()));   // Go to Tx1
       } else {
