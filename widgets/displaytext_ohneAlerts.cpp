@@ -411,7 +411,12 @@ QString DisplayText::leftJustifyAppendage (QString message, QString const& appen
       // use a nbsp to save the start of appended text so we can find
       // it again later, align appended data at a fixed column if
       // there is space otherwise let it float to the right
-      int space_count {40 + padding - message.size ()};
+      int space_count;
+      if (m_config->align()) {
+          space_count = (42 + padding - message.size ());
+      } else {
+          space_count = (41 + padding - message.size ());
+      }
       if (space_count > 0) {
         message += QString {space_count, QChar {' '}};
       }
@@ -503,27 +508,31 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
           auto const& looked_up = logBook.countries ()->lookup (dxCall);
           auto countryName = looked_up.entity_name;
 
-          // do some obvious abbreviations
-          countryName.replace ("Islands", "Is.");
-          countryName.replace ("Island", "Is.");
-          countryName.replace ("North ", "N. ");
-          countryName.replace ("Northern ", "N. ");
-          countryName.replace ("South ", "S. ");
-          countryName.replace ("East ", "E. ");
-          countryName.replace ("Eastern ", "E. ");
-          countryName.replace ("West ", "W. ");
-          countryName.replace ("Western ", "W. ");
-          countryName.replace ("Central ", "C. ");
-          countryName.replace (" and ", " & ");
-          countryName.replace ("Republic", "Rep.");
-          countryName.replace ("United States", "U.S.A.");
-          countryName.replace ("Fed. Rep. of ", "");
-          countryName.replace ("French ", "Fr.");
-          countryName.replace ("Asiatic", "AS");
-          countryName.replace ("European", "EU");
-          countryName.replace ("African", "AF");
+          if (m_bPrincipalPrefix) {
+              extra += looked_up.primary_prefix;
+          } else {
+              // do some obvious abbreviations
+              countryName.replace ("Islands", "Is.");
+              countryName.replace ("Island", "Is.");
+              countryName.replace ("North ", "N. ");
+              countryName.replace ("Northern ", "N. ");
+              countryName.replace ("South ", "S. ");
+              countryName.replace ("East ", "E. ");
+              countryName.replace ("Eastern ", "E. ");
+              countryName.replace ("West ", "W. ");
+              countryName.replace ("Western ", "W. ");
+              countryName.replace ("Central ", "C. ");
+              countryName.replace (" and ", " & ");
+              countryName.replace ("Republic", "Rep.");
+              countryName.replace ("United States", "U.S.A.");
+              countryName.replace ("Fed. Rep. of ", "");
+              countryName.replace ("French ", "Fr.");
+              countryName.replace ("Asiatic", "AS");
+              countryName.replace ("European", "EU");
+              countryName.replace ("African", "AF");
 
-          extra += countryName;
+              extra += countryName;
+          }
           message = leftJustifyAppendage(message, extra);
         }
       else
@@ -568,8 +577,8 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
                       message = leftJustifyAppendage (message, " [" + distance + "]");
                   }
               } else {
-                  if (message.length() < 56) {
-                      message = leftJustifyAppendage ((message + "                    ").left(56), "[" + distance + "]");
+                  if (message.length() < 60) {
+                      message = leftJustifyAppendage ((message + "                          ").left(60), "[" + distance + "]");
                   } else {
                       message = leftJustifyAppendage (message, "[" + distance + "]");
                   }
