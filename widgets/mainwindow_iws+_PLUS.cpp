@@ -2986,6 +2986,16 @@ void MainWindow::on_actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP_triggered()
   QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Quick_Start_WSJT-X_2.7_QMAP.pdf"});
 }
 
+void MainWindow::on_actionWSJT_X_improved_Home_Page_triggered()
+{
+  QDesktopServices::openUrl (QUrl {"https://wsjt-x-improved.sourceforge.io/"});
+}
+
+void MainWindow::on_actionThe_additional_features_of_wsjt_x_improved_triggered()
+{
+  QDesktopServices::openUrl (QUrl {"https://wsjt-x-improved.sourceforge.io/The_additional_features_of_wsjt-x_improved.pdf"});
+}
+
 void MainWindow::on_actionOnline_User_Guide_triggered()      //Display manual
 {
 #if defined (CMAKE_BUILD)
