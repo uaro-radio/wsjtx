@@ -4184,6 +4184,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
     bool bAvgMsg=false;
     int navg=0;
 
+    qint64 ms = QDateTime::currentMSecsSinceEpoch() % 86400000;
+    double fTR=float((ms%int(1000.0*m_TRperiod)))/int(1000.0*m_TRperiod);
     if(line_read.indexOf("<DecodeFinished>") >= 0) {
       m_bDecoded =  line_read.mid(20).trimmed().toInt() > 0;
       int n=line_read.trimmed().size();
@@ -4247,6 +4249,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
           }
         m_tBlankLine = line_read.left(ntime);
       }
+      if(m_mode=="FT8" && fTR>0.6 && fTR<0.75) decodeDone();  // Clear a hung decoder status
     }   // Filtering out some false decodes, and don't write all.txt for such
 
       if ("FST4W" == m_mode)
