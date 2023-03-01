@@ -1515,10 +1515,17 @@ void MainWindow::readSettings()
   if (displayMsgAvg) on_actionMessage_averaging_triggered();
   if (displayFoxLog) on_fox_log_action_triggered ();
   if (displayContestLog) on_contest_log_action_triggered ();
-  if (displayActiveStations) {
+  if(displayActiveStations) {
     on_actionActiveStations_triggered();
+    if(m_mode=="Q65") {
+      QString t{""};
+      if(m_specOp==SpecOp::Q65_PILEUP) {
+        m_ActiveStationsWidget->displayRecentStations("Q65-pileup",t);
+      } else {
+        m_ActiveStationsWidget->displayRecentStations("Q65",t);
+      }
+    }
   }
-  if (!ui->actionDisable_event_logging->isChecked()) on_actionDefault_event_logging_triggered();
 }
 
 void MainWindow::checkMSK144ContestType()
@@ -4057,9 +4064,11 @@ void MainWindow::ARRL_Digi_Display()
 
 void MainWindow::callSandP2(int n)
 {
+  bool bHoldFreq = (n<0);
+  n=qAbs(n)-1;
   if(m_mode!="Q65" and m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
-  if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP) {
+  if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP and n <= m_callers->size()) {
     // This is the mode for 6m EME DXpeditions
     w=m_callers[n].split(' ', SkipEmptyParts);
     m_deCall=w[2];
@@ -4073,14 +4082,15 @@ void MainWindow::callSandP2(int n)
     setTxMsg(3);
     if (!ui->autoButton->isChecked()) ui->autoButton->click(); // Enable Tx
     if(m_transmitting) m_restart=true;
-//    qDebug() << "aa" << int(m_specOp) << n << m_callers[n];
     return;
   }
 
   if(m_mode=="Q65") {
-    double kHz=w[1].toDouble();
-    int nMHz=m_freqNominal/1000000;
-    m_freqNominal=(nMHz*1000 + kHz)* 1000;
+    if(!bHoldFreq) {
+      double kHz=w[1].toDouble();
+      int nMHz=m_freqNominal/1000000;
+      m_freqNominal=(nMHz*1000 + kHz)* 1000;
+    }
     m_deCall=w[3];
     m_deGrid=w[4];
     m_txFirst=(w[5]=="0");
@@ -8631,7 +8641,7 @@ void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const&
 
             if (m_lastDialFreq != m_freqNominal and m_ActiveStationsWidget != NULL) {
               m_recentCall.clear();
-              m_ActiveStationsWidget->erase();
+              if(m_mode!="Q65") m_ActiveStationsWidget->erase();
             }
 
             m_lastDialFreq = m_freqNominal;
@@ -10005,7 +10015,6 @@ void MainWindow::write_transmit_entry (QString const& file_name)
 void MainWindow::readWidebandDecodes()
 {
   if(m_ActiveStationsWidget==NULL) return;
-
   int nhr=0;
   int nmin=0;
   int nsnr=0;
@@ -10026,10 +10035,11 @@ void MainWindow::readWidebandDecodes()
     m_EMECall[dxcall].nsnr=nsnr;
     m_EMECall[dxcall].t=60*nhr + nmin;
     if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
+    bool bCQ=line.contains(" CQ ");
+    m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));
     m_fetched++;
 
     Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
-    bool bCQ=line.contains(" CQ ");
     bool bFromDisk=qmapcom.nQDecoderDone==2;
     if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
       qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
@@ -10057,25 +10067,25 @@ void MainWindow::readWidebandDecodes()
   m_ActiveStationsWidget->setClickOK(false);
   int k=0;
   for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
-    int snr=i->nsnr;
-    int odd=1 - (i->t)%2;
-    int age=60*nhr + nmin - (i->t);
-    if(age<0) age += 1440;
-    if(age<=maxAge) {
-      dxcall=(i.key()+"     ").left(8);
-      dxgrid4=(i->grid4+"... ").left(4);
-      if(m_EMEworked[dxcall.trimmed()]) {
-        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
-                       dxgrid4.toLatin1().constData(),odd,age);
-      } else {
-        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d*\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
-                       dxgrid4.toLatin1().constData(),odd,age);
+    if(i->ready2call or !m_ActiveStationsWidget->readyOnly()) {
+      int snr=i->nsnr;
+      int odd=1 - (i->t)%2;
+      int age=60*nhr + nmin - (i->t);
+      char c2[3]={32,32,0};
+      if(age<0) age += 1440;
+      if(age<=maxAge) {
+        dxcall=(i.key()+"     ").left(8);
+        dxgrid4=(i->grid4+"... ").left(4);
+        if(!m_EMEworked[dxcall.trimmed()]) c2[0]=35;       //# for not in log
+        if(i->ready2call) c2[1]=42;                        //* for ready to call
+        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d %2s\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
+                       dxgrid4.toLatin1().constData(),odd,age,c2);
+        f[k]=i->fsked;
+        list.append(t1);
+        k++;
       }
-      f[k]=i->fsked;
-      list.append(t1);
-      k++;
+      m_ActiveStationsWidget->setClickOK(true);
     }
-    m_ActiveStationsWidget->setClickOK(true);
   }
 
   if(k>0) {
