@@ -2336,6 +2336,13 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
     }
     ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
     set_mode(m_mode);
+    if(m_ActiveStationsWidget!=NULL and m_mode=="Q65") {
+      if(m_specOp==SpecOp::Q65_PILEUP) {
+        m_ActiveStationsWidget->displayRecentStations("Q65-pileup","");
+      } else {
+        m_ActiveStationsWidget->displayRecentStations("Q65","");
+      }
+    }
   }
 }
 
@@ -7274,6 +7281,10 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
     if(m_mode=="Q65") {
       m_score++;
       m_EMEworked[call]=true;
+      if(m_specOp==SpecOp::Q65_PILEUP) {
+        rm_q3list_(const_cast<char *> (m_deCall.toLatin1().constData()), m_deCall.size());
+        refreshPileupList();
+      }
       m_ActiveStationsWidget->setRate(m_score);
     } else {
       QString band=m_config.bands()->find(dial_freq);
@@ -7397,6 +7408,13 @@ void MainWindow::displayWidgets(qint64 n)
   b=m_mode.startsWith("FST4");
   ui->sbNB->setVisible(b);
   genStdMsgs (m_rpt, true);
+  if(m_ActiveStationsWidget!=NULL and (m_mode=="Q65" or m_mode=="FT4" or m_mode=="FT8")) {
+    if(m_specOp==SpecOp::Q65_PILEUP) {
+      m_ActiveStationsWidget->displayRecentStations("Q65-pileup","");
+    } else {
+      m_ActiveStationsWidget->displayRecentStations(m_mode,"");
+    }
+  }
 }
 
 void MainWindow::on_actionFST4_triggered()
@@ -8256,6 +8274,17 @@ void MainWindow::on_actionErase_ALL_TXT_triggered()          //Erase ALL.TXT
     m_RxLog=1;
   }
 }
+
+void MainWindow::on_actionErase_list_of_Q65_callers_triggered()
+{
+  int ret = MessageBox::query_message (this, tr ("Confirm Erase"),
+          tr ("Are you sure you want to erase the list of Q65 callers?"));
+  if(ret==MessageBox::Yes) {
+    QFile f {m_config.writeable_data_dir ().absoluteFilePath ("tsil.3q")};
+    f.remove();
+  }
+}
+
 
 void MainWindow::on_reset_cabrillo_log_action_triggered ()
 {
@@ -10046,6 +10075,7 @@ void MainWindow::readWidebandDecodes()
   int nsnr=0;
   while(m_fetched < qmapcom.ndecodes) {
     QString line=QString::fromLatin1(qmapcom.result[m_fetched]);
+    m_fetched++;
     nhr=line.mid(0,2).toInt();
     nmin=line.mid(2,2).toInt();
     double frx=line.mid(4,9).toDouble();
@@ -10054,23 +10084,23 @@ void MainWindow::readWidebandDecodes()
     int i1=msg.indexOf(" ");
     int i2=i1 +1 + msg.mid(i1+1,-1).indexOf(" ");
     QString dxcall=msg.mid(i1+1,i2-i1-1);
-    QString w3=msg.mid(i2+1,-1);
-    nsnr=line.mid(29,3).toInt();
-    m_EMECall[dxcall].frx=frx;
-    m_EMECall[dxcall].fsked=fsked;
-    m_EMECall[dxcall].nsnr=nsnr;
-    m_EMECall[dxcall].t=60*nhr + nmin;
-    if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
-    bool bCQ=line.contains(" CQ ");
-    m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));
-    m_fetched++;
-
-    Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
-    bool bFromDisk=qmapcom.nQDecoderDone==2;
-    if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
-      qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
-      if (!m_psk_Reporter.addRemoteStation (dxcall, m_EMECall[dxcall].grid4, frequency, m_mode, nsnr)) {
-        showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));
+    if(stdCall(dxcall)) {
+      QString w3=msg.mid(i2+1,-1);
+      nsnr=line.mid(29,3).toInt();
+      m_EMECall[dxcall].frx=frx;
+      m_EMECall[dxcall].fsked=fsked;
+      m_EMECall[dxcall].nsnr=nsnr;
+      m_EMECall[dxcall].t=60*nhr + nmin;
+      if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
+      bool bCQ=line.contains(" CQ ");
+      m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));
+      Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
+      bool bFromDisk=qmapcom.nQDecoderDone==2;
+      if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
+        qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
+        if (!m_psk_Reporter.addRemoteStation (dxcall, m_EMECall[dxcall].grid4, frequency, m_mode, nsnr)) {
+          showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));
+        }
       }
     }
   }
@@ -10092,8 +10122,12 @@ void MainWindow::readWidebandDecodes()
 
   m_ActiveStationsWidget->setClickOK(false);
   int k=0;
+
   for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
-    if(i->ready2call or !m_ActiveStationsWidget->readyOnly()) {
+    bool bSkip=false;
+    if(m_ActiveStationsWidget->wantedOnly() and m_EMEworked[i.key()]) bSkip=true;
+    if(m_ActiveStationsWidget->readyOnly() and !i->ready2call) bSkip=true;
+    if(!bSkip) {
       int snr=i->nsnr;
       int odd=1 - (i->t)%2;
       int age=60*nhr + nmin - (i->t);
