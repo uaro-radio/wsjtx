@@ -1641,6 +1641,7 @@ install (FILES
   grid.dat
   sat.dat
   contrib/Ephemeris/JPLEPH
+  eclipse.txt
   DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME}
   #COMPONENT runtime
   )
