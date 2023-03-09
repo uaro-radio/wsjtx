@@ -394,6 +394,7 @@ private:
   void chkFT4();
   bool elide_tx1_not_allowed () const;
   void readWidebandDecodes();
+  void configActiveStations();
   bool play_DXcall = false;
 
   QProcessEnvironment const& m_env;

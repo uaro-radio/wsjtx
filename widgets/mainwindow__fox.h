@@ -392,6 +392,7 @@ private:
   void setColorHighlighting();
   void chkFT4();
   bool elide_tx1_not_allowed () const;
+  void configActiveStations();
   void readWidebandDecodes();
 
   QProcessEnvironment const& m_env;

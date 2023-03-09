@@ -1517,17 +1517,7 @@ void MainWindow::readSettings()
   if (displayMsgAvg) on_actionMessage_averaging_triggered();
   if (displayFoxLog) on_fox_log_action_triggered ();
   if (displayContestLog) on_contest_log_action_triggered ();
-  if(displayActiveStations) {
-    on_actionActiveStations_triggered();
-    if(m_mode=="Q65") {
-      QString t{""};
-      if(m_specOp==SpecOp::Q65_PILEUP) {
-        m_ActiveStationsWidget->displayRecentStations("Q65-pileup",t);
-      } else {
-        m_ActiveStationsWidget->displayRecentStations("Q65",t);
-      }
-    }
-  }
+  if(displayActiveStations) on_actionActiveStations_triggered();
 }
 
 void MainWindow::checkMSK144ContestType()
@@ -2336,13 +2326,7 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
     }
     ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
     set_mode(m_mode);
-    if(m_ActiveStationsWidget!=NULL and m_mode=="Q65") {
-      if(m_specOp==SpecOp::Q65_PILEUP) {
-        m_ActiveStationsWidget->displayRecentStations("Q65-pileup","");
-      } else {
-        m_ActiveStationsWidget->displayRecentStations("Q65","");
-      }
-    }
+    configActiveStations();
   }
 }
 
@@ -3287,6 +3271,7 @@ void MainWindow::on_actionActiveStations_triggered()
   m_ActiveStationsWidget->showNormal();
   m_ActiveStationsWidget->raise();
   m_ActiveStationsWidget->activateWindow();
+  configActiveStations();
   connect(m_ActiveStationsWidget.data(), SIGNAL(callSandP(int)),this,SLOT(callSandP2(int)));
   connect(m_ActiveStationsWidget.data(), SIGNAL(activeStationsDisplay()),this,SLOT(ARRL_Digi_Display()));
   m_ActiveStationsWidget->setScore(m_score);
@@ -3931,7 +3916,6 @@ void MainWindow::refreshPileupList()
         memcpy(line,&list[36*i],36);
         t0=QString::fromLatin1(line)+"\n";
         m_callers[i]=t0;
-  //      qDebug() << "aa" << t0;
         t+=t0;
       }
       m_ActiveStationsWidget->setClickOK(false);
@@ -5468,14 +5452,14 @@ void MainWindow::guiUpdate()
     }
   }
 
-  if(m_mode=="FT8" or m_mode=="MSK144" or m_mode=="FT4" || "Q65" == m_mode) {
+  if(m_mode=="FT8" or m_mode=="MSK144" or m_mode=="FT4" or m_mode=="Q65") {
     if(ui->txrb1->isEnabled() and
        (SpecOp::NA_VHF==m_specOp or
         SpecOp::FIELD_DAY==m_specOp or
         SpecOp::RTTY==m_specOp or
         SpecOp::WW_DIGI==m_specOp or
         SpecOp::ARRL_DIGI==m_specOp or
-        SpecOp::Q65_PILEUP==m_specOp) ) {
+        SpecOp::Q65_PILEUP==m_specOp)) {
       //We're in a contest-like mode other than EU_VHF: start QSO with Tx2.
       ui->tx1->setEnabled(false);
       ui->txb1->setEnabled(false);
@@ -7420,13 +7404,7 @@ void MainWindow::displayWidgets(qint64 n)
   b=m_mode.startsWith("FST4");
   ui->sbNB->setVisible(b);
   genStdMsgs (m_rpt, true);
-  if(m_ActiveStationsWidget!=NULL and (m_mode=="Q65" or m_mode=="FT4" or m_mode=="FT8")) {
-    if(m_specOp==SpecOp::Q65_PILEUP) {
-      m_ActiveStationsWidget->displayRecentStations("Q65-pileup","");
-    } else {
-      m_ActiveStationsWidget->displayRecentStations(m_mode,"");
-    }
-  }
+  configActiveStations();
 }
 
 void MainWindow::on_actionFST4_triggered()
@@ -7639,7 +7617,6 @@ void MainWindow::on_actionFT8_triggered()
   } else {
     if (!(keep_frequency)) switch_mode (Modes::FT8);
   }
-
   if(m_specOp != SpecOp::HOUND) {
       ui->houndButton->setChecked(false);
       ui->houndButton->setStyleSheet("");
@@ -7673,6 +7650,7 @@ void MainWindow::on_actionFT8_triggered()
     m_bWarnedSplit=true;
   }
   statusChanged();
+  configActiveStations();
 }
 
 void MainWindow::on_actionJT4_triggered()
@@ -11077,6 +11055,17 @@ void MainWindow::set_mode (QString const& mode)
     else if ("MSK144" == mode) on_actionMSK144_triggered ();
     else if ("WSPR" == mode) on_actionWSPR_triggered ();
     else if ("Echo" == mode) on_actionEcho_triggered ();
+}
+
+void MainWindow::configActiveStations()
+{
+  if(m_ActiveStationsWidget!=NULL and (m_mode=="Q65" or m_mode=="FT4" or m_mode=="FT8")) {
+    if(m_specOp==SpecOp::Q65_PILEUP) {
+      m_ActiveStationsWidget->displayRecentStations("Q65-pileup","");
+    } else {
+      m_ActiveStationsWidget->displayRecentStations(m_mode,"");
+    }
+  }
 }
 
 void MainWindow::remote_configure (QString const& mode, quint32 frequency_tolerance

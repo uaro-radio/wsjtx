@@ -167,7 +167,7 @@ private slots:
   void on_actionQSG_FST4_triggered();
   void on_actionQSG_Q65_triggered();
   void on_actionQSG_X250_M3_triggered();
-  void on_actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP_triggered();
+  void on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered();
   void on_actionOnline_User_Guide_triggered();
   void on_actionLocal_User_Guide_triggered();
   void on_actionWide_Waterfall_triggered();
@@ -236,6 +236,7 @@ private slots:
   void on_reset_cabrillo_log_action_triggered ();
   void on_actionErase_wsjtx_log_adi_triggered();
   void on_actionErase_WSPR_hashtable_triggered();
+  void on_actionErase_list_of_Q65_callers_triggered();
   void on_actionExport_Cabrillo_log_triggered();
   void startTx2();
   void startP1();
@@ -376,6 +377,7 @@ private:
   void chkFT4();
   bool elide_tx1_not_allowed () const;
   void readWidebandDecodes();
+  void configActiveStations();
 
   QProcessEnvironment const& m_env;
   NetworkAccessManager m_network_manager;
@@ -669,7 +671,7 @@ private:
   QString m_deCall;
   QString m_deGrid;
   QString m_ready2call[50];
-  QString m_callers[40];
+  QString m_callers[50];
 
   QSet<QString> m_pfx;
   QSet<QString> m_sfx;
@@ -714,6 +716,7 @@ private:
     qint32 nsnr;
     qint32 t;
     bool worked;
+    bool ready2call;
   };
   QMap<QString,EMECall> m_EMECall;
 
@@ -867,6 +870,7 @@ private:
   void ARRL_Digi_Update(DecodedText dt);
   void activeWorked(QString call, QString band);
   void read_log();
+  void refreshPileupList();
 };
 
 extern int killbyname(const char* progName);
