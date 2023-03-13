@@ -2052,6 +2052,7 @@ void MainWindow::fastSink(qint64 frames)
     // Wait & Reply for MSK144
     if (text.contains(m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
         !decodedtext.string().contains("73 ") && m_mode=="MSK144" && m_config.Wait_features_enabled()) {
+          tx_watchdog (false);
           m_bDoubleClicked = true;
           processMessage(decodedtext);
           auto_tx_mode(true);
@@ -2403,6 +2404,7 @@ void MainWindow::on_autoButton_clicked (bool checked)
   }
   m_tAutoOn=QDateTime::currentMSecsSinceEpoch()/1000;
   if(m_mode=="Echo") m_echoRunning=false;
+  if(!checked) tx_watchdog (false);
   check_button_color();
 }
 
@@ -4332,6 +4334,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && (m_hisCall!="") &&
             (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))
             && m_config.Wait_features_enabled()) {
+                tx_watchdog (false);
                 m_bDoubleClicked = true;
                 processMessage(decodedtext0);
                 auto_tx_mode(true);
