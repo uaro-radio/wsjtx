@@ -1233,14 +1233,14 @@ When not checked you can view the calibration results.</string>
                       <item>
                        <widget class="QPushButton" name="pbR2T">
                         <property name="sizePolicy">
-                         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+                         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                           <horstretch>0</horstretch>
                           <verstretch>0</verstretch>
                          </sizepolicy>
                         </property>
                         <property name="minimumSize">
                          <size>
-                          <width>35</width>
+                          <width>15</width>
                           <height>0</height>
                          </size>
                         </property>
@@ -1280,14 +1280,14 @@ When not checked you can view the calibration results.</string>
                       <item>
                        <widget class="QPushButton" name="pbT2R">
                         <property name="sizePolicy">
-                         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+                         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                           <horstretch>0</horstretch>
                           <verstretch>0</verstretch>
                          </sizepolicy>
                         </property>
                         <property name="minimumSize">
                          <size>
-                          <width>35</width>
+                          <width>15</width>
                           <height>0</height>
                          </size>
                         </property>
