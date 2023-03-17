@@ -4136,7 +4136,7 @@ list. The list can be maintained in Settings (F2).</source>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="525"/>
-        <source>Scanned ADIF log, %1 worked before records created</source>
+        <source>Scanned ADIF log, %1 worked-before records created. CTY: %2</source>
         <translation>掃描 ADIF 紀錄, %1 建立曾經通聯紀錄</translation>
     </message>
     <message>
