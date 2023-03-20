@@ -839,7 +839,7 @@ void DisplayText::highlight_callsign (QString const& callsign, QColor const& bg,
 
 void DisplayText::AudioAlerts()
 {
-    QAudioOutput (QAudioDeviceInfo::defaultOutputDevice());
+    QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
     if(m_config->alert_Enabled()) {
     static int startIndex = 0;
     int nextStartIndex = startIndex +1;
