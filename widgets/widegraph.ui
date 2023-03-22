@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>842</width>
-    <height>337</height>
+    <width>845</width>
+    <height>245</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -126,22 +126,6 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QSpinBox" name="waterfallAvgSpinBox">
-          <property name="toolTip">
-           <string>Number of FFTs averaged (controls waterfall scrolling rate)</string>
-          </property>
-          <property name="prefix">
-           <string>N Avg </string>
-          </property>
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>500</number>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QSpinBox" name="fStartSpinBox">
           <property name="minimumSize">
            <size>
@@ -163,6 +147,22 @@
           </property>
           <property name="singleStep">
            <number>100</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="waterfallAvgSpinBox">
+          <property name="toolTip">
+           <string>Number of FFTs averaged (controls waterfall scrolling rate)</string>
+          </property>
+          <property name="prefix">
+           <string>N Avg </string>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>500</number>
           </property>
          </widget>
         </item>
@@ -358,19 +358,6 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="cbFreq">
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Freq</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QCheckBox" name="cbBars">
           <property name="maximumSize">
            <size>
@@ -380,6 +367,19 @@
           </property>
           <property name="text">
            <string>Bars</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="cbFreq">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Freq</string>
           </property>
          </widget>
         </item>
