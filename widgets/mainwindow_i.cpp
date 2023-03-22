@@ -8437,10 +8437,8 @@ void MainWindow::band_changed (Frequency f)
       }
     setRig (f);
     setXIT (ui->TxFreqSpinBox->value ());
-
-    // when changing bands, don't preserve the Fox queues
-    FoxReset("BandChange");
-
+    m_specOp=m_config.special_op_id();
+    if (m_specOp==SpecOp::FOX) FoxReset("BandChange");  // when changing bands, don't preserve the Fox queues
     if (m_config.erase_BandActivity ()) ui->decodedTextBrowser->erase ();   // Mod for WD5DHK
   }
 }
