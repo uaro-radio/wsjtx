@@ -4194,29 +4194,38 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
       }
 
+    QString message0 {QString::fromUtf8(line_read.constData())};
+
   // Don't allow a7 decodes during the first period because they can be leftovers from the previous band
   if ((!(no_a7_decodes && line_read.contains("a7")))
 
   // Filtering out some false decodes, and don't write all.txt for such
-      and (!(SpecOp::NONE==m_specOp && ui->actionReduce_false_decodes->isChecked() &&   // FDR step 2
-           ((((line_read.contains("/P") && line_read.contains(" R "))              // /P and R
-           || (line_read.contains(";") && line_read.contains("/R"))                // ; and /R
-           || (line_read.contains(";") && line_read.contains("/P"))                // ; and /P
-           || line_read.contains("? a")                                            // ap decodes of low confidence
-           || (line_read.contains("<...>") && line_read.contains(" R "))           // hash and R
-           || (line_read.contains("<...>") && line_read.contains("/P"))            // hash and /P
-           || (line_read.contains("<...>") && line_read.contains(";"))             // hash and ;
-           || line_read.contains("3.") || line_read.contains("2.") || line_read.contains("1."))    // -0.9 < dt <  0.9
-           && (line_read.contains("-24") || line_read.contains("-25")
-               || line_read.contains("-26")))                                 // for such SNRmin = -23
-           or (line_read.contains("/R") && line_read.contains("-2"))          // SNR > -20 for /R calls
-           or (((line_read.contains("<...>") || line_read.contains(";")            // unresolved hash, F/H messages
-               || line_read.contains("/R") || line_read.contains(" R ") )          // /R, contest calls
-               && (line_read.contains("3.") || line_read.contains("2."))))         // -1.9 < dt < 1.9
-           or (line_read.contains(";") && line_read.contains(" R "))))        // don't allow such at all
-           or ((line_read.contains("2.") || line_read.contains("3."))              // -1.9 < dt < 1.9
-           && (line_read.contains("-25") || line_read.contains("-26")))            // for SNR < -24
-           or (line_read.contains("<...> <...>"))))                           // don't allow two unsesolved hashs
+      // FDR step 1
+      and (!(SpecOp::NONE==m_specOp &&
+           (message0.contains("<...> <...>")                                   // don't allow two unsesolved hashs
+           || message0.contains(QRegularExpression {"(\\w+)/P (\\w+)/P"})      // don't allow two /P calls
+           || message0.contains(QRegularExpression {"(\\w+)/R (\\w+)/R"})      // don't allow two /R calls
+           || (message0.contains(";") && message0.contains(" R ")))))          // don't allow such at all
+      // FDR step 2
+      and (!(SpecOp::NONE==m_specOp && ui->actionReduce_false_decodes->isChecked() &&
+           ((((message0.contains("/P") && message0.contains(" R "))                    // /P and R
+           || (message0.contains(";") && message0.contains("/R"))                      // ; and /R
+           || (message0.contains(";") && message0.contains("/P"))                      // ; and /P
+           || message0.contains("? a")                                                 // ap decodes of low confidence
+           || (message0.contains("<...>") && message0.contains(" R "))                 // hash and R
+           || (message0.contains("<...>") && message0.contains("/P"))                  // hash and /P
+           || (message0.contains("<...>") && message0.contains(";"))                   // hash and ;
+           || message0.contains(QRegularExpression {"\\w\\w\\w\\w\\w\\w\\w\\w"})       // likely invalid calls
+           || message0.contains(QRegularExpression {"\\d\\d\\d \\d\\d\\d"})            // contest messages
+           || message0.contains("3.") || message0.contains("2.")
+           || message0.contains("1."))                                                 // -0.9 < dt <  0.9
+           && (message0.contains("-24") || message0.contains("-25")))          // for such SNRmin = -23
+           or (message0.contains("/R") && message0.contains("-2"))             // very weak rover calls
+           or (((message0.contains("<...>") || message0.contains(";")                  // unresolved hash and F/H messages
+               || message0.contains("/R") || message0.contains(" R ")                  // rover and contest calls
+               || message0.contains("-24") || message0.contains("-25"))                // SNR < -23
+               && (message0.contains("3.") || message0.contains("2.")))))))    // for such -1.9 < dt < 1.9
+      )
     {
     if (m_mode!="FT8" and m_mode!="FT4" and !m_mode.startsWith ("FST4") and m_mode!="Q65") {
       //Pad 22-char msg to at least 37 chars
@@ -4420,34 +4429,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
                }
            }
 
-           // Filtering out some more false decodes when FDR is enabled and SpecOp::NONE
-          if (SpecOp::NONE==m_specOp && ui->actionReduce_false_decodes->isChecked()
-              && !decodedtext.string().contains("QRP")                    // pass all QRP stations
-              ) {
-              if ((((decodedtext.string().contains("<...>")
-                       && (decodedtext.string().contains(QRegularExpression {"\\s\\D\\D\\D"})          // hash + invalid prefix
-                       || decodedtext.string().contains("/P")))                                        // hash + /P call
-                   || decodedtext.string().contains(QRegularExpression {"(\\w+)/P (\\w+)/P"})          // two /P calls
-                   || decodedtext.string().contains(QRegularExpression {"\\w\\w\\w\\w\\w\\w\\w\\w"})   // likely invalid calls
-                   || decodedtext.string().contains(QRegularExpression {"\\d\\d\\d \\d\\d\\d"})        // contest messages
-                   || (!(decodedtext.string().contains(QRegularExpression {"\\D\\d\\D\\D"})))          // invalid call
-                    )                                                // for such SNRmin = -19 and -0.9 < dt <0.9
-                 && (decodedtext.string().contains(" -2") || decodedtext.string().contains("3.")
-                   || decodedtext.string().contains("2.") || decodedtext.string().contains("1.")))
-                      )  {
-                   blockUDP = true;                              // block udp spotting for false decodes (JTAlert)
-              } else {
-                  ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
-                                                              m_logBook, m_currentBandPeriod, m_config.ppfx (),
-                                                              ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
-                                                              haveFSpread, fSpread, bDisplayPoints, m_points, distance);
-              }
-          } else {
-              ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
-                                                          m_logBook, m_currentBandPeriod, m_config.ppfx (),
-                                                          ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
-                                                          haveFSpread, fSpread, bDisplayPoints, m_points, distance);
-          }
+          ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
+                                                      m_logBook, m_currentBandPeriod, m_config.ppfx (),
+                                                      ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
+                                                      haveFSpread, fSpread, bDisplayPoints, m_points, distance);
           if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
        }
 
