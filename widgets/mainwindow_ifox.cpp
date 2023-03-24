@@ -6401,7 +6401,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
     }
     // his base call different or his call more qualified
     // i.e. compound version of same base call
-    if (!(s2.contains(" 73") && ui->respondComboBox->currentText()=="CQ: Max dB")) ui->dxCallEntry->setText (hiscall);
+    if (!((s2.contains(m_config.my_callsign()) && s2.contains(" 73")) && ui->respondComboBox->currentText()=="CQ: Max dB")) ui->dxCallEntry->setText (hiscall);
   }
   if (hisgrid.contains (grid_regexp)) {
     if(ui->dxGridEntry->text().mid(0,4) != hisgrid) ui->dxGridEntry->setText(hisgrid);
