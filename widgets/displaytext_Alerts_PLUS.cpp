@@ -5,6 +5,7 @@
 
 #include <QSound>
 #include <QAudioOutput>
+#include <QDir>
 #include <QTimer>
 #include <QMouseEvent>
 #include <QDateTime>
