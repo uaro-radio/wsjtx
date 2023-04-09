@@ -4464,7 +4464,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
            QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
                if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
 #ifdef WIN32
-               QSound::play("./bin/sounds/DXcall.wav");
+               QSound::play(QCoreApplication::applicationDirPath() + "/sounds/DXcall.wav");
 #else
                QSound::play(QDir::homePath() + "/sounds/DXcall.wav");  // for Linux and macOS
 #endif
