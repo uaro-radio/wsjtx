@@ -842,6 +842,8 @@ void DisplayText::highlight_callsign (QString const& callsign, QColor const& bg,
 void DisplayText::AudioAlerts()
 {
     QAudioOutput device(QAudioDeviceInfo::defaultOutputDevice());
+    QString binPath = QCoreApplication::applicationDirPath();
+    QString homePath = QDir::homePath();
     if(m_config->alert_Enabled()) {
     static int startIndex = 0;
     int nextStartIndex = startIndex +1;
@@ -849,9 +851,9 @@ void DisplayText::AudioAlerts()
     case 0:
         if (play_MyCall) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/MyCall.wav");
+            QSound::play(binPath + "/sounds/MyCall.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/MyCall.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/MyCall.wav");  // for Linux and macOS
 #endif
             play_MyCall = false;
             alertsTimer.start (1000);
@@ -864,9 +866,9 @@ void DisplayText::AudioAlerts()
     case 1:
         if (play_DXCC) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/DXCC.wav");
+            QSound::play(binPath + "/sounds/DXCC.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/DXCC.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/DXCC.wav");  // for Linux and macOS
 #endif
             play_DXCC = false;
             play_DXCCOB = false;
@@ -880,9 +882,9 @@ void DisplayText::AudioAlerts()
     case 2:
         if (play_DXCCOB && !play_DXCC) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/DXCCOnBand.wav");
+            QSound::play(binPath + "/sounds/DXCCOnBand.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/DXCCOnBand.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/DXCCOnBand.wav");  // for Linux and macOS
 #endif
             play_DXCCOB = false;
             alertsTimer.start (1800);
@@ -895,9 +897,9 @@ void DisplayText::AudioAlerts()
     case 3:
         if (play_Continent) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/Continent.wav");
+            QSound::play(binPath + "/sounds/Continent.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/Continent.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/Continent.wav");  // for Linux and macOS
 #endif
             play_Continent = false;
             play_ContinentOB = false;
@@ -914,9 +916,9 @@ void DisplayText::AudioAlerts()
     case 4:
         if (play_ContinentOB && !play_Continent) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/ContinentOnBand.wav");
+            QSound::play(binPath + "/sounds/ContinentOnBand.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/ContinentOnBand.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/ContinentOnBand.wav");  // for Linux and macOS
 #endif
             play_ContinentOB = false;
             play_GridOB = false;
@@ -932,9 +934,9 @@ void DisplayText::AudioAlerts()
     case 5:
         if (play_CQZ) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/CQZone.wav");
+            QSound::play(binPath + "/sounds/CQZone.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/CQZone.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/CQZone.wav");  // for Linux and macOS
 #endif
             play_CQZ = false;
             play_CQZOB = false;
@@ -949,9 +951,9 @@ void DisplayText::AudioAlerts()
     case 6:
         if (play_CQZOB && !play_CQZ) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/CQZoneOnBand.wav");
+            QSound::play(binPath + "/sounds/CQZoneOnBand.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/CQZoneOnBand.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/CQZoneOnBand.wav");  // for Linux and macOS
 #endif
             play_CQZOB = false;
             alertsTimer.start (1800);
@@ -964,9 +966,9 @@ void DisplayText::AudioAlerts()
     case 7:
         if (play_ITUZ) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/ITUZone.wav");
+            QSound::play(binPath + "/sounds/ITUZone.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/ITUZone.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/ITUZone.wav");  // for Linux and macOS
 #endif
             play_ITUZ = false;
             play_ITUZOB = false;
@@ -981,9 +983,9 @@ void DisplayText::AudioAlerts()
     case 8:
         if (play_ITUZOB && !(play_ITUZ)) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/ITUZoneOnBand.wav");
+            QSound::play(binPath + "/sounds/ITUZoneOnBand.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/ITUZoneOnBand.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/ITUZoneOnBand.wav");  // for Linux and macOS
 #endif
             play_ITUZOB = false;
             play_GridOB = false;
@@ -997,9 +999,9 @@ void DisplayText::AudioAlerts()
     case 9:
         if (play_Grid) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/Grid.wav");
+            QSound::play(binPath + "/sounds/Grid.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/Grid.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/Grid.wav");  // for Linux and macOS
 #endif
             play_Grid = false;
             play_GridOB = false;
@@ -1013,9 +1015,9 @@ void DisplayText::AudioAlerts()
     case 10:
         if (play_GridOB && !play_Grid) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/GridOnBand.wav");
+            QSound::play(binPath + "/sounds/GridOnBand.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/GridOnBand.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/GridOnBand.wav");  // for Linux and macOS
 #endif
             play_GridOB = false;
             alertsTimer.start (1500);
@@ -1028,9 +1030,9 @@ void DisplayText::AudioAlerts()
     case 11:
         if (play_CQ) {
 #ifdef WIN32
-            QSound::play(QCoreApplication::applicationDirPath() + "/sounds/CQ.wav");
+            QSound::play(binPath + "/sounds/CQ.wav");
 #else
-            QSound::play(QDir::homePath() + "/sounds/CQ.wav");  // for Linux and macOS
+            QSound::play(homePath + "/sounds/CQ.wav");  // for Linux and macOS
 #endif
             play_CQ = false;
             alertsTimer.start (1000);
