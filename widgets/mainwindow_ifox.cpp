@@ -2797,8 +2797,10 @@ void MainWindow::statusChanged()
       ui->txrb6->setEnabled(true);
       ui->houndButton->setChecked(false);
       ui->houndButton->setStyleSheet("");
+      if(m_specOp!=SpecOp::FOX) {
       ui->foxButton->setChecked(false);
       ui->foxButton->setStyleSheet("");
+      }
   }
 }
 
