@@ -39,7 +39,7 @@ IARURegions::Region IARURegions::value (QString const& s)
   auto end = region_names + region_names_size;
   auto p = std::find_if (region_names, end
                          , [&s] (char const * const name) {
-                           return name == s;
+                           return tr (name) == s;
                          });
   return p != end ? static_cast<Region> (p - region_names) : ALL;
 }
@@ -64,7 +64,7 @@ QVariant IARURegions::data (QModelIndex const& index, int role) const
 
         case Qt::DisplayRole:
         case Qt::AccessibleTextRole:
-          item = region_names[row];
+          item = tr (region_names[row]);
           break;
 
         case Qt::TextAlignmentRole:

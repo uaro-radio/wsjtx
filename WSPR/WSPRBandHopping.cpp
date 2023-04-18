@@ -31,8 +31,14 @@ extern "C"
 
 namespace
 {
-  char const * const title = "WSPR Band Hopping";
-  char const * const periods[] = {"Sunrise grayline", "Day", "Sunset grayline", "Night", "Tune", "Rx only"};
+  char const * const title = QT_TRANSLATE_NOOP ("Dialog", "WSPR Band Hopping");
+  char const * const periods[] = {
+    QT_TRANSLATE_NOOP ("Dialog", "Sunrise grayline"),
+    QT_TRANSLATE_NOOP ("Dialog", "Day"),
+    QT_TRANSLATE_NOOP ("Dialog", "Sunset grayline"),
+    QT_TRANSLATE_NOOP ("Dialog", "Night"),
+    QT_TRANSLATE_NOOP ("Dialog", "Tune"),
+    QT_TRANSLATE_NOOP ("Dialog", "Rx only")};
   size_t constexpr num_periods {sizeof (periods) / sizeof (periods[0])};
   // These 10 bands are globally coordinated
   QList<QString> const coordinated_bands = {"160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m"};
@@ -151,7 +157,7 @@ void Dialog::frequencies_changed ()
   // set up and load the table of check boxes
   for (auto row = 0u; row < num_periods; ++row)
     {
-      auto vertical_header = new QTableWidgetItem {periods[row]};
+      auto vertical_header = new QTableWidgetItem {tr (periods[row])};
       vertical_header->setTextAlignment (Qt::AlignRight | Qt::AlignVCenter);
       bands_table_->setVerticalHeaderItem (row, vertical_header);
       int column {0};
