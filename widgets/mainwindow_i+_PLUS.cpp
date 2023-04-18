@@ -1,7 +1,10 @@
 //---------------------------------------------------------- MainWindow
 #include "mainwindow.h"
 
+#include <QAudio>
+#include <QAudioOutput>
 #include <QSound>
+#include <QCoreApplication>
 #include <cinttypes>
 #include <cstring>
 #include <cmath>
@@ -1524,6 +1527,25 @@ void MainWindow::readSettings()
   if (displayFoxLog) on_fox_log_action_triggered ();
   if (displayContestLog) on_contest_log_action_triggered ();
   if(displayActiveStations) on_actionActiveStations_triggered();
+
+#ifdef WIN32
+  if (m_config.alert_Enabled()) {  // testing and initializing the default audio device for playing audible alerts
+      QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
+      QString binPath = QCoreApplication::applicationDirPath();
+      QAudioFormat format;
+      format.setCodec("audio/pcm");
+      format.setSampleRate (48000);
+      format.setChannelCount (1);
+      format.setSampleSize (16);
+      format.setSampleType(QAudioFormat::SignedInt);
+      QAudioOutput* audio;
+      audio = new QAudioOutput(format, this);
+      QFile *effect = new QFile(this);
+      effect->setFileName(QString("%1/%2").arg(binPath, "/sounds/Testing.wav"));
+      effect->open(QIODevice::ReadOnly);
+      audio->start(effect);
+  }
+#endif
 }
 
 void MainWindow::checkMSK144ContestType()
@@ -2430,14 +2452,17 @@ void MainWindow::on_autoButton_clicked (bool checked)
   ui->pbBandHopping->setChecked(false); // disable band hopping when Tx is enabled
   m_auto = checked;
   m_maxPoints=-1;
-  maxdBPoints=-28;
-  mindBPoints=99;
-  if (checked
-      && ui->respondComboBox->isVisible () && ui->respondComboBox->currentText() != "CQ: None"
-      && ui->respondComboBox->currentText() != "CQ: Max dB" && ui->respondComboBox->currentText() != "CQ: Min dB"
+  if (!checked && ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
+                                                       or ui->respondComboBox->currentText() == "CQ: Min dB")) {
+      dBpoints=-28;                 // reset points
+      dBpoints2=99;                 // reset points
+      maxdBPoints=-28;              // reset points
+      mindBPoints=99;               // reset points
+  }
+  if (checked && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText() != "CQ: None"
       && CALLING == m_QSOProgress) {
-    m_bAutoReply = false;         // ready for next
-    m_bCallingCQ = true;          // allows tail-enders to be picked up
+      m_bAutoReply = false;         // ready for next
+      m_bCallingCQ = true;          // allows tail-enders to be picked up
   }
   if (!checked) m_bCallingCQ = false;
   statusUpdate ();
@@ -4508,16 +4533,31 @@ void MainWindow::readFromStdout()                             //readFromStdout
            ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true);
            if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
        }
-           QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
-               if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
+       QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
+           if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
 #ifdef WIN32
-               QSound::play(QCoreApplication::applicationDirPath() + "/sounds/DXcall.wav");
+               QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
+               QString binPath = QCoreApplication::applicationDirPath();
+               QAudioFormat format;
+               format.setCodec("audio/pcm");
+               format.setSampleRate (48000);
+               format.setChannelCount (1);
+               format.setSampleSize (16);
+               format.setSampleType(QAudioFormat::SignedInt);
+               QAudioOutput* audio;
+               audio = new QAudioOutput(format, this);
+               connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
+               QFile *effect1 = new QFile(this);
+               effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXcall.wav"));
+               effect1->open(QIODevice::ReadOnly);
+               audio->start(effect1);
 #else
+               QString homePath = QDir::homePath();
                QSound::play(QDir::homePath() + "/sounds/DXcall.wav");  // for Linux and macOS
 #endif
-               }
                play_DXcall = false;
-           });
+           }
+       });                                                  // UR delete for versions without alerts
 
           if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
             QString messagePriority=ui->decodedTextBrowser->CQPriority();
@@ -7318,6 +7358,15 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
                         m_dateTimeQSOOn, dateTimeQSOOff, m_freqNominal +
                         ui->TxFreqSpinBox->value(), m_noSuffix, m_xSent, m_xRcvd);
   m_inQSOwith="";
+  if (ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
+                                           or ui->respondComboBox->currentText() == "CQ: Min dB")) {
+        dBpoints=-28;                  // reset points
+        dBpoints2=99;                  // reset points
+        maxdBPoints=-28;               // reset points
+        mindBPoints=99;                // reset points
+        clearDX();                     // clear dxCallEntry
+        ui->tx5->setCurrentText("");   // clear tx5
+  }
 }
 
 void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, QString const& grid
@@ -8644,6 +8693,15 @@ void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
   if(m_specOp==SpecOp::HOUND && m_txFirst) {  // reset Hound to the correct time slot
       m_txFirst=false;
       ui->txFirstCheckBox->setChecked(false);
+  }
+  if (ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
+                                           or ui->respondComboBox->currentText() == "CQ: Min dB")) {
+      dBpoints=-28;                  // reset points
+      dBpoints2=99;                  // reset points
+      maxdBPoints=-28;               // reset points
+      mindBPoints=99;                // reset points
+      clearDX();                     // clear dxCallEntry
+      ui->tx5->setCurrentText("");   // clear tx5
   }
 }
 

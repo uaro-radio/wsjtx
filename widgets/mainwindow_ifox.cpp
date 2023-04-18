@@ -1,7 +1,7 @@
 //---------------------------------------------------------- MainWindow
 #include "mainwindow.h"
 
-#include <QSound>
+#include <QCoreApplication>
 #include <cinttypes>
 #include <cstring>
 #include <cmath>
@@ -2432,14 +2432,17 @@ void MainWindow::on_autoButton_clicked (bool checked)
   ui->pbBandHopping->setChecked(false); // disable band hopping when Tx is enabled
   m_auto = checked;
   m_maxPoints=-1;
-  maxdBPoints=-28;
-  mindBPoints=99;
-  if (checked
-      && ui->respondComboBox->isVisible () && ui->respondComboBox->currentText() != "CQ: None"
-      && ui->respondComboBox->currentText() != "CQ: Max dB" && ui->respondComboBox->currentText() != "CQ: Min dB"
+  if (!checked && ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
+                                                       or ui->respondComboBox->currentText() == "CQ: Min dB")) {
+      dBpoints=-28;                 // reset points
+      dBpoints2=99;                 // reset points
+      maxdBPoints=-28;              // reset points
+      mindBPoints=99;               // reset points
+  }
+  if (checked && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText() != "CQ: None"
       && CALLING == m_QSOProgress) {
-    m_bAutoReply = false;         // ready for next
-    m_bCallingCQ = true;          // allows tail-enders to be picked up
+      m_bAutoReply = false;         // ready for next
+      m_bCallingCQ = true;          // allows tail-enders to be picked up
   }
   if (!checked) m_bCallingCQ = false;
   statusUpdate ();
@@ -7313,6 +7316,15 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
                         m_dateTimeQSOOn, dateTimeQSOOff, m_freqNominal +
                         ui->TxFreqSpinBox->value(), m_noSuffix, m_xSent, m_xRcvd);
   m_inQSOwith="";
+  if (ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
+                                           or ui->respondComboBox->currentText() == "CQ: Min dB")) {
+        dBpoints=-28;                  // reset points
+        dBpoints2=99;                  // reset points
+        maxdBPoints=-28;               // reset points
+        mindBPoints=99;                // reset points
+        clearDX();                     // clear dxCallEntry
+        ui->tx5->setCurrentText("");   // clear tx5
+  }
 }
 
 void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, QString const& grid
@@ -8643,6 +8655,15 @@ void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
   if(m_specOp==SpecOp::HOUND && m_txFirst) {  // reset Hound to the correct time slot
       m_txFirst=false;
       ui->txFirstCheckBox->setChecked(false);
+  }
+  if (ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
+                                           or ui->respondComboBox->currentText() == "CQ: Min dB")) {
+      dBpoints=-28;                  // reset points
+      dBpoints2=99;                  // reset points
+      maxdBPoints=-28;               // reset points
+      mindBPoints=99;                // reset points
+      clearDX();                     // clear dxCallEntry
+      ui->tx5->setCurrentText("");   // clear tx5
   }
 }
 

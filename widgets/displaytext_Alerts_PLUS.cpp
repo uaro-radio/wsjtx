@@ -3,8 +3,9 @@
 #include <vector>
 #include <algorithm>
 
-#include <QSound>
+#include <QAudio>
 #include <QAudioOutput>
+#include <QSound>
 #include <QDir>
 #include <QCoreApplication>
 #include <QTimer>
@@ -841,217 +842,275 @@ void DisplayText::highlight_callsign (QString const& callsign, QColor const& bg,
 
 void DisplayText::AudioAlerts()
 {
-    QAudioOutput device(QAudioDeviceInfo::defaultOutputDevice());
-    QString binPath = QCoreApplication::applicationDirPath();
-    QString homePath = QDir::homePath();
-    if(m_config->alert_Enabled()) {
-    static int startIndex = 0;
-    int nextStartIndex = startIndex +1;
-    switch (startIndex){
-    case 0:
-        if (play_MyCall) {
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/MyCall.wav");
+  if(m_config->alert_Enabled()) {
+        QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
+        QString binPath = QCoreApplication::applicationDirPath();
+        QAudioFormat format;
+        format.setCodec("audio/pcm");
+        format.setSampleRate (48000);
+        format.setChannelCount (1);
+        format.setSampleSize (16);
+        format.setSampleType(QAudioFormat::SignedInt);
+        QAudioOutput* audio;
+        audio = new QAudioOutput(format, this);
+        connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
 #else
-            QSound::play(homePath + "/sounds/MyCall.wav");  // for Linux and macOS
+  if(m_config->alert_Enabled()) {
+        QAudioOutput device(QAudioDeviceInfo::defaultOutputDevice());
+        QString homePath = QDir::homePath();
 #endif
-            play_MyCall = false;
-            alertsTimer.start (1000);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 1:
-        if (play_DXCC) {
+        static int startIndex = 0;
+        int nextStartIndex = startIndex +1;
+        switch (startIndex) {
+        case 0:
+            if (play_MyCall) {
+
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/DXCC.wav");
+                QFile *effect2 = new QFile(this);
+                effect2->setFileName(QString("%1/%2").arg(binPath, "/sounds/MyCall.wav"));
+                effect2->open(QIODevice::ReadOnly);
+                audio->start(effect2);
 #else
-            QSound::play(homePath + "/sounds/DXCC.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/MyCall.wav");  // for Linux and macOS
 #endif
-            play_DXCC = false;
-            play_DXCCOB = false;
-            alertsTimer.start (1200);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 2:
-        if (play_DXCCOB && !play_DXCC) {
+
+                play_MyCall = false;
+                alertsTimer.start (1000);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 1:
+            if (play_DXCC) {
+
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/DXCCOnBand.wav");
+                QFile *effect3 = new QFile(this);
+                effect3->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXCC.wav"));
+                effect3->open(QIODevice::ReadOnly);
+                audio->start(effect3);
 #else
-            QSound::play(homePath + "/sounds/DXCCOnBand.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/DXCC.wav");  // for Linux and macOS
 #endif
-            play_DXCCOB = false;
-            alertsTimer.start (1800);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 3:
-        if (play_Continent) {
+
+                play_DXCC = false;
+                play_DXCCOB = false;
+                alertsTimer.start (1200);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 2:
+            if (play_DXCCOB && !play_DXCC) {
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/Continent.wav");
+                QFile *effect4 = new QFile(this);
+                effect4->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXCCOnBand.wav"));
+                effect4->open(QIODevice::ReadOnly);
+                audio->start(effect4);
 #else
-            QSound::play(homePath + "/sounds/Continent.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/DXCCOnBand.wav");  // for Linux and macOS
 #endif
-            play_Continent = false;
-            play_ContinentOB = false;
-            play_GridOB = false;
-            play_CQZOB = false;
-            play_ITUZOB = false;
-            alertsTimer.start (1000);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 4:
-        if (play_ContinentOB && !play_Continent) {
+
+                play_DXCCOB = false;
+                alertsTimer.start (1800);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 3:
+            if (play_Continent) {
+
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/ContinentOnBand.wav");
+                QFile *effect5 = new QFile(this);
+                effect5->setFileName(QString("%1/%2").arg(binPath, "/sounds/Continent.wav"));
+                effect5->open(QIODevice::ReadOnly);
+                audio->start(effect5);
 #else
-            QSound::play(homePath + "/sounds/ContinentOnBand.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/Continent.wav");  // for Linux and macOS
 #endif
-            play_ContinentOB = false;
-            play_GridOB = false;
-            play_CQZOB = false;
-            play_ITUZOB = false;
-            alertsTimer.start (2000);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 5:
-        if (play_CQZ) {
+                play_Continent = false;
+                play_ContinentOB = false;
+                play_GridOB = false;
+                play_CQZOB = false;
+                play_ITUZOB = false;
+                alertsTimer.start (1000);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 4:
+            if (play_ContinentOB && !play_Continent) {
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/CQZone.wav");
+                QFile *effect6 = new QFile(this);
+                effect6->setFileName(QString("%1/%2").arg(binPath, "/sounds/ContinentOnBand.wav"));
+                effect6->open(QIODevice::ReadOnly);
+                audio->start(effect6);
 #else
-            QSound::play(homePath + "/sounds/CQZone.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/ContinentOnBand.wav");  // for Linux and macOS
 #endif
-            play_CQZ = false;
-            play_CQZOB = false;
-            alertsTimer.stop ();    // UR
-            alertsTimer.start (1500);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 6:
-        if (play_CQZOB && !play_CQZ) {
+                play_ContinentOB = false;
+                play_GridOB = false;
+                play_CQZOB = false;
+                play_ITUZOB = false;
+                alertsTimer.start (2000);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 5:
+            if (play_CQZ) {
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/CQZoneOnBand.wav");
+                QFile *effect7 = new QFile(this);
+                effect7->setFileName(QString("%1/%2").arg(binPath, "/sounds/CQZone.wav"));
+                effect7->open(QIODevice::ReadOnly);
+                audio->start(effect7);
 #else
-            QSound::play(homePath + "/sounds/CQZoneOnBand.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/CQZone.wav");  // for Linux and macOS
 #endif
-            play_CQZOB = false;
-            alertsTimer.start (1800);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 7:
-        if (play_ITUZ) {
+                play_CQZ = false;
+                play_CQZOB = false;
+                alertsTimer.start (1500);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 6:
+            if (play_CQZOB && !play_CQZ) {
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/ITUZone.wav");
+                QFile *effect8 = new QFile(this);
+                effect8->setFileName(QString("%1/%2").arg(binPath, "/sounds/CQZoneOnBand.wav"));
+                effect8->open(QIODevice::ReadOnly);
+                audio->start(effect8);
 #else
-            QSound::play(homePath + "/sounds/ITUZone.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/CQZoneOnBand.wav");  // for Linux and macOS
 #endif
-            play_ITUZ = false;
-            play_ITUZOB = false;
-            play_GridOB = false;
-            alertsTimer.start (1500);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 8:
-        if (play_ITUZOB && !(play_ITUZ)) {
+                play_CQZOB = false;
+                alertsTimer.start (1800);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 7:
+            if (play_ITUZ) {
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/ITUZoneOnBand.wav");
+                QFile *effect9 = new QFile(this);
+                effect9->setFileName(QString("%1/%2").arg(binPath, "/sounds/ITUZone.wav"));
+                effect9->open(QIODevice::ReadOnly);
+                audio->start(effect9);
 #else
-            QSound::play(homePath + "/sounds/ITUZoneOnBand.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/ITUZone.wav");  // for Linux and macOS
 #endif
-            play_ITUZOB = false;
-            play_GridOB = false;
-            alertsTimer.start (1900);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 9:
-        if (play_Grid) {
+                play_ITUZ = false;
+                play_ITUZOB = false;
+                play_GridOB = false;
+                alertsTimer.start (1500);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 8:
+            if (play_ITUZOB && !(play_ITUZ)) {
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/Grid.wav");
+                QFile *effect10 = new QFile(this);
+                effect10->setFileName(QString("%1/%2").arg(binPath, "/sounds/ITUZoneOnBand.wav"));
+                effect10->open(QIODevice::ReadOnly);
+                audio->start(effect10);
 #else
-            QSound::play(homePath + "/sounds/Grid.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/ITUZoneOnBand.wav");  // for Linux and macOS
 #endif
-            play_Grid = false;
-            play_GridOB = false;
-            alertsTimer.start (1000);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 10:
-        if (play_GridOB && !play_Grid) {
+                play_ITUZOB = false;
+                play_GridOB = false;
+                alertsTimer.start (1900);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 9:
+            if (play_Grid) {
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/GridOnBand.wav");
+                QFile *effect11 = new QFile(this);
+                effect11->setFileName(QString("%1/%2").arg(binPath, "/sounds/Grid.wav"));
+                effect11->open(QIODevice::ReadOnly);
+                audio->start(effect11);
 #else
-            QSound::play(homePath + "/sounds/GridOnBand.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/Grid.wav");  // for Linux and macOS
 #endif
-            play_GridOB = false;
-            alertsTimer.start (1500);
-            startIndex = nextStartIndex;
-            return;
-        } else {
-            nextStartIndex++;
-        }
-        Q_FALLTHROUGH();
-    case 11:
-        if (play_CQ) {
+                play_Grid = false;
+                play_GridOB = false;
+                alertsTimer.start (1000);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 10:
+            if (play_GridOB && !play_Grid) {
 #ifdef WIN32
-            QSound::play(binPath + "/sounds/CQ.wav");
+                QFile *effect12 = new QFile(this);
+                effect12->setFileName(QString("%1/%2").arg(binPath, "/sounds/GridOnBand.wav"));
+                effect12->open(QIODevice::ReadOnly);
+                audio->start(effect12);
 #else
-            QSound::play(homePath + "/sounds/CQ.wav");  // for Linux and macOS
+                QSound::play(homePath + "/sounds/GridOnBand.wav");  // for Linux and macOS
 #endif
-            play_CQ = false;
-            alertsTimer.start (1000);
-            startIndex = 0;
-            return;
-        } else {
-            nextStartIndex++;
+                play_GridOB = false;
+                alertsTimer.start (1500);
+                startIndex = nextStartIndex;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 11:
+            if (play_CQ) {
+#ifdef WIN32
+                QFile *effect13 = new QFile(this);
+                effect13->setFileName(QString("%1/%2").arg(binPath, "/sounds/CQ.wav"));
+                effect13->open(QIODevice::ReadOnly);
+                audio->start(effect13);
+#else
+                QSound::play(homePath + "/sounds/CQ.wav");  // for Linux and macOS
+#endif
+                play_CQ = false;
+                alertsTimer.start (1000);
+                startIndex = 0;
+                return;
+            } else {
+                nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 12:
+            if (!play_CQ && !play_MyCall && !play_DXCC && !play_DXCCOB && !play_Grid && !play_GridOB &&
+                !play_Continent && ! play_ContinentOB && !play_CQZ && !play_CQZOB && !play_ITUZ && !play_ITUZOB) {
+                startIndex = 0;
+                return;
+            } else {
+                alertsTimer.start (1000);
+                startIndex = 0;
+                return;
+            }
+#ifdef WIN32
+            audio->deleteLater();  // remove QAudioSink to avoid a memory leak
+#endif
         }
-        Q_FALLTHROUGH();
-    case 12:
-        if (!play_CQ && !play_MyCall && !play_DXCC && !play_DXCCOB && !play_Grid && !play_GridOB &&
-            !play_Continent && ! play_ContinentOB && !play_CQZ && !play_CQZOB && !play_ITUZ && !play_ITUZOB) {
-            startIndex = 0;
-            return;
-        } else {
-            alertsTimer.start (1000);
-            startIndex = 0;
-            return;
-        }
-    }
   }
 }
