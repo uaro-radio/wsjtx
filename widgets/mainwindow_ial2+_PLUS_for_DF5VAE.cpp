@@ -226,10 +226,15 @@ bool keep_frequency = false;
 bool first_Fox_alert = true;
 bool second_Fox_alert = true;
 bool no_Fox_alert = false;
+int Dpoints=0;
+int maxDPoints=0;
 int dBpoints=-28;
 int dBpoints2=99;
 int maxdBPoints=-28;
 int mindBPoints=99;
+bool pounce = false;
+bool filtered = false;
+QString txlog;
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
 struct {
@@ -1116,6 +1121,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->pbBestSP->setVisible(m_mode=="FT4");
 
   check_button_color();
+  read_txlog();
 
   QString jpleph = m_config.data_dir().absoluteFilePath("JPLEPH");
   jpl_setup_(const_cast<char *>(jpleph.toLocal8Bit().constData()),256);
@@ -2023,6 +2029,7 @@ void MainWindow::fastSink(qint64 frames)
 {
   int k (frames);
   bool decodeNow=false;
+  filtered = false;
   if(k < m_k0) {                                 //New sequence ?
     memcpy(fast_green2,fast_green,4*703);        //Copy fast_green[] to fast_green2[]
     memcpy(fast_s2,fast_s,4*703*64);             //Copy fast_s[] into fast_s2[]
@@ -2072,153 +2079,277 @@ void MainWindow::fastSink(qint64 frames)
   if(bmsk144 and (line[0]!=0)) {
     QString message {QString::fromLatin1 (line)};
     DecodedText decodedtext {message.replace (QChar::LineFeed, "")};
-    ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC(),
-         m_logBook, m_currentBand, m_config.ppfx ());
 
-    QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait & Reply/Call
+    QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait features
+    QString text2;
+    QStringList tw=decodedtext.string().mid(24).split(" ",SkipEmptyParts);
+    if (m_config.filters_for_word2()) {
+        text2 = tw[1].left(4);   // for Blacklist  URUR
+    } else {
+        text2 = text;   // for Blacklist
+    }
+
+    bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
+                               (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
+                               (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
+
+    // Always pass messages with keywords from Always Pass list for MSK144
+    if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass ()
+          && (
+              (text.contains(m_config.Pass1()) && (m_config.Pass1()!=""))
+              || (text2.contains(m_config.Pass2()) && (m_config.Pass2()!=""))
+              || (text2.contains(m_config.Pass3()) && (m_config.Pass3()!=""))
+              || (text2.contains(m_config.Pass4()) && (m_config.Pass4()!=""))
+              || (text2.contains(m_config.Pass5()) && (m_config.Pass5()!=""))
+              || (text2.contains(m_config.Pass6()) && (m_config.Pass6()!=""))
+              || (text2.contains(m_config.Pass7()) && (m_config.Pass7()!=""))
+              || (text2.contains(m_config.Pass8()) && (m_config.Pass8()!=""))
+              ))) {
+
+        // Filtering out messages with keywords from Blacklist for MSK144
+        if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
+            && (
+                (text.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
+                || (text.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
+                || (text.contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
+                || (text.contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
+                || (text.contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
+                || (text.contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
+                || (text.contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
+                || (text.contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
+                || (text.contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
+                || (text.contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
+                || (text.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
+                || (text.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
+                )) {
+        filtered = true;
+        if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+        // reset dB score when filtered
+        if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
+                       or ui->respondComboBox->currentText()=="CQ: Max dB"
+                       or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+          Dpoints=0;
+          maxDPoints=0;
+          dBpoints=-28;
+          dBpoints2=99;
+          maxdBPoints=-28;
+          mindBPoints=99;
+        }
+
+        // Filtering out everything but messages with keywords from Whitelist for MSK144
+        } else if (SpecOp::NONE==m_specOp && m_config.Whitelisted ()
+                   && !(text2.contains(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
+                   && !(text2.contains(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
+                   && !(text2.contains(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
+                   && !(text2.contains(m_config.Whitelist4()) && (m_config.Whitelist4()!=""))
+                   && !(text2.contains(m_config.Whitelist5()) && (m_config.Whitelist5()!=""))
+                   && !(text2.contains(m_config.Whitelist6()) && (m_config.Whitelist6()!=""))
+                   && !(text2.contains(m_config.Whitelist7()) && (m_config.Whitelist7()!=""))
+                   && !(text2.contains(m_config.Whitelist8()) && (m_config.Whitelist8()!=""))
+                   && !(text2.contains(m_config.Whitelist9()) && (m_config.Whitelist9()!=""))
+                   && !(text2.contains(m_config.Whitelist10()) && (m_config.Whitelist10()!=""))
+                   && !(text2.contains(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
+                   && !(text2.contains(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
+                   ) {
+        filtered = true;
+        if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+        // reset dB score when filtered
+        if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
+                       or ui->respondComboBox->currentText()=="CQ: Max dB"
+                       or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+          Dpoints=0;
+          maxDPoints=0;
+          dBpoints=-28;
+          dBpoints2=99;
+          maxdBPoints=-28;
+          mindBPoints=99;
+        }
+        }
+    }
 
     // Wait & Reply for MSK144
     if (text.contains(m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
         !decodedtext.string().contains("73 ") && m_mode=="MSK144" && m_config.Wait_features_enabled()
         && !ui->autoButton->isChecked()) {
-          tx_watchdog (false);
-          m_bDoubleClicked = true;
-          processMessage(decodedtext);
-          auto_tx_mode(true);
-          stopWRTimer.start(int(12000.0*m_TRperiod));     // Wait & Reply Tx max 12*TRperiod
+                  tx_watchdog (false);
+                  m_bDoubleClicked = true;
+                  processMessage(decodedtext);
+                  auto_tx_mode(true);
+                  stopWRTimer.start(int(12000.0*m_TRperiod));     // Wait & Reply Tx max 12*TRperiod
     }
+
     // Wait & Call for MSK144
     if (m_mode=="MSK144" && wait_and_call && m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() &&
         m_hisCall!="" && (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
-         or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73")) && m_config.Wait_features_enabled()) {
-          m_bDoubleClicked = true;
-          processMessage(decodedtext);
-          auto_tx_mode(true);
-          no_wait_and_call = true;
-          stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
+        or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73")) && m_config.Wait_features_enabled()) {
+                  m_bDoubleClicked = true;
+                  processMessage(decodedtext);
+                  auto_tx_mode(true);
+                  no_wait_and_call = true;
+                  stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
     }
-    // CQ First for MSK144
+
+    // Pounce CQ: None and CQ: First for MSK144
+    if(pounce && !filtered && text.contains(" CQ ") && (ui->respondComboBox->currentText()=="CQ: None"
+       or ui->respondComboBox->currentText()=="CQ: First") && m_config.Wait_features_enabled()) {
+                  m_bDoubleClicked=true;
+                  auto_tx_mode(true);
+                  processMessage(decodedtext);
+                  stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
+    }
+
+    // CQ: First for MSK144
     if (m_bCallingCQ && !m_bAutoReply && decodedtext.string().contains(m_config.my_callsign())
-       && m_specOp!=SpecOp::FOX && m_specOp!=SpecOp::HOUND) {
-      bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
-          (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
-          (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
-      if (decodedtext.messageWords().length() >= 3) {
-          QString t=decodedtext.messageWords()[2];
-          if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
-      } else {
-          bProcessMsgNormally=true;
-      }
-      if(bProcessMsgNormally) {
-        m_bDoubleClicked=true;
-        m_bAutoReply = true;
-        processMessage (decodedtext);
-      }
-    // CQ Max Dist for MSK144
-    if (!bProcessMsgNormally and m_ActiveStationsWidget and ui->respondComboBox->currentText()=="CQ: Max Dist") {
-      QString deCall;
-      QString deGrid;
-      decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-      if(deGrid.contains(grid_regexp) or
-         (deGrid.contains("+") or deGrid.contains("-"))) {
-        int points=0;
-        if(m_activeCall.contains(deCall)) {
-          points=m_activeCall[deCall].points;
-          deGrid=m_activeCall[deCall].grid4;
-        } else if(deGrid.contains(grid_regexp)) {
-          double utch=0.0;
-          int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
-          azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1 ().constData ()),
-                  const_cast <char *> ((deGrid + "      ").left(6).toLatin1 ().constData ()),&utch,
-                  &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,(FCL)6,(FCL)6);
-          points=nDkm/500;
-          if(nDkm > 500*points) points += 1;
-          points += 1;
+        && m_specOp!=SpecOp::FOX && m_specOp!=SpecOp::HOUND) {
+        if (decodedtext.messageWords().length() >= 3 && !filtered) {
+            QString t=decodedtext.messageWords()[2];
+            if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
+        } else {
+            bProcessMsgNormally=true;
         }
-        if(points>m_maxPoints) {
-          m_maxPoints=points;
-          m_deCall=deCall;
-          m_bDoubleClicked=true;
-          ui->dxCallEntry->setText(deCall);
-          int m_ntx=2;
-          bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
-          if(bContest) m_ntx=3;
-          if(deGrid.contains(grid_regexp)) {
-            m_deGrid=deGrid;
-            ui->dxGridEntry->setText(deGrid);
-          } else {
-            m_ntx=3;
-          }
-          if(m_ntx==2) m_QSOProgress = REPORT;
-          if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
-          genStdMsgs(QString::number(decodedtext.snr()));
-          ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
-          setTxMsg(m_ntx);
-          m_currentMessageType=m_ntx;
+        if(bProcessMsgNormally) {
+            m_bDoubleClicked=true;
+            m_bAutoReply = true;
+            processMessage (decodedtext);
         }
-       }
-      }
-    // CQ Max dB for MSK144
-    if(!bProcessMsgNormally and ui->respondComboBox->currentText()=="CQ: Max dB") {
-      QString deCall;
-      QString deGrid;
-      decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-      if (!decodedtext.string().contains(" 73")) {
-          dBpoints=decodedtext.string().mid(7,3).toInt();
-          if(dBpoints>maxdBPoints) {
-            maxdBPoints=dBpoints;
-            m_deCall=deCall;
-            m_bDoubleClicked=true;
-            ui->dxCallEntry->setText(deCall);
-            int m_ntx=2;
-            bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
-            if(bContest) m_ntx=3;
-            if(deGrid.contains(grid_regexp)) {
-              m_deGrid=deGrid;
-              ui->dxGridEntry->setText(deGrid);
-            } else {
-              m_ntx=3;
-            }
-            if(m_ntx==2) m_QSOProgress = REPORT;
-            if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
-            genStdMsgs(QString::number(decodedtext.snr()));
-            ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
-            setTxMsg(m_ntx);
-            m_currentMessageType=m_ntx;
-         }
-       }
-     }
-    // CQ Min dB for MSK144
-    if(!bProcessMsgNormally and ui->respondComboBox->currentText()=="CQ: Min dB") {
-       QString deCall;
-       QString deGrid;
-       decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-       if (!decodedtext.string().contains(" 73")) {
-         dBpoints2=decodedtext.string().mid(7,3).toInt();
-         if(dBpoints2<mindBPoints) {
-            mindBPoints=dBpoints2;
-            m_deCall=deCall;
-            m_bDoubleClicked=true;
-            ui->dxCallEntry->setText(deCall);
-            int m_ntx=2;
-            bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
-            if(bContest) m_ntx=3;
-            if(deGrid.contains(grid_regexp)) {
-              m_deGrid=deGrid;
-              ui->dxGridEntry->setText(deGrid);
-            } else {
-              m_ntx=3;
-            }
-            if(m_ntx==2) m_QSOProgress = REPORT;
-            if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
-            genStdMsgs(QString::number(decodedtext.snr()));
-            ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
-            setTxMsg(m_ntx);
-            m_currentMessageType=m_ntx;
-         }
-       }
     }
+
+    // CQ: Max Dist for MSK144
+    if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Max Dist"
+        && m_specOp!=SpecOp::NA_VHF && m_specOp!=SpecOp::ARRL_DIGI) {
+        QString deCall;
+        QString deGrid;
+        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        if (deGrid.contains(grid_regexp) && !filtered && !text.contains(" 73") && ((pounce && text.contains(" CQ ")) or (!pounce &&
+            (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
+             && !txlog.contains(deCall)) {
+            double utch=0.0;
+            int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
+            azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1().constData()),
+                    const_cast <char *> ((deGrid + "      ").left (6).toLatin1().constData()),&utch,
+                    &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,6,6);
+            Dpoints=nDkm;
+            if(Dpoints>maxDPoints) {
+                maxDPoints=Dpoints;
+                m_deCall=deCall;
+                m_bDoubleClicked=true;
+                if (pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) {
+                   auto_tx_mode(true);
+                   processMessage(decodedtext);
+                   stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
+                }
+                ui->dxCallEntry->setText(deCall);
+                genStdMsgs(QString::number(decodedtext.snr()));
+                ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+                setTxMsg(m_ntx);
+                m_currentMessageType=m_ntx;
+            }
+        }
     }
+
+    // CQ: Max dB for MSK144
+    if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Max dB") {
+        QString deCall;
+        QString deGrid;
+        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        if (!text.contains(" 73") && !filtered  && ((pounce && text.contains(" CQ ")) or (!pounce &&
+            (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
+             && !txlog.contains(deCall)) {
+            dBpoints=decodedtext.string().mid(7,3).toInt();
+            if(dBpoints>maxdBPoints) {
+                maxdBPoints=dBpoints;
+                m_deCall=deCall;
+                m_bDoubleClicked=true;
+                if (pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) {
+                    auto_tx_mode(true);
+                    processMessage(decodedtext);
+                    stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
+                }
+                ui->dxCallEntry->setText(deCall);
+                genStdMsgs(QString::number(decodedtext.snr()));
+                ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+                setTxMsg(m_ntx);
+                m_currentMessageType=m_ntx;
+            }
+        }
+    }
+
+    // CQ: Min dB for MSK144
+    if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Min dB") {
+        QString deCall;
+        QString deGrid;
+        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        if (!text.contains(" 73") && !filtered  && ((pounce && text.contains(" CQ ")) or (!pounce &&
+            (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
+             && !txlog.contains(deCall)) {
+
+            dBpoints2=decodedtext.string().mid(7,3).toInt();
+            if(dBpoints2<mindBPoints) {
+                mindBPoints=dBpoints2;
+                m_deCall=deCall;
+                m_bDoubleClicked=true;
+                if (pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) {
+                    auto_tx_mode(true);
+                    processMessage(decodedtext);
+                    stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
+                }
+                ui->dxCallEntry->setText(deCall);
+                genStdMsgs(QString::number(decodedtext.snr()));
+                ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+                setTxMsg(m_ntx);
+                m_currentMessageType=m_ntx;
+            }
+        }
+    }
+
+    // Highlight DX Call/Grid for MSK144
+    if (!pounce && m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
+        || (decodedtext.string().contains("<...> " + m_hisCall))))  {
+        ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+        if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
+        QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
+            ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+        });
+        QTimer::singleShot (1000, [=] {                      // repeated highlighting to override JTAlert
+            ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+        });
+        QTimer::singleShot (2500, [=] {                      // repeated highlighting to override JTAlert
+            ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
+        });
+    }
+    if (!pounce && m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
+        ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true);
+        if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
+    }
+    QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
+        if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
+#ifdef WIN32
+            QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
+            QString binPath = QCoreApplication::applicationDirPath();
+            QAudioFormat format;
+            format.setCodec("audio/pcm");
+            format.setSampleRate (48000);
+            format.setChannelCount (1);
+            format.setSampleSize (16);
+            format.setSampleType(QAudioFormat::SignedInt);
+            QAudioOutput* audio;
+            audio = new QAudioOutput(format, this);
+            connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
+            QFile *effect1 = new QFile(this);
+            effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXcall.wav"));
+            effect1->open(QIODevice::ReadOnly);
+            audio->start(effect1);
+#else
+                QString homePath = QDir::homePath();
+                QSound::play(QDir::homePath() + "/sounds/DXcall.wav");  // for Linux and macOS
+#endif
+            play_DXcall = false;
+        }
+    });                                                  // UR delete for versions without alerts
+
+    if (!filtered or (filtered && m_config.filters_for_Wait_and_Pounce_only()))
+        ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC(),
+        m_logBook, m_currentBand, m_config.ppfx ());
 
     m_bDecoded=true;
     auto_sequence (decodedtext, ui->sbFtol->value (), std::numeric_limits<unsigned>::max ());
@@ -2450,21 +2581,27 @@ void MainWindow::on_autoButton_clicked (bool checked)
       ui->txFirstCheckBox->setChecked(false);
   }
   ui->pbBandHopping->setChecked(false); // disable band hopping when Tx is enabled
-  m_auto = checked;
-  m_maxPoints=-1;
-  if (!checked && ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
-                                                       or ui->respondComboBox->currentText() == "CQ: Min dB")) {
-      dBpoints=-28;                 // reset points
-      dBpoints2=99;                 // reset points
-      maxdBPoints=-28;              // reset points
-      mindBPoints=99;               // reset points
+  if (checked) {
+      m_auto = checked;
+      QTimer::singleShot (3000, [=] {pounce = false;});  // ensure to select only CQ messages
+  } else {
+      pounce = false;
+      m_auto = false;
+      ui->autoButton->setChecked(false);  // ensure autoButton is unchecked
+      filtered = false;
+      Dpoints=0;                          // reset points
+      maxDPoints=0;                       // reset points
+      dBpoints=-28;                       // reset points
+      dBpoints2=99;                       // reset points
+      maxdBPoints=-28;                    // reset points
+      mindBPoints=99;                     // reset points
   }
+  m_maxPoints=-1;
   if (checked && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText() != "CQ: None"
       && CALLING == m_QSOProgress) {
       m_bAutoReply = false;         // ready for next
       m_bCallingCQ = true;          // allows tail-enders to be picked up
   }
-  if (!checked) m_bCallingCQ = false;
   statusUpdate ();
   m_bEchoTxOK=false;
   if(m_mode=="Echo" and m_auto) {
@@ -3056,6 +3193,22 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
       ui->txFirstCheckBox->setChecked(false);
       auto_tx_mode (false);
   }
+  if (ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
+      or ui->respondComboBox->currentText() == "CQ: Min dB" or ui->respondComboBox->currentText() == "CQ: Max Dist")) {
+      Dpoints=0;                          // reset points
+      maxDPoints=0;                       // reset points
+      dBpoints=-28;                       // reset points
+      dBpoints2=99;                       // reset points
+      maxdBPoints=-28;                    // reset points
+      mindBPoints=99;                     // reset points
+      clearDX();                          // clear dxCallEntry
+      ui->tx5->setCurrentText("");        // clear tx5
+      ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
+  }
+  pounce = false;
+  ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
+  filtered = false;
+  check_button_color();
 }
 
 void MainWindow::on_actionRelease_Notes_triggered ()
@@ -4235,6 +4388,7 @@ void MainWindow::activeWorked(QString call, QString band)
 void MainWindow::readFromStdout()                             //readFromStdout
 {
   bool bDisplayPoints = false;
+  filtered = false;
   if(m_ActiveStationsWidget!=NULL) {
     bDisplayPoints=(m_mode=="FT4" or m_mode=="FT8") and
       (m_specOp==SpecOp::ARRL_DIGI or m_ActiveStationsWidget->isVisible());
@@ -4412,6 +4566,13 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait & Reply/Call
+        QString text2;
+        QStringList tw=decodedtext.string().mid(24).split(" ",SkipEmptyParts);
+        if (m_config.filters_for_word2()) {
+          text2 = tw[1].left(4);   // for Blacklist
+        } else {
+          text2 = text;   // for Blacklist
+        }
 
         // Wait & Reply
         if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && (m_hisCall!="")
@@ -4440,72 +4601,109 @@ void MainWindow::readFromStdout()                             //readFromStdout
               stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
         }
 
-          // Filtering out messages with keywords from Blacklist
-       if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
-            && (
-               (decodedtext.string().contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
-            || (decodedtext.string().contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
-               )) {
-                    return;
+          // Filtering
+          if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass () // Always pass messages with keywords from Always Pass list
+                && (
+                    (text.contains(m_config.Pass1()) && (m_config.Pass1()!=""))
+                    || (text2.contains(m_config.Pass2()) && (m_config.Pass2()!=""))
+                    || (text2.contains(m_config.Pass3()) && (m_config.Pass3()!=""))
+                    || (text2.contains(m_config.Pass4()) && (m_config.Pass4()!=""))
+                    || (text2.contains(m_config.Pass5()) && (m_config.Pass5()!=""))
+                    || (text2.contains(m_config.Pass6()) && (m_config.Pass6()!=""))
+                    || (text2.contains(m_config.Pass7()) && (m_config.Pass7()!=""))
+                    || (text2.contains(m_config.Pass8()) && (m_config.Pass8()!=""))
+                    ))) {
 
-          // Filtering out everything but messages with keywords from Whitelist
-       } else if (SpecOp::NONE==m_specOp && m_config.Whitelisted ()
-             && !(decodedtext.string().contains(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist4()) && (m_config.Whitelist4()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist5()) && (m_config.Whitelist5()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist6()) && (m_config.Whitelist6()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist7()) && (m_config.Whitelist7()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist8()) && (m_config.Whitelist8()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist9()) && (m_config.Whitelist9()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist10()) && (m_config.Whitelist10()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
-             && !(decodedtext.string().contains(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
-                ) {
-                     return;
+                // Filtering out messages with keywords from Blacklist
+                if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
+                    && (
+                        (text.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
+                        || (text.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
+                        || (text.contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
+                        || (text.contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
+                        || (text.contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
+                        || (text.contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
+                        || (text.contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
+                        || (text.contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
+                        || (text.contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
+                        || (text.contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
+                        || (text.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
+                        || (text.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
+                        )) {
+                    filtered = true;
+                    if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+                    // reset dB score when filtered
+                    if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
+                                   or ui->respondComboBox->currentText()=="CQ: Max dB"
+                                   or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+                        Dpoints=0;
+                        maxDPoints=0;
+                        dBpoints=-28;
+                        dBpoints2=99;
+                        maxdBPoints=-28;
+                        mindBPoints=99;
+                    }
 
-       } else {
+                    // Filtering out everything but messages with keywords from Whitelist
+                } else if (SpecOp::NONE==m_specOp && m_config.Whitelisted ()
+                           && !(text2.contains(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
+                           && !(text2.contains(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
+                           && !(text2.contains(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
+                           && !(text2.contains(m_config.Whitelist4()) && (m_config.Whitelist4()!=""))
+                           && !(text2.contains(m_config.Whitelist5()) && (m_config.Whitelist5()!=""))
+                           && !(text2.contains(m_config.Whitelist6()) && (m_config.Whitelist6()!=""))
+                           && !(text2.contains(m_config.Whitelist7()) && (m_config.Whitelist7()!=""))
+                           && !(text2.contains(m_config.Whitelist8()) && (m_config.Whitelist8()!=""))
+                           && !(text2.contains(m_config.Whitelist9()) && (m_config.Whitelist9()!=""))
+                           && !(text2.contains(m_config.Whitelist10()) && (m_config.Whitelist10()!=""))
+                           && !(text2.contains(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
+                           && !(text2.contains(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
+                           ) {
+                    filtered = true;
+                    if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+                    // reset dB score when filtered
+                    if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
+                                   or ui->respondComboBox->currentText()=="CQ: Max dB"
+                                   or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+                        Dpoints=0;
+                        maxDPoints=0;
+                        dBpoints=-28;
+                        dBpoints2=99;
+                        maxdBPoints=-28;
+                        mindBPoints=99;
+                    }
+                }
+          }
 
+       if (!filtered or m_config.filters_for_Wait_and_Pounce_only()) {  // show decodes if not filtered
            // show distance and bearing
            QString distance;
            QString deCall;
            QString grid;
            decodedtext.deCallAndGrid(deCall,grid);
            if ((m_config.showDistance() || m_config.showAzimuth()) && grid.contains(grid_regexp)) {
-               double utch=0.0;
-               int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
-               azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1().constData()),
-                       const_cast <char *> ((grid + "      ").left (6).toLatin1().constData()),&utch,
-                       &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,6,6);
-               if (m_config.showDistance()) {
+              double utch=0.0;
+              int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
+              azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1().constData()),
+                      const_cast <char *> ((grid + "      ").left (6).toLatin1().constData()),&utch,
+                      &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,6,6);
+              if (m_config.showDistance()) {
                    int nd=nDkm;
                    if(m_config.miles()) nd=nDmiles;
                    distance = QString::number(nd);
                    if(m_config.miles()) distance += " mi";
                    if(!m_config.miles()) distance += " km";
-               }
-               if (m_config.showAzimuth()) {
+              }
+              if (m_config.showAzimuth()) {
                    if (distance.length()) distance += " / ";
                    distance += QString::number(nAz) + "°";
-               }
+              }
            }
-
-          ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
+           ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
                                                       m_logBook, m_currentBandPeriod, m_config.ppfx (),
                                                       ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
                                                       haveFSpread, fSpread, bDisplayPoints, m_points, distance);
-          if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
+           if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
        }
 
        if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
@@ -4515,7 +4713,104 @@ void MainWindow::readFromStdout()                             //readFromStdout
          if(bWorkedOnBand) activeWorked(deCall,m_currentBand);
        }
 
-       if (m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
+       // Pounce CQ: None and CQ: First
+       if(pounce && !filtered && decodedtext.string().contains(" CQ ") && (ui->respondComboBox->currentText()=="CQ: None"
+          or ui->respondComboBox->currentText()=="CQ: First") && m_config.Wait_features_enabled()) {
+         m_bDoubleClicked=true;
+         auto_tx_mode(true);
+         processMessage(decodedtext0);
+         stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
+       }
+
+       // CQ: Max Dist if not ARRL_GIGI
+       if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Max Dist"
+           && m_specOp!=SpecOp::NA_VHF && m_specOp!=SpecOp::ARRL_DIGI) {
+         QString deCall;
+         QString deGrid;
+         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+         if (deGrid.contains(grid_regexp) && !filtered && !text.contains(" 73") && ((pounce && text.contains(" CQ ")) or (!pounce &&
+             (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
+              && !txlog.contains(deCall)) {
+            double utch=0.0;
+            int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
+            azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1().constData()),
+                    const_cast <char *> ((deGrid + "      ").left (6).toLatin1().constData()),&utch,
+                    &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,6,6);
+            Dpoints=nDkm;
+            if(Dpoints>maxDPoints) {
+                   maxDPoints=Dpoints;
+                   m_deCall=deCall;
+                   m_bDoubleClicked=true;
+                   if (pounce && decodedtext.string().contains(" CQ ") && m_config.Wait_features_enabled()) {
+                       auto_tx_mode(true);
+                       processMessage(decodedtext0);
+                       stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
+                   }
+                   ui->dxCallEntry->setText(deCall);
+                   genStdMsgs(QString::number(decodedtext.snr()));
+                   ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+                   setTxMsg(m_ntx);
+                   m_currentMessageType=m_ntx;
+            }
+         }
+       }
+
+       // CQ: Max dB
+       if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Max dB") {
+         QString deCall;
+         QString deGrid;
+         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+         if (!text.contains(" 73") && !filtered && ((pounce && text.contains(" CQ ")) or (!pounce &&
+             (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
+              && !txlog.contains(deCall)) {
+               dBpoints=decodedtext.string().mid(7,3).toInt();
+               if(dBpoints>maxdBPoints) {
+                   maxdBPoints=dBpoints;
+                   m_deCall=deCall;
+                   m_bDoubleClicked=true;
+                   if (pounce && decodedtext.string().contains(" CQ ") && m_config.Wait_features_enabled()) {
+                       auto_tx_mode(true);
+                       processMessage(decodedtext0);
+                       stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
+                   }
+                   ui->dxCallEntry->setText(deCall);
+                   genStdMsgs(QString::number(decodedtext.snr()));
+                   ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+                   setTxMsg(m_ntx);
+                   m_currentMessageType=m_ntx;
+               }
+         }
+       }
+
+       // CQ: Min dB
+       if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Min dB") {
+         QString deCall;
+         QString deGrid;
+         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+         if (!text.contains(" 73") && !filtered && ((pounce && text.contains(" CQ ")) or (!pounce &&
+             (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
+              && !txlog.contains(deCall)) {
+               dBpoints2=decodedtext.string().mid(7,3).toInt();
+               if(dBpoints2<mindBPoints) {
+                   mindBPoints=dBpoints2;
+                   m_deCall=deCall;
+                   m_bDoubleClicked=true;
+                   if (pounce && decodedtext.string().contains(" CQ ") && m_config.Wait_features_enabled()) {
+                       auto_tx_mode(true);
+                       processMessage(decodedtext0);
+                       stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
+                   }
+                   ui->dxCallEntry->setText(deCall);
+                   genStdMsgs(QString::number(decodedtext.snr()));
+                   ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
+                   setTxMsg(m_ntx);
+                   m_currentMessageType=m_ntx;
+               }
+         }
+       }
+
+       // Highlight DX Call/Grid
+       if (!pounce && m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
             || (decodedtext.string().contains("<...> " + m_hisCall))))  {
            ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
            if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
@@ -4529,7 +4824,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
                });
        }
-       if (m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
+       if (!pounce && m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
            ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true);
            if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
        }
@@ -4617,7 +4912,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
               processMessage (decodedtext);
             }
 
-            if(!bProcessMsgNormally and m_ActiveStationsWidget and ui->respondComboBox->currentText()=="CQ: Max Dist") {
+            if(m_specOp==SpecOp::ARRL_DIGI && !bProcessMsgNormally and m_ActiveStationsWidget and ui->respondComboBox->currentText()=="CQ: Max Dist") {
               QString deCall;
               QString deGrid;
               decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -4661,66 +4956,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   setTxMsg(m_ntx);
                   m_currentMessageType=m_ntx;
                 }
-              }
-            }
-
-            if(!bProcessMsgNormally and ui->respondComboBox->currentText()=="CQ: Max dB") {
-              QString deCall;
-              QString deGrid;
-              decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-              if (!decodedtext.string().contains(" 73")) {
-                  dBpoints=decodedtext.string().mid(7,3).toInt();
-                  if(dBpoints>maxdBPoints) {
-                    maxdBPoints=dBpoints;
-                    m_deCall=deCall;
-                    m_bDoubleClicked=true;
-                    ui->dxCallEntry->setText(deCall);
-                    int m_ntx=2;
-                    bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
-                    if(bContest) m_ntx=3;
-                    if(deGrid.contains(grid_regexp)) {
-                      m_deGrid=deGrid;
-                      ui->dxGridEntry->setText(deGrid);
-                    } else {
-                      m_ntx=3;
-                    }
-                    if(m_ntx==2) m_QSOProgress = REPORT;
-                    if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
-                    genStdMsgs(QString::number(decodedtext.snr()));
-                    ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
-                    setTxMsg(m_ntx);
-                    m_currentMessageType=m_ntx;
-                 }
-              }
-            }
-
-            if(!bProcessMsgNormally and ui->respondComboBox->currentText()=="CQ: Min dB") {
-              QString deCall;
-              QString deGrid;
-              decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-              if (!decodedtext.string().contains(" 73")) {
-                 dBpoints2=decodedtext.string().mid(7,3).toInt();
-                 if(dBpoints2<mindBPoints) {
-                    mindBPoints=dBpoints2;
-                    m_deCall=deCall;
-                    m_bDoubleClicked=true;
-                    ui->dxCallEntry->setText(deCall);
-                    int m_ntx=2;
-                    bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
-                    if(bContest) m_ntx=3;
-                    if(deGrid.contains(grid_regexp)) {
-                      m_deGrid=deGrid;
-                      ui->dxGridEntry->setText(deGrid);
-                    } else {
-                      m_ntx=3;
-                    }
-                    if(m_ntx==2) m_QSOProgress = REPORT;
-                    if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
-                    genStdMsgs(QString::number(decodedtext.snr()));
-                    ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
-                    setTxMsg(m_ntx);
-                    m_currentMessageType=m_ntx;
-                 }
               }
             }
 
@@ -7224,6 +7459,15 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mousePressEvents
       m_specOp=m_config.special_op_id();
       on_actionQ65_triggered();
   }
+  if(ui->autoButton->hasFocus() && (event->button() & Qt::RightButton)) {  // autoButton
+      if (!pounce && !m_auto && m_config.Wait_features_enabled()) {
+        pounce = true;
+        check_button_color();
+      } else {
+        pounce = false;
+        check_button_color();
+      }
+  }
 }
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
@@ -7308,8 +7552,6 @@ void MainWindow::cease_auto_Tx_after_QSO ()
 void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
 {
   if (!m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65")) cease_auto_Tx_after_QSO ();
-  // always stop Tx after sending 73
-  if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65") && m_ntx != 4) cease_auto_Tx_after_QSO ();
 
   if (!m_hisCall.size ()) {
     MessageBox::warning_message (this, tr ("Warning:  DX Call field is empty."));
@@ -7361,14 +7603,26 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
                         ui->TxFreqSpinBox->value(), m_noSuffix, m_xSent, m_xRcvd);
   m_inQSOwith="";
   if (ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
-                                           or ui->respondComboBox->currentText() == "CQ: Min dB")) {
-        dBpoints=-28;                  // reset points
-        dBpoints2=99;                  // reset points
-        maxdBPoints=-28;               // reset points
-        mindBPoints=99;                // reset points
-        clearDX();                     // clear dxCallEntry
-        ui->tx5->setCurrentText("");   // clear tx5
+      or ui->respondComboBox->currentText() == "CQ: Min dB" or ui->respondComboBox->currentText() == "CQ: Max Dist")) {
+        Dpoints=0;                          // reset points
+        maxDPoints=0;                       // reset points
+        dBpoints=-28;                       // reset points
+        dBpoints2=99;                       // reset points
+        maxdBPoints=-28;                    // reset points
+        mindBPoints=99;                     // reset points
+        clearDX();                          // clear dxCallEntry
+        ui->tx5->setCurrentText("");        // clear tx5
+        ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
   }
+  QTimer::singleShot (2000, [=] {
+      pounce = false;
+      filtered = false;
+      read_txlog();
+      check_button_color();
+  });
+  QTimer::singleShot (7000, [=] {
+      read_txlog();
+  });
 }
 
 void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, QString const& grid
@@ -8697,14 +8951,20 @@ void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
       ui->txFirstCheckBox->setChecked(false);
   }
   if (ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
-                                           or ui->respondComboBox->currentText() == "CQ: Min dB")) {
-      dBpoints=-28;                  // reset points
-      dBpoints2=99;                  // reset points
-      maxdBPoints=-28;               // reset points
-      mindBPoints=99;                // reset points
-      clearDX();                     // clear dxCallEntry
-      ui->tx5->setCurrentText("");   // clear tx5
+      or ui->respondComboBox->currentText() == "CQ: Min dB" or ui->respondComboBox->currentText() == "CQ: Max Dist")) {
+      Dpoints=0;                          // reset points
+      maxDPoints=0;                       // reset points
+      dBpoints=-28;                       // reset points
+      dBpoints2=99;                       // reset points
+      maxdBPoints=-28;                    // reset points
+      mindBPoints=99;                     // reset points
+      clearDX();                          // clear dxCallEntry
+      ui->tx5->setCurrentText("");        // clear tx5
   }
+  pounce = false;
+  ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
+  filtered = false;
+  check_button_color();
 }
 
 void MainWindow::rigOpen ()
@@ -12046,5 +12306,25 @@ void MainWindow::check_button_color()
     } else {
         ui->EraseButton->setToolTip("Erase right window.\n"
                                     "Double-click to erase both windows.");
+    }
+    if (pounce && !m_auto) {
+        ui->autoButton->setStyleSheet("QPushButton {background-color: #ff7a05; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+        ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
+    }
+}
+
+void MainWindow::read_txlog()
+{
+    QString logs_location;
+    QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
+    logs_location = dataPath.exists("wsjtx.log") ? dataPath.absoluteFilePath("wsjtx.log") : m_config.data_dir ().absoluteFilePath ("wsjtx.log");
+    QFile logfile = {logs_location};
+    QTextStream logstream(&logfile);
+    if(logfile.open (QIODevice::ReadOnly | QIODevice::Text)) {
+        while (!logstream.atEnd()) {
+            txlog = logstream.readAll();
+        }
+        logstream.flush();
+        logfile.close();
     }
 }

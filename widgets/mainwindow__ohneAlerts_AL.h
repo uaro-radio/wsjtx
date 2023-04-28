@@ -235,6 +235,7 @@ private slots:
   void on_dxCallEntry_returnPressed ();
   void on_genStdMsgsPushButton_clicked();
   void on_logQSOButton_clicked();
+  void read_txlog();
   void on_actionJT9_triggered();
   void on_actionJT65_triggered();
   void on_actionJT4_triggered();
