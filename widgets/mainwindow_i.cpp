@@ -8349,7 +8349,7 @@ void MainWindow::on_actionEcho_triggered()
 {
   int nd=int(m_ndepth&3);
   on_actionJT4_triggered();
-// Don't allow decoding depth to be changed just because Echo mode was entered:
+  // Don't allow decoding depth to be changed just because Echo mode was entered:
   if(nd==1) ui->actionQuickDecode->setChecked (true);
   if(nd==2) ui->actionMediumDecode->setChecked (true);
   if(nd==3) ui->actionDeepestDecode->setChecked (true);
@@ -8370,6 +8370,9 @@ void MainWindow::on_actionEcho_triggered()
   ui->TxFreqSpinBox->setValue(1500);
   ui->TxFreqSpinBox->setEnabled (false);
   if(!m_echoGraph->isVisible()) m_echoGraph->show();
+  if (!ui->actionAstronomical_data->isChecked ()) {
+    ui->actionAstronomical_data->setChecked (true);
+  }
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
@@ -8377,7 +8380,6 @@ void MainWindow::on_actionEcho_triggered()
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
-  if(m_astroWidget) m_astroWidget->selectOwnEcho();
   ui->sbEchoAvg->values ({1, 2, 5, 10, 20, 50, 100});
   statusChanged();
   monitor(false);
