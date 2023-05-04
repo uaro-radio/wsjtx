@@ -1133,16 +1133,14 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
 void MainWindow::not_GA_warning_message ()
 {
-  /*       ### TEMPORARY ###
   MessageBox::critical_message (this,
-                                "This is a pre-release version of WSJT-X 2.6.0 made\n"
+                                "This is a pre-release version of WSJT-X 2.7.0-rc1 made\n"
                                 "available for testing purposes.  By design it will\n"
-                                "be nonfunctional after Dec 31, 2022.");
+                                "be nonfunctional after Jan 15, 2024.");
   auto now = QDateTime::currentDateTimeUtc ();
-  if (now >= QDateTime {{2022, 12, 31}, {23, 59, 59, 999}, Qt::UTC}) {
+  if (now >= QDateTime {{2024, 01, 15}, {23, 59, 59, 999}, Qt::UTC}) {
     Q_EMIT finished ();
   }
-  */
 }
 
 void MainWindow::initialize_fonts ()
@@ -9772,6 +9770,7 @@ void MainWindow::locationChange (QString const& location)
     if (m_config.my_grid () != grid) {
       m_config.set_location (grid);
       genStdMsgs (m_rpt, false);
+      pskSetLocal ();
       statusUpdate ();
     }
   } else {
