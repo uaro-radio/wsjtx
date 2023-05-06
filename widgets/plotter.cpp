@@ -139,13 +139,6 @@ void CPlotter::paintEvent(QPaintEvent *)                                // paint
       painter.drawPixmap(m_lastMouseX, 0, m_HoverOverlayPixmap);
     }
   }
-  if(m_freq && m_lastMouseX >= 0 && m_lastMouseX != m_lastPaintedX) {
-    QFont font = CPlotter::font ();
-    QString freq=QString::number(int(FreqfromX(m_lastMouseX)));
-    int z = font.pointSize()*freq.length()+64/font.pointSize();
-    QPoint pos = m_pos + QPoint(-z,-10);
-    QToolTip::showText(pos,freq);
-  }
   m_lastPaintedX = m_lastMouseX;
   m_paintEventBusy=false;
 }
@@ -858,18 +851,20 @@ void CPlotter::mouseMoveEvent (QMouseEvent * event)
   update();
 
   event->ignore();
-  if (!m_bTotalPower){
-      QToolTip::showText(event->globalPos(),QString::number(int(FreqfromX(x))));
-  } else {
-      int y=event->y();
-      float pdB=10.0*(m_h-y)/m_vpixperdiv + 20.0;
-      if(y<(m_h-m_h2)) {
-          QToolTip::showText(event->globalPos(),QString::number(int(FreqfromX(x))));
-      } else {
-          QString t;
-          t=t.asprintf("%4.1f dB",pdB);
-          QToolTip::showText(event->globalPos(),t);
-      }
+  if(m_freq) {
+    if (!m_bTotalPower){
+        QToolTip::showText(event->globalPos(),QString::number(int(FreqfromX(x))));
+    } else {
+        int y=event->y();
+        float pdB=10.0*(m_h-y)/m_vpixperdiv + 20.0;
+        if(y<(m_h-m_h2)) {
+            QToolTip::showText(event->globalPos(),QString::number(int(FreqfromX(x))));
+        } else {
+            QString t;
+            t=t.asprintf("%4.1f dB",pdB);
+            QToolTip::showText(event->globalPos(),t);
+        }
+    }
   }
   QWidget::mouseMoveEvent(event);
 }
