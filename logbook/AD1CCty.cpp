@@ -30,6 +30,7 @@ namespace
 {
   auto const file_name = "cty.dat";
   auto const grid_file_name = "grid.dat";    // NJ0A
+//  auto const logFileName = "wsjtx_log.adi";  // NJ0A
 }
 
 struct entity
@@ -436,7 +437,7 @@ AD1CCty::AD1CCty (Configuration const * configuration)
 
   if (file1.open (QFile::ReadOnly))
     {
-       int line_number {0};
+       int line_number [[maybe_unused]] {0};
        QTextStream in {&file1};
        while (!in.atEnd ())
        {
