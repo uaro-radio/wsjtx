@@ -26,7 +26,6 @@ public:
   }
 
   HighlightItems static const defaults_;
-  HighlightItems static const defaults2_;
   HighlightItems data_;
   QFont font_;
 };
@@ -48,25 +47,6 @@ QList<DecodeHighlightingModel::HighlightInfo> const DecodeHighlightingModel::imp
   , {Highlight::LotW, false, {{0x99, 0x00, 0x00}}, {}}
   , {Highlight::CQ, true, {}, {{0x66, 0xff, 0x66}}}
   , {Highlight::Tx, true, {}, {Qt::yellow}}
-};
-
-QList<DecodeHighlightingModel::HighlightInfo> const DecodeHighlightingModel::impl::defaults2_ = {
-  {Highlight::LotW, true, {Qt::black}, {}}
-  , {Highlight::MyCall, true, {{0xaa, 0x00, 0x00}}, {{0x00, 0xff, 0xff}}}
-  , {Highlight::Continent, true, {{0xaa, 0x00, 0x00}}, {{0xff, 0x50, 0xff}}}
-  , {Highlight::ContinentBand, true, {{0xaa, 0x00, 0x00}}, {{0xff, 0x82, 0xff}}}
-  , {Highlight::DXCC, true, {{0xaa, 0x00, 0x00}}, {Qt::yellow}}
-  , {Highlight::DXCCBand, true, {{0xaa, 0x00, 0x00}}, {{0xff, 0xff, 0x9b}}}
-  , {Highlight::CQZone, true, {{0xaa, 0x00, 0x00}}, {{0xaa, 0xaa, 0x00}}}
-  , {Highlight::CQZoneBand, true, {{0xaa, 0x00, 0x00}}, {{0xaa, 0xaa, 0x7f}}}
-  , {Highlight::ITUZone, true, {{0xaa, 0x00, 0x00}}, {{0x37, 0xbd, 0xff}}}
-  , {Highlight::ITUZoneBand, true, {{0xaa, 0x00, 0x00}}, {{0x91, 0xde, 0xff}}}
-  , {Highlight::Grid, true, {{0xaa, 0x00, 0x00}}, {{0xff, 0xa8, 0x80}}}
-  , {Highlight::GridBand, true, {{0xaa, 0x00, 0x00}}, {{0xff, 0xcd, 0x9b}}}
-  , {Highlight::Call, true, {{0xaa, 0x00, 0x00}}, {{0x64, 0xff, 0x64}}}
-  , {Highlight::CallBand, true, {{0xaa, 0x00, 0x00}}, {{0xb4, 0xff, 0xb4}}}
-  , {Highlight::CQ, true, {{0xaa, 0x00, 0x00}}, {{0xc3, 0xc3, 0xc3}}}
-  , {Highlight::Tx, true, {Qt::black}, {{0xff, 0xa5, 0xc6}}}
 };
 
 bool operator == (DecodeHighlightingModel::HighlightInfo const& lhs, DecodeHighlightingModel::HighlightInfo const& rhs)
@@ -152,11 +132,6 @@ QString DecodeHighlightingModel::highlight_name (Highlight h)
 auto DecodeHighlightingModel::default_items () -> HighlightItems const&
 {
   return impl::defaults_;
-}
-
-auto DecodeHighlightingModel::default_items2 () -> HighlightItems const&
-{
-  return impl::defaults2_;
 }
 
 auto DecodeHighlightingModel::items () const -> HighlightItems const&

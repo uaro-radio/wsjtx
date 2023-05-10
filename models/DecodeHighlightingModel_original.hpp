@@ -39,7 +39,6 @@ public:
 
   // access to raw items nd default items
   static HighlightItems const& default_items ();
-  static HighlightItems const& default_items2 ();
   HighlightItems const& items () const;
   void items (HighlightItems const&);
 

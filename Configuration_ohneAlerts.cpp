@@ -578,6 +578,7 @@ private:
   Q_SLOT void handle_transceiver_failure (QString const& reason);
   Q_SLOT void on_DXCC_check_box_clicked(bool checked);
   Q_SLOT void on_reset_highlighting_to_defaults_push_button_clicked (bool);
+  Q_SLOT void on_reset_highlighting_to_defaults2_push_button_clicked (bool);
   Q_SLOT void on_rescan_log_push_button_clicked (bool);
   Q_SLOT void on_CTY_download_button_clicked (bool);
   Q_SLOT void on_LotW_CSV_fetch_push_button_clicked (bool);
@@ -2912,6 +2913,16 @@ void Configuration::impl::on_reset_highlighting_to_defaults_push_button_clicked 
                                                     , tr ("Reset all decode highlighting and priorities to default values")))
     {
       next_decode_highlighing_model_.items (DecodeHighlightingModel::default_items ());
+    }
+}
+
+void Configuration::impl::on_reset_highlighting_to_defaults2_push_button_clicked (bool /*checked*/)
+{
+    if (MessageBox::Yes == MessageBox::query_message (this
+                             , tr ("Reset Decode Highlighting")
+                             , tr ("Reset all decode highlighting and priorities to default values")))
+    {
+      next_decode_highlighing_model_.items (DecodeHighlightingModel::default_items2 ());
     }
 }
 
