@@ -134,6 +134,9 @@ public:
   QString Pass6() const;
   QString Pass7() const;
   QString Pass8() const;
+  QString highlight_orange_callsigns() const;
+  QString highlight_blue_callsigns() const;
+
   void setEU_VHF_Contest();
   QFont text_font () const;
   QFont decoded_text_font () const;
@@ -234,6 +237,8 @@ public:
   bool highlight_only_fields () const;
   bool include_WAE_entities () const;
   bool highlight_73 () const;
+  bool highlight_orange () const;   // URUR
+  bool highlight_blue () const;    // URUR
   bool show_country_names () const;
   bool alternate_erase_button () const;
   void setSpecial_Q65_Pileup();

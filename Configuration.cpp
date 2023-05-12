@@ -625,6 +625,8 @@ private:
   Q_SLOT void on_Pass6_textEdited (QString const&);
   Q_SLOT void on_Pass7_textEdited (QString const&);
   Q_SLOT void on_Pass8_textEdited (QString const&);
+  Q_SLOT void on_highlight_orange_callsigns_textEdited (QString const&);
+  Q_SLOT void on_highlight_blue_callsigns_textEdited (QString const&);
 
   // typenames used as arguments must match registered type names :(
   Q_SIGNAL void start_transceiver (unsigned seqeunce_number) const;
@@ -700,6 +702,8 @@ private:
   bool highlight_only_fields_;
   bool include_WAE_entities_;
   bool highlight_73_;
+  bool highlight_orange_;
+  bool highlight_blue_;
   bool alternate_erase_button_;
   bool show_country_names_;
   int LotW_days_since_upload_;
@@ -758,6 +762,9 @@ private:
   QString Pass8_;
   QString cloudLogApiUrl_;
   QString cloudLogApiKey_;
+  QString highlight_orange_callsigns_;
+  QString highlight_blue_callsigns_;
+
 
   qint32 id_interval_;
   qint32 align_steps_;
@@ -995,6 +1002,8 @@ bool Configuration::highlight_by_mode () const {return m_->highlight_by_mode_;}
 bool Configuration::highlight_only_fields () const {return m_->highlight_only_fields_;}
 bool Configuration::include_WAE_entities () const {return m_->include_WAE_entities_;}
 bool Configuration::highlight_73 () const {return m_->highlight_73_;}
+bool Configuration::highlight_orange () const {return m_->highlight_orange_;}
+bool Configuration::highlight_blue () const {return m_->highlight_blue_;}
 bool Configuration::alternate_erase_button () const {return m_->alternate_erase_button_;}
 bool Configuration::show_country_names () const {return m_->show_country_names_;}
 bool Configuration::highlight_DXcall () const {return m_->highlight_DXcall_;}
@@ -1300,6 +1309,16 @@ QString Configuration::Pass8() const
   return m_->Pass8_;
 }
 
+QString Configuration::highlight_orange_callsigns() const
+{
+  return m_->highlight_orange_callsigns_;
+}
+
+QString Configuration::highlight_blue_callsigns() const
+{
+  return m_->highlight_blue_callsigns_;
+}
+
 auto Configuration::special_op_id () const -> SpecialOperatingActivity
 {
   return m_->bSpecialOp_ ? static_cast<SpecialOperatingActivity> (m_->SelectedActivity_) : SpecialOperatingActivity::NONE;
@@ -1412,6 +1431,8 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   , highlight_only_fields_ {false}
   , include_WAE_entities_ {false}
   , highlight_73_ {false}
+  , highlight_orange_ {false}
+  , highlight_blue_ {false}
   , alternate_erase_button_ {false}
   , show_country_names_ {false}
   , LotW_days_since_upload_ {0}
@@ -1876,6 +1897,8 @@ void Configuration::impl::initialize_models ()
   ui_->only_fields_check_box->setChecked (highlight_only_fields_);
   ui_->include_WAE_check_box->setChecked (include_WAE_entities_);
   ui_->highlight_73_check_box->setChecked (highlight_73_);
+  ui_->highlight_orange_check_box->setChecked (highlight_orange_);
+  ui_->highlight_blue_check_box->setChecked (highlight_blue_);
   ui_->alternate_erase_button_check_box->setChecked (alternate_erase_button_);
   ui_->show_country_names_check_box->setChecked (show_country_names_);
   ui_->LotW_days_since_upload_spin_box->setValue (LotW_days_since_upload_);
@@ -1963,6 +1986,8 @@ void Configuration::impl::read_settings ()
   Pass6_ = settings_->value ("Pass6",QString {}).toString ();
   Pass7_ = settings_->value ("Pass7",QString {}).toString ();
   Pass8_ = settings_->value ("Pass8",QString {}).toString ();
+  highlight_orange_callsigns_ = settings_->value ("HighlightOrangeCallsigns",QString {}).toString ();
+  highlight_blue_callsigns_ = settings_->value ("HighlightBlackCallsigns",QString {}).toString ();
   ui_->Blacklist1->setText(Blacklist1_);
   ui_->Blacklist2->setText(Blacklist2_);
   ui_->Blacklist3->setText(Blacklist3_);
@@ -1995,6 +2020,8 @@ void Configuration::impl::read_settings ()
   ui_->Pass6->setText(Pass6_);
   ui_->Pass7->setText(Pass7_);
   ui_->Pass8->setText(Pass8_);
+  ui_->highlight_orange_callsigns->setText(highlight_orange_callsigns_);
+  ui_->highlight_blue_callsigns->setText(highlight_blue_callsigns_);
 
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
       && next_font_ != font_)
@@ -2108,6 +2135,8 @@ void Configuration::impl::read_settings ()
   highlight_only_fields_ = settings_->value("OnlyFieldsSought", false).toBool ();
   include_WAE_entities_ = settings_->value("IncludeWAEEntities", false).toBool ();
   highlight_73_ = settings_->value("Highlight73", true).toBool ();
+  highlight_orange_ = settings_->value("HighlightOrange", false).toBool ();
+  highlight_blue_ = settings_->value("HighlightBlack", false).toBool ();
   alternate_erase_button_ = settings_->value("AlternateEraseButtonBehavior", false).toBool ();
   show_country_names_ = settings_->value("AlwaysShowCountryNames", false).toBool ();
   LotW_days_since_upload_ = settings_->value ("LotWDaysSinceLastUpload", 365).toInt ();
@@ -2282,6 +2311,8 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("Pass6", Pass6_);
   settings_->setValue ("Pass7", Pass7_);
   settings_->setValue ("Pass8", Pass8_);
+  settings_->setValue ("HighlightOrangeCallsigns", highlight_orange_callsigns_);
+  settings_->setValue ("HighlightBlackCallsigns", highlight_blue_callsigns_);
   settings_->setValue ("Font", font_.toString ());
   settings_->setValue ("DecodedTextFont", decoded_text_font_.toString ());
   settings_->setValue ("IDint", id_interval_);
@@ -2320,6 +2351,8 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("OnlyFieldsSought", highlight_only_fields_);
   settings_->setValue ("IncludeWAEEntities", include_WAE_entities_);
   settings_->setValue ("Highlight73", highlight_73_);
+  settings_->setValue ("HighlightOrange", highlight_orange_);
+  settings_->setValue ("HighlightBlack", highlight_blue_);
   settings_->setValue ("AlternateEraseButtonBehavior", alternate_erase_button_);
   settings_->setValue ("AlwaysShowCountryNames", show_country_names_);
   settings_->setValue ("LotWDaysSinceLastUpload", LotW_days_since_upload_);
@@ -2821,6 +2854,8 @@ void Configuration::impl::accept ()
   Pass6_= ui_->Pass6->text ().toUpper ();
   Pass7_= ui_->Pass7->text ().toUpper ();
   Pass8_= ui_->Pass8->text ().toUpper ();
+  highlight_orange_callsigns_= ui_-> highlight_orange_callsigns->text ().toUpper ();
+  highlight_blue_callsigns_= ui_-> highlight_blue_callsigns->text ().toUpper ();
   spot_to_psk_reporter_ = ui_->psk_reporter_check_box->isChecked ();
   psk_reporter_tcpip_ = ui_->psk_reporter_tcpip_check_box->isChecked ();
   id_interval_ = ui_->CW_id_interval_spin_box->value ();
@@ -2954,6 +2989,8 @@ void Configuration::impl::accept ()
   highlight_only_fields_ = ui_->only_fields_check_box->isChecked ();
   include_WAE_entities_ = ui_->include_WAE_check_box->isChecked ();
   highlight_73_ = ui_->highlight_73_check_box->isChecked ();
+  highlight_orange_ = ui_->highlight_orange_check_box->isChecked ();
+  highlight_blue_ = ui_->highlight_blue_check_box->isChecked ();
   alternate_erase_button_ = ui_->alternate_erase_button_check_box->isChecked ();
   show_country_names_ = ui_->show_country_names_check_box->isChecked ();
   LotW_days_since_upload_ = ui_->LotW_days_since_upload_spin_box->value ();
@@ -3806,6 +3843,16 @@ void Configuration::impl::on_Pass7_textEdited (QString const& exchange)
 void Configuration::impl::on_Pass8_textEdited (QString const& exchange)
 {
   ui_->Pass8->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_highlight_orange_callsigns_textEdited (QString const& exchange)
+{
+  ui_->highlight_orange_callsigns->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_highlight_blue_callsigns_textEdited (QString const& exchange)
+{
+  ui_->highlight_blue_callsigns->setText (exchange.toUpper ());
 }
 
 bool Configuration::impl::have_rig ()

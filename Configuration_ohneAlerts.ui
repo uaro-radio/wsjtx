@@ -2466,32 +2466,36 @@ Right click for insert and delete options.</string>
           <string>Decode Highlightling</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="5" column="0">
-           <widget class="QCheckBox" name="include_WAE_check_box">
-            <property name="text">
-             <string>Include extra WAE entities</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QCheckBox" name="only_fields_check_box">
-            <property name="toolTip">
-             <string>Check to for grid highlighting to only apply to unworked grid fields</string>
-            </property>
-            <property name="text">
-             <string>Only grid Fields sought</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="highlight_by_mode_check_box">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to indicate new DXCC entities, grid squares, and callsigns per mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Highlight by Mode</string>
-            </property>
-           </widget>
+          <item row="1" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_20">
+            <item>
+             <widget class="QPushButton" name="reset_highlighting_to_defaults_push_button">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Push to reset all highlight items above to default values and priorities.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Reset Highlighting to WSJT-X default</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="reset_highlighting_to_defaults2_push_button">
+              <property name="text">
+               <string>Reset Highlighting to wsjt-x_improved default</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="rescan_log_push_button">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click to scan the wsjtx_log.adi ADIF file again for worked before information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Rescan ADIF Log</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="0" colspan="2">
            <widget class="DecodeHighlightingListView" name="highlighting_list_view">
@@ -2530,56 +2534,89 @@ Right click for insert and delete options.</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_15">
-            <item>
+          <item row="3" column="0" colspan="2">
+           <layout class="QGridLayout" name="gridLayout_23">
+            <item row="1" column="0">
+             <widget class="QCheckBox" name="only_fields_check_box">
+              <property name="toolTip">
+               <string>Check to for grid highlighting to only apply to unworked grid fields</string>
+              </property>
+              <property name="text">
+               <string>Only grid Fields sought</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
              <spacer name="horizontalSpacer_5">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>20</width>
                 <height>20</height>
                </size>
               </property>
              </spacer>
             </item>
-            <item>
-             <widget class="QPushButton" name="rescan_log_push_button">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click to scan the wsjtx_log.adi ADIF file again for worked before information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
+            <item row="2" column="0">
+             <widget class="QCheckBox" name="include_WAE_check_box">
               <property name="text">
-               <string>Rescan ADIF Log</string>
+               <string>Include extra WAE entities</string>
               </property>
              </widget>
             </item>
-           </layout>
-          </item>
-          <item row="6" column="0">
-           <widget class="QCheckBox" name="highlight_73_check_box">
-            <property name="text">
-             <string>Highlight also messages with 73 or RR73</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_20">
-            <item>
-             <widget class="QPushButton" name="reset_highlighting_to_defaults_push_button">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Push to reset all highlight items above to default values and priorities.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
+            <item row="3" column="0">
+             <widget class="QCheckBox" name="highlight_73_check_box">
               <property name="text">
-               <string>Reset Highlighting to WSJT-X default</string>
+               <string>Highlight also messages with 73 or RR73</string>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QPushButton" name="reset_highlighting_to_defaults2_push_button">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="highlight_by_mode_check_box">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to indicate new DXCC entities, grid squares, and callsigns per mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
-               <string>Reset Highlighting to wsjt-x_improved default</string>
+               <string>Highlight by Mode</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QCheckBox" name="highlight_orange_check_box">
+              <property name="toolTip">
+               <string>Highlight callsigns or grids with orange background color. Callsigns and/or grids must be separated by comma or space.</string>
+              </property>
+              <property name="text">
+               <string>Highlight orange:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QCheckBox" name="highlight_blue_check_box">
+              <property name="toolTip">
+               <string>Highlight callsigns or grids with blue background color. Callsigns and/or grids must be separated by comma or space.</string>
+              </property>
+              <property name="text">
+               <string>Highlight blue:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLineEdit" name="highlight_orange_callsigns">
+              <property name="toolTip">
+               <string>Highlight callsigns or grids with orange background color. Callsigns and/or grids must be separated by comma or space.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QLineEdit" name="highlight_blue_callsigns">
+              <property name="toolTip">
+               <string>Highlight callsigns or grids with blue background color. Callsigns and/or grids must be separated by comma or space.</string>
               </property>
              </widget>
             </item>
@@ -2755,22 +2792,6 @@ Right click for insert and delete options.</string>
        <string>Advanced</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_9">
-       <item row="2" column="0" colspan="2">
-        <spacer name="verticalSpacer_8">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="0" column="1">
         <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
@@ -2942,6 +2963,90 @@ Right click for insert and delete options.</string>
           </item>
          </layout>
         </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;User-selectable parameters for JT65 VHF/UHF/Microwave decoding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="title">
+          <string>JT65 VHF/UHF/Microwave decoding parameters</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout_11">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Random erasure patterns:</string>
+            </property>
+            <property name="buddy">
+             <cstring>sbNtrials</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="sbNtrials">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of erasure patterns for stochastic soft-decision Reed Solomon decoder is 10^(n/2).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="minimum">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <number>12</number>
+            </property>
+            <property name="value">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Aggressive decoding level:</string>
+            </property>
+            <property name="buddy">
+             <cstring>sbAggressive</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="sbAggressive">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Higher levels will increase the probability of decoding, but will also increase probability of a false decode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="maximum">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="cbTwoPass">
+            <property name="text">
+             <string>Two-pass decoding</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <spacer name="verticalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item row="1" column="0" colspan="2">
         <widget class="QGroupBox" name="gbSpecialOpActivity">
@@ -3301,74 +3406,6 @@ Right click for insert and delete options.</string>
             <attribute name="buttonGroup">
              <string notr="true">special_op_activity_button_group</string>
             </attribute>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_6">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;User-selectable parameters for JT65 VHF/UHF/Microwave decoding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="title">
-          <string>JT65 VHF/UHF/Microwave decoding parameters</string>
-         </property>
-         <layout class="QFormLayout" name="formLayout_11">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Random erasure patterns:</string>
-            </property>
-            <property name="buddy">
-             <cstring>sbNtrials</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="sbNtrials">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of erasure patterns for stochastic soft-decision Reed Solomon decoder is 10^(n/2).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="minimum">
-             <number>0</number>
-            </property>
-            <property name="maximum">
-             <number>12</number>
-            </property>
-            <property name="value">
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Aggressive decoding level:</string>
-            </property>
-            <property name="buddy">
-             <cstring>sbAggressive</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="sbAggressive">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Higher levels will increase the probability of decoding, but will also increase probability of a false decode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="maximum">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="cbTwoPass">
-            <property name="text">
-             <string>Two-pass decoding</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
            </widget>
           </item>
          </layout>
@@ -3743,10 +3780,6 @@ Right click for insert and delete options.</string>
   <tabstop>frequencies_table_view</tabstop>
   <tabstop>stations_table_view</tabstop>
   <tabstop>highlighting_list_view</tabstop>
-  <tabstop>highlight_by_mode_check_box</tabstop>
-  <tabstop>only_fields_check_box</tabstop>
-  <tabstop>include_WAE_check_box</tabstop>
-  <tabstop>rescan_log_push_button</tabstop>
   <tabstop>LotW_CSV_URL_line_edit</tabstop>
   <tabstop>LotW_CSV_fetch_push_button</tabstop>
   <tabstop>sbNtrials</tabstop>
@@ -3837,13 +3870,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="TX_audio_source_button_group"/>
-  <buttongroup name="special_op_activity_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="special_op_activity_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
+  <buttongroup name="TX_audio_source_button_group"/>
  </buttongroups>
 </ui>

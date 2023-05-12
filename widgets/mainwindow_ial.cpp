@@ -2145,7 +2145,7 @@ void MainWindow::fastSink(qint64 frames)
 
     // Wait & Reply for MSK144
     if (text.contains(m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
-        !decodedtext.string().contains("73 ") && m_mode=="MSK144" && m_config.Wait_features_enabled()
+        !text.string().contains("73 ") && m_mode=="MSK144" && m_config.Wait_features_enabled()
         && !ui->autoButton->isChecked()) {
                   tx_watchdog (false);
                   m_bDoubleClicked = true;
@@ -2283,6 +2283,21 @@ void MainWindow::fastSink(qint64 frames)
         ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC(),
           m_logBook, m_currentBand, m_config.ppfx ());
 
+           // highlight orange and blue callsigns for MSK144
+    if(m_config.highlight_orange() or (m_config.highlight_blue())) {
+        QString deCall;
+        QString deGrid;
+        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deCall))
+            ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,85,0), QColor(255,255,255), true);
+        if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid))
+            ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(255,85,0), QColor(255,255,255), true);
+        if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deCall))
+            ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
+        if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid))
+            ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
+    }
+
     // Highlight DX Call/Grid for MSK144
     if (!pounce && m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
         || (decodedtext.string().contains("<...> " + m_hisCall))))  {
@@ -2298,7 +2313,7 @@ void MainWindow::fastSink(qint64 frames)
         });
     }
     if (!pounce && m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
-        ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true);
+        ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,200), QColor(255,255,255), true);
     }
 
     m_bDecoded=true;
@@ -4759,6 +4774,21 @@ void MainWindow::readFromStdout()                             //readFromStdout
          }
        }
 
+       // highlight orange and blue callsigns
+       if(m_config.highlight_orange() or (m_config.highlight_blue())) {
+         QString deCall;
+         QString deGrid;
+         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+         if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deCall))
+               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,85,0), QColor(255,255,255), true);
+         if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid))
+               ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(255,85,0), QColor(255,255,255), true);
+         if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deCall))
+               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
+         if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid))
+               ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
+       }
+
        // Highlight DX Call/Grid
        if (!pounce && m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
             || (decodedtext.string().contains("<...> " + m_hisCall))))  {
@@ -4774,7 +4804,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                });
        }
        if (!pounce && m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
-           ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true);
+           ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,200), QColor(255,255,255), true);
        }
 
           if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
@@ -7368,7 +7398,7 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
   check_button_color();
 }
 
-void MainWindow::mousePressEvent(QMouseEvent *event)    // mousePressEvents
+void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
 {
   if(ui->DX_Call_Button->hasFocus() && (event->button() & Qt::RightButton)) {  // DX_Call_Button
       clearDX();                     // clear dxCallEntry
