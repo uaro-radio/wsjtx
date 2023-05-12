@@ -2278,6 +2278,11 @@ void MainWindow::fastSink(qint64 frames)
         }
     }
 
+    // display decodes for the fast modes must be done before highlighting any call or grid
+    if (!filtered or (filtered && m_config.filters_for_Wait_and_Pounce_only()))
+        ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC(),
+          m_logBook, m_currentBand, m_config.ppfx ());
+
     // Highlight DX Call/Grid for MSK144
     if (!pounce && m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
         || (decodedtext.string().contains("<...> " + m_hisCall))))  {
@@ -2295,10 +2300,6 @@ void MainWindow::fastSink(qint64 frames)
     if (!pounce && m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
         ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true);
     }
-
-    if (!filtered or (filtered && m_config.filters_for_Wait_and_Pounce_only()))
-        ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC(),
-        m_logBook, m_currentBand, m_config.ppfx ());
 
     m_bDecoded=true;
     auto_sequence (decodedtext, ui->sbFtol->value (), std::numeric_limits<unsigned>::max ());
