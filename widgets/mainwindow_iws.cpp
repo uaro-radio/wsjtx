@@ -5852,6 +5852,16 @@ void MainWindow::guiUpdate()
       if (!m_tx_watchdog) {
         tx_status_label.setStyleSheet("QLabel{color: #000000; background-color: #00ff00}");
         auto t = tr ("Receiving");
+        // switching tx_status_label text and color when filters are enabled
+        if ((SpecOp::NONE==m_specOp && !m_config.filters_for_Wait_and_Pounce_only() &&
+             (m_config.Blacklisted () or m_config.Whitelisted ())) or (ui->cbCQonly->isChecked() && ui->cbCQonly->isVisible())) {
+          tx_status_label.setMinimumSize (QSize  {120, 18});
+          tx_status_label.setStyleSheet ("QLabel{color: #000000; background-color: #00ffff}");
+          t = "Receiving, Filters On";
+        } else {
+          tx_status_label.setMinimumSize (QSize  {100, 18});
+          tx_status_label.setStyleSheet ("QLabel{color: #000000; background-color: #00ff00}");
+        }
         if(m_mode=="MSK144") {
           int npct=int(100.0*m_fCPUmskrtd/0.298667);
           if(npct>90) tx_status_label.setStyleSheet("QLabel{color: #000000; background-color: #ff0000}");
