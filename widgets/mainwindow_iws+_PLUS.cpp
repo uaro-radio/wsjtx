@@ -2186,9 +2186,9 @@ void MainWindow::fastSink(qint64 frames)
                   stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
     }
 
-    // Pounce CQ: None and CQ: First for MSK144
-    if(pounce && !filtered && text.contains(" CQ ") && (ui->respondComboBox->currentText()=="CQ: None"
-       or ui->respondComboBox->currentText()=="CQ: First") && m_config.Wait_features_enabled()) {
+    // Pounce CQ: First for MSK144
+    if(pounce && !filtered && decodedtext.string().contains(" CQ ") && ui->respondComboBox->currentText()=="CQ: First"
+        && m_config.Wait_features_enabled()) {
                   m_bDoubleClicked=true;
                   auto_tx_mode(true);
                   processMessage(decodedtext);
@@ -2196,8 +2196,8 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // CQ: First for MSK144
-    if (m_bCallingCQ && !m_bAutoReply && decodedtext.string().contains(m_config.my_callsign())
-        && m_specOp!=SpecOp::FOX && m_specOp!=SpecOp::HOUND) {
+    if (m_bCallingCQ && !m_bAutoReply && decodedtext.string().contains(m_config.my_callsign()) && m_specOp!=SpecOp::FOX
+        && m_specOp!=SpecOp::HOUND  && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First") {
         if (decodedtext.messageWords().length() >= 3 && !filtered) {
             QString t=decodedtext.messageWords()[2];
             if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
@@ -2212,14 +2212,15 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // CQ: Max Dist for MSK144
-    if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Max Dist"
+    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist"
         && m_specOp!=SpecOp::NA_VHF && m_specOp!=SpecOp::ARRL_DIGI) {
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-        if (deGrid.contains(grid_regexp) && !filtered && !text.contains(" 73") && ((pounce && text.contains(" CQ ")) or (!pounce &&
-            (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
-             && !txlog.contains(deCall)) {
+        if (!filtered && deGrid.contains(grid_regexp) && (
+             (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+             (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+                                                                    )) {
             double utch=0.0;
             int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
             azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1().constData()),
@@ -2230,7 +2231,7 @@ void MainWindow::fastSink(qint64 frames)
                 maxDPoints=Dpoints;
                 m_deCall=deCall;
                 m_bDoubleClicked=true;
-                if (pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) {
+                if ((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) or m_auto) {
                    auto_tx_mode(true);
                    processMessage(decodedtext);
                    stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
@@ -2245,19 +2246,20 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // CQ: Max dB for MSK144
-    if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Max dB") {
+    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max dB") {
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-        if (!text.contains(" 73") && !filtered  && ((pounce && text.contains(" CQ ")) or (!pounce &&
-            (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
-             && !txlog.contains(deCall)) {
+        if (!filtered && (
+             (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+             (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+                          )) {
             dBpoints=decodedtext.string().mid(7,3).toInt();
             if(dBpoints>maxdBPoints) {
                 maxdBPoints=dBpoints;
                 m_deCall=deCall;
                 m_bDoubleClicked=true;
-                if (pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) {
+                if ((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) or m_auto) {
                     auto_tx_mode(true);
                     processMessage(decodedtext);
                     stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
@@ -2272,20 +2274,20 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // CQ: Min dB for MSK144
-    if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Min dB") {
+    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Min dB") {
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-        if (!text.contains(" 73") && !filtered  && ((pounce && text.contains(" CQ ")) or (!pounce &&
-            (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
-             && !txlog.contains(deCall)) {
-
+        if (!filtered && (
+             (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+             (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+                          )) {
             dBpoints2=decodedtext.string().mid(7,3).toInt();
             if(dBpoints2<mindBPoints) {
                 mindBPoints=dBpoints2;
                 m_deCall=deCall;
                 m_bDoubleClicked=true;
-                if (pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) {
+                if ((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) or m_auto) {
                     auto_tx_mode(true);
                     processMessage(decodedtext);
                     stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
@@ -2762,7 +2764,7 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
     case Qt::Key_F11:
       if((e->modifiers() & Qt::ControlModifier) and (e->modifiers() & Qt::ShiftModifier)) {
         m_bandEdited = true;
-        band_changed(m_freqNominal-2000);
+        band_changed(m_freqNominal-1000);
       } else {
         n=11;
         if(e->modifiers() & Qt::ControlModifier) n+=100;
@@ -2778,7 +2780,7 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
     case Qt::Key_F12:
       if((e->modifiers() & Qt::ControlModifier) and (e->modifiers() & Qt::ShiftModifier)) {
         m_bandEdited = true;
-        band_changed(m_freqNominal+2000);
+        band_changed(m_freqNominal+1000);
       } else {
         n=12;
         if(e->modifiers() & Qt::ControlModifier) n+=100;
@@ -3206,8 +3208,7 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
       ui->txFirstCheckBox->setChecked(false);
       auto_tx_mode (false);
   }
-  if (ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
-      or ui->respondComboBox->currentText() == "CQ: Min dB" or ui->respondComboBox->currentText() == "CQ: Max Dist")) {
+  if (ui->respondComboBox->isVisible()) {
       Dpoints=0;                          // reset points
       maxDPoints=0;                       // reset points
       dBpoints=-28;                       // reset points
@@ -4726,24 +4727,28 @@ void MainWindow::readFromStdout()                             //readFromStdout
          if(bWorkedOnBand) activeWorked(deCall,m_currentBand);
        }
 
-       // Pounce CQ: None and CQ: First
-       if(pounce && !filtered && decodedtext.string().contains(" CQ ") && (ui->respondComboBox->currentText()=="CQ: None"
-          or ui->respondComboBox->currentText()=="CQ: First") && m_config.Wait_features_enabled()) {
+       // Pounce CQ: First
+       if(pounce && !filtered && decodedtext.string().contains(" CQ ") && ui->respondComboBox->currentText()=="CQ: First"
+          && m_config.Wait_features_enabled()) {
          m_bDoubleClicked=true;
          auto_tx_mode(true);
          processMessage(decodedtext0);
          stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
        }
 
-       // CQ: Max Dist if not ARRL_GIGI
-       if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Max Dist"
+       // CQ: Max Dist if not ARRL_DIGI
+       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist"
            && m_specOp!=SpecOp::NA_VHF && m_specOp!=SpecOp::ARRL_DIGI) {
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-         if (deGrid.contains(grid_regexp) && !filtered && !text.contains(" 73") && ((pounce && text.contains(" CQ ")) or (!pounce &&
-             (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
-              && !txlog.contains(deCall)) {
+         // if they dont' send their grid we'll use ours and assume dx=0
+         if (deGrid.length() == 0) deGrid = m_config.my_grid();
+
+         if (!filtered && deGrid.contains(grid_regexp) && (
+             (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+             (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+                                                           )) {
             double utch=0.0;
             int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
             azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1().constData()),
@@ -4754,7 +4759,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                    maxDPoints=Dpoints;
                    m_deCall=deCall;
                    m_bDoubleClicked=true;
-                   if (pounce && decodedtext.string().contains(" CQ ") && m_config.Wait_features_enabled()) {
+                   if ((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) or m_auto) {
                        auto_tx_mode(true);
                        processMessage(decodedtext0);
                        stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
@@ -4769,19 +4774,20 @@ void MainWindow::readFromStdout()                             //readFromStdout
        }
 
        // CQ: Max dB
-       if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Max dB") {
+       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max dB") {
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-         if (!text.contains(" 73") && !filtered && ((pounce && text.contains(" CQ ")) or (!pounce &&
-             (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
-              && !txlog.contains(deCall)) {
+         if (!filtered && (
+              (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+              (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+                           )) {
                dBpoints=decodedtext.string().mid(7,3).toInt();
                if(dBpoints>maxdBPoints) {
                    maxdBPoints=dBpoints;
                    m_deCall=deCall;
                    m_bDoubleClicked=true;
-                   if (pounce && decodedtext.string().contains(" CQ ") && m_config.Wait_features_enabled()) {
+                   if ((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) or m_auto) {
                        auto_tx_mode(true);
                        processMessage(decodedtext0);
                        stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
@@ -4796,19 +4802,20 @@ void MainWindow::readFromStdout()                             //readFromStdout
        }
 
        // CQ: Min dB
-       if((pounce or m_auto) and ui->respondComboBox->currentText()=="CQ: Min dB") {
+       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Min dB") {
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-         if (!text.contains(" 73") && !filtered && ((pounce && text.contains(" CQ ")) or (!pounce &&
-             (m_hisCall!="" && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 ")))))
-              && !txlog.contains(deCall)) {
+         if (!filtered && (
+              (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+              (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+                           )) {
                dBpoints2=decodedtext.string().mid(7,3).toInt();
                if(dBpoints2<mindBPoints) {
                    mindBPoints=dBpoints2;
                    m_deCall=deCall;
                    m_bDoubleClicked=true;
-                   if (pounce && decodedtext.string().contains(" CQ ") && m_config.Wait_features_enabled()) {
+                   if ((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled()) or m_auto) {
                        auto_tx_mode(true);
                        processMessage(decodedtext0);
                        stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
@@ -4926,21 +4933,26 @@ void MainWindow::readFromStdout()                             //readFromStdout
           }
           if(m_bCallingCQ && !m_bAutoReply && for_us && m_specOp!=SpecOp::FOX && m_specOp!=SpecOp::HOUND) {
             bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
-                (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
+                (m_specOp==SpecOp::ARRL_DIGI && ui->respondComboBox->currentText()=="CQ: Max Dist"
+                 and m_ActiveStationsWidget==NULL) or
                 (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
-            if (decodedtext.messageWords().length() >= 3) {
-                QString t=decodedtext.messageWords()[2];
-                if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
-            } else {
-                bProcessMsgNormally=true;
-            }
-            if(bProcessMsgNormally) {
-              m_bDoubleClicked=true;
-              m_bAutoReply = true;
-              processMessage (decodedtext);
-            }
+            // CQ: First
+            if (m_specOp==SpecOp::ARRL_DIGI or ui->respondComboBox->currentText()=="CQ: First") {
+                if (decodedtext.messageWords().length() >= 3) {
+                       QString t=decodedtext.messageWords()[2];
+                       if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
+                } else {
+                       bProcessMsgNormally=true;
+                }
+                if(bProcessMsgNormally) {
+                       m_bDoubleClicked=true;
+                       m_bAutoReply = true;
+                       processMessage (decodedtext);
+                }
+          }
 
-            if(m_specOp==SpecOp::ARRL_DIGI && !bProcessMsgNormally and m_ActiveStationsWidget and ui->respondComboBox->currentText()=="CQ: Max Dist") {
+            if(m_specOp==SpecOp::ARRL_DIGI && !bProcessMsgNormally and m_ActiveStationsWidget and
+               ui->respondComboBox->currentText()=="CQ: Max Dist") {
               QString deCall;
               QString deGrid;
               decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5027,7 +5039,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       if (bDisplayRight && !block_right_display) {
         // This msg is within 10 hertz of our tuned frequency, or a JT4 or JT65 avg,
         // or contains MyCall
-        if(!m_bBestSPArmed or m_mode!="FT4") {
+        if(!pounce && (!m_bBestSPArmed or m_mode!="FT4")) {
           ui->decodedTextBrowser2->displayDecodedText (decodedtext0, m_config.my_callsign (), m_mode, m_config.DXCC (),
                 m_logBook, m_currentBand, m_config.ppfx (), false, false, 0.0, bDisplayPoints, m_points);
         }
@@ -7478,6 +7490,14 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
   if(ui->DX_Call_Button->hasFocus() && (event->button() & Qt::RightButton)) {  // DX_Call_Button
       clearDX();                     // clear dxCallEntry
       ui->tx5->setCurrentText("");   // clear tx5
+      if (ui->respondComboBox->isVisible()) {
+      Dpoints=0;                          // reset points
+      maxDPoints=0;                       // reset points
+      dBpoints=-28;                       // reset points
+      dBpoints2=99;                       // reset points
+      maxdBPoints=-28;                    // reset points
+      mindBPoints=99;                     // reset points
+      }
   }
   if (m_config.alternate_erase_button() && ui->EraseButton->hasFocus() && (event->button() & Qt::RightButton)) {
      ui->decodedTextBrowser2->erase ();
@@ -7497,10 +7517,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       m_specOp=m_config.special_op_id();
       on_actionQ65_triggered();
   }
-  if(ui->autoButton->hasFocus() && (event->button() & Qt::RightButton)) {  // autoButton
+  // Wait & Pounce
+  if(ui->autoButton->hasFocus() && (event->button() & Qt::RightButton) && ui->respondComboBox->currentText()!="CQ: None") {
       if (!pounce && !m_auto && m_config.Wait_features_enabled()) {
         pounce = true;
         check_button_color();
+        stopWRTimer.stop();           // Stop any Wait & Reply timeout
+        stopWCTimer.stop();           // Stop any Wait & Call timeout
       } else {
         pounce = false;
         check_button_color();
@@ -7640,17 +7663,13 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
                         m_dateTimeQSOOn, dateTimeQSOOff, m_freqNominal +
                         ui->TxFreqSpinBox->value(), m_noSuffix, m_xSent, m_xRcvd);
   m_inQSOwith="";
-  if (ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
-      or ui->respondComboBox->currentText() == "CQ: Min dB" or ui->respondComboBox->currentText() == "CQ: Max Dist")) {
+  if (ui->respondComboBox->isVisible() && ui->respondComboBox->currentText() != "CQ: None") {
         Dpoints=0;                          // reset points
         maxDPoints=0;                       // reset points
         dBpoints=-28;                       // reset points
         dBpoints2=99;                       // reset points
         maxdBPoints=-28;                    // reset points
         mindBPoints=99;                     // reset points
-        clearDX();                          // clear dxCallEntry
-        ui->tx5->setCurrentText("");        // clear tx5
-        ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
   }
   QTimer::singleShot (2000, [=] {
       pounce = false;
@@ -7661,6 +7680,8 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
   QTimer::singleShot (7000, [=] {
       read_txlog();
   });
+  stopWRTimer.stop();           // Stop any Wait & Reply timeout
+  stopWCTimer.stop();           // Stop any Wait & Call timeout
 }
 
 void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, QString const& grid
@@ -8991,16 +9012,13 @@ void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
       m_txFirst=false;
       ui->txFirstCheckBox->setChecked(false);
   }
-  if (ui->respondComboBox->isVisible() && (ui->respondComboBox->currentText() == "CQ: Max dB"
-      or ui->respondComboBox->currentText() == "CQ: Min dB" or ui->respondComboBox->currentText() == "CQ: Max Dist")) {
+  if (ui->respondComboBox->isVisible() && ui->respondComboBox->currentText() != "CQ: None") {
       Dpoints=0;                          // reset points
       maxDPoints=0;                       // reset points
       dBpoints=-28;                       // reset points
       dBpoints2=99;                       // reset points
       maxdBPoints=-28;                    // reset points
       mindBPoints=99;                     // reset points
-      clearDX();                          // clear dxCallEntry
-      ui->tx5->setCurrentText("");        // clear tx5
   }
   pounce = false;
   ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
