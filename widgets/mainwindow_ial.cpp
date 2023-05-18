@@ -7465,11 +7465,16 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         }
       } else {
         m_config.setSpecial_None();
-        if (m_specOp!=SpecOp::HOUND) {
-        on_houndButton_clicked(false);
+        if(ui->txrb1->isChecked()) on_txb2_clicked();
+        ui->tx1->setEnabled(true);
+        ui->txb1->setEnabled(true);
+        if (m_specOp==SpecOp::HOUND) {
+        ui->houndButton->setStyleSheet("");
+        m_config.setSpecial_None();
+        keep_frequency = true;
+        QTimer::singleShot (250, [=] {keep_frequency = false;});
         }
       }
-      if (m_specOp==SpecOp::Q65_PILEUP) on_actionQ65_triggered();
       m_specOp=m_config.special_op_id();
       SpecOp nContest0=m_specOp;
       if(m_specOp!=nContest0) {
