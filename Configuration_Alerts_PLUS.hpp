@@ -237,14 +237,16 @@ public:
   bool highlight_only_fields () const;
   bool include_WAE_entities () const;
   bool highlight_73 () const;
-  bool highlight_orange () const;   // URUR
-  bool highlight_blue () const;    // URUR
+  bool highlight_orange () const;
+  bool highlight_blue () const;
+  bool bSpecialOp () const;
   bool show_country_names () const;
   bool alternate_erase_button () const;
   void setSpecial_Q65_Pileup();
   void setSpecial_Hound();
   void setSpecial_Fox();
   void setSpecial_None();
+  void setSpecial_On();
   bool highlight_DXcall () const;
   bool clear_DXcall () const;
   bool highlight_DXgrid () const;

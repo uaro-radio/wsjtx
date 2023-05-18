@@ -2489,6 +2489,7 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
     ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
     set_mode(m_mode);
     configActiveStations();
+    check_button_color();
   }
 }
 
@@ -7462,6 +7463,46 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         pounce = false;
         check_button_color();
       }
+  }
+  // Switch contest mode on/off
+  if(ui->houndButton->hasFocus() && (event->button() & Qt::RightButton)) {
+      m_specOp=m_config.special_op_id();
+      if (!m_config.bSpecialOp()) {
+        m_config.setSpecial_On();
+        if (m_specOp==SpecOp::HOUND) {
+        ui->houndButton->click();
+        }
+      } else {
+        m_config.setSpecial_None();
+        if (m_specOp!=SpecOp::HOUND) {
+        on_houndButton_clicked(false);
+        }
+      }
+      if (m_specOp==SpecOp::Q65_PILEUP) on_actionQ65_triggered();
+      m_specOp=m_config.special_op_id();
+      SpecOp nContest0=m_specOp;
+      if(m_specOp!=nContest0) {
+        ui->tx1->setEnabled(true);
+        ui->txb1->setEnabled(true);
+        set_mode(m_mode);
+      }
+      displayDialFrequency ();
+      update_watchdog_label ();
+      checkMSK144ContestType();
+      chkFT4();
+      if(SpecOp::EU_VHF==m_specOp and m_config.my_grid().size()<6) {
+        MessageBox::information_message (this,
+          "EU VHF Contest messages require a 6-character locator.");
+      }
+      if((m_specOp==SpecOp::FOX or m_specOp==SpecOp::HOUND) and
+          m_mode!="FT8") {
+        MessageBox::information_message (this,
+          "Fox-and-Hound operation is available only in FT8 mode.\nGo back and change your selection.");
+      }
+      ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
+      set_mode(m_mode);
+      configActiveStations();
+      check_button_color();
   }
 }
 

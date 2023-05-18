@@ -700,6 +700,7 @@ private:
   bool highlight_73_;
   bool highlight_orange_;
   bool highlight_blue_;
+  bool bSpecialOp_;
   bool alternate_erase_button_;
   bool show_country_names_;
   int LotW_days_since_upload_;
@@ -809,7 +810,6 @@ private:
   bool AlwaysPass_;
   bool filters_for_Wait_and_Pounce_only_;
   bool filters_for_word2_;
-  bool bSpecialOp_;
   int  SelectedActivity_;
   bool x2ToneSpacing_;
   bool x4ToneSpacing_;
@@ -976,6 +976,7 @@ bool Configuration::include_WAE_entities () const {return m_->include_WAE_entiti
 bool Configuration::highlight_73 () const {return m_->highlight_73_;}
 bool Configuration::highlight_orange () const {return m_->highlight_orange_;}
 bool Configuration::highlight_blue () const {return m_->highlight_blue_;}
+bool Configuration::bSpecialOp () const {return m_->bSpecialOp_;}
 bool Configuration::alternate_erase_button () const {return m_->alternate_erase_button_;}
 bool Configuration::show_country_names () const {return m_->show_country_names_;}
 bool Configuration::highlight_DXcall () const {return m_->highlight_DXcall_;}
@@ -1320,9 +1321,16 @@ void Configuration::setSpecial_None()
 {
   m_->bSpecialOp_=false;
   m_->ui_->gbSpecialOpActivity->setChecked(m_->bSpecialOp_);
-  m_->SelectedActivity_ = static_cast<int> (SpecialOperatingActivity::HOUND); // brings backward compatibility to versions without Q65_PILEUP
   m_->write_settings();
 }
+
+void Configuration::setSpecial_On()
+{
+  m_->bSpecialOp_=true;
+  m_->ui_->gbSpecialOpActivity->setChecked(m_->bSpecialOp_);
+  m_->write_settings();
+}
+
 namespace
 {
 #if defined (Q_OS_MAC)
@@ -1390,6 +1398,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   , highlight_73_ {false}
   , highlight_orange_ {false}
   , highlight_blue_ {false}
+  , bSpecialOp_ {false}
   , alternate_erase_button_ {false}
   , show_country_names_ {false}
   , LotW_days_since_upload_ {0}
