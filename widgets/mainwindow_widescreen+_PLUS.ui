@@ -468,6 +468,9 @@
                  <height>0</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decode most recent Rx period at QSO Frequency&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
@@ -501,6 +504,9 @@
                  <width>50</width>
                  <height>0</height>
                 </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
                </property>
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Auto-Tx On/Off&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -781,6 +787,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::StrongFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle Wait &amp;amp; Call On/Off. Right-click to clear the DX Call box.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1162,7 +1171,7 @@ When not checked you can view the calibration results.</string>
                         <item>
                          <widget class="QComboBox" name="respondComboBox">
                           <property name="toolTip">
-                           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: First&lt;/span&gt; to respond automatically to the first decoded reply to your CQ. &lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max Pts&lt;/span&gt; to respond automatically to the reply yielding most points in the ARRL International Digital Contest.&lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max dB&lt;/span&gt; to respond automatically to the the strongest station's reply to your CQ. &lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: None&lt;/span&gt; to choose callers manually.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: None&lt;/span&gt; to choose callers manually.&lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: First&lt;/span&gt; to respond automatically to the first decoded reply to your CQ. &lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max Dist&lt;/span&gt; to respond automatically to the reply yielding most points in the ARRL International Digital Contest, or in general to the most distant station, if its message has a valid grid.&lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max dB&lt;/span&gt; to respond automatically to the the strongest station's reply to your CQ. &lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Min dB&lt;/span&gt; to respond automatically to the the weakest station's reply to your CQ. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                           </property>
                           <property name="currentText">
                            <string/>
@@ -1194,6 +1203,9 @@ When not checked you can view the calibration results.</string>
                        <layout class="QVBoxLayout" name="verticalLayout_14">
                         <item>
                          <widget class="QCheckBox" name="txFirstCheckBox">
+                          <property name="focusPolicy">
+                           <enum>Qt::StrongFocus</enum>
+                          </property>
                           <property name="toolTip">
                            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to Tx in even-numbered minutes or sequences, starting at 0; uncheck for odd sequences. In MSK144 mode, right-click to freeze the state of the checkbox to avoid starting a QSO with a station operating in the same time slot. Click on any mode button to unfreeze.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                           </property>
@@ -3235,6 +3247,9 @@ QLabel[oob=&quot;true&quot;] {
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::StrongFocus</enum>
                  </property>
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle FT8 hound mode On/Off. Right-click to toggle last used contest mode On/Off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
