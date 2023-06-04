@@ -2294,11 +2294,11 @@ void MainWindow::fastSink(qint64 frames)
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-        if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deCall))
+        if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deCall + ","))
             ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,85,0), QColor(255,255,255), true);
         if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid))
             ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(255,85,0), QColor(255,255,255), true);
-        if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deCall))
+        if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deCall + ","))
             ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
         if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid))
             ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
@@ -4791,11 +4791,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-         if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deCall))
+         if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deCall + ","))
                ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,85,0), QColor(255,255,255), true);
          if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid))
                ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(255,85,0), QColor(255,255,255), true);
-         if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deCall))
+         if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deCall + ","))
                ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
          if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid))
                ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
