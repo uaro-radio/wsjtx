@@ -2233,6 +2233,17 @@ When not checked you can view the calibration results.</string>
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle FT8 hound mode On/Off. Right-click to toggle last used contest mode On/Off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton:checked {
+	color: rgb(0, 0, 0);
+	background-color: red;
+	border-style: outset;
+	border-width: 1px;
+	border-radius: 5px;
+	border-color: black;
+	padding: 3px;
+}</string>
+              </property>
               <property name="text">
                <string>H</string>
               </property>

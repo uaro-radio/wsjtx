@@ -3008,7 +3008,6 @@ void MainWindow::statusChanged()
       ui->txb6->setEnabled(true);
       ui->txrb6->setEnabled(true);
       ui->houndButton->setChecked(false);
-      ui->houndButton->setStyleSheet("");
   }
 }
 
@@ -7566,7 +7565,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         ui->tx1->setEnabled(true);
         ui->txb1->setEnabled(true);
         if (m_specOp==SpecOp::HOUND) {
-        ui->houndButton->setStyleSheet("");
+        ui->houndButton->setChecked(false);
         m_config.setSpecial_None();
         keep_frequency = true;
         QTimer::singleShot (250, [=] {keep_frequency = false;});
@@ -8123,7 +8122,6 @@ void MainWindow::on_actionFT8_triggered()
   }
   if(SpecOp::HOUND == m_specOp) {
     ui->houndButton->setChecked(true);
-    ui->houndButton->setStyleSheet("background-color: #ff0000;");
     ui->txFirstCheckBox->setChecked(false);
     ui->txFirstCheckBox->setEnabled(false);
     ui->cbAutoSeq->setEnabled(false);
@@ -8146,7 +8144,6 @@ void MainWindow::on_actionFT8_triggered()
   }
   if(m_specOp != SpecOp::HOUND) {
       ui->houndButton->setChecked(false);
-      ui->houndButton->setStyleSheet("");
   }
 
   m_specOp=m_config.special_op_id();
@@ -11760,13 +11757,11 @@ QString MainWindow::WSPR_message()
 void MainWindow::on_houndButton_clicked (bool checked)
 {
   if (checked) {
-    ui->houndButton->setStyleSheet("background-color: #ff0000;");
     m_config.setSpecial_Hound();
     ui->tx1->setVisible(true);
     ui->tx1->setEnabled(true);
     ui->txb1->setEnabled(true);
   } else {
-    ui->houndButton->setStyleSheet("");
     m_config.setSpecial_None();
     keep_frequency = true;
     QTimer::singleShot (250, [=] {keep_frequency = false;});

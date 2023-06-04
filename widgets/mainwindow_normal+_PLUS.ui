@@ -3277,6 +3277,17 @@ QLabel[oob=&quot;true&quot;] {
              <property name="toolTip">
               <string>Switch to FT8 mode</string>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton:checked {
+	color: rgb(0, 0, 0);
+	background-color: red;
+	border-style: outset;
+	border-width: 1px;
+	border-radius: 5px;
+	border-color: black;
+	padding: 3px;
+}</string>
+             </property>
              <property name="text">
               <string>FT8</string>
              </property>

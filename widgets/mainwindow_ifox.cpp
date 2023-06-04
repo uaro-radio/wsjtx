@@ -2964,10 +2964,8 @@ void MainWindow::statusChanged()
       ui->txb6->setEnabled(true);
       ui->txrb6->setEnabled(true);
       ui->houndButton->setChecked(false);
-      ui->houndButton->setStyleSheet("");
       if(m_specOp!=SpecOp::FOX) {
       ui->foxButton->setChecked(false);
-      ui->foxButton->setStyleSheet("");
       }
   }
 }
@@ -7482,7 +7480,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         ui->tx1->setEnabled(true);
         ui->txb1->setEnabled(true);
         if (m_specOp==SpecOp::HOUND) {
-        ui->houndButton->setStyleSheet("");
+        ui->houndButton->setChecked(false);
         m_config.setSpecial_None();
         keep_frequency = true;
         QTimer::singleShot (250, [=] {keep_frequency = false;});
@@ -8032,7 +8030,6 @@ void MainWindow::on_actionFT8_triggered()
   }
   if(SpecOp::HOUND == m_specOp) {
     ui->houndButton->setChecked(true);
-    ui->houndButton->setStyleSheet("background-color: #ff0000;");
     ui->txFirstCheckBox->setChecked(false);
     ui->txFirstCheckBox->setEnabled(false);
     ui->cbAutoSeq->setEnabled(false);
@@ -8055,17 +8052,14 @@ void MainWindow::on_actionFT8_triggered()
   }
   if(m_specOp != SpecOp::HOUND) {
       ui->houndButton->setChecked(false);
-      ui->houndButton->setStyleSheet("");
   }
 
   if(SpecOp::FOX == m_specOp) {
     ui->foxButton->setChecked(true);
-    ui->foxButton->setStyleSheet("background-color: #009b00;");
   }
 
   if(m_specOp != SpecOp::FOX) {
       ui->foxButton->setChecked(false);
-      ui->foxButton->setStyleSheet("");
   }
 
   m_specOp=m_config.special_op_id();
@@ -11679,10 +11673,8 @@ QString MainWindow::WSPR_message()
 void MainWindow::on_foxButton_clicked (bool checked)
 {
   if (checked) {
-    ui->foxButton->setStyleSheet("background-color: #009b00;");
     m_config.setSpecial_Fox();
   } else {
-    ui->foxButton->setStyleSheet("");
     m_config.setSpecial_None();
     keep_frequency = true;
     QTimer::singleShot (250, [=] {keep_frequency = false;});
@@ -11695,13 +11687,11 @@ void MainWindow::on_foxButton_clicked (bool checked)
 void MainWindow::on_houndButton_clicked (bool checked)
 {
   if (checked) {
-    ui->houndButton->setStyleSheet("background-color: #ff0000;");
     m_config.setSpecial_Hound();
     ui->tx1->setVisible(true);
     ui->tx1->setEnabled(true);
     ui->txb1->setEnabled(true);
   } else {
-    ui->houndButton->setStyleSheet("");
     m_config.setSpecial_None();
     keep_frequency = true;
     QTimer::singleShot (250, [=] {keep_frequency = false;});
