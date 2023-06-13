@@ -4545,6 +4545,17 @@ void MainWindow::readFromStdout()                             //readFromStdout
           text2 = text;   // for Blacklist
         }
 
+        // FT4 NS (NCCC Sprints): Log QSO after receiving "mycall hiscall R hisgrid"
+        if (m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprints() && m_hisCall!="" && m_hisGrid!="" &&
+            text.contains(m_config.my_callsign() + " " + m_hisCall + " R " + m_hisGrid.left(4))) {
+          if (m_config.prompt_to_log() || m_config.autoLog()) logQSOTimer.start(0);
+          QTimer::singleShot (500, [=] {
+            on_stopTxButton_clicked();
+            clearDX();
+            ui->tx5->setCurrentText("");   // clear tx5
+          });
+        }
+
         // Wait & Reply
         if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && (m_hisCall!="")
             && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))
@@ -6480,6 +6491,13 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
            and bContestOK) {
           setTxMsg(3);
           m_QSOProgress=ROGER_REPORT;
+          // FT4 NS (NCCC Sprints): Log QSO after receiving "hiscall mycall R mygrid"
+          if (SpecOp::NA_VHF==m_specOp && m_mode=="FT4" && m_config.NCCC_Sprints()) {
+              if (m_config.prompt_to_log() || m_config.autoLog()) logQSOTimer.start(0);
+              auto_tx_mode(false);
+              if (m_auto) ui->autoButton->click();
+              QTimer::singleShot (int(850.0*m_TRperiod), [=] {clearDX();});
+          }
         } else {
           if(m_mode=="JT65" and message_words.size()>5 and message_words.at(5)=="OOO") {
             setTxMsg(3);
@@ -11505,7 +11523,8 @@ void MainWindow::chkFT4()
   m_specOp=m_config.special_op_id();
   if(m_specOp!=SpecOp::NONE and m_specOp!=SpecOp::FOX and m_specOp!=SpecOp::HOUND) {
     QString t0="";
-    if(SpecOp::NA_VHF==m_specOp) t0="NA VHF";
+    if(SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprints()) t0="NCCC Sprints";
+    if(SpecOp::NA_VHF==m_specOp && !m_config.NCCC_Sprints()) t0="NA VHF";
     if(SpecOp::EU_VHF==m_specOp) t0="EU VHF";
     if(SpecOp::FIELD_DAY==m_specOp) t0="Field Day";
     if(SpecOp::RTTY==m_specOp) t0="FT RU";

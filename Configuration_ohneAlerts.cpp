@@ -576,6 +576,7 @@ private:
   Q_SLOT void on_calibration_slope_ppm_spin_box_valueChanged (double);
   Q_SLOT void handle_transceiver_update (TransceiverState const&, unsigned sequence_number);
   Q_SLOT void handle_transceiver_failure (QString const& reason);
+  Q_SLOT void on_special_op_activity_button_group_buttonClicked (int);
   Q_SLOT void on_DXCC_check_box_clicked(bool checked);
   Q_SLOT void on_reset_highlighting_to_defaults_push_button_clicked (bool);
   Q_SLOT void on_reset_highlighting_to_defaults2_push_button_clicked (bool);
@@ -805,6 +806,7 @@ private:
   bool single_decode_;
   bool twoPass_;
   bool Individual_Contest_Name_;
+  bool NCCC_Sprints_;
   bool Blacklisted_;
   bool Whitelisted_;
   bool AlwaysPass_;
@@ -933,6 +935,7 @@ bool Configuration::repeat_Tx () const {return m_->repeat_Tx_;}
 bool Configuration::single_decode () const {return m_->single_decode_;}
 bool Configuration::twoPass() const {return m_->twoPass_;}
 bool Configuration::Individual_Contest_Name() const {return m_->Individual_Contest_Name_;}
+bool Configuration::NCCC_Sprints() const {return m_->NCCC_Sprints_;}
 bool Configuration::Blacklisted() const {return m_->Blacklisted_;}
 bool Configuration::Whitelisted() const {return m_->Whitelisted_;}
 bool Configuration::AlwaysPass() const {return m_->AlwaysPass_;}
@@ -1762,6 +1765,7 @@ void Configuration::impl::initialize_models ()
   ui_->single_decode_check_box->setChecked(single_decode_);
   ui_->cbTwoPass->setChecked(twoPass_);
   ui_->cbContestName->setChecked(Individual_Contest_Name_);
+  ui_->cb_NCCC_Sprints->setChecked(NCCC_Sprints_);
   ui_->cbBlacklist->setChecked(Blacklisted_);
   ui_->cbWhitelist->setChecked(Whitelisted_);
   ui_->cbPass->setChecked(AlwaysPass_);
@@ -2802,6 +2806,7 @@ void Configuration::impl::accept ()
   single_decode_ = ui_->single_decode_check_box->isChecked ();
   twoPass_ = ui_->cbTwoPass->isChecked ();
   Individual_Contest_Name_ = ui_->cbContestName->isChecked ();
+  NCCC_Sprints_ = ui_->cb_NCCC_Sprints->isChecked ();
   Blacklisted_ = ui_->cbBlacklist->isChecked ();
   Whitelisted_ = ui_->cbWhitelist->isChecked ();
   AlwaysPass_ = ui_->cbPass->isChecked ();
@@ -2901,6 +2906,7 @@ void Configuration::impl::accept ()
   erase_BandActivity_ = ui_->cbEraseBandActivity->isChecked();
   set_RXtoTX_ = ui_->cbRxToTxAfterQSO->isChecked();
   Individual_Contest_Name_ = ui_->cbContestName->isChecked();
+  NCCC_Sprints_ = ui_->cb_NCCC_Sprints->isChecked();
   Blacklisted_ = ui_->cbBlacklist->isChecked();
   Whitelisted_ = ui_->cbWhitelist->isChecked();
   AlwaysPass_ = ui_->cbPass->isChecked();
@@ -3025,6 +3031,15 @@ void Configuration::impl::on_decoded_text_font_push_button_clicked ()
                                                   , tr ("WSJT-X Decoded Text Font Chooser")
                                                   , QFontDialog::MonospacedFonts
                                                   );
+}
+
+void Configuration::impl::on_special_op_activity_button_group_buttonClicked (int /* id */)
+{
+  if (ui_->rbNA_VHF_Contest->isChecked()) {
+    ui_->cb_NCCC_Sprints->setEnabled (true);
+  } else {
+    ui_->cb_NCCC_Sprints->setEnabled (false);
+  }
 }
 
 void Configuration::impl::on_DXCC_check_box_clicked(bool checked)

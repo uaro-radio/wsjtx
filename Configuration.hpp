@@ -254,6 +254,7 @@ public:
   bool erase_BandActivity () const;
   bool set_RXtoTX () const;
   bool Individual_Contest_Name() const;
+  bool NCCC_Sprints() const;
   bool Blacklisted() const;
   bool Whitelisted() const;
   bool AlwaysPass() const;

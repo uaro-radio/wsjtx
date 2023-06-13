@@ -3893,8 +3893,6 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionEcho"/>
     <addaction name="separator"/>
     <addaction name="actionFreqCal"/>
-    <addaction name="separator"/>
-    <addaction name="actionFT4NS"/>
    </widget>
    <widget class="QMenu" name="menuConfig">
     <property name="title">
