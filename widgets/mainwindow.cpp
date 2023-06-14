@@ -4748,7 +4748,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
        // CQ: Max Dist if not ARRL_DIGI
        if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist"
-           && m_specOp!=SpecOp::NA_VHF && m_specOp!=SpecOp::ARRL_DIGI) {
+           && (m_specOp!=SpecOp::NA_VHF or m_config.NCCC_Sprints()) && m_specOp!=SpecOp::ARRL_DIGI) {
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5747,7 +5747,7 @@ void MainWindow::guiUpdate()
           if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65") && m_ntx != 4) cease_auto_Tx_after_QSO ();
           // send RR73 up to 10 times
           if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65")) stopWRTimer.start(int(20000.0*m_TRperiod));
-          logQSOTimer.start(0);
+          if (m_mode!="FT4" && SpecOp::NA_VHF!=m_specOp && !m_config.NCCC_Sprints()) logQSOTimer.start(0);
         }
       else
         {
@@ -6560,7 +6560,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
            and bContestOK) {
           setTxMsg(3);
           m_QSOProgress=ROGER_REPORT;
-          // FT4 NS (NCCC Sprints): Log QSO after receiving "hiscall mycall R mygrid"
+          // FT4 NS (NCCC Sprints): Log QSO after sending "hiscall mycall R mygrid"
           if (SpecOp::NA_VHF==m_specOp && m_mode=="FT4" && m_config.NCCC_Sprints()) {
               if (m_config.prompt_to_log() || m_config.autoLog()) logQSOTimer.start(0);
               auto_tx_mode(false);
@@ -6634,7 +6634,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
             if (false)              // Always Send 73 after receiving RRR or RR73, even in contest mode.
               {
                 if (m_config.prompt_to_log() || m_config.autoLog()) {
-                  logQSOTimer.start(0);
+                  if (m_mode!="FT4" && SpecOp::NA_VHF!=m_specOp && !m_config.NCCC_Sprints()) logQSOTimer.start(0);
                 }
                 else {
                   cease_auto_Tx_after_QSO ();
@@ -6657,7 +6657,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
             else if (ROGERS == m_QSOProgress)
               {
                 if (m_config.prompt_to_log() || m_config.autoLog()) {
-                  logQSOTimer.start(0);
+                  if (m_mode!="FT4" && SpecOp::NA_VHF!=m_specOp && !m_config.NCCC_Sprints()) logQSOTimer.start(0);
                 }
                 else {
                   cease_auto_Tx_after_QSO ();
