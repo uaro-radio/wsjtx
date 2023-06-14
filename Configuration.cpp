@@ -2204,6 +2204,7 @@ void Configuration::impl::read_settings ()
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
   twoPass_ = settings_->value("TwoPass",true).toBool ();
   Individual_Contest_Name_ = settings_->value("Individual_Contest_Name",false).toBool ();
+  NCCC_Sprints_ = settings_->value("NCCC_Sprints",false).toBool ();
   Blacklisted_ = settings_->value("Blacklisted",false).toBool ();
   Whitelisted_ = settings_->value("Whitelisted",false).toBool ();
   AlwaysPass_ = settings_->value("AlwaysPass",false).toBool ();
@@ -2417,6 +2418,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("SingleDecode", single_decode_);
   settings_->setValue ("TwoPass", twoPass_);
   settings_->setValue ("Individual_Contest_Name", Individual_Contest_Name_);
+  settings_->setValue ("NCCC_Sprints", NCCC_Sprints_);
   settings_->setValue ("Blacklisted", Blacklisted_);
   settings_->setValue ("Whitelisted", Whitelisted_);
   settings_->setValue ("AlwaysPass", AlwaysPass_);
