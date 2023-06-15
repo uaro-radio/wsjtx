@@ -2082,11 +2082,15 @@ void MainWindow::fastSink(qint64 frames)
 
     QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait features
     QString text2;
-    QStringList tw=decodedtext.string().mid(24).split(" ",SkipEmptyParts);
+    QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
     if (m_config.filters_for_word2()) {
-        text2 = tw[1].left(4);   // for Blacklist
+      if (tw[1].length() == 2 && tw[1].contains(QRegularExpression{"\\w\\w"})) {   // directional calls
+        text2 = tw[2].left(3);   // for directional calls analyze word 3 for filtering
+      } else {
+        text2 = tw[1].left(3);   // otherwise analyze word 2 for filtering
+      }
     } else {
-        text2 = text;   // for Blacklist
+      text2 = text;   // for filtering
     }
 
     bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
@@ -2096,7 +2100,7 @@ void MainWindow::fastSink(qint64 frames)
     // Always pass messages with keywords from Always Pass list for MSK144
     if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass ()
           && (
-              (text.contains(m_config.Pass1()) && (m_config.Pass1()!=""))
+              (text2.contains(m_config.Pass1()) && (m_config.Pass1()!=""))
               || (text2.contains(m_config.Pass2()) && (m_config.Pass2()!=""))
               || (text2.contains(m_config.Pass3()) && (m_config.Pass3()!=""))
               || (text2.contains(m_config.Pass4()) && (m_config.Pass4()!=""))
@@ -2109,18 +2113,18 @@ void MainWindow::fastSink(qint64 frames)
         // Filtering out messages with keywords from Blacklist for MSK144
         if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
             && (
-                (text.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
-                || (text.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
-                || (text.contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
-                || (text.contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
-                || (text.contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
-                || (text.contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
-                || (text.contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
-                || (text.contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
-                || (text.contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
-                || (text.contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
-                || (text.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
-                || (text.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
+                (text2.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
+                || (text2.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
+                || (text2.contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
+                || (text2.contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
+                || (text2.contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
+                || (text2.contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
+                || (text2.contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
+                || (text2.contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
+                || (text2.contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
+                || (text2.contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
+                || (text2.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
+                || (text2.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
                 )) {
         filtered = true;
         if (!m_config.filters_for_Wait_and_Pounce_only())  return;
@@ -4581,11 +4585,15 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
         QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait & Reply/Call
         QString text2;
-        QStringList tw=decodedtext.string().mid(24).split(" ",SkipEmptyParts);
+        QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
         if (m_config.filters_for_word2()) {
-          text2 = tw[1].left(4);   // for Blacklist
+          if (tw[1].length() == 2 && tw[1].contains(QRegularExpression{"\\w\\w"})) {   // directional calls
+            text2 = tw[2].left(3);   // for directional calls analyze word 3 for filtering
+          } else {
+            text2 = tw[1].left(3);   // otherwise analyze word 2 for filtering
+          }
         } else {
-          text2 = text;   // for Blacklist
+          text2 = text;   // for filtering
         }
 
         // FT4 NS (NCCC Sprints): Log QSO after receiving "mycall hiscall R hisgrid"
@@ -4628,7 +4636,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
           // Filtering
           if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass () // Always pass messages with keywords from Always Pass list
                 && (
-                    (text.contains(m_config.Pass1()) && (m_config.Pass1()!=""))
+                    (text2.contains(m_config.Pass1()) && (m_config.Pass1()!=""))
                     || (text2.contains(m_config.Pass2()) && (m_config.Pass2()!=""))
                     || (text2.contains(m_config.Pass3()) && (m_config.Pass3()!=""))
                     || (text2.contains(m_config.Pass4()) && (m_config.Pass4()!=""))
@@ -4641,18 +4649,18 @@ void MainWindow::readFromStdout()                             //readFromStdout
                 // Filtering out messages with keywords from Blacklist
                 if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
                     && (
-                        (text.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
-                        || (text.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
-                        || (text.contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
-                        || (text.contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
-                        || (text.contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
-                        || (text.contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
-                        || (text.contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
-                        || (text.contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
-                        || (text.contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
-                        || (text.contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
-                        || (text.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
-                        || (text.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
+                        (text2.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
+                        || (text2.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
+                        || (text2.contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
+                        || (text2.contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
+                        || (text2.contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
+                        || (text2.contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
+                        || (text2.contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
+                        || (text2.contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
+                        || (text2.contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
+                        || (text2.contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
+                        || (text2.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
+                        || (text2.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
                         )) {
                     filtered = true;
                     if (!m_config.filters_for_Wait_and_Pounce_only())  return;

@@ -3173,7 +3173,7 @@ Right click for insert and delete options.</string>
             <item>
              <widget class="QCheckBox" name="cb_NCCC_Sprint">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle the NCCC Sprint FT4 NS short message protocol On/Off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle the NCCC Sprint FT4 short message protocol On/Off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>NCCC Sprint</string>
@@ -4016,10 +4016,10 @@ Right click for insert and delete options.</string>
          <item row="16" column="0" colspan="4">
           <widget class="QCheckBox" name="cb_filters_for_word2">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apply Whitelist and Always Pass filters only to the first 4 characters of the second word of the messages (which usually contain the prefix of the calling station).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apply filters only to the first 3 characters of the second word of the messages (which usually contain the prefix of the calling station). For directional calls, the third word is analyzed instead of the second.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
-            <string>Apply Whitelist and Always Pass filters only to the first 4 characters of the second word of the messages (usually the prefix of the calling station)</string>
+            <string>Apply filters only to the first 3 characters of the second word of the messages (usually the prefix of the calling station)</string>
            </property>
           </widget>
          </item>
@@ -4249,13 +4249,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="special_op_activity_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
   <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
  </buttongroups>
 </ui>
