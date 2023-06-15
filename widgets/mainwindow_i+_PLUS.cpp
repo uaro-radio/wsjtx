@@ -4589,7 +4589,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         // FT4 NS (NCCC Sprints): Log QSO after receiving "mycall hiscall R hisgrid"
-        if (m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprints() && m_hisCall!="" && m_hisGrid!="" &&
+        if (m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint() && m_hisCall!="" && m_hisGrid!="" &&
             text.contains(m_config.my_callsign() + " " + m_hisCall + " R " + m_hisGrid.left(4))) {
           if (m_config.prompt_to_log() || m_config.autoLog()) logQSOTimer.start(0);
           QTimer::singleShot (500, [=] {
@@ -4597,15 +4597,16 @@ void MainWindow::readFromStdout()                             //readFromStdout
           });
         }
 
-        // Wait & Reply
-        if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && (m_hisCall!="")
-            && (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))
-            && m_config.Wait_features_enabled() && (!ui->autoButton->isChecked() or m_specOp==SpecOp::HOUND)) {
-          tx_watchdog (false);
-          m_bDoubleClicked = true;
-          processMessage(decodedtext0);
-          auto_tx_mode(true);
-          stopWRTimer.start(int(8000.0*m_TRperiod));    // Wait & Reply Tx max 8*TRperiod
+        // Wait & Reply + FT4 NS (NCCC Sprints) reply to incoming RR73 messages
+        if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && m_hisCall!=""
+            && text.contains(m_config.my_callsign() + " " + m_hisCall) && ((!text.contains("73 ")
+            && m_config.Wait_features_enabled() && (!ui->autoButton->isChecked() or m_specOp==SpecOp::HOUND))
+            or (SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint()))) {
+              tx_watchdog (false);
+              m_bDoubleClicked = true;
+              processMessage(decodedtext0);
+              auto_tx_mode(true);
+              if(!(SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint())) stopWRTimer.start(int(8000.0*m_TRperiod));    // Wait & Reply Tx max 8*TRperiod
         }
 
         // Wait & Call
@@ -4747,7 +4748,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
        // CQ: Max Dist if not ARRL_DIGI
        if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist"
-           && (m_specOp!=SpecOp::NA_VHF or m_config.NCCC_Sprints()) && m_specOp!=SpecOp::ARRL_DIGI) {
+           && (m_specOp!=SpecOp::NA_VHF or m_config.NCCC_Sprint()) && m_specOp!=SpecOp::ARRL_DIGI) {
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5746,7 +5747,7 @@ void MainWindow::guiUpdate()
           if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65") && m_ntx != 4) cease_auto_Tx_after_QSO ();
           // send RR73 up to 10 times
           if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65")) stopWRTimer.start(int(20000.0*m_TRperiod));
-          if (m_mode!="FT4" && SpecOp::NA_VHF!=m_specOp && !m_config.NCCC_Sprints()) logQSOTimer.start(0);
+          if (!(m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint())) logQSOTimer.start(0);
         }
       else
         {
@@ -6560,7 +6561,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
           setTxMsg(3);
           m_QSOProgress=ROGER_REPORT;
           // FT4 NS (NCCC Sprints): Log QSO after sending "hiscall mycall R mygrid"
-          if (SpecOp::NA_VHF==m_specOp && m_mode=="FT4" && m_config.NCCC_Sprints()) {
+          if (SpecOp::NA_VHF==m_specOp && m_mode=="FT4" && m_config.NCCC_Sprint()) {
               if (m_auto && (m_config.prompt_to_log() || m_config.autoLog())) logQSOTimer.start(0);
               QTimer::singleShot (int(850.0*m_TRperiod), [=] {
                 auto_tx_mode(false);
@@ -6634,7 +6635,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
             if (false)              // Always Send 73 after receiving RRR or RR73, even in contest mode.
               {
                 if (m_config.prompt_to_log() || m_config.autoLog()) {
-                  if (m_mode!="FT4" && SpecOp::NA_VHF!=m_specOp && !m_config.NCCC_Sprints()) logQSOTimer.start(0);
+                  if (!(m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint())) logQSOTimer.start(0);
                 }
                 else {
                   cease_auto_Tx_after_QSO ();
@@ -6657,7 +6658,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
             else if (ROGERS == m_QSOProgress)
               {
                 if (m_config.prompt_to_log() || m_config.autoLog()) {
-                  if (m_mode!="FT4" && SpecOp::NA_VHF!=m_specOp && !m_config.NCCC_Sprints()) logQSOTimer.start(0);
+                  if (!(m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint())) logQSOTimer.start(0);
                 }
                 else {
                   cease_auto_Tx_after_QSO ();
@@ -11590,8 +11591,8 @@ void MainWindow::chkFT4()
   m_specOp=m_config.special_op_id();
   if(m_specOp!=SpecOp::NONE and m_specOp!=SpecOp::FOX and m_specOp!=SpecOp::HOUND) {
     QString t0="";
-    if(SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprints()) t0="NCCC Sprints";
-    if(SpecOp::NA_VHF==m_specOp && !m_config.NCCC_Sprints()) t0="NA VHF";
+    if(SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint()) t0="NCCC Sprint";
+    if(SpecOp::NA_VHF==m_specOp && !m_config.NCCC_Sprint()) t0="NA VHF";
     if(SpecOp::EU_VHF==m_specOp) t0="EU VHF";
     if(SpecOp::FIELD_DAY==m_specOp) t0="Field Day";
     if(SpecOp::RTTY==m_specOp) t0="FT RU";

@@ -806,7 +806,7 @@ private:
   bool single_decode_;
   bool twoPass_;
   bool Individual_Contest_Name_;
-  bool NCCC_Sprints_;
+  bool NCCC_Sprint_;
   bool Blacklisted_;
   bool Whitelisted_;
   bool AlwaysPass_;
@@ -935,7 +935,7 @@ bool Configuration::repeat_Tx () const {return m_->repeat_Tx_;}
 bool Configuration::single_decode () const {return m_->single_decode_;}
 bool Configuration::twoPass() const {return m_->twoPass_;}
 bool Configuration::Individual_Contest_Name() const {return m_->Individual_Contest_Name_;}
-bool Configuration::NCCC_Sprints() const {return m_->NCCC_Sprints_;}
+bool Configuration::NCCC_Sprint() const {return m_->NCCC_Sprint_;}
 bool Configuration::Blacklisted() const {return m_->Blacklisted_;}
 bool Configuration::Whitelisted() const {return m_->Whitelisted_;}
 bool Configuration::AlwaysPass() const {return m_->AlwaysPass_;}
@@ -1765,7 +1765,7 @@ void Configuration::impl::initialize_models ()
   ui_->single_decode_check_box->setChecked(single_decode_);
   ui_->cbTwoPass->setChecked(twoPass_);
   ui_->cbContestName->setChecked(Individual_Contest_Name_);
-  ui_->cb_NCCC_Sprints->setChecked(NCCC_Sprints_);
+  ui_->cb_NCCC_Sprint->setChecked(NCCC_Sprint_);
   ui_->cbBlacklist->setChecked(Blacklisted_);
   ui_->cbWhitelist->setChecked(Whitelisted_);
   ui_->cbPass->setChecked(AlwaysPass_);
@@ -2127,7 +2127,7 @@ void Configuration::impl::read_settings ()
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
   twoPass_ = settings_->value("TwoPass",true).toBool ();
   Individual_Contest_Name_ = settings_->value("Individual_Contest_Name",false).toBool ();
-  NCCC_Sprints_ = settings_->value("NCCC_Sprints",false).toBool ();
+  NCCC_Sprint_ = settings_->value("NCCC_Sprint",false).toBool ();
   Blacklisted_ = settings_->value("Blacklisted",false).toBool ();
   Whitelisted_ = settings_->value("Whitelisted",false).toBool ();
   AlwaysPass_ = settings_->value("AlwaysPass",false).toBool ();
@@ -2323,7 +2323,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("SingleDecode", single_decode_);
   settings_->setValue ("TwoPass", twoPass_);
   settings_->setValue ("Individual_Contest_Name", Individual_Contest_Name_);
-  settings_->setValue ("NCCC_Sprints", NCCC_Sprints_);
+  settings_->setValue ("NCCC_Sprint", NCCC_Sprint_);
   settings_->setValue ("Blacklisted", Blacklisted_);
   settings_->setValue ("Whitelisted", Whitelisted_);
   settings_->setValue ("AlwaysPass", AlwaysPass_);
@@ -2808,7 +2808,7 @@ void Configuration::impl::accept ()
   single_decode_ = ui_->single_decode_check_box->isChecked ();
   twoPass_ = ui_->cbTwoPass->isChecked ();
   Individual_Contest_Name_ = ui_->cbContestName->isChecked ();
-  NCCC_Sprints_ = ui_->cb_NCCC_Sprints->isChecked ();
+  NCCC_Sprint_ = ui_->cb_NCCC_Sprint->isChecked ();
   Blacklisted_ = ui_->cbBlacklist->isChecked ();
   Whitelisted_ = ui_->cbWhitelist->isChecked ();
   AlwaysPass_ = ui_->cbPass->isChecked ();
@@ -2908,7 +2908,7 @@ void Configuration::impl::accept ()
   erase_BandActivity_ = ui_->cbEraseBandActivity->isChecked();
   set_RXtoTX_ = ui_->cbRxToTxAfterQSO->isChecked();
   Individual_Contest_Name_ = ui_->cbContestName->isChecked();
-  NCCC_Sprints_ = ui_->cb_NCCC_Sprints->isChecked();
+  NCCC_Sprint_ = ui_->cb_NCCC_Sprint->isChecked();
   Blacklisted_ = ui_->cbBlacklist->isChecked();
   Whitelisted_ = ui_->cbWhitelist->isChecked();
   AlwaysPass_ = ui_->cbPass->isChecked();
@@ -3038,9 +3038,9 @@ void Configuration::impl::on_decoded_text_font_push_button_clicked ()
 void Configuration::impl::on_special_op_activity_button_group_buttonClicked (int /* id */)
 {
   if (ui_->rbNA_VHF_Contest->isChecked()) {
-    ui_->cb_NCCC_Sprints->setEnabled (true);
+    ui_->cb_NCCC_Sprint->setEnabled (true);
   } else {
-    ui_->cb_NCCC_Sprints->setEnabled (false);
+    ui_->cb_NCCC_Sprint->setEnabled (false);
   }
 }
 
