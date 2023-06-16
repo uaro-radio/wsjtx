@@ -2081,94 +2081,173 @@ void MainWindow::fastSink(qint64 frames)
     DecodedText decodedtext {message.replace (QChar::LineFeed, "")};
 
     QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait features
-    QString text2;
-    QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
-    if (m_config.filters_for_word2()) {
-      if (tw[1].length() == 2 && tw[1].contains(QRegularExpression{"\\w\\w"})) {   // directional calls
-        text2 = tw[2].left(3);   // for directional calls analyze word 3 for filtering
-      } else {
-        text2 = tw[1].left(3);   // otherwise analyze word 2 for filtering
-      }
-    } else {
-      text2 = text;   // for filtering
-    }
 
     bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
                                (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
                                (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
 
-    // Always pass messages with keywords from Always Pass list for MSK144
-    if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass ()
-          && (
-              (text2.contains(m_config.Pass1()) && (m_config.Pass1()!=""))
-              || (text2.contains(m_config.Pass2()) && (m_config.Pass2()!=""))
-              || (text2.contains(m_config.Pass3()) && (m_config.Pass3()!=""))
-              || (text2.contains(m_config.Pass4()) && (m_config.Pass4()!=""))
-              || (text2.contains(m_config.Pass5()) && (m_config.Pass5()!=""))
-              || (text2.contains(m_config.Pass6()) && (m_config.Pass6()!=""))
-              || (text2.contains(m_config.Pass7()) && (m_config.Pass7()!=""))
-              || (text2.contains(m_config.Pass8()) && (m_config.Pass8()!=""))
-              ))) {
+    // Filtering for MSK144
+    QString text2;
+    QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
+    if (m_config.filters_for_word2()) {
+      if (tw[1].length() == 2 && tw[1].contains(QRegularExpression{"\\w\\w"})) {   // directional calls
+        text2 = tw[2];   // for directional calls analyze word 3 for filtering
+      } else {
+        text2 = tw[1];   // otherwise analyze word 2 for filtering
+      }
+      if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass () // Always pass messages with keywords from Always Pass list
+            && (
+                 (text2.startsWith(m_config.Pass1()) && (m_config.Pass1()!=""))
+                 || (text2.startsWith(m_config.Pass2()) && (m_config.Pass2()!=""))
+                 || (text2.startsWith(m_config.Pass3()) && (m_config.Pass3()!=""))
+                 || (text2.startsWith(m_config.Pass4()) && (m_config.Pass4()!=""))
+                 || (text2.startsWith(m_config.Pass5()) && (m_config.Pass5()!=""))
+                 || (text2.startsWith(m_config.Pass6()) && (m_config.Pass6()!=""))
+                 || (text2.startsWith(m_config.Pass7()) && (m_config.Pass7()!=""))
+                 || (text2.startsWith(m_config.Pass8()) && (m_config.Pass8()!=""))
+                 || (text2.startsWith(m_config.Pass9()) && (m_config.Pass9()!=""))
+                 || (text2.startsWith(m_config.Pass10()) && (m_config.Pass10()!=""))
+                 || (text2.startsWith(m_config.Pass11()) && (m_config.Pass11()!=""))
+                 || (text2.startsWith(m_config.Pass12()) && (m_config.Pass12()!=""))
+                 ))) {
 
-        // Filtering out messages with keywords from Blacklist for MSK144
+        // Filtering out messages with keywords from Blacklist
         if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
             && (
-                (text2.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
-                || (text2.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
-                || (text2.contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
-                || (text2.contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
-                || (text2.contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
-                || (text2.contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
-                || (text2.contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
-                || (text2.contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
-                || (text2.contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
-                || (text2.contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
-                || (text2.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
-                || (text2.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
-                )) {
-        filtered = true;
-        if (!m_config.filters_for_Wait_and_Pounce_only())  return;
-        // reset dB score when filtered
-        if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
-                       or ui->respondComboBox->currentText()=="CQ: Max dB"
-                       or ui->respondComboBox->currentText()=="CQ: Min dB")) {
-          Dpoints=0;
-          maxDPoints=0;
-          dBpoints=-28;
-          dBpoints2=99;
-          maxdBPoints=-28;
-          mindBPoints=99;
-        }
+                 (text2.startsWith(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
+                 || (text2.startsWith(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
+                 || (text2.startsWith(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
+                 || (text2.startsWith(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
+                 || (text2.startsWith(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
+                 || (text2.startsWith(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
+                 || (text2.startsWith(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
+                 || (text2.startsWith(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
+                 || (text2.startsWith(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
+                 || (text2.startsWith(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
+                 || (text2.startsWith(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
+                 || (text2.startsWith(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
+                 )) {
+          filtered = true;
+          if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+          // reset dB score when filtered
+          if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
+                          or ui->respondComboBox->currentText()=="CQ: Max dB"
+                          or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+            Dpoints=0;
+            maxDPoints=0;
+            dBpoints=-28;
+            dBpoints2=99;
+            maxdBPoints=-28;
+            mindBPoints=99;
+          }
 
-        // Filtering out everything but messages with keywords from Whitelist for MSK144
+        // Filtering out everything but messages with keywords from Whitelist
         } else if (SpecOp::NONE==m_specOp && m_config.Whitelisted ()
-                   && !(text2.contains(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
-                   && !(text2.contains(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
-                   && !(text2.contains(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
-                   && !(text2.contains(m_config.Whitelist4()) && (m_config.Whitelist4()!=""))
-                   && !(text2.contains(m_config.Whitelist5()) && (m_config.Whitelist5()!=""))
-                   && !(text2.contains(m_config.Whitelist6()) && (m_config.Whitelist6()!=""))
-                   && !(text2.contains(m_config.Whitelist7()) && (m_config.Whitelist7()!=""))
-                   && !(text2.contains(m_config.Whitelist8()) && (m_config.Whitelist8()!=""))
-                   && !(text2.contains(m_config.Whitelist9()) && (m_config.Whitelist9()!=""))
-                   && !(text2.contains(m_config.Whitelist10()) && (m_config.Whitelist10()!=""))
-                   && !(text2.contains(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
-                   && !(text2.contains(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
-                   ) {
-        filtered = true;
-        if (!m_config.filters_for_Wait_and_Pounce_only())  return;
-        // reset dB score when filtered
-        if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
-                       or ui->respondComboBox->currentText()=="CQ: Max dB"
-                       or ui->respondComboBox->currentText()=="CQ: Min dB")) {
-          Dpoints=0;
-          maxDPoints=0;
-          dBpoints=-28;
-          dBpoints2=99;
-          maxdBPoints=-28;
-          mindBPoints=99;
+                   && !(text2.startsWith(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
+                   && !(text2.startsWith(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
+                   && !(text2.startsWith(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
+                   && !(text2.startsWith(m_config.Whitelist4()) && (m_config.Whitelist4()!=""))
+                   && !(text2.startsWith(m_config.Whitelist5()) && (m_config.Whitelist5()!=""))
+                   && !(text2.startsWith(m_config.Whitelist6()) && (m_config.Whitelist6()!=""))
+                   && !(text2.startsWith(m_config.Whitelist7()) && (m_config.Whitelist7()!=""))
+                   && !(text2.startsWith(m_config.Whitelist8()) && (m_config.Whitelist8()!=""))
+                   && !(text2.startsWith(m_config.Whitelist9()) && (m_config.Whitelist9()!=""))
+                   && !(text2.startsWith(m_config.Whitelist10()) && (m_config.Whitelist10()!=""))
+                   && !(text2.startsWith(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
+                   && !(text2.startsWith(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
+          ) {
+          filtered = true;
+          if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+          // reset dB score when filtered
+          if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
+                          or ui->respondComboBox->currentText()=="CQ: Max dB"
+                          or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+            Dpoints=0;
+            maxDPoints=0;
+            dBpoints=-28;
+            dBpoints2=99;
+            maxdBPoints=-28;
+            mindBPoints=99;
+          }
         }
+      }
+    } else {
+      if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass () // Always pass messages with keywords from Always Pass list
+            && (
+                 (text.contains(m_config.Pass1()) && (m_config.Pass1()!=""))
+                 || (text.contains(m_config.Pass2()) && (m_config.Pass2()!=""))
+                 || (text.contains(m_config.Pass3()) && (m_config.Pass3()!=""))
+                 || (text.contains(m_config.Pass4()) && (m_config.Pass4()!=""))
+                 || (text.contains(m_config.Pass5()) && (m_config.Pass5()!=""))
+                 || (text.contains(m_config.Pass6()) && (m_config.Pass6()!=""))
+                 || (text.contains(m_config.Pass7()) && (m_config.Pass7()!=""))
+                 || (text.contains(m_config.Pass8()) && (m_config.Pass8()!=""))
+                 || (text.contains(m_config.Pass9()) && (m_config.Pass9()!=""))
+                 || (text.contains(m_config.Pass10()) && (m_config.Pass10()!=""))
+                 || (text.contains(m_config.Pass11()) && (m_config.Pass11()!=""))
+                 || (text.contains(m_config.Pass12()) && (m_config.Pass12()!=""))
+                 ))) {
+
+        // Filtering out messages with keywords from Blacklist
+        if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
+            && (
+                 (text.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
+                 || (text.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
+                 || (text.contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
+                 || (text.contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
+                 || (text.contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
+                 || (text.contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
+                 || (text.contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
+                 || (text.contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
+                 || (text.contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
+                 || (text.contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
+                 || (text.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
+                 || (text.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
+                 )) {
+          filtered = true;
+          if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+          // reset dB score when filtered
+          if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
+                          or ui->respondComboBox->currentText()=="CQ: Max dB"
+                          or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+            Dpoints=0;
+            maxDPoints=0;
+            dBpoints=-28;
+            dBpoints2=99;
+            maxdBPoints=-28;
+            mindBPoints=99;
+          }
+
+        // Filtering out everything but messages with keywords from Whitelist
+        } else if (SpecOp::NONE==m_specOp && m_config.Whitelisted ()
+                   && !(text.contains(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
+                   && !(text.contains(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
+                   && !(text.contains(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
+                   && !(text.contains(m_config.Whitelist4()) && (m_config.Whitelist4()!=""))
+                   && !(text.contains(m_config.Whitelist5()) && (m_config.Whitelist5()!=""))
+                   && !(text.contains(m_config.Whitelist6()) && (m_config.Whitelist6()!=""))
+                   && !(text.contains(m_config.Whitelist7()) && (m_config.Whitelist7()!=""))
+                   && !(text.contains(m_config.Whitelist8()) && (m_config.Whitelist8()!=""))
+                   && !(text.contains(m_config.Whitelist9()) && (m_config.Whitelist9()!=""))
+                   && !(text.contains(m_config.Whitelist10()) && (m_config.Whitelist10()!=""))
+                   && !(text.contains(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
+                   && !(text.contains(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
+          ) {
+          filtered = true;
+          if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+          // reset dB score when filtered
+          if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
+                          or ui->respondComboBox->currentText()=="CQ: Max dB"
+                          or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+            Dpoints=0;
+            maxDPoints=0;
+            dBpoints=-28;
+            dBpoints2=99;
+            maxdBPoints=-28;
+            mindBPoints=99;
+          }
         }
+      }
     }
     // Wait & Reply for MSK144
     if (text.contains(m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
@@ -4580,131 +4659,210 @@ void MainWindow::readFromStdout()                             //readFromStdout
           DecodedText decodedtext1=decodedtext0;
           if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
             ARRL_Digi_Update(decodedtext1);
-          }
+        }
 
-          QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait & Reply/Call
-          QString text2;
-          QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
-          if (m_config.filters_for_word2()) {
-            if (tw[1].length() == 2 && tw[1].contains(QRegularExpression{"\\w\\w"})) {   // directional calls
-              text2 = tw[2].left(3);   // for directional calls analyze word 3 for filtering
-            } else {
-              text2 = tw[1].left(3);   // otherwise analyze word 2 for filtering
-            }
-          } else {
-            text2 = text;   // for filtering
-          }
+        QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait & Reply/Call and filtering
 
-          // FT4 NS (NCCC Sprints): Log QSO after receiving "mycall hiscall R hisgrid"
-          if (m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint() && m_hisCall!="" && m_hisGrid!="" &&
-              text.contains(m_config.my_callsign() + " " + m_hisCall + " R " + m_hisGrid.left(4))) {
-            if (m_config.prompt_to_log() || m_config.autoLog()) logQSOTimer.start(0);
-            QTimer::singleShot (500, [=] {
-              on_stopTxButton_clicked();
-            });
-          }
+        // FT4 NS (NCCC Sprints): Log QSO after receiving "mycall hiscall R hisgrid"
+        if (m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint() && m_hisCall!="" && m_hisGrid!="" &&
+            text.contains(m_config.my_callsign() + " " + m_hisCall + " R " + m_hisGrid.left(4))) {
+          if (m_config.prompt_to_log() || m_config.autoLog()) logQSOTimer.start(0);
+          QTimer::singleShot (500, [=] {
+            on_stopTxButton_clicked();
+          });
+        }
 
-          // Wait & Reply + FT4 NS (NCCC Sprints) reply to incoming RR73 messages
-          if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && m_hisCall!=""
-              && text.contains(m_config.my_callsign() + " " + m_hisCall) && ((!text.contains("73 ")
-              && m_config.Wait_features_enabled() && (!ui->autoButton->isChecked() or m_specOp==SpecOp::HOUND))
-              or (SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint()))) {
-                tx_watchdog (false);
-                m_bDoubleClicked = true;
-                processMessage(decodedtext0);
-                auto_tx_mode(true);
-                if(!(SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint())) stopWRTimer.start(int(8000.0*m_TRperiod));    // Wait & Reply Tx max 8*TRperiod
-          }
+        // Wait & Reply + FT4 NS (NCCC Sprints) reply to incoming RR73 messages
+        if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && m_hisCall!=""
+            && text.contains(m_config.my_callsign() + " " + m_hisCall) && ((!text.contains("73 ")
+            && m_config.Wait_features_enabled() && (!ui->autoButton->isChecked() or m_specOp==SpecOp::HOUND))
+            or (SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint()))) {
+              tx_watchdog (false);
+              m_bDoubleClicked = true;
+              processMessage(decodedtext0);
+              auto_tx_mode(true);
+              if(!(SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint())) stopWRTimer.start(int(8000.0*m_TRperiod));    // Wait & Reply Tx max 8*TRperiod
+        }
 
-          // Wait & Call
-          if (wait_and_call && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") &&
-              m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && m_hisCall!="" && !no_wait_and_call &&
-              (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
-               or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))
-              && m_config.Wait_features_enabled()) {
-                if (!text.contains(m_config.my_callsign() + " " + m_hisCall))
-                    block_right_display = true;                // prevent display of first message twice
-                if (m_specOp==SpecOp::HOUND) ui->TxFreqSpinBox->setValue(2300);
-                m_bDoubleClicked = true;
-                processMessage(decodedtext0);
-                auto_tx_mode(true);
-                no_wait_and_call = true;
-                stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
-          }
+        // Wait & Call
+        if (wait_and_call && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") &&
+            m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && m_hisCall!="" && !no_wait_and_call &&
+            (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
+             or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))
+            && m_config.Wait_features_enabled()) {
+              if (!text.contains(m_config.my_callsign() + " " + m_hisCall))
+                  block_right_display = true;                // prevent display of first message twice
+              if (m_specOp==SpecOp::HOUND) ui->TxFreqSpinBox->setValue(2300);
+              m_bDoubleClicked = true;
+              processMessage(decodedtext0);
+              auto_tx_mode(true);
+              no_wait_and_call = true;
+              stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
+        }
 
-          // Filtering
-          if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass () // Always pass messages with keywords from Always Pass list
-                && (
-                    (text2.contains(m_config.Pass1()) && (m_config.Pass1()!=""))
-                    || (text2.contains(m_config.Pass2()) && (m_config.Pass2()!=""))
-                    || (text2.contains(m_config.Pass3()) && (m_config.Pass3()!=""))
-                    || (text2.contains(m_config.Pass4()) && (m_config.Pass4()!=""))
-                    || (text2.contains(m_config.Pass5()) && (m_config.Pass5()!=""))
-                    || (text2.contains(m_config.Pass6()) && (m_config.Pass6()!=""))
-                    || (text2.contains(m_config.Pass7()) && (m_config.Pass7()!=""))
-                    || (text2.contains(m_config.Pass8()) && (m_config.Pass8()!=""))
-                    ))) {
-
-                // Filtering out messages with keywords from Blacklist
-                if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
+        // Filtering
+        QString text2;
+        QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
+        if (m_config.filters_for_word2()) {
+              if (tw[1].length() == 2 && tw[1].contains(QRegularExpression{"\\w\\w"})) {   // directional calls
+                  text2 = tw[2];   // for directional calls analyze word 3 for filtering
+              } else {
+                  text2 = tw[1];   // otherwise analyze word 2 for filtering
+              }
+              if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass () // Always pass messages with keywords from Always Pass list
                     && (
-                        (text2.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
-                        || (text2.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
-                        || (text2.contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
-                        || (text2.contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
-                        || (text2.contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
-                        || (text2.contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
-                        || (text2.contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
-                        || (text2.contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
-                        || (text2.contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
-                        || (text2.contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
-                        || (text2.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
-                        || (text2.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
-                        )) {
+                         (text2.startsWith(m_config.Pass1()) && (m_config.Pass1()!=""))
+                         || (text2.startsWith(m_config.Pass2()) && (m_config.Pass2()!=""))
+                         || (text2.startsWith(m_config.Pass3()) && (m_config.Pass3()!=""))
+                         || (text2.startsWith(m_config.Pass4()) && (m_config.Pass4()!=""))
+                         || (text2.startsWith(m_config.Pass5()) && (m_config.Pass5()!=""))
+                         || (text2.startsWith(m_config.Pass6()) && (m_config.Pass6()!=""))
+                         || (text2.startsWith(m_config.Pass7()) && (m_config.Pass7()!=""))
+                         || (text2.startsWith(m_config.Pass8()) && (m_config.Pass8()!=""))
+                         || (text2.startsWith(m_config.Pass9()) && (m_config.Pass9()!=""))
+                         || (text2.startsWith(m_config.Pass10()) && (m_config.Pass10()!=""))
+                         || (text2.startsWith(m_config.Pass11()) && (m_config.Pass11()!=""))
+                         || (text2.startsWith(m_config.Pass12()) && (m_config.Pass12()!=""))
+                         ))) {
+
+                  // Filtering out messages with keywords from Blacklist
+                  if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
+                      && (
+                           (text2.startsWith(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
+                           || (text2.startsWith(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
+                           || (text2.startsWith(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
+                           || (text2.startsWith(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
+                           || (text2.startsWith(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
+                           || (text2.startsWith(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
+                           || (text2.startsWith(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
+                           || (text2.startsWith(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
+                           || (text2.startsWith(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
+                           || (text2.startsWith(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
+                           || (text2.startsWith(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
+                           || (text2.startsWith(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
+                           )) {
                     filtered = true;
                     if (!m_config.filters_for_Wait_and_Pounce_only())  return;
                     // reset dB score when filtered
                     if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
-                                   or ui->respondComboBox->currentText()=="CQ: Max dB"
-                                   or ui->respondComboBox->currentText()=="CQ: Min dB")) {
-                        Dpoints=0;
-                        maxDPoints=0;
-                        dBpoints=-28;
-                        dBpoints2=99;
-                        maxdBPoints=-28;
-                        mindBPoints=99;
+                                    or ui->respondComboBox->currentText()=="CQ: Max dB"
+                                    or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+                      Dpoints=0;
+                      maxDPoints=0;
+                      dBpoints=-28;
+                      dBpoints2=99;
+                      maxdBPoints=-28;
+                      mindBPoints=99;
                     }
 
-                    // Filtering out everything but messages with keywords from Whitelist
-                } else if (SpecOp::NONE==m_specOp && m_config.Whitelisted ()
-                           && !(text2.contains(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
-                           && !(text2.contains(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
-                           && !(text2.contains(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
-                           && !(text2.contains(m_config.Whitelist4()) && (m_config.Whitelist4()!=""))
-                           && !(text2.contains(m_config.Whitelist5()) && (m_config.Whitelist5()!=""))
-                           && !(text2.contains(m_config.Whitelist6()) && (m_config.Whitelist6()!=""))
-                           && !(text2.contains(m_config.Whitelist7()) && (m_config.Whitelist7()!=""))
-                           && !(text2.contains(m_config.Whitelist8()) && (m_config.Whitelist8()!=""))
-                           && !(text2.contains(m_config.Whitelist9()) && (m_config.Whitelist9()!=""))
-                           && !(text2.contains(m_config.Whitelist10()) && (m_config.Whitelist10()!=""))
-                           && !(text2.contains(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
-                           && !(text2.contains(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
-                           ) {
+                  // Filtering out everything but messages with keywords from Whitelist
+                  } else if (SpecOp::NONE==m_specOp && m_config.Whitelisted ()
+                             && !(text2.startsWith(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
+                             && !(text2.startsWith(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
+                             && !(text2.startsWith(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
+                             && !(text2.startsWith(m_config.Whitelist4()) && (m_config.Whitelist4()!=""))
+                             && !(text2.startsWith(m_config.Whitelist5()) && (m_config.Whitelist5()!=""))
+                             && !(text2.startsWith(m_config.Whitelist6()) && (m_config.Whitelist6()!=""))
+                             && !(text2.startsWith(m_config.Whitelist7()) && (m_config.Whitelist7()!=""))
+                             && !(text2.startsWith(m_config.Whitelist8()) && (m_config.Whitelist8()!=""))
+                             && !(text2.startsWith(m_config.Whitelist9()) && (m_config.Whitelist9()!=""))
+                             && !(text2.startsWith(m_config.Whitelist10()) && (m_config.Whitelist10()!=""))
+                             && !(text2.startsWith(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
+                             && !(text2.startsWith(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
+                    ) {
                     filtered = true;
                     if (!m_config.filters_for_Wait_and_Pounce_only())  return;
                     // reset dB score when filtered
                     if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
-                                   or ui->respondComboBox->currentText()=="CQ: Max dB"
-                                   or ui->respondComboBox->currentText()=="CQ: Min dB")) {
-                        Dpoints=0;
-                        maxDPoints=0;
-                        dBpoints=-28;
-                        dBpoints2=99;
-                        maxdBPoints=-28;
-                        mindBPoints=99;
+                                    or ui->respondComboBox->currentText()=="CQ: Max dB"
+                                    or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+                      Dpoints=0;
+                      maxDPoints=0;
+                      dBpoints=-28;
+                      dBpoints2=99;
+                      maxdBPoints=-28;
+                      mindBPoints=99;
                     }
-                }
-          }
+                  }
+              }
+        } else {
+              if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass () // Always pass messages with keywords from Always Pass list
+                    && (
+                         (text.contains(m_config.Pass1()) && (m_config.Pass1()!=""))
+                         || (text.contains(m_config.Pass2()) && (m_config.Pass2()!=""))
+                         || (text.contains(m_config.Pass3()) && (m_config.Pass3()!=""))
+                         || (text.contains(m_config.Pass4()) && (m_config.Pass4()!=""))
+                         || (text.contains(m_config.Pass5()) && (m_config.Pass5()!=""))
+                         || (text.contains(m_config.Pass6()) && (m_config.Pass6()!=""))
+                         || (text.contains(m_config.Pass7()) && (m_config.Pass7()!=""))
+                         || (text.contains(m_config.Pass8()) && (m_config.Pass8()!=""))
+                         || (text.contains(m_config.Pass9()) && (m_config.Pass9()!=""))
+                         || (text.contains(m_config.Pass10()) && (m_config.Pass10()!=""))
+                         || (text.contains(m_config.Pass11()) && (m_config.Pass11()!=""))
+                         || (text.contains(m_config.Pass12()) && (m_config.Pass12()!=""))
+                         ))) {
+
+                  // Filtering out messages with keywords from Blacklist
+                  if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
+                      && (
+                           (text.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
+                           || (text.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
+                           || (text.contains(m_config.Blacklist3()) && (m_config.Blacklist3()!=""))
+                           || (text.contains(m_config.Blacklist4()) && (m_config.Blacklist4()!=""))
+                           || (text.contains(m_config.Blacklist5()) && (m_config.Blacklist5()!=""))
+                           || (text.contains(m_config.Blacklist6()) && (m_config.Blacklist6()!=""))
+                           || (text.contains(m_config.Blacklist7()) && (m_config.Blacklist7()!=""))
+                           || (text.contains(m_config.Blacklist8()) && (m_config.Blacklist8()!=""))
+                           || (text.contains(m_config.Blacklist9()) && (m_config.Blacklist9()!=""))
+                           || (text.contains(m_config.Blacklist10()) && (m_config.Blacklist10()!=""))
+                           || (text.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
+                           || (text.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
+                           )) {
+                    filtered = true;
+                    if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+                    // reset dB score when filtered
+                    if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
+                                    or ui->respondComboBox->currentText()=="CQ: Max dB"
+                                    or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+                      Dpoints=0;
+                      maxDPoints=0;
+                      dBpoints=-28;
+                      dBpoints2=99;
+                      maxdBPoints=-28;
+                      mindBPoints=99;
+                    }
+
+                  // Filtering out everything but messages with keywords from Whitelist
+                  } else if (SpecOp::NONE==m_specOp && m_config.Whitelisted ()
+                             && !(text.contains(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
+                             && !(text.contains(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
+                             && !(text.contains(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
+                             && !(text.contains(m_config.Whitelist4()) && (m_config.Whitelist4()!=""))
+                             && !(text.contains(m_config.Whitelist5()) && (m_config.Whitelist5()!=""))
+                             && !(text.contains(m_config.Whitelist6()) && (m_config.Whitelist6()!=""))
+                             && !(text.contains(m_config.Whitelist7()) && (m_config.Whitelist7()!=""))
+                             && !(text.contains(m_config.Whitelist8()) && (m_config.Whitelist8()!=""))
+                             && !(text.contains(m_config.Whitelist9()) && (m_config.Whitelist9()!=""))
+                             && !(text.contains(m_config.Whitelist10()) && (m_config.Whitelist10()!=""))
+                             && !(text.contains(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
+                             && !(text.contains(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
+                    ) {
+                    filtered = true;
+                    if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+                    // reset dB score when filtered
+                    if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
+                                    or ui->respondComboBox->currentText()=="CQ: Max dB"
+                                    or ui->respondComboBox->currentText()=="CQ: Min dB")) {
+                      Dpoints=0;
+                      maxDPoints=0;
+                      dBpoints=-28;
+                      dBpoints2=99;
+                      maxdBPoints=-28;
+                      mindBPoints=99;
+                    }
+                  }
+              }
+        }
 
        if (!filtered or m_config.filters_for_Wait_and_Pounce_only()) {  // show decodes if not filtered
            // show distance and bearing

@@ -2964,22 +2964,6 @@ Right click for insert and delete options.</string>
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
-        <spacer name="verticalSpacer_8">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBox_6">
          <property name="toolTip">
@@ -3047,6 +3031,22 @@ Right click for insert and delete options.</string>
           </item>
          </layout>
         </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <spacer name="verticalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item row="1" column="0" colspan="2">
         <widget class="QGroupBox" name="gbSpecialOpActivity">
@@ -3434,61 +3434,11 @@ Right click for insert and delete options.</string>
       <layout class="QGridLayout" name="gridLayout_13">
        <item row="0" column="0">
         <layout class="QGridLayout" name="gridLayout_19">
-         <item row="4" column="3">
-          <widget class="QLineEdit" name="Blacklist8"/>
-         </item>
-         <item row="5" column="3">
-          <widget class="QLineEdit" name="Blacklist12"/>
-         </item>
-         <item row="13" column="3">
-          <widget class="QLineEdit" name="Pass4"/>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="Blacklist6"/>
-         </item>
-         <item row="14" column="2">
-          <widget class="QLineEdit" name="Pass7"/>
-         </item>
-         <item row="9" column="2">
-          <widget class="QLineEdit" name="Whitelist7"/>
-         </item>
-         <item row="5" column="2">
-          <widget class="QLineEdit" name="Blacklist11"/>
-         </item>
-         <item row="8" column="1">
-          <widget class="QLineEdit" name="Whitelist2"/>
-         </item>
-         <item row="9" column="0">
-          <widget class="QLineEdit" name="Whitelist5"/>
-         </item>
-         <item row="8" column="3">
-          <widget class="QLineEdit" name="Whitelist4"/>
+         <item row="10" column="2">
+          <widget class="QLineEdit" name="Whitelist11"/>
          </item>
          <item row="8" column="0">
           <widget class="QLineEdit" name="Whitelist1"/>
-         </item>
-         <item row="18" column="0">
-          <spacer name="verticalSpacer_10">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="14" column="0">
-          <widget class="QLineEdit" name="Pass5"/>
-         </item>
-         <item row="12" column="0" colspan="4">
-          <widget class="QCheckBox" name="cbPass">
-           <property name="text">
-            <string>Always pass messages with the following keywords:</string>
-           </property>
-          </widget>
          </item>
          <item row="6" column="0" colspan="4" alignment="Qt::AlignBottom">
           <widget class="QLabel" name="whitelist_label">
@@ -3509,46 +3459,26 @@ Right click for insert and delete options.</string>
            </property>
           </widget>
          </item>
-         <item row="9" column="3">
-          <widget class="QLineEdit" name="Whitelist8"/>
+         <item row="14" column="1">
+          <widget class="QLineEdit" name="Pass6"/>
          </item>
-         <item row="0" column="0" colspan="4">
-          <widget class="QLabel" name="label_18">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Filters for the Band Activity window</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-           </property>
-          </widget>
+         <item row="10" column="1">
+          <widget class="QLineEdit" name="Whitelist10"/>
          </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="Blacklist2"/>
+         <item row="14" column="0">
+          <widget class="QLineEdit" name="Pass5"/>
+         </item>
+         <item row="13" column="3">
+          <widget class="QLineEdit" name="Pass4"/>
          </item>
          <item row="3" column="2">
           <widget class="QLineEdit" name="Blacklist3"/>
          </item>
-         <item row="7" column="0" colspan="4">
-          <widget class="QCheckBox" name="cbWhitelist">
-           <property name="text">
-            <string>Show only messages containing the following callsigns or keywords:</string>
-           </property>
-          </widget>
+         <item row="9" column="2">
+          <widget class="QLineEdit" name="Whitelist7"/>
          </item>
-         <item row="10" column="2">
-          <widget class="QLineEdit" name="Whitelist11"/>
-         </item>
-         <item row="10" column="0">
-          <widget class="QLineEdit" name="Whitelist9"/>
-         </item>
-         <item row="8" column="2">
-          <widget class="QLineEdit" name="Whitelist3"/>
+         <item row="3" column="0">
+          <widget class="QLineEdit" name="Blacklist1"/>
          </item>
          <item row="13" column="2">
           <widget class="QLineEdit" name="Pass3"/>
@@ -3575,7 +3505,48 @@ Right click for insert and delete options.</string>
            </property>
           </widget>
          </item>
-         <item row="15" column="0">
+         <item row="4" column="2">
+          <widget class="QLineEdit" name="Blacklist7"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLineEdit" name="Blacklist5"/>
+         </item>
+         <item row="0" column="0" colspan="4">
+          <widget class="QLabel" name="label_18">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Filters for the Band Activity window</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="4">
+          <widget class="QCheckBox" name="cbBlacklist">
+           <property name="text">
+            <string>Hide messages containing the following callsigns or keywords:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QLineEdit" name="Whitelist6"/>
+         </item>
+         <item row="9" column="0">
+          <widget class="QLineEdit" name="Whitelist5"/>
+         </item>
+         <item row="10" column="3">
+          <widget class="QLineEdit" name="Whitelist12"/>
+         </item>
+         <item row="13" column="0">
+          <widget class="QLineEdit" name="Pass1"/>
+         </item>
+         <item row="16" column="0">
           <spacer name="verticalSpacer_12">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -3591,48 +3562,91 @@ Right click for insert and delete options.</string>
            </property>
           </spacer>
          </item>
-         <item row="10" column="1">
-          <widget class="QLineEdit" name="Whitelist10"/>
+         <item row="5" column="2">
+          <widget class="QLineEdit" name="Blacklist11"/>
          </item>
-         <item row="2" column="0" colspan="4">
-          <widget class="QCheckBox" name="cbBlacklist">
+         <item row="14" column="2">
+          <widget class="QLineEdit" name="Pass7"/>
+         </item>
+         <item row="4" column="3">
+          <widget class="QLineEdit" name="Blacklist8"/>
+         </item>
+         <item row="18" column="0" colspan="4">
+          <widget class="QCheckBox" name="cb_filters_for_Wait_and_Pounce_only">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use filters for Wait and Pounce only.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
-            <string>Hide messages containing the following callsigns or keywords:</string>
+            <string>Use filters for Wait and Pounce only</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="Blacklist6"/>
+         </item>
+         <item row="19" column="0">
+          <spacer name="verticalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="17" column="0" colspan="4">
+          <widget class="QCheckBox" name="cb_filters_for_word2">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apply filters only to the callsigns of the calling stations. Usually the second word of the messages is analyzed, for directional calls the third word.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Apply filters only to the callsigns of the calling stations</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QLineEdit" name="Whitelist2"/>
+         </item>
+         <item row="8" column="3">
+          <widget class="QLineEdit" name="Whitelist4"/>
+         </item>
+         <item row="7" column="0" colspan="4">
+          <widget class="QCheckBox" name="cbWhitelist">
+           <property name="text">
+            <string>Show only messages containing the following callsigns or keywords:</string>
            </property>
           </widget>
          </item>
          <item row="3" column="3">
           <widget class="QLineEdit" name="Blacklist4"/>
          </item>
+         <item row="5" column="3">
+          <widget class="QLineEdit" name="Blacklist12"/>
+         </item>
          <item row="14" column="3">
           <widget class="QLineEdit" name="Pass8"/>
          </item>
-         <item row="13" column="1">
-          <widget class="QLineEdit" name="Pass2"/>
+         <item row="10" column="0">
+          <widget class="QLineEdit" name="Whitelist9"/>
          </item>
-         <item row="4" column="2">
-          <widget class="QLineEdit" name="Blacklist7"/>
+         <item row="8" column="2">
+          <widget class="QLineEdit" name="Whitelist3"/>
          </item>
-         <item row="10" column="3">
-          <widget class="QLineEdit" name="Whitelist12"/>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLineEdit" name="Blacklist5"/>
-         </item>
-         <item row="13" column="0">
-          <widget class="QLineEdit" name="Pass1"/>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLineEdit" name="Blacklist1"/>
+         <item row="12" column="0" colspan="4">
+          <widget class="QCheckBox" name="cbPass">
+           <property name="text">
+            <string>Always pass messages with the following keywords:</string>
+           </property>
+          </widget>
          </item>
          <item row="5" column="1">
           <widget class="QLineEdit" name="Blacklist10"/>
          </item>
-         <item row="14" column="1">
-          <widget class="QLineEdit" name="Pass6"/>
-         </item>
-         <item row="9" column="1">
-          <widget class="QLineEdit" name="Whitelist6"/>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="Blacklist2"/>
          </item>
          <item row="11" column="0" colspan="4">
           <widget class="QLabel" name="always_pass_label">
@@ -3647,25 +3661,23 @@ Right click for insert and delete options.</string>
            </property>
           </widget>
          </item>
-         <item row="16" column="0" colspan="4">
-          <widget class="QCheckBox" name="cb_filters_for_word2">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apply filters only to the first 3 characters of the second word of the messages (which usually contain the prefix of the calling station). For directional calls, the third word is analyzed instead of the second.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Apply filters only to the first 3 characters of the second word of the messages (usually the prefix of the calling station)</string>
-           </property>
-          </widget>
+         <item row="13" column="1">
+          <widget class="QLineEdit" name="Pass2"/>
          </item>
-         <item row="17" column="0" colspan="4">
-          <widget class="QCheckBox" name="cb_filters_for_Wait_and_Pounce_only">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use filters for Wait and Pounce only.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Use filters for Wait and Pounce only</string>
-           </property>
-          </widget>
+         <item row="9" column="3">
+          <widget class="QLineEdit" name="Whitelist8"/>
+         </item>
+         <item row="15" column="0">
+          <widget class="QLineEdit" name="Pass9"/>
+         </item>
+         <item row="15" column="1">
+          <widget class="QLineEdit" name="Pass10"/>
+         </item>
+         <item row="15" column="2">
+          <widget class="QLineEdit" name="Pass11"/>
+         </item>
+         <item row="15" column="3">
+          <widget class="QLineEdit" name="Pass12"/>
          </item>
         </layout>
        </item>
@@ -3883,13 +3895,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="TX_audio_source_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
  </buttongroups>
 </ui>

@@ -626,6 +626,10 @@ private:
   Q_SLOT void on_Pass6_textEdited (QString const&);
   Q_SLOT void on_Pass7_textEdited (QString const&);
   Q_SLOT void on_Pass8_textEdited (QString const&);
+  Q_SLOT void on_Pass9_textEdited (QString const&);
+  Q_SLOT void on_Pass10_textEdited (QString const&);
+  Q_SLOT void on_Pass11_textEdited (QString const&);
+  Q_SLOT void on_Pass12_textEdited (QString const&);
   Q_SLOT void on_highlight_orange_callsigns_textEdited (QString const&);
   Q_SLOT void on_highlight_blue_callsigns_textEdited (QString const&);
 
@@ -762,6 +766,10 @@ private:
   QString Pass6_;
   QString Pass7_;
   QString Pass8_;
+  QString Pass9_;
+  QString Pass10_;
+  QString Pass11_;
+  QString Pass12_;
   QString cloudLogApiUrl_;
   QString cloudLogApiKey_;
   QString highlight_orange_callsigns_;
@@ -1311,6 +1319,26 @@ QString Configuration::Pass7() const
 QString Configuration::Pass8() const
 {
   return m_->Pass8_;
+}
+
+QString Configuration::Pass9() const
+{
+  return m_->Pass9_;
+}
+
+QString Configuration::Pass10() const
+{
+  return m_->Pass10_;
+}
+
+QString Configuration::Pass11() const
+{
+  return m_->Pass11_;
+}
+
+QString Configuration::Pass12() const
+{
+  return m_->Pass12_;
 }
 
 QString Configuration::highlight_orange_callsigns() const
@@ -1999,6 +2027,10 @@ void Configuration::impl::read_settings ()
   Pass6_ = settings_->value ("Pass6",QString {}).toString ();
   Pass7_ = settings_->value ("Pass7",QString {}).toString ();
   Pass8_ = settings_->value ("Pass8",QString {}).toString ();
+  Pass9_ = settings_->value ("Pass9",QString {}).toString ();
+  Pass10_ = settings_->value ("Pass10",QString {}).toString ();
+  Pass11_ = settings_->value ("Pass11",QString {}).toString ();
+  Pass12_ = settings_->value ("Pass12",QString {}).toString ();
   highlight_orange_callsigns_ = settings_->value ("HighlightOrangeCallsigns",QString {}).toString ();
   highlight_blue_callsigns_ = settings_->value ("HighlightBlueCallsigns",QString {}).toString ();
   ui_->Blacklist1->setText(Blacklist1_);
@@ -2033,6 +2065,10 @@ void Configuration::impl::read_settings ()
   ui_->Pass6->setText(Pass6_);
   ui_->Pass7->setText(Pass7_);
   ui_->Pass8->setText(Pass8_);
+  ui_->Pass9->setText(Pass9_);
+  ui_->Pass10->setText(Pass10_);
+  ui_->Pass11->setText(Pass11_);
+  ui_->Pass12->setText(Pass12_);
   ui_->highlight_orange_callsigns->setText(highlight_orange_callsigns_);
   ui_->highlight_blue_callsigns->setText(highlight_blue_callsigns_);
 
@@ -2325,6 +2361,10 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("Pass6", Pass6_);
   settings_->setValue ("Pass7", Pass7_);
   settings_->setValue ("Pass8", Pass8_);
+  settings_->setValue ("Pass9", Pass9_);
+  settings_->setValue ("Pass10", Pass10_);
+  settings_->setValue ("Pass11", Pass11_);
+  settings_->setValue ("Pass12", Pass12_);
   settings_->setValue ("HighlightOrangeCallsigns", highlight_orange_callsigns_);
   settings_->setValue ("HighlightBlueCallsigns", highlight_blue_callsigns_);
   settings_->setValue ("Font", font_.toString ());
@@ -2869,6 +2909,10 @@ void Configuration::impl::accept ()
   Pass6_= ui_->Pass6->text ().toUpper ();
   Pass7_= ui_->Pass7->text ().toUpper ();
   Pass8_= ui_->Pass8->text ().toUpper ();
+  Pass9_= ui_->Pass9->text ().toUpper ();
+  Pass10_= ui_->Pass10->text ().toUpper ();
+  Pass11_= ui_->Pass11->text ().toUpper ();
+  Pass12_= ui_->Pass12->text ().toUpper ();
   highlight_orange_callsigns_= ui_-> highlight_orange_callsigns->text ().toUpper ();
   highlight_blue_callsigns_= ui_-> highlight_blue_callsigns->text ().toUpper ();
   spot_to_psk_reporter_ = ui_->psk_reporter_check_box->isChecked ();
@@ -3869,6 +3913,26 @@ void Configuration::impl::on_Pass7_textEdited (QString const& exchange)
 void Configuration::impl::on_Pass8_textEdited (QString const& exchange)
 {
   ui_->Pass8->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Pass9_textEdited (QString const& exchange)
+{
+  ui_->Pass9->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Pass10_textEdited (QString const& exchange)
+{
+  ui_->Pass10->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Pass11_textEdited (QString const& exchange)
+{
+  ui_->Pass11->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Pass12_textEdited (QString const& exchange)
+{
+  ui_->Pass12->setText (exchange.toUpper ());
 }
 
 void Configuration::impl::on_highlight_orange_callsigns_textEdited (QString const& exchange)
