@@ -219,6 +219,7 @@ bool wait_and_call = false;
 bool no_wait_and_call = false;
 bool no_a7_decodes = false;
 bool keep_frequency = false;
+bool not_erase = false;
 bool first_Fox_alert = true;
 bool second_Fox_alert = true;
 bool no_Fox_alert = false;
@@ -2252,7 +2253,7 @@ void MainWindow::fastSink(qint64 frames)
                   stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
     }
 
-    // Pounce CQ: First for MSK144
+    // Wait & Pounce CQ: First for MSK144
     if(pounce && !filtered && decodedtext.string().contains(" CQ ") && ui->respondComboBox->currentText()=="CQ: First"
         && m_config.Wait_features_enabled()) {
                   m_bDoubleClicked=true;
@@ -2279,7 +2280,7 @@ void MainWindow::fastSink(qint64 frames)
 
     // CQ: Max Dist for MSK144
     if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist"
-        && m_specOp!=SpecOp::NA_VHF && m_specOp!=SpecOp::ARRL_DIGI) {
+        && m_ActiveStationsWidget==NULL) {
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -4860,7 +4861,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
          if(bWorkedOnBand) activeWorked(deCall,m_currentBand);
        }
 
-       // Pounce CQ: First
+       // Wait & Pounce CQ: First
        if(pounce && !filtered && decodedtext.string().contains(" CQ ") && ui->respondComboBox->currentText()=="CQ: First"
           && m_config.Wait_features_enabled()) {
          m_bDoubleClicked=true;
@@ -4871,7 +4872,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
        // CQ: Max Dist if not ARRL_DIGI
        if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist"
-           && (m_specOp!=SpecOp::NA_VHF or m_config.NCCC_Sprint()) && m_specOp!=SpecOp::ARRL_DIGI) {
+           && m_ActiveStationsWidget==NULL) {
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -6445,15 +6446,15 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
   }
   DecodedText message {cursor.block().text().trimmed().left(61).remove("TU; ")};
   int nmod = fmod(double(message.timeInSeconds()),2.0*m_TRperiod);
-  if(m_mode=="MSK144" && !ui->txFirstCheckBox->isEnabled() && (
+  if(ui->txFirstCheckBox->isVisible() && !ui->txFirstCheckBox->isEnabled() && (
         (nmod!=0 && !ui->txFirstCheckBox->isChecked()) or
         (nmod==0 && ui->txFirstCheckBox->isChecked()))) {
       auto const& msg = tr("This station transmits in the same time slot as you do.\n\n"
                            "You must not start a QSO if both stations Tx even/1st\n"
                            "or Tx odd/2nd, while the Tx even/1st checkbox is disabled.\n\n"
-                           "Click the MSK144 button to re-enable the Tx even/1st\n"
+                           "Click the MSK144 mode button to re-enable the Tx even/1st\n"
                            "checkbox, or choose another station.");
-      MessageBox::warning_message (this, msg);
+      if(m_mode=="MSK144") MessageBox::warning_message (this, msg);
       return;    // don't allow a QSO when both stations Tx 1st or Tx 2nd, and the Tx 1st checkbox is frozen
   } else {
       m_bDoubleClicked = true;
@@ -7615,8 +7616,11 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
   if (m_config.alternate_erase_button() && ui->EraseButton->hasFocus() && (event->button() & Qt::RightButton)) {
      ui->decodedTextBrowser2->erase ();
   }
-  if(m_mode=="MSK144" && ui->txFirstCheckBox->hasFocus() && (event->button() & Qt::RightButton)) {  // txFirstCheckBox
-      ui->txFirstCheckBox->setEnabled(false);
+  if(ui->txFirstCheckBox->isVisible() && ui->txFirstCheckBox->hasFocus() && (event->button() & Qt::RightButton)) {
+      ui->txFirstCheckBox->setEnabled(false);  // freeze txFirstCheckBox
+  }
+  if((ui->ft8Button->hasFocus() or ui->msk144Button->hasFocus()) && (event->button() & Qt::RightButton)) {
+      ui->txFirstCheckBox->setEnabled(true);  // unfreeze txFirstCheckBox
   }
   if(ui->q65Button->hasFocus() && (event->button() & Qt::RightButton)) {  // toggle Q65_Pileup mode On/Off
       m_specOp=m_config.special_op_id();
@@ -7652,6 +7656,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
   }
   // Switch contest mode on/off
   if(ui->houndButton->hasFocus() && (event->button() & Qt::RightButton)) {
+      not_erase = true;  // prevent erasing the decodedTextBrowser
+      QTimer::singleShot (350, [=] {not_erase = false;});
       m_specOp=m_config.special_op_id();
       if (!m_config.bSpecialOp()) {
         m_config.setSpecial_On();
@@ -9061,7 +9067,7 @@ void MainWindow::band_changed (Frequency f)
     setXIT (ui->TxFreqSpinBox->value ());
     m_specOp=m_config.special_op_id();
     if (m_specOp==SpecOp::FOX) FoxReset("BandChange");  // when changing bands, don't preserve the Fox queues
-    if (m_config.erase_BandActivity ()) ui->decodedTextBrowser->erase ();   // Mod for WD5DHK
+    if (m_config.erase_BandActivity () && !not_erase) ui->decodedTextBrowser->erase ();   // Mod for WD5DHK
   }
 }
 
