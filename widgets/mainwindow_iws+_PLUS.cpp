@@ -2311,6 +2311,7 @@ void MainWindow::fastSink(qint64 frames)
                     const_cast <char *> ((deGrid + "      ").left (6).toLatin1().constData()),&utch,
                     &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,6,6);
             Dpoints=nDkm;
+            if (!deGrid.contains(grid_regexp)) Dpoints=1;
             if(Dpoints>maxDPoints) {
                 maxDPoints=Dpoints;
                 m_deCall=deCall;
@@ -4916,9 +4917,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-         // if they dont' send their grid we'll use ours and assume dx=0
-         if (deGrid.length() == 0) deGrid = m_config.my_grid();
-
          if (!filtered && (deGrid.contains(grid_regexp) or m_bCallingCQ) && (
              (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
              (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
@@ -4929,6 +4927,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                     const_cast <char *> ((deGrid + "      ").left (6).toLatin1().constData()),&utch,
                     &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,6,6);
             Dpoints=nDkm;
+            if (!deGrid.contains(grid_regexp)) Dpoints=1;
             if(Dpoints>maxDPoints) {
                    maxDPoints=Dpoints;
                    m_deCall=deCall;
