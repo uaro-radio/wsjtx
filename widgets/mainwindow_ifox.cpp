@@ -2063,10 +2063,6 @@ void MainWindow::fastSink(qint64 frames)
 
     QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait features
 
-    bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
-                               (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
-                               (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
-
     // Filtering for MSK144
     QString text2;
     QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
@@ -2253,34 +2249,18 @@ void MainWindow::fastSink(qint64 frames)
                   stopWCTimer.start(int(6000.0*m_TRperiod));     // Wait & Call Tx max 8*TRperiod
     }
 
-    // Wait & Pounce CQ: First for MSK144
-    if(pounce && !filtered && decodedtext.string().contains(" CQ ") && ui->respondComboBox->currentText()=="CQ: First"
-        && m_config.Wait_features_enabled()) {
+    // CQ: First for MSK144
+    if(((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled())
+        or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign())))
+        && !filtered && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First") {
                   m_bDoubleClicked=true;
                   auto_tx_mode(true);
                   processMessage(decodedtext);
                   stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
     }
 
-    // CQ: First for MSK144
-    if (m_bCallingCQ && !m_bAutoReply && decodedtext.string().contains(m_config.my_callsign()) && m_specOp!=SpecOp::FOX
-        && m_specOp!=SpecOp::HOUND  && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First") {
-        if (decodedtext.messageWords().length() >= 3 && !filtered) {
-            QString t=decodedtext.messageWords()[2];
-            if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
-        } else {
-            bProcessMsgNormally=true;
-        }
-        if(bProcessMsgNormally) {
-            m_bDoubleClicked=true;
-            m_bAutoReply = true;
-            processMessage (decodedtext);
-        }
-    }
-
     // CQ: Max Dist for MSK144
-    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist"
-        && m_ActiveStationsWidget==NULL) {
+    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist") {
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -4862,18 +4842,18 @@ void MainWindow::readFromStdout()                             //readFromStdout
          if(bWorkedOnBand) activeWorked(deCall,m_currentBand);
        }
 
-       // Wait & Pounce CQ: First
-       if(pounce && !filtered && decodedtext.string().contains(" CQ ") && ui->respondComboBox->currentText()=="CQ: First"
-          && m_config.Wait_features_enabled()) {
+       // CQ: First
+       if(((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled())
+             or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign())))
+           && !filtered && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First") {
          m_bDoubleClicked=true;
          auto_tx_mode(true);
          processMessage(decodedtext0);
          stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
        }
 
-       // CQ: Max Dist if not ARRL_DIGI
-       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist"
-           && m_ActiveStationsWidget==NULL) {
+       // CQ: Max Dist
+       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist") {
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5037,75 +5017,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   for_us = false;
             }
           }
-          if(m_bCallingCQ && !m_bAutoReply && for_us && m_specOp!=SpecOp::FOX && m_specOp!=SpecOp::HOUND) {
-            bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
-                (m_specOp==SpecOp::ARRL_DIGI && ui->respondComboBox->currentText()=="CQ: Max Dist"
-                 and m_ActiveStationsWidget==NULL) or
-                (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
-            // CQ: First
-            if (m_specOp==SpecOp::ARRL_DIGI or ui->respondComboBox->currentText()=="CQ: First") {
-                if (decodedtext.messageWords().length() >= 3) {
-                       QString t=decodedtext.messageWords()[2];
-                       if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
-                } else {
-                       bProcessMsgNormally=true;
-                }
-                if(bProcessMsgNormally) {
-                       m_bDoubleClicked=true;
-                       m_bAutoReply = true;
-                       processMessage (decodedtext);
-                }
-          }
 
-            if(m_specOp==SpecOp::ARRL_DIGI && !bProcessMsgNormally and m_ActiveStationsWidget and
-               ui->respondComboBox->currentText()=="CQ: Max Dist") {
-              QString deCall;
-              QString deGrid;
-              decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-              // if they dont' send their grid we'll use ours and assume dx=0
-              if (deGrid.length() == 0) deGrid = m_config.my_grid();
-
-              if(deGrid.contains(grid_regexp) or
-                 (deGrid.contains("+") or deGrid.contains("-"))) {
-                int points=0;
-                if(m_activeCall.contains(deCall)) {
-                  points=m_activeCall[deCall].points;
-                  deGrid=m_activeCall[deCall].grid4;
-                } else if(deGrid.contains(grid_regexp)) {
-                  double utch=0.0;
-                  int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
-                  azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1 ().constData ()),
-                          const_cast <char *> ((deGrid + "      ").left(6).toLatin1 ().constData ()),&utch,
-                          &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,(FCL)6,(FCL)6);
-                  points=nDkm/500;
-                  if(nDkm > 500*points) points += 1;
-                  points += 1;
-                }
-                if(points>m_maxPoints) {
-                  m_maxPoints=points;
-                  m_deCall=deCall;
-                  m_bDoubleClicked=true;
-                  ui->dxCallEntry->setText(deCall);
-                  int m_ntx=2;
-                  bool bContest=m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI;
-                  if(bContest) m_ntx=3;
-                  if(deGrid.contains(grid_regexp)) {
-                    m_deGrid=deGrid;
-                    ui->dxGridEntry->setText(deGrid);
-                  } else {
-                    m_ntx=3;
-                  }
-                  if(m_ntx==2) m_QSOProgress = REPORT;
-                  if(m_ntx==3) m_QSOProgress = ROGER_REPORT;
-                  genStdMsgs(QString::number(decodedtext.snr()));
-                  ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
-                  setTxMsg(m_ntx);
-                  m_currentMessageType=m_ntx;
-                }
-              }
-            }
-
-          }
           if(SpecOp::FOX==m_specOp and decodedtext.string().contains(" DE ")) for_us=true; //Hound with compound callsign
           if(SpecOp::FOX==m_specOp and for_us and decodedtext.string().contains(QRegularExpression{" R\\W\\d"})) bDisplayRight=true;
           if(SpecOp::FOX!=m_specOp and (for_us or (abs(audioFreq - m_wideGraph->rxFreq()) <= 10))) bDisplayRight=true;
