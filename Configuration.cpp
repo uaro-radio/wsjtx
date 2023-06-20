@@ -630,6 +630,10 @@ private:
   Q_SLOT void on_Pass10_textEdited (QString const&);
   Q_SLOT void on_Pass11_textEdited (QString const&);
   Q_SLOT void on_Pass12_textEdited (QString const&);
+  Q_SLOT void on_Territory1_textEdited (QString const&);
+  Q_SLOT void on_Territory2_textEdited (QString const&);
+  Q_SLOT void on_Territory3_textEdited (QString const&);
+  Q_SLOT void on_Territory4_textEdited (QString const&);
   Q_SLOT void on_highlight_orange_callsigns_textEdited (QString const&);
   Q_SLOT void on_highlight_blue_callsigns_textEdited (QString const&);
 
@@ -770,11 +774,14 @@ private:
   QString Pass10_;
   QString Pass11_;
   QString Pass12_;
-  QString cloudLogApiUrl_;
-  QString cloudLogApiKey_;
+  QString Territory1_;
+  QString Territory2_;
+  QString Territory3_;
+  QString Territory4_;
   QString highlight_orange_callsigns_;
   QString highlight_blue_callsigns_;
-
+  QString cloudLogApiUrl_;
+  QString cloudLogApiKey_;
 
   qint32 id_interval_;
   qint32 align_steps_;
@@ -1339,6 +1346,26 @@ QString Configuration::Pass11() const
 QString Configuration::Pass12() const
 {
   return m_->Pass12_;
+}
+
+QString Configuration::Territory1() const
+{
+  return m_->Territory1_;
+}
+
+QString Configuration::Territory2() const
+{
+  return m_->Territory2_;
+}
+
+QString Configuration::Territory3() const
+{
+  return m_->Territory3_;
+}
+
+QString Configuration::Territory4() const
+{
+  return m_->Territory4_;
 }
 
 QString Configuration::highlight_orange_callsigns() const
@@ -2031,6 +2058,10 @@ void Configuration::impl::read_settings ()
   Pass10_ = settings_->value ("Pass10",QString {}).toString ();
   Pass11_ = settings_->value ("Pass11",QString {}).toString ();
   Pass12_ = settings_->value ("Pass12",QString {}).toString ();
+  Territory1_ = settings_->value ("Territory1",QString {}).toString ();
+  Territory2_ = settings_->value ("Territory2",QString {}).toString ();
+  Territory3_ = settings_->value ("Territory3",QString {}).toString ();
+  Territory4_ = settings_->value ("Territory4",QString {}).toString ();
   highlight_orange_callsigns_ = settings_->value ("HighlightOrangeCallsigns",QString {}).toString ();
   highlight_blue_callsigns_ = settings_->value ("HighlightBlueCallsigns",QString {}).toString ();
   ui_->Blacklist1->setText(Blacklist1_);
@@ -2069,7 +2100,10 @@ void Configuration::impl::read_settings ()
   ui_->Pass10->setText(Pass10_);
   ui_->Pass11->setText(Pass11_);
   ui_->Pass12->setText(Pass12_);
-  ui_->highlight_orange_callsigns->setText(highlight_orange_callsigns_);
+  ui_->Territory1->setText(Territory1_);
+  ui_->Territory2->setText(Territory2_);
+  ui_->Territory3->setText(Territory3_);
+  ui_->Territory4->setText(Territory4_);  ui_->highlight_orange_callsigns->setText(highlight_orange_callsigns_);
   ui_->highlight_blue_callsigns->setText(highlight_blue_callsigns_);
 
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
@@ -2365,6 +2399,10 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("Pass10", Pass10_);
   settings_->setValue ("Pass11", Pass11_);
   settings_->setValue ("Pass12", Pass12_);
+  settings_->setValue ("Territory1", Territory1_);
+  settings_->setValue ("Territory2", Territory2_);
+  settings_->setValue ("Territory3", Territory3_);
+  settings_->setValue ("Territory4", Territory4_);
   settings_->setValue ("HighlightOrangeCallsigns", highlight_orange_callsigns_);
   settings_->setValue ("HighlightBlueCallsigns", highlight_blue_callsigns_);
   settings_->setValue ("Font", font_.toString ());
@@ -2913,6 +2951,10 @@ void Configuration::impl::accept ()
   Pass10_= ui_->Pass10->text ().toUpper ();
   Pass11_= ui_->Pass11->text ().toUpper ();
   Pass12_= ui_->Pass12->text ().toUpper ();
+  Territory1_= ui_->Territory1->text ();
+  Territory2_= ui_->Territory2->text ();
+  Territory3_= ui_->Territory3->text ();
+  Territory4_= ui_->Territory4->text ();
   highlight_orange_callsigns_= ui_-> highlight_orange_callsigns->text ().toUpper ();
   highlight_blue_callsigns_= ui_-> highlight_blue_callsigns->text ().toUpper ();
   spot_to_psk_reporter_ = ui_->psk_reporter_check_box->isChecked ();
@@ -3933,6 +3975,26 @@ void Configuration::impl::on_Pass11_textEdited (QString const& exchange)
 void Configuration::impl::on_Pass12_textEdited (QString const& exchange)
 {
   ui_->Pass12->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Territory1_textEdited (QString const& exchange)
+{
+  ui_->Territory1->setText (exchange);
+}
+
+void Configuration::impl::on_Territory2_textEdited (QString const& exchange)
+{
+  ui_->Territory2->setText (exchange);
+}
+
+void Configuration::impl::on_Territory3_textEdited (QString const& exchange)
+{
+  ui_->Territory3->setText (exchange);
+}
+
+void Configuration::impl::on_Territory4_textEdited (QString const& exchange)
+{
+  ui_->Territory4->setText (exchange);
 }
 
 void Configuration::impl::on_highlight_orange_callsigns_textEdited (QString const& exchange)

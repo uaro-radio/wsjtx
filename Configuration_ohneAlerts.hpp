@@ -137,6 +137,10 @@ public:
   QString Pass10() const;
   QString Pass11() const;
   QString Pass12() const;
+  QString Territory1() const;
+  QString Territory2() const;
+  QString Territory3() const;
+  QString Territory4() const;
   QString highlight_orange_callsigns() const;
   QString highlight_blue_callsigns() const;
 

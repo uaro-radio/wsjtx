@@ -1344,6 +1344,18 @@ void MainWindow::writeSettings()
   m_settings->setValue ("disableWritingOfAllTxt", ui->actionDisable_writing_of_ALL_TXT->isChecked() );
   m_settings->setValue ("DisableEventLogging", ui->actionDisable_event_logging->isChecked() );
   m_settings->setValue ("DarkStyle", ui->actionUse_Dark_Style->isChecked() );
+  m_settings->setValue ("HideB4", ui->actionHideB4->isChecked() );
+  m_settings->setValue ("HideTerritory1", ui->actionHideTerritory1->isChecked() );
+  m_settings->setValue ("HideTerritory2", ui->actionHideTerritory2->isChecked() );
+  m_settings->setValue ("HideTerritory3", ui->actionHideTerritory3->isChecked() );
+  m_settings->setValue ("HideTerritory4", ui->actionHideTerritory4->isChecked() );
+  m_settings->setValue ("HideEU", ui->actionHideEU->isChecked() );
+  m_settings->setValue ("HideNA", ui->actionHideNA->isChecked() );
+  m_settings->setValue ("HideSA", ui->actionHideSA->isChecked() );
+  m_settings->setValue ("HideAS", ui->actionHideAS->isChecked() );
+  m_settings->setValue ("HideAF", ui->actionHideAF->isChecked() );
+  m_settings->setValue ("HideOC", ui->actionHideOC->isChecked() );
+  m_settings->setValue ("HideAN", ui->actionHideAN->isChecked() );
   m_settings->endGroup();
 }
 
@@ -1427,6 +1439,18 @@ void MainWindow::readSettings()
   ui->actionDisable_writing_of_ALL_TXT->setChecked(m_settings->value("disableWritingOfAllTxt", false).toBool());
   ui->actionDisable_event_logging->setChecked(m_settings->value("DisableEventLogging", false).toBool());
   ui->actionUse_Dark_Style->setChecked(m_settings->value("DarkStyle", false).toBool());
+  ui->actionHideB4->setChecked(m_settings->value("HideB4", false).toBool());
+  ui->actionHideTerritory1->setChecked(m_settings->value("HideTerritory1", false).toBool());
+  ui->actionHideTerritory2->setChecked(m_settings->value("HideTerritory2", false).toBool());
+  ui->actionHideTerritory3->setChecked(m_settings->value("HideTerritory3", false).toBool());
+  ui->actionHideTerritory4->setChecked(m_settings->value("HideTerritory4", false).toBool());
+  ui->actionHideEU->setChecked(m_settings->value("HideEU", false).toBool());
+  ui->actionHideNA->setChecked(m_settings->value("HideNA", false).toBool());
+  ui->actionHideSA->setChecked(m_settings->value("HideSA", false).toBool());
+  ui->actionHideAS->setChecked(m_settings->value("HideAS", false).toBool());
+  ui->actionHideAF->setChecked(m_settings->value("HideAF", false).toBool());
+  ui->actionHideOC->setChecked(m_settings->value("HideOC", false).toBool());
+  ui->actionHideAN->setChecked(m_settings->value("HideAN", false).toBool());
   m_mode=m_settings->value("Mode","FT8").toString();
   ui->actionNone->setChecked(m_settings->value("SaveNone",true).toBool());
   ui->actionSave_decoded->setChecked(m_settings->value("SaveDecoded",false).toBool());
@@ -2143,6 +2167,78 @@ void MainWindow::fastSink(qint64 frames)
             mindBPoints=99;
           }
         }
+
+        // search logbook for filtering
+        if (ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked() or
+            ui->actionHideTerritory3->isChecked() or ui->actionHideTerritory4->isChecked() or
+            ui->actionHideB4->isChecked() or ui->actionHideEU->isChecked() or ui->actionHideAS->isChecked() or
+            ui->actionHideNA->isChecked() or ui->actionHideSA->isChecked() or ui->actionHideAF->isChecked() or
+            ui->actionHideOC->isChecked() or ui->actionHideAN->isChecked()) {
+          QString deCall;
+          QString deGrid;
+          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+          // search for country names
+          if (ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked() or
+              ui->actionHideTerritory3->isChecked() or ui->actionHideTerritory4->isChecked()) {
+            auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+            auto countryName = looked_up.entity_name;
+            // do some obvious abbreviations
+            countryName.replace ("Islands", "Is.");
+            countryName.replace ("Island", "Is.");
+            countryName.replace ("North ", "N. ");
+            countryName.replace ("Northern ", "N. ");
+            countryName.replace ("South ", "S. ");
+            countryName.replace ("East ", "E. ");
+            countryName.replace ("Eastern ", "E. ");
+            countryName.replace ("West ", "W. ");
+            countryName.replace ("Western ", "W. ");
+            countryName.replace ("Central ", "C. ");
+            countryName.replace (" and ", " & ");
+            countryName.replace ("Republic", "Rep.");
+            countryName.replace ("United States of America", "U.S.A.");
+            countryName.replace ("United States", "U.S.A.");
+            countryName.replace ("Fed. Rep. of ", "");
+            countryName.replace ("French ", "Fr.");
+            countryName.replace ("Asiatic", "AS");
+            countryName.replace ("European", "EU");
+            countryName.replace ("African", "AF");
+            if (ui->actionHideTerritory1->isChecked() && countryName.contains(m_config.Territory1())
+                && (m_config.Territory1()!="")) filtered = true;;
+            if (ui->actionHideTerritory2->isChecked() && countryName.contains(m_config.Territory2())
+                && (m_config.Territory2()!="")) filtered = true;;
+            if (ui->actionHideTerritory3->isChecked() && countryName.contains(m_config.Territory3())
+                && (m_config.Territory3()!="")) filtered = true;;
+            if (ui->actionHideTerritory4->isChecked() && countryName.contains(m_config.Territory3())
+                && (m_config.Territory4()!="")) filtered = true;;
+          }
+          // search for callsigns worked B4 on band
+          if (ui->actionHideB4->isChecked()) {
+            bool callB4onBand;
+            bool countryB4onBand;
+            bool gridB4onBand;
+            bool continentB4onBand;
+            bool CQZoneB4onBand;
+            bool ITUZoneB4onBand;
+            auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+            m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+              continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+            if (callB4onBand && ui->actionHideB4->isChecked()) filtered = true;
+          }
+          // search for continents
+          if (ui->actionHideEU->isChecked() or ui->actionHideAS->isChecked() or ui->actionHideNA->isChecked()
+              or ui->actionHideSA->isChecked() or ui->actionHideAF->isChecked() or ui->actionHideOC->isChecked()
+              or ui->actionHideAN->isChecked()) {
+            auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+            QString continent = AD1CCty::continent (looked_up.continent);
+            if (ui->actionHideEU->isChecked() && continent == "EU") filtered = true;;
+            if (ui->actionHideAS->isChecked() && continent == "AS") filtered = true;;
+            if (ui->actionHideNA->isChecked() && continent == "NA") filtered = true;;
+            if (ui->actionHideSA->isChecked() && continent == "SA") filtered = true;;
+            if (ui->actionHideAF->isChecked() && continent == "AF") filtered = true;;
+            if (ui->actionHideOC->isChecked() && continent == "OC") filtered = true;;
+            if (ui->actionHideAN->isChecked() && continent == "AN") filtered = true;;
+          }
+        }
       }
     } else {
       if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass () // Always pass messages with keywords from Always Pass list
@@ -2218,6 +2314,78 @@ void MainWindow::fastSink(qint64 frames)
             dBpoints2=99;
             maxdBPoints=-28;
             mindBPoints=99;
+          }
+        }
+
+        // search logbook for filtering
+        if (ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked() or
+            ui->actionHideTerritory3->isChecked() or ui->actionHideTerritory4->isChecked() or
+            ui->actionHideB4->isChecked() or ui->actionHideEU->isChecked() or ui->actionHideAS->isChecked() or
+            ui->actionHideNA->isChecked() or ui->actionHideSA->isChecked() or ui->actionHideAF->isChecked() or
+            ui->actionHideOC->isChecked() or ui->actionHideAN->isChecked()) {
+          QString deCall;
+          QString deGrid;
+          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+          // search for country names
+          if (ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked() or
+              ui->actionHideTerritory3->isChecked() or ui->actionHideTerritory4->isChecked()) {
+            auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+            auto countryName = looked_up.entity_name;
+            // do some obvious abbreviations
+            countryName.replace ("Islands", "Is.");
+            countryName.replace ("Island", "Is.");
+            countryName.replace ("North ", "N. ");
+            countryName.replace ("Northern ", "N. ");
+            countryName.replace ("South ", "S. ");
+            countryName.replace ("East ", "E. ");
+            countryName.replace ("Eastern ", "E. ");
+            countryName.replace ("West ", "W. ");
+            countryName.replace ("Western ", "W. ");
+            countryName.replace ("Central ", "C. ");
+            countryName.replace (" and ", " & ");
+            countryName.replace ("Republic", "Rep.");
+            countryName.replace ("United States of America", "U.S.A.");
+            countryName.replace ("United States", "U.S.A.");
+            countryName.replace ("Fed. Rep. of ", "");
+            countryName.replace ("French ", "Fr.");
+            countryName.replace ("Asiatic", "AS");
+            countryName.replace ("European", "EU");
+            countryName.replace ("African", "AF");
+            if (ui->actionHideTerritory1->isChecked() && countryName.contains(m_config.Territory1())
+                && (m_config.Territory1()!="")) filtered = true;;
+            if (ui->actionHideTerritory2->isChecked() && countryName.contains(m_config.Territory2())
+                && (m_config.Territory2()!="")) filtered = true;;
+            if (ui->actionHideTerritory3->isChecked() && countryName.contains(m_config.Territory3())
+                && (m_config.Territory3()!="")) filtered = true;;
+            if (ui->actionHideTerritory4->isChecked() && countryName.contains(m_config.Territory3())
+                && (m_config.Territory4()!="")) filtered = true;;
+          }
+          // search for callsigns worked B4 on band
+          if (ui->actionHideB4->isChecked()) {
+            bool callB4onBand;
+            bool countryB4onBand;
+            bool gridB4onBand;
+            bool continentB4onBand;
+            bool CQZoneB4onBand;
+            bool ITUZoneB4onBand;
+            auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+            m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+              continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+            if (callB4onBand && ui->actionHideB4->isChecked()) filtered = true;
+          }
+          // search for continents
+          if (ui->actionHideEU->isChecked() or ui->actionHideAS->isChecked() or ui->actionHideNA->isChecked()
+              or ui->actionHideSA->isChecked() or ui->actionHideAF->isChecked() or ui->actionHideOC->isChecked()
+              or ui->actionHideAN->isChecked()) {
+            auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+            QString continent = AD1CCty::continent (looked_up.continent);
+            if (ui->actionHideEU->isChecked() && continent == "EU") filtered = true;;
+            if (ui->actionHideAS->isChecked() && continent == "AS") filtered = true;;
+            if (ui->actionHideNA->isChecked() && continent == "NA") filtered = true;;
+            if (ui->actionHideSA->isChecked() && continent == "SA") filtered = true;;
+            if (ui->actionHideAF->isChecked() && continent == "AF") filtered = true;;
+            if (ui->actionHideOC->isChecked() && continent == "OC") filtered = true;;
+            if (ui->actionHideAN->isChecked() && continent == "AN") filtered = true;;
           }
         }
       }
@@ -4716,6 +4884,78 @@ void MainWindow::readFromStdout()                             //readFromStdout
                       mindBPoints=99;
                     }
                   }
+
+                  // search logbook for filtering
+                  if (ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked() or
+                      ui->actionHideTerritory3->isChecked() or ui->actionHideTerritory4->isChecked() or
+                      ui->actionHideB4->isChecked() or ui->actionHideEU->isChecked() or ui->actionHideAS->isChecked() or
+                      ui->actionHideNA->isChecked() or ui->actionHideSA->isChecked() or ui->actionHideAF->isChecked() or
+                      ui->actionHideOC->isChecked() or ui->actionHideAN->isChecked()) {
+                    QString deCall;
+                    QString deGrid;
+                    decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+                    // search for country names
+                    if (ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked() or
+                        ui->actionHideTerritory3->isChecked() or ui->actionHideTerritory4->isChecked()) {
+                      auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+                      auto countryName = looked_up.entity_name;
+                      // do some obvious abbreviations
+                      countryName.replace ("Islands", "Is.");
+                      countryName.replace ("Island", "Is.");
+                      countryName.replace ("North ", "N. ");
+                      countryName.replace ("Northern ", "N. ");
+                      countryName.replace ("South ", "S. ");
+                      countryName.replace ("East ", "E. ");
+                      countryName.replace ("Eastern ", "E. ");
+                      countryName.replace ("West ", "W. ");
+                      countryName.replace ("Western ", "W. ");
+                      countryName.replace ("Central ", "C. ");
+                      countryName.replace (" and ", " & ");
+                      countryName.replace ("Republic", "Rep.");
+                      countryName.replace ("United States of America", "U.S.A.");
+                      countryName.replace ("United States", "U.S.A.");
+                      countryName.replace ("Fed. Rep. of ", "");
+                      countryName.replace ("French ", "Fr.");
+                      countryName.replace ("Asiatic", "AS");
+                      countryName.replace ("European", "EU");
+                      countryName.replace ("African", "AF");
+                      if (ui->actionHideTerritory1->isChecked() && countryName.contains(m_config.Territory1())
+                          && (m_config.Territory1()!="")) filtered = true;;
+                      if (ui->actionHideTerritory2->isChecked() && countryName.contains(m_config.Territory2())
+                          && (m_config.Territory2()!="")) filtered = true;;
+                      if (ui->actionHideTerritory3->isChecked() && countryName.contains(m_config.Territory3())
+                          && (m_config.Territory3()!="")) filtered = true;;
+                      if (ui->actionHideTerritory4->isChecked() && countryName.contains(m_config.Territory3())
+                          && (m_config.Territory4()!="")) filtered = true;;
+                    }
+                    // search for callsigns worked B4 on band
+                    if (ui->actionHideB4->isChecked()) {
+                      bool callB4onBand;
+                      bool countryB4onBand;
+                      bool gridB4onBand;
+                      bool continentB4onBand;
+                      bool CQZoneB4onBand;
+                      bool ITUZoneB4onBand;
+                      auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+                      m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+                        continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+                      if (callB4onBand && ui->actionHideB4->isChecked()) filtered = true;
+                    }
+                    // search for continents
+                    if (ui->actionHideEU->isChecked() or ui->actionHideAS->isChecked() or ui->actionHideNA->isChecked()
+                        or ui->actionHideSA->isChecked() or ui->actionHideAF->isChecked() or ui->actionHideOC->isChecked()
+                        or ui->actionHideAN->isChecked()) {
+                      auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+                      QString continent = AD1CCty::continent (looked_up.continent);
+                      if (ui->actionHideEU->isChecked() && continent == "EU") filtered = true;;
+                      if (ui->actionHideAS->isChecked() && continent == "AS") filtered = true;;
+                      if (ui->actionHideNA->isChecked() && continent == "NA") filtered = true;;
+                      if (ui->actionHideSA->isChecked() && continent == "SA") filtered = true;;
+                      if (ui->actionHideAF->isChecked() && continent == "AF") filtered = true;;
+                      if (ui->actionHideOC->isChecked() && continent == "OC") filtered = true;;
+                      if (ui->actionHideAN->isChecked() && continent == "AN") filtered = true;;
+                    }
+                  }
               }
         } else {
               if (!(SpecOp::NONE==m_specOp && m_config.AlwaysPass () // Always pass messages with keywords from Always Pass list
@@ -4791,6 +5031,78 @@ void MainWindow::readFromStdout()                             //readFromStdout
                       dBpoints2=99;
                       maxdBPoints=-28;
                       mindBPoints=99;
+                    }
+                  }
+
+                  // search logbook for filtering
+                  if (ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked() or
+                      ui->actionHideTerritory3->isChecked() or ui->actionHideTerritory4->isChecked() or
+                      ui->actionHideB4->isChecked() or ui->actionHideEU->isChecked() or ui->actionHideAS->isChecked() or
+                      ui->actionHideNA->isChecked() or ui->actionHideSA->isChecked() or ui->actionHideAF->isChecked() or
+                      ui->actionHideOC->isChecked() or ui->actionHideAN->isChecked()) {
+                    QString deCall;
+                    QString deGrid;
+                    decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+                    // search for country names
+                    if (ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked() or
+                        ui->actionHideTerritory3->isChecked() or ui->actionHideTerritory4->isChecked()) {
+                      auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+                      auto countryName = looked_up.entity_name;
+                      // do some obvious abbreviations
+                      countryName.replace ("Islands", "Is.");
+                      countryName.replace ("Island", "Is.");
+                      countryName.replace ("North ", "N. ");
+                      countryName.replace ("Northern ", "N. ");
+                      countryName.replace ("South ", "S. ");
+                      countryName.replace ("East ", "E. ");
+                      countryName.replace ("Eastern ", "E. ");
+                      countryName.replace ("West ", "W. ");
+                      countryName.replace ("Western ", "W. ");
+                      countryName.replace ("Central ", "C. ");
+                      countryName.replace (" and ", " & ");
+                      countryName.replace ("Republic", "Rep.");
+                      countryName.replace ("United States of America", "U.S.A.");
+                      countryName.replace ("United States", "U.S.A.");
+                      countryName.replace ("Fed. Rep. of ", "");
+                      countryName.replace ("French ", "Fr.");
+                      countryName.replace ("Asiatic", "AS");
+                      countryName.replace ("European", "EU");
+                      countryName.replace ("African", "AF");
+                      if (ui->actionHideTerritory1->isChecked() && countryName.contains(m_config.Territory1())
+                          && (m_config.Territory1()!="")) filtered = true;;
+                      if (ui->actionHideTerritory2->isChecked() && countryName.contains(m_config.Territory2())
+                          && (m_config.Territory2()!="")) filtered = true;;
+                      if (ui->actionHideTerritory3->isChecked() && countryName.contains(m_config.Territory3())
+                          && (m_config.Territory3()!="")) filtered = true;;
+                      if (ui->actionHideTerritory4->isChecked() && countryName.contains(m_config.Territory3())
+                          && (m_config.Territory4()!="")) filtered = true;;
+                    }
+                    // search for callsigns worked B4 on band
+                    if (ui->actionHideB4->isChecked()) {
+                      bool callB4onBand;
+                      bool countryB4onBand;
+                      bool gridB4onBand;
+                      bool continentB4onBand;
+                      bool CQZoneB4onBand;
+                      bool ITUZoneB4onBand;
+                      auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+                      m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+                        continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+                      if (callB4onBand && ui->actionHideB4->isChecked()) filtered = true;
+                    }
+                    // search for continents
+                    if (ui->actionHideEU->isChecked() or ui->actionHideAS->isChecked() or ui->actionHideNA->isChecked()
+                        or ui->actionHideSA->isChecked() or ui->actionHideAF->isChecked() or ui->actionHideOC->isChecked()
+                        or ui->actionHideAN->isChecked()) {
+                      auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+                      QString continent = AD1CCty::continent (looked_up.continent);
+                      if (ui->actionHideEU->isChecked() && continent == "EU") filtered = true;;
+                      if (ui->actionHideAS->isChecked() && continent == "AS") filtered = true;;
+                      if (ui->actionHideNA->isChecked() && continent == "NA") filtered = true;;
+                      if (ui->actionHideSA->isChecked() && continent == "SA") filtered = true;;
+                      if (ui->actionHideAF->isChecked() && continent == "AF") filtered = true;;
+                      if (ui->actionHideOC->isChecked() && continent == "OC") filtered = true;;
+                      if (ui->actionHideAN->isChecked() && continent == "AN") filtered = true;;
                     }
                   }
               }
@@ -5982,7 +6294,12 @@ void MainWindow::guiUpdate()
         auto t = tr ("Receiving");
         // switching tx_status_label text and color when filters are enabled
         if ((SpecOp::NONE==m_specOp && !m_config.filters_for_Wait_and_Pounce_only() &&
-             (m_config.Blacklisted () or m_config.Whitelisted ())) or (ui->cbCQonly->isChecked() && ui->cbCQonly->isVisible())) {
+             (m_config.Blacklisted () or m_config.Whitelisted ())) or (ui->cbCQonly->isChecked() && ui->cbCQonly->isVisible())
+              or ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked()
+              or ui->actionHideTerritory3->isChecked() or ui->actionHideTerritory4->isChecked()
+              or ui->actionHideB4->isChecked() or ui->actionHideEU->isChecked() or ui->actionHideAS->isChecked()
+              or ui->actionHideNA->isChecked() or ui->actionHideSA->isChecked() or ui->actionHideAF->isChecked()
+              or ui->actionHideOC->isChecked() or ui->actionHideAN->isChecked()) {
           tx_status_label.setMinimumSize (QSize  {120, 18});
           tx_status_label.setStyleSheet ("QLabel{color: #000000; background-color: #00ffff}");
           t = "Receiving, Filters On";
@@ -12421,6 +12738,10 @@ void MainWindow::check_button_color()
         ui->autoButton->setStyleSheet("QPushButton {background-color: #ff7a05; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
     }
+    if (m_config.Territory1()!="") ui->actionHideTerritory1->setText("Hide callsigns from " + m_config.Territory1());
+    if (m_config.Territory2()!="") ui->actionHideTerritory2->setText("Hide callsigns from " + m_config.Territory2());
+    if (m_config.Territory3()!="") ui->actionHideTerritory3->setText("Hide callsigns from " + m_config.Territory3());
+    if (m_config.Territory4()!="") ui->actionHideTerritory4->setText("Hide callsigns from " + m_config.Territory4());
 }
 
 void MainWindow::read_txlog()

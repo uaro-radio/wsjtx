@@ -3279,9 +3279,9 @@ QLabel[oob=&quot;true&quot;] {
                <height>16777215</height>
               </size>
              </property>
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
+             <property name="focusPolicy">
+              <enum>Qt::StrongFocus</enum>
+             </property>
              <property name="toolTip">
               <string>Switch to FT8 mode</string>
              </property>
@@ -3326,9 +3326,9 @@ QLabel[oob=&quot;true&quot;] {
                <height>16777215</height>
               </size>
              </property>
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
+             <property name="focusPolicy">
+              <enum>Qt::StrongFocus</enum>
+             </property>
              <property name="toolTip">
               <string>Switch to MSK144 mode</string>
              </property>
@@ -3564,6 +3564,21 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionActiveStations"/>
     <addaction name="actionSWL_Mode"/>
     <addaction name="actionUse_Dark_Style"/>
+    <addaction name="separator"/>
+    <addaction name="actionHideB4"/>
+    <addaction name="separator"/>
+    <addaction name="actionHideTerritory1"/>
+    <addaction name="actionHideTerritory2"/>
+    <addaction name="actionHideTerritory3"/>
+    <addaction name="actionHideTerritory4"/>
+    <addaction name="separator"/>
+    <addaction name="actionHideEU"/>
+    <addaction name="actionHideNA"/>
+    <addaction name="actionHideSA"/>
+    <addaction name="actionHideAS"/>
+    <addaction name="actionHideAF"/>
+    <addaction name="actionHideOC"/>
+    <addaction name="actionHideAN"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -4256,6 +4271,102 @@ QPushButton[state=&quot;ok&quot;] {
   <action name="actionErase_list_of_Q65_callers">
    <property name="text">
     <string>Erase list of Q65 callers</string>
+   </property>
+  </action>
+  <action name="actionHideB4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide B4 callsigns</string>
+   </property>
+  </action>
+  <action name="actionHideTerritory1">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide callsigns from Territory 1</string>
+   </property>
+  </action>
+  <action name="actionHideTerritory2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide callsigns from Territory 2</string>
+   </property>
+  </action>
+  <action name="actionHideTerritory3">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide callsigns from Territory 3</string>
+   </property>
+  </action>
+  <action name="actionHideTerritory4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide callsigns from Territory 4</string>
+   </property>
+  </action>
+  <action name="actionHideEU">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide stations from Europe</string>
+   </property>
+  </action>
+  <action name="actionHideNA">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide stations from North America</string>
+   </property>
+  </action>
+  <action name="actionHideSA">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide stations from South America</string>
+   </property>
+  </action>
+  <action name="actionHideAS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide stations from Asia</string>
+   </property>
+  </action>
+  <action name="actionHideAF">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide stations from Africa</string>
+   </property>
+  </action>
+  <action name="actionHideOC">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide stations from Oceania</string>
+   </property>
+  </action>
+  <action name="actionHideAN">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide stations from Antarctica</string>
    </property>
   </action>
  </widget>
