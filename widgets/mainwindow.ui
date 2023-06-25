@@ -1170,6 +1170,9 @@ Not available to nonstandard callsign holders.</string>
                      </item>
                      <item>
                       <widget class="QSpinBox" name="sbMaxDrift">
+                       <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                       </property>
                        <property name="prefix">
                         <string>Max Drift  </string>
                        </property>
@@ -1387,7 +1390,7 @@ When not checked you can view the calibration results.</string>
                       </widget>
                      </item>
                      <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,3,0">
+                      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,6,0">
                        <property name="spacing">
                         <number>0</number>
                        </property>
@@ -1407,7 +1410,7 @@ When not checked you can view the calibration results.</string>
                          </property>
                          <property name="maximumSize">
                           <size>
-                           <width>50</width>
+                           <width>35</width>
                            <height>20</height>
                           </size>
                          </property>
@@ -1466,7 +1469,7 @@ When not checked you can view the calibration results.</string>
                          </property>
                          <property name="maximumSize">
                           <size>
-                           <width>50</width>
+                           <width>35</width>
                            <height>20</height>
                           </size>
                          </property>
