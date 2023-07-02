@@ -4640,7 +4640,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
            || message0.contains("3.") || message0.contains("2.")
            || message0.contains("1."))                                                 // -0.9 < dt <  0.9
            && (message0.contains("-1") || message0.contains("-2")))            // for such SNRmin = -09
-           or (message0.contains("/R") && message0.contains("-2"))             // very weak rover calls
+           or ((message0.contains("/R") or message0.contains(" R ")) && message0.contains("-2"))  // for /R or contest calls SNRmin = -19
            or (((message0.contains("<...>") || message0.contains(";")                  // unresolved hash and F/H messages
                || message0.contains("? a")                                             // ap decodes of low confidence
                || message0.contains("/R") || message0.contains(" R ")                  // rover and contest calls
