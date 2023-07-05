@@ -1,6 +1,6 @@
 module ft8_a7
 
-  parameter(MAXDEC=100)
+  parameter(MAXDEC=200)
 
 ! For the following three arrays
 !    First index   i=decode number in this sequence
