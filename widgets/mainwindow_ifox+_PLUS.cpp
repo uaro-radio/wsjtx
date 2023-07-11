@@ -235,6 +235,7 @@ int maxdBPoints=-28;
 int mindBPoints=99;
 bool pounce = false;
 bool filtered = false;
+bool selected = false;
 QString txlog;
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
@@ -2439,10 +2440,12 @@ void MainWindow::fastSink(qint64 frames)
     // CQ: First for MSK144
     if(((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled())
         or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign())))
-        && !filtered && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First") {
+        && !filtered && !selected && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First") {
                   m_bDoubleClicked=true;
+                  selected = true;
                   auto_tx_mode(true);
                   processMessage(decodedtext);
+                  QTimer::singleShot (6000, [=] {selected = false;});
                   stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
     }
 
@@ -5202,10 +5205,12 @@ void MainWindow::readFromStdout()                             //readFromStdout
        // CQ: First
        if(((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled())
              or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign())))
-           && !filtered && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First") {
+           && !filtered && !selected && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First") {
          m_bDoubleClicked=true;
+         selected = true;
          auto_tx_mode(true);
          processMessage(decodedtext0);
+         QTimer::singleShot (6000, [=] {selected = false;});
          stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
        }
 
