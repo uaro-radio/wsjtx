@@ -236,6 +236,7 @@ int mindBPoints=99;
 bool pounce = false;
 bool filtered = false;
 bool selected = false;
+bool keepTx5 = false;
 QString txlog;
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
