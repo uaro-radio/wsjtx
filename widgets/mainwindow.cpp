@@ -3452,7 +3452,7 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
       maxdBPoints=-28;                    // reset points
       mindBPoints=99;                     // reset points
       clearDX();                          // clear dxCallEntry
-      ui->tx5->setCurrentText("");        // clear tx5
+      if (!keepTx5) ui->tx5->setCurrentText("");        // clear tx5
       ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
   }
   pounce = false;
@@ -7424,7 +7424,7 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
     ui->tx2->clear ();
     ui->tx3->clear ();
     ui->tx4->clear ();
-    if(unconditional) ui->tx5->lineEdit ()->clear ();   //Test if it needs sending again
+    if(unconditional && !keepTx5) ui->tx5->lineEdit ()->clear ();   //Test if it needs sending again
     m_gen_message_is_cq = false;
     return;
   }
@@ -7563,12 +7563,12 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
     }
     if (m_mode=="JT4" || m_mode=="Q65") {
       if (m_bShMsgs) t="@1750  (73)";
-      msgtype(t, ui->tx5->lineEdit());
+      if (!keepTx5) msgtype(t, ui->tx5->lineEdit());
     } else if ("MSK144" == m_mode && m_bShMsgs) {
-      msgtype(t, ui->tx5->lineEdit());
+      if (!keepTx5) msgtype(t, ui->tx5->lineEdit());
     } else if(unconditional || hisBase != m_lastCallsign || !m_lastCallsign.size ()) {
       // only update tx5 when forced or  callsign changes
-      msgtype(t, ui->tx5->lineEdit());
+      if (!keepTx5) msgtype(t, ui->tx5->lineEdit());
       m_lastCallsign = hisBase;
     }
   }
@@ -7592,7 +7592,7 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
               msgtype(t + "R" + rpt, ui->tx3);
             }
             if ((m_mode != "JT4" && m_mode != "Q65") || !m_bShMsgs) {
-              msgtype(t + "73", ui->tx5->lineEdit ());
+              if (!keepTx5) msgtype(t + "73", ui->tx5->lineEdit ());
             }
           }
           break;
@@ -7606,7 +7606,7 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
             msgtype(t + "R" + rpt, ui->tx3);
           }
           if (!eme_short_codes && ((m_mode != "JT4" && m_mode != "Q65") || !m_bShMsgs)) {
-            msgtype(t + "73", ui->tx5->lineEdit ());
+            if (!keepTx5) msgtype(t + "73", ui->tx5->lineEdit ());
           }
           break;
 
@@ -7622,7 +7622,7 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
           }
           // don't use short codes here as in a sked with a type 2
           // prefix we would never send out prefix/suffix
-          msgtype(t + "73", ui->tx5->lineEdit ());
+          if (!keepTx5) msgtype(t + "73", ui->tx5->lineEdit ());
           break;
         }
     }
@@ -7631,7 +7631,7 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
         && !eme_short_codes) {
       // cfm we have his full call copied as we could not do this earlier
       t = hisCall + " 73";
-      msgtype(t, ui->tx5->lineEdit ());
+      if (!keepTx5) msgtype(t, ui->tx5->lineEdit ());
     }
   } else {
     if (hisCall != hisBase and SpecOp::HOUND != m_specOp) {
@@ -7643,7 +7643,7 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
       else if (!eme_short_codes
                && ("MSK144" != m_mode || !m_bShMsgs)) {
         t=hisCall + " 73";
-        msgtype(t, ui->tx5->lineEdit ());
+        if (!keepTx5) msgtype(t, ui->tx5->lineEdit ());
       }
     }
   }
@@ -7936,7 +7936,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
 {
   if(ui->DX_Call_Button->hasFocus() && (event->button() & Qt::RightButton)) {  // DX_Call_Button
       clearDX();                     // clear dxCallEntry
-      ui->tx5->setCurrentText("");   // clear tx5
+      if (!keepTx5) ui->tx5->setCurrentText("");   // clear tx5
       if (ui->respondComboBox->isVisible()) {
       Dpoints=0;                          // reset points
       maxDPoints=0;                       // reset points
@@ -8034,6 +8034,17 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       configActiveStations();
       check_button_color();
   }
+  // freeze the Tx5 text
+  if(ui->txb5->hasFocus() && (event->button() & Qt::RightButton)) {
+      if (!keepTx5) {
+        keepTx5 = true;
+        ui->tx5->setStyleSheet("color: #000000; background-color: #ffff00");
+      } else {
+        keepTx5 = false;
+        ui->tx5->setStyleSheet("");
+      }
+  }
+
 }
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
