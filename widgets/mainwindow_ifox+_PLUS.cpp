@@ -1132,7 +1132,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 void MainWindow::not_GA_warning_message ()
 {
   MessageBox::critical_message (this,
-                                "This is a pre-release version of WSJT-X 2.7.0-rc1 made\n"
+                                "This is a pre-release version of WSJT-X " + version (false) + " made\n"
                                 "available for testing purposes.  By design it will\n"
                                 "be nonfunctional after Jan 15, 2024.");
   auto now = QDateTime::currentDateTimeUtc ();
