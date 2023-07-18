@@ -4702,25 +4702,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
         if(navg>=2) bAvgMsg=true;
       }
       write_all("Rx",line_read.trimmed());
-      int ntime=6;
-      if(m_TRperiod>=60) ntime=4;
-      if (line_read.left(ntime) != m_tBlankLine) {
-          ui->decodedTextBrowser->new_period ();
-          if (m_config.insert_blank ()
-              && SpecOp::FOX != m_specOp) {
-            QString band;
-            if(((QDateTime::currentMSecsSinceEpoch() / 1000 - m_secBandChanged) > 4*int(m_TRperiod)/4)
-                or m_displayBand) {
-              band = ' ' + m_config.bands ()->find (m_freqNominal);
-            }
-            if (ui->actionUse_Dark_Style->isChecked()) {
-                ui->decodedTextBrowser->insertText(band.rightJustified(40, '-'), "#a2a2a2", "#000000");
-            } else {
-                ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
-            }
-          }
-        m_tBlankLine = line_read.left(ntime);
-      }
     }   // Filtering out some false decodes, and don't write all.txt for such
 
       if ("FST4W" == m_mode)
@@ -5105,6 +5086,27 @@ void MainWindow::readFromStdout()                             //readFromStdout
                     }
                   }
               }
+        }
+
+        // insert blank line, but only if not filtered and no decodes
+        int ntime=6;
+        if(m_TRperiod>=60) ntime=4;
+        if (line_read.left(ntime) != m_tBlankLine) {
+              ui->decodedTextBrowser->new_period ();
+              if (m_config.insert_blank () && SpecOp::FOX != m_specOp
+                  && (!filtered or m_config.filters_for_Wait_and_Pounce_only())) {
+                  QString band;
+                  if(((QDateTime::currentMSecsSinceEpoch() / 1000 - m_secBandChanged) > 4*int(m_TRperiod)/4)
+                      or m_displayBand) {
+                    band = ' ' + m_config.bands ()->find (m_freqNominal);
+                  }
+                  if (ui->actionUse_Dark_Style->isChecked()) {
+                    ui->decodedTextBrowser->insertText(band.rightJustified(40, '-'), "#a2a2a2", "#000000");
+                  } else {
+                    ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
+                  }
+              }
+              m_tBlankLine = line_read.left(ntime);
         }
 
        if (!filtered or m_config.filters_for_Wait_and_Pounce_only()) {  // show decodes if not filtered
