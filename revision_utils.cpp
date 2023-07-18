@@ -4,6 +4,7 @@
 
 #include <QCoreApplication>
 #include <QRegularExpression>
+#include <QTime>
 
 #include "scs_version.h"
 
@@ -26,7 +27,8 @@ namespace
 
 QString revision (QString const& scs_rev_string)
 {
-  return "230714";
+//  return "466792";
+  return QDateTime::currentDateTimeUtc().toString("yyMMdd");  // set current date as revision ID
   QString result;
   auto revision_from_scs = revision_extract_number (scs_rev_string);
 
