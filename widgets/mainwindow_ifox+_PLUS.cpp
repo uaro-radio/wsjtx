@@ -8779,6 +8779,8 @@ void MainWindow::on_actionJT65_triggered()
     ui->cbAutoSeq->setChecked(false);
     ui->cbAutoSeq->setVisible(false);
   }
+  if (m_config.decode_at_52s() && m_config.auto_open() && !ui->actionAstronomical_data->isChecked())
+    ui->actionAstronomical_data->setChecked (true);
   statusChanged();
 }
 
@@ -8849,6 +8851,8 @@ void MainWindow::on_actionQ65_triggered()
         ui->txb1->setEnabled(true);
     }
   }
+  if (m_config.decode_at_52s() && m_config.auto_open() && !ui->actionAstronomical_data->isChecked())
+    ui->actionAstronomical_data->setChecked (true);
   statusChanged();
 }
 
@@ -9064,11 +9068,10 @@ void MainWindow::switch_mode (Mode mode)
     ui->rh_decodes_widget->setVisible (false);     // UR disable for AL + widescreen versions
     ui->lh_decodes_title_label->setVisible(false);
   }
-  if (m_mode=="Echo" && !ui->actionAstronomical_data->isChecked ()) {
-    ui->actionAstronomical_data->setChecked (true);
-  } else {
-    ui->actionAstronomical_data->setChecked (false);
-  }
+  QTimer::singleShot (500, [=] {
+    if (!(m_mode=="Echo" or ((m_mode=="Q65" or m_mode=="JT65") && m_config.decode_at_52s()))
+        && ui->actionAstronomical_data->isChecked () && m_config.auto_close()) ui->actionAstronomical_data->setChecked (false);
+  });
   check_button_color();
 }
 
