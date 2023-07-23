@@ -237,6 +237,7 @@ bool pounce = false;
 bool filtered = false;
 bool selected = false;
 bool keepTx5 = false;
+bool no_logging = false;
 QString txlog;
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
@@ -4809,12 +4810,16 @@ void MainWindow::readFromStdout()                             //readFromStdout
         if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && m_hisCall!=""
             && text.contains(m_config.my_callsign() + " " + m_hisCall) && ((!text.contains("73 ")
             && m_config.Wait_features_enabled() && (!ui->autoButton->isChecked() or m_specOp==SpecOp::HOUND))
-            or (SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint()))) {
+            or (m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint()))) {
               tx_watchdog (false);
               m_bDoubleClicked = true;
               processMessage(decodedtext0);
               auto_tx_mode(true);
-              if(!(SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint())) stopWRTimer.start(int(8000.0*m_TRperiod));    // Wait & Reply Tx max 8*TRperiod
+              if(m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint()) {
+                if(!no_logging) logQSOTimer.start(0);  // logging of stations not in contest mode
+              } else {
+                stopWRTimer.start(int(8000.0*m_TRperiod));    // Wait & Reply Tx max 8*TRperiod
+              }
         }
 
         // Wait & Call
@@ -6996,6 +7001,10 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
                 auto_tx_mode(false);
                 if (m_auto) ui->autoButton->click();
               });
+              if (m_config.prompt_to_log() || m_config.autoLog()) {  // prevent dupe logbook entries
+                no_logging = true;
+                QTimer::singleShot (20000, [=] {no_logging = false;});
+              }
           }
         } else {
           if(m_mode=="JT65" and message_words.size()>5 and message_words.at(5)=="OOO") {
