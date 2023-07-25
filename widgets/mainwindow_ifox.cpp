@@ -2089,7 +2089,9 @@ void MainWindow::fastSink(qint64 frames)
     QString text2;
     QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
     if (m_config.filters_for_word2()) {
-      if (tw[1].length() == 2 && tw[1].contains(QRegularExpression{"\\w\\w"})) {   // directional calls
+      if (tw.size () < 2) {
+        text2 == "___";  // prevent segfault errors with free text messages
+      } else if (tw[1].length() == 2 && tw[1].contains(QRegularExpression{"\\w\\w"})) {   // directional calls
         text2 = tw[2];   // for directional calls analyze word 3 for filtering
       } else {
         text2 = tw[1];   // otherwise analyze word 2 for filtering
@@ -4801,7 +4803,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
         QString text2;
         QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
         if (m_config.filters_for_word2()) {
-              if (tw[1].length() == 2 && tw[1].contains(QRegularExpression{"\\w\\w"})) {   // directional calls
+              if (tw.size () < 2) {
+                  text2 == "___";  // prevent segfault errors with free text messages
+              } else if (tw[1].length() == 2 && tw[1].contains(QRegularExpression{"\\w\\w"})) {   // directional calls
                   text2 = tw[2];   // for directional calls analyze word 3 for filtering
               } else {
                   text2 = tw[1];   // otherwise analyze word 2 for filtering
