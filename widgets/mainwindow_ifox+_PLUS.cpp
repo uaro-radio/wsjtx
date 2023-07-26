@@ -9496,6 +9496,8 @@ void MainWindow::on_rptSpinBox_valueChanged(int n)
 
 void MainWindow::on_tuneButton_clicked (bool checked)
 {
+  stopWRTimer.stop();           // stop any Wait & Reply timeout
+  stopWCTimer.stop();           // stop any Wait & Call timeout
   if (checked && !(m_config.Tune_watchdog_disabled() || m_mode=="WSPR" || m_mode=="FST4W")) {
       tuneATU_Timer.start (90000); // tune watchdog
   }
@@ -9530,6 +9532,7 @@ void MainWindow::on_tuneButton_clicked (bool checked)
 
 void MainWindow::end_tuning ()
 {
+  tuneATU_Timer.stop ();        // stop tune watchdog when stopping Tune manually
   on_stopTxButton_clicked ();
   // we're turning off so remember our Tune pwr setting and reset to Tx pwr
   if (m_config.pwrBandTuneMemory() || m_config.pwrBandTxMemory()) {
@@ -9543,6 +9546,7 @@ void MainWindow::end_tuning ()
 
 void MainWindow::stop_tuning ()
 {
+  tuneATU_Timer.stop ();        // stop tune watchdog when stopping Tune manually
   on_tuneButton_clicked(false);
   ui->tuneButton->setChecked (false);
   m_bTxTime=false;
@@ -9551,6 +9555,7 @@ void MainWindow::stop_tuning ()
 
 void MainWindow::stopTuneATU()
 {
+  tuneATU_Timer.stop ();        // stop tune watchdog when stopping Tune manually
   on_tuneButton_clicked(false);
   m_bTxTime=false;
   ui->tuneButton->setText("Tune");
@@ -9567,6 +9572,7 @@ void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
   if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
   stopWRTimer.stop();           // Stop any Wait & Reply timeout
   stopWCTimer.stop();           // Stop any Wait & Call timeout
+  tuneATU_Timer.stop ();        // stop tune watchdog when stopping Tune manually
   no_wait_and_call = false;
   m_specOp=m_config.special_op_id();
   if(m_specOp==SpecOp::HOUND && m_txFirst) {  // reset Hound to the correct time slot
