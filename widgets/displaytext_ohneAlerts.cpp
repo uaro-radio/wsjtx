@@ -25,6 +25,8 @@
 #include "qt_helpers.hpp"
 #include "moc_displaytext.cpp"
 
+using SpecOp = Configuration::SpecialOperatingActivity;
+
 DisplayText::DisplayText(QWidget *parent)
   : QTextEdit(parent)
   , m_config {nullptr}
@@ -477,7 +479,8 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
       message = message.left (ap_pos).trimmed ();
     }
   m_CQPriority="";
-  if (CQcall || (is_73 && (m_config->highlight_73 ())))
+  if (CQcall || (is_73 && m_config->highlight_73()) || (mode == "FT4" && m_config->highlight_73() && m_config->NCCC_Sprint()
+      && (SpecOp::NA_VHF == m_config->special_op_id()) && decodedText.string().contains(" R ")))
     {
       if (displayDXCCEntity)
         {
