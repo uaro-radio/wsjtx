@@ -238,6 +238,7 @@ bool filtered = false;
 bool selected = false;
 bool keepTx5 = false;
 bool no_logging = false;
+bool BlankLineInserted = false;
 QString txlog;
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
@@ -5170,7 +5171,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         // insert blank line, but only if not filtered and no decodes
         int ntime=6;
         if(m_TRperiod>=60) ntime=4;
-        if (line_read.left(ntime) != m_tBlankLine) {
+        if (line_read.left(ntime) != m_tBlankLine or !BlankLineInserted) {
               ui->decodedTextBrowser->new_period ();
               if (m_config.insert_blank () && SpecOp::FOX != m_specOp
                   && (!filtered or m_config.filters_for_Wait_and_Pounce_only())) {
@@ -5184,6 +5185,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   } else {
                     ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
                   }
+                  BlankLineInserted = true;
+                  QTimer::singleShot ((int(800.0*m_TRperiod)), [=] {BlankLineInserted = false;});
               }
               m_tBlankLine = line_read.left(ntime);
         }
