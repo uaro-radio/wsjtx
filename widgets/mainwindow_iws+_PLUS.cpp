@@ -7309,7 +7309,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
     }
 
   if (!m_bSentReport || base_call != qso_partner_base_call || m_mode == "FT8" || m_mode == "FT4"
-          || m_mode == "Q65" || m_mode == "FST4") // Change report within a QSO
+          || m_mode == "FST4") // Change report within a QSO
     {
       auto n = message.report ().toInt ();
       if(m_mode=="MSK144" and m_bShMsgs) {
