@@ -3786,7 +3786,7 @@ Double-click to reset to the standard 73 message</string>
      <x>0</x>
      <y>0</y>
      <width>840</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -4678,7 +4678,7 @@ Double-click to reset to the standard 73 message</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Highlight DX callsigns on 2m, 6m, 160m</string>
+    <string>Highlight DX callsigns on VHF and 160m</string>
    </property>
   </action>
  </widget>

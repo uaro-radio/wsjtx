@@ -5232,11 +5232,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
            auto countryName = looked_up.entity_name;
            QString continent = AD1CCty::continent (looked_up.continent);
            m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4, countryB4, gridB4, continentB4, CQZoneB4, ITUZoneB4);
-           if (deCall!="" && (!countryB4 or (m_currentBandPeriod == "2m" && (!(countryName.contains("Germany") or
+           if (deCall!="" && (!countryB4 or ((m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm") && (!(countryName.contains("Germany") or
                countryName.contains("Netherlands") or countryName.contains("Belgium") or countryName.contains("Denmark")))))) {
               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,255,0), QColor(0,0,0), true);
            }
-           if ((m_currentBandPeriod == "2m" or m_currentBandPeriod == "6m" or m_currentBandPeriod == "160m") && continent != "EU") {
+           if ((m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm" or m_currentBandPeriod == "6m" or m_currentBandPeriod == "160m") && continent != "EU") {
               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,130,255), QColor(0,0,0), true);
            }
            if (deCall=="K1JT" or deCall=="K9AN" or deCall=="W2PU" or deCall=="N9ADG" or deCall=="IV3NWV")
