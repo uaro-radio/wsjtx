@@ -3244,7 +3244,7 @@ void MainWindow::statusChanged()
                                  .arg (f.fileName ()).arg (f.errorString ()));
   }
   on_dxGridEntry_textChanged(m_hisGrid);
-  if(m_specOp!=SpecOp::HOUND) {
+  if (m_specOp!=SpecOp::HOUND) {
       ui->txb2->setEnabled(true);
       ui->txrb2->setEnabled(true);
       ui->txb4->setEnabled(true);
@@ -3254,6 +3254,15 @@ void MainWindow::statusChanged()
       ui->txb6->setEnabled(true);
       ui->txrb6->setEnabled(true);
       ui->houndButton->setChecked(false);
+  }
+  if (m_mode=="Q65" or m_mode=="JT65") {
+    if (ui->actionInclude_averaging->isVisible() && ui->actionInclude_averaging->isChecked()) {
+      ui->lh_decodes_title_label->setText(tr ("Single-Period Decodes"));
+      ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
+    } else {
+      ui->lh_decodes_title_label->setText(tr ("Band Activity"));
+      ui->rh_decodes_title_label->setText(tr ("Rx Frequency"));
+    }
   }
 }
 
@@ -8833,8 +8842,6 @@ void MainWindow::on_actionJT65_triggered()
       QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();});
       QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT65",0).toInt());});
       QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
-      ui->lh_decodes_title_label->setText(tr ("Single-Period Decodes"));
-      ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
       ui->sbFtol->setValue (m_settings->value ("Ftol_JT65", 50).toInt());       // remember FTol settings by mode
       QTimer::singleShot (50, [=] {on_sbFtol_valueChanged (ui->sbFtol->value());});
   } else {
@@ -8896,8 +8903,6 @@ void MainWindow::on_actionQ65_triggered()
   switch_mode (Modes::Q65);
 //                         01234567890123456789012345678901234567
   displayWidgets(nWidgets("11111101011011010011100000010000000011"));
-  ui->lh_decodes_title_label->setText(tr ("Single-Period Decodes"));
-  ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
   ui->lh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   ui->rh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
 
@@ -9283,6 +9288,7 @@ void MainWindow::on_actionDeepestDecode_toggled (bool checked)
 void MainWindow::on_actionInclude_averaging_toggled (bool checked)
 {
   m_ndepth ^= (-checked ^ m_ndepth) & 0x00000010;
+  statusChanged();
 }
 
 void MainWindow::on_actionInclude_correlation_toggled (bool checked)
