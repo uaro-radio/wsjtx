@@ -3195,23 +3195,35 @@ void MainWindow::statusChanged()
   }
   on_dxGridEntry_textChanged(m_hisGrid);
   if (m_specOp!=SpecOp::HOUND) {
-      ui->txb2->setEnabled(true);
-      ui->txrb2->setEnabled(true);
-      ui->txb4->setEnabled(true);
-      ui->txrb4->setEnabled(true);
-      ui->txb5->setEnabled(true);
-      ui->txrb5->setEnabled(true);
-      ui->txb6->setEnabled(true);
-      ui->txrb6->setEnabled(true);
-      ui->houndButton->setChecked(false);
+    ui->txb2->setEnabled(true);
+    ui->txrb2->setEnabled(true);
+    ui->txb4->setEnabled(true);
+    ui->txrb4->setEnabled(true);
+    ui->txb5->setEnabled(true);
+    ui->txrb5->setEnabled(true);
+    ui->txb6->setEnabled(true);
+    ui->txrb6->setEnabled(true);
+    ui->houndButton->setChecked(false);
   }
-  if (m_mode=="Q65" or m_mode=="JT65") {
+  if (m_config.enable_VHF_features() && (m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65")) {
+    ui->actionInclude_averaging->setVisible(true);
+    ui->actionAuto_Clear_Avg->setVisible(true);
+  } else {
+    ui->actionInclude_averaging->setVisible(false);
+    ui->actionAuto_Clear_Avg->setVisible(false);
+  }
+  if (m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") {
     if (ui->actionInclude_averaging->isVisible() && ui->actionInclude_averaging->isChecked()) {
       ui->lh_decodes_title_label->setText(tr ("Single-Period Decodes"));
       ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
     } else {
-      ui->lh_decodes_title_label->setText(tr ("Band Activity"));
-      ui->rh_decodes_title_label->setText(tr ("Rx Frequency"));
+      if (m_config.enable_VHF_features()) {
+        ui->lh_decodes_title_label->setText(tr ("Band Activity"));
+        ui->rh_decodes_title_label->setText(tr ("Decodes containing My Call"));
+      } else {
+        ui->lh_decodes_title_label->setText(tr ("Band Activity"));
+        ui->rh_decodes_title_label->setText(tr ("Rx Frequency"));
+      }
     }
   }
 }
@@ -5427,7 +5439,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
         if((abs(audioFreq - m_wideGraph->rxFreq()) <= 10) and
            !m_config.enable_VHF_features()) bDisplayRight=true;
       }
-      if(m_mode=="Q65" and !bAvgMsg and !decodedtext.string().contains(m_baseCall)) bDisplayRight=false;
+      if(m_mode=="Q65" and !bAvgMsg) bDisplayRight=false;
+      if((m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") and decodedtext.string().contains(m_baseCall) && ui->actionInclude_averaging->isVisible() && !ui->actionInclude_averaging->isChecked()) bDisplayRight=true;
 
       if (bDisplayRight && !block_right_display) {
         // This msg is within 10 hertz of our tuned frequency, or a JT4 or JT65 avg,
@@ -8640,8 +8653,6 @@ void MainWindow::on_actionJT4_triggered()
   m_bFast9=false;
   setup_status_bar (bVHF);
   ui->sbSubmode->setMaximum(6);
-  ui->lh_decodes_title_label->setText(tr ("Single-Period Decodes"));
-  ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
   ui->lh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   ui->rh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   if(bVHF) {
