@@ -2450,6 +2450,8 @@ void MainWindow::fastSink(qint64 frames)
                   selected = true;
                   auto_tx_mode(true);
                   processMessage(decodedtext);
+                  auto now = QDateTime::currentDateTimeUtc();
+                  m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
                   QTimer::singleShot (6000, [=] {selected = false;});
                   if (pounce) stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
     }
@@ -2484,6 +2486,8 @@ void MainWindow::fastSink(qint64 frames)
                 ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
                 setTxMsg(m_ntx);
                 m_currentMessageType=m_ntx;
+                auto now = QDateTime::currentDateTimeUtc();
+                m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
             }
         }
     }
@@ -2512,6 +2516,8 @@ void MainWindow::fastSink(qint64 frames)
                 ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
                 setTxMsg(m_ntx);
                 m_currentMessageType=m_ntx;
+                auto now = QDateTime::currentDateTimeUtc();
+                m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
             }
         }
     }
@@ -2540,6 +2546,8 @@ void MainWindow::fastSink(qint64 frames)
                 ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
                 setTxMsg(m_ntx);
                 m_currentMessageType=m_ntx;
+                auto now = QDateTime::currentDateTimeUtc();
+                m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
             }
         }
     }
@@ -5262,6 +5270,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
          selected = true;
          auto_tx_mode(true);
          processMessage(decodedtext0);
+         auto now = QDateTime::currentDateTimeUtc();
+         m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
          QTimer::singleShot (6000, [=] {selected = false;});
          if (pounce) stopWCTimer.start(int(6000.0*m_TRperiod));     // Tx max 8*TRperiod
        }
@@ -5296,6 +5306,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                    ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
                    setTxMsg(m_ntx);
                    m_currentMessageType=m_ntx;
+                   auto now = QDateTime::currentDateTimeUtc();
+                   m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
             }
          }
        }
@@ -5324,6 +5336,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                    ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
                    setTxMsg(m_ntx);
                    m_currentMessageType=m_ntx;
+                   auto now = QDateTime::currentDateTimeUtc();
+                   m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
                }
          }
        }
@@ -5352,6 +5366,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                    ui->RxFreqSpinBox->setValue(decodedtext.frequencyOffset());
                    setTxMsg(m_ntx);
                    m_currentMessageType=m_ntx;
+                   auto now = QDateTime::currentDateTimeUtc();
+                   m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
                }
          }
        }
@@ -6819,7 +6835,6 @@ void MainWindow::on_txb6_clicked()
 void MainWindow::doubleClickOnCall2(Qt::KeyboardModifiers modifiers)
 {
 //Confusing: come here after double-click on left text window, not right window.
-  set_dateTimeQSO(-1); // reset our QSO start time
   m_decodedText2=true;
   doubleClickOnCall(modifiers);
   m_decodedText2=false;
@@ -6827,6 +6842,7 @@ void MainWindow::doubleClickOnCall2(Qt::KeyboardModifiers modifiers)
 
 void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
 {
+  set_dateTimeQSO(-1); // reset our QSO start time
   QTextCursor cursor;
   if(m_mode=="FST4W") {
     MessageBox::information_message (this,
@@ -8220,7 +8236,9 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
   }
   // m_dateTimeQSOOn should really already be set but we'll ensure it gets set to something just in case
   if (!m_dateTimeQSOOn.isValid ()) {
-    m_dateTimeQSOOn = QDateTime::currentDateTimeUtc();
+    auto now = QDateTime::currentDateTimeUtc();
+    m_dateTimeQSOOn = now.addSecs (-(m_ntx - 2) * int(m_TRperiod) -
+                                   int(fmod(double(now.time().second()),m_TRperiod)));
   }
   auto dateTimeQSOOff = QDateTime::currentDateTimeUtc();
   if (dateTimeQSOOff < m_dateTimeQSOOn) dateTimeQSOOff = m_dateTimeQSOOn;
