@@ -8223,6 +8223,9 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
   QString grid=m_hisGrid;
   if(grid=="....") grid="";
 
+  // Optionally replace empty grids by "ZZ00"
+  if(m_config.ZZ00() && m_hisGrid=="" && m_specOp!=SpecOp::NONE && m_specOp!=SpecOp::FOX && m_specOp!=SpecOp::HOUND) m_hisGrid = "ZZ00";
+
   switch( m_specOp )
     {
       case SpecOp::NA_VHF:

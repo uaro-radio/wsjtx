@@ -826,6 +826,7 @@ private:
   bool twoPass_;
   bool Individual_Contest_Name_;
   bool NCCC_Sprint_;
+  bool ZZ00_;
   bool Blacklisted_;
   bool Whitelisted_;
   bool AlwaysPass_;
@@ -957,6 +958,7 @@ bool Configuration::single_decode () const {return m_->single_decode_;}
 bool Configuration::twoPass() const {return m_->twoPass_;}
 bool Configuration::Individual_Contest_Name() const {return m_->Individual_Contest_Name_;}
 bool Configuration::NCCC_Sprint() const {return m_->NCCC_Sprint_;}
+bool Configuration::ZZ00() const {return m_->ZZ00_;}
 bool Configuration::Blacklisted() const {return m_->Blacklisted_;}
 bool Configuration::Whitelisted() const {return m_->Whitelisted_;}
 bool Configuration::AlwaysPass() const {return m_->AlwaysPass_;}
@@ -1829,6 +1831,7 @@ void Configuration::impl::initialize_models ()
   ui_->cbTwoPass->setChecked(twoPass_);
   ui_->cbContestName->setChecked(Individual_Contest_Name_);
   ui_->cb_NCCC_Sprint->setChecked(NCCC_Sprint_);
+  ui_->cbZZ00->setChecked(ZZ00_);
   ui_->cbBlacklist->setChecked(Blacklisted_);
   ui_->cbWhitelist->setChecked(Whitelisted_);
   ui_->cbPass->setChecked(AlwaysPass_);
@@ -2208,6 +2211,7 @@ void Configuration::impl::read_settings ()
   twoPass_ = settings_->value("TwoPass",true).toBool ();
   Individual_Contest_Name_ = settings_->value("Individual_Contest_Name",false).toBool ();
   NCCC_Sprint_ = settings_->value("NCCC_Sprint",false).toBool ();
+  ZZ00_ = settings_->value("ZZ00",false).toBool ();
   Blacklisted_ = settings_->value("Blacklisted",false).toBool ();
   Whitelisted_ = settings_->value("Whitelisted",false).toBool ();
   AlwaysPass_ = settings_->value("AlwaysPass",false).toBool ();
@@ -2414,6 +2418,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("TwoPass", twoPass_);
   settings_->setValue ("Individual_Contest_Name", Individual_Contest_Name_);
   settings_->setValue ("NCCC_Sprint", NCCC_Sprint_);
+  settings_->setValue ("ZZ00", ZZ00_);
   settings_->setValue ("Blacklisted", Blacklisted_);
   settings_->setValue ("Whitelisted", Whitelisted_);
   settings_->setValue ("AlwaysPass", AlwaysPass_);
@@ -2909,6 +2914,7 @@ void Configuration::impl::accept ()
   twoPass_ = ui_->cbTwoPass->isChecked ();
   Individual_Contest_Name_ = ui_->cbContestName->isChecked ();
   NCCC_Sprint_ = ui_->cb_NCCC_Sprint->isChecked ();
+  ZZ00_ = ui_->cbZZ00->isChecked ();
   Blacklisted_ = ui_->cbBlacklist->isChecked ();
   Whitelisted_ = ui_->cbWhitelist->isChecked ();
   AlwaysPass_ = ui_->cbPass->isChecked ();
@@ -3007,7 +3013,7 @@ void Configuration::impl::accept ()
   clear_DXgrid_ = ui_->cbClearDXgrid->isChecked();
   erase_BandActivity_ = ui_->cbEraseBandActivity->isChecked();
   set_RXtoTX_ = ui_->cbRxToTxAfterQSO->isChecked();
-  Individual_Contest_Name_ = ui_->cbContestName->isChecked();
+  ZZ00_ = ui_->cbZZ00->isChecked();
   NCCC_Sprint_ = ui_->cb_NCCC_Sprint->isChecked();
   Blacklisted_ = ui_->cbBlacklist->isChecked();
   Whitelisted_ = ui_->cbWhitelist->isChecked();

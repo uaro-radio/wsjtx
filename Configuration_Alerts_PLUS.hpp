@@ -265,6 +265,7 @@ public:
   bool set_RXtoTX () const;
   bool Individual_Contest_Name() const;
   bool NCCC_Sprint() const;
+  bool ZZ00() const;
   bool Blacklisted() const;
   bool Whitelisted() const;
   bool AlwaysPass() const;
