@@ -1,6 +1,6 @@
 subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,nkhz_center, newdat,nagain,  &
-     max_drift,ndepth,datetime,ndop00,idec)
+     max_drift,offset,ndepth,datetime,ndop00,idec)
 
 ! This routine provides an interface between QMAP and the Q65 decoder
 ! in WSJT-X.  All arguments are input data obtained from the QMAP GUI.
@@ -15,6 +15,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   parameter (NMAX=60*12000)
   parameter (RAD=57.2957795)
   integer*2 iwave(60*12000)
+  integer offset
   complex ca(MAXFFT1)                      !FFT of raw I/Q data from Linrad
   complex cx(0:MAXFFT2-1),cz(0:MAXFFT2)
   real*8 fcenter,freq0,freq1
@@ -111,7 +112,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      freq1=freq0 + 0.001d0*(ikhz1-ikhz)
      ndecodes=ndecodes+1
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
-     fsked=frx - 0.001*ndop00/2.0 - 1.5
+     fsked=frx - 0.001*ndop00/2.0 - 0.001*offset
      write(result(ndecodes),1120) nutc,frx,fsked,xdt0,nsnr0,trim(msg0)
 1120 format(i4.4,f9.3,f7.1,f7.2,i5,2x,a)
      write(12,1130) datetime,trim(result(ndecodes)(5:))

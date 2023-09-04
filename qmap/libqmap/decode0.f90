@@ -5,16 +5,18 @@ subroutine decode0(dd,ss,savg)
 
   real*4 dd(2,NSMAX),ss(322,NFFT),savg(NFFT)
   real*8 fcenter
+  integer offset
   integer hist(0:32768)
   character mycall*12,hiscall*12,mygrid*6,hisgrid*6,datetime*20
   character mycall0*12,hiscall0*12,hisgrid0*6
   character*60 result
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
-  common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,                &
+  common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
        ndepth,ndiskdat,neme,newdat,nfa,nfb,nfcal,nfshift,                 &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
-       ndop00,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,datetime
+       ndop00,nsave,max_drift,offset,nhsym,mycall,mygrid,                 &
+       hiscall,hisgrid,datetime
   data neme0/-99/
   save
 
@@ -43,7 +45,7 @@ subroutine decode0(dd,ss,savg)
 
   call timer('qmapa   ',0)
   call qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
-       mousedf,mousefqso,nagain,nfshift,max_drift,                  &
+       mousedf,mousefqso,nagain,nfshift,max_drift,offset,           &
        nfcal,mycall,hiscall,hisgrid,nfsample,nmode,ndepth,          &
        datetime,ndop00,fselected)
   call timer('qmapa   ',1)
