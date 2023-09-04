@@ -617,9 +617,10 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
           highlight_types types {Highlight::MyCall};
           set_colours (m_config, &bg, &fg, types);
           if (m_config->alert_MyCall()) {
-              play_MyCall = true;
+              QStringList tw=decodedText.string().mid(24).split(" ",SkipEmptyParts);
+              if (tw.size () > 0 && tw[0].contains(myCall)) play_MyCall = true;
+          }
         }
-      }
     }
 
   if (m_config->GridMap() && !m_bDisplayPoints) {
