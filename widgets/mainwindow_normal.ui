@@ -3618,6 +3618,8 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionEnable_AP_DXcall"/>
     <addaction name="actionAuto_Clear_Avg"/>
     <addaction name="actionReduce_false_decodes"/>
+    <addaction name="separator"/>
+    <addaction name="actionFull_Duplex_Mode"/>
    </widget>
    <widget class="QMenu" name="menuSave">
     <property name="title">
@@ -4390,6 +4392,14 @@ QPushButton[state=&quot;ok&quot;] {
    </property>
    <property name="text">
     <string>Hide stations from Antarctica</string>
+   </property>
+  </action>
+  <action name="actionFull_Duplex_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full Duplex Mode</string>
    </property>
   </action>
  </widget>

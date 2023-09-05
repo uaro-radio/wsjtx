@@ -614,11 +614,14 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
         }
       if ((decodedText.clean_string () + " ").contains (QRegularExpression {regexp}))
         {
-          highlight_types types {Highlight::MyCall};
-          set_colours (m_config, &bg, &fg, types);
-          if (m_config->alert_MyCall()) {
-              QStringList tw=decodedText.string().mid(24).split(" ",SkipEmptyParts);
-              if (tw.size () > 0 && tw[0].contains(myCall)) play_MyCall = true;
+          QStringList tw=decodedText.string().mid(24).split(" ",SkipEmptyParts);
+          if (tw.size () > 0 && tw[0].contains(myCall)) {
+            highlight_types types {Highlight::MyCall};
+            set_colours (m_config, &bg, &fg, types);
+            if (m_config->alert_MyCall()) play_MyCall = true;
+          } else {
+            highlight_types types {Highlight::Tx};
+            set_colours (m_config, &bg, &fg, types);
           }
         }
     }

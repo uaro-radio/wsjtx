@@ -239,6 +239,7 @@ bool selected = false;
 bool keepTx5 = false;
 bool no_logging = false;
 bool BlankLineInserted = false;
+bool m_txing;
 QString txlog;
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
@@ -1342,6 +1343,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("bh_15mDXp", ui->cb15mDXp->isChecked() );
   m_settings->setValue ("bh_10mDXp", ui->cb10mDXp->isChecked() );
   m_settings->setValue ("reduceFalseDecodes", ui->actionReduce_false_decodes->isChecked() );
+  m_settings->setValue ("FullDuplexMode", ui->actionFull_Duplex_Mode->isChecked() );
   m_settings->setValue ("actionDontSplitALLTXT", ui->actionDon_t_split_ALL_TXT->isChecked() );
   m_settings->setValue ("splitAllTxtYearly", ui->actionSplit_ALL_TXT_yearly->isChecked() );
   m_settings->setValue ("splitAllTxtMonthly", ui->actionSplit_ALL_TXT_monthly->isChecked() );
@@ -1437,6 +1439,7 @@ void MainWindow::readSettings()
   ui->cb15mDXp->setChecked(m_settings->value("bh_15mDXp", false).toBool());
   ui->cb10mDXp->setChecked(m_settings->value("bh_10mDXp", false).toBool());
   ui->actionReduce_false_decodes->setChecked(m_settings->value("reduceFalseDecodes", false).toBool());
+  ui->actionFull_Duplex_Mode->setChecked(m_settings->value("FullDuplexMode", false).toBool());
   ui->labDXped->setText(m_settings->value("labDXpedText",QString {}).toString ());
   ui->actionDon_t_split_ALL_TXT->setChecked(m_settings->value("actionDontSplitALLTXT", true).toBool());
   ui->actionSplit_ALL_TXT_yearly->setChecked(m_settings->value("splitAllTxtYearly", false).toBool());
@@ -2425,7 +2428,8 @@ void MainWindow::fastSink(qint64 frames)
     // Wait & Reply for MSK144
     if (text.contains(m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
         !text.contains("73 ") && m_mode=="MSK144" && m_config.Wait_features_enabled()
-        && !ui->autoButton->isChecked()) {
+        && !ui->autoButton->isChecked()
+        && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
                   tx_watchdog (false);
                   m_bDoubleClicked = true;
                   processMessage(decodedtext);
@@ -2436,7 +2440,8 @@ void MainWindow::fastSink(qint64 frames)
     // Wait & Call for MSK144
     if (m_mode=="MSK144" && wait_and_call && m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() &&
         m_hisCall!="" && (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
-        or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73")) && m_config.Wait_features_enabled()) {
+        or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73")) && m_config.Wait_features_enabled()
+        && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
                   m_bDoubleClicked = true;
                   processMessage(decodedtext);
                   auto_tx_mode(true);
@@ -2447,7 +2452,8 @@ void MainWindow::fastSink(qint64 frames)
     // CQ: First for MSK144
     if(((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled())
         or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign())))
-        && !filtered && !selected && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First") {
+        && !filtered && !selected && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First"
+        && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
                   m_bDoubleClicked=true;
                   selected = true;
                   auto_tx_mode(true);
@@ -2459,7 +2465,8 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // CQ: Max Dist for MSK144
-    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist") {
+    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist"
+        && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -2495,7 +2502,8 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // CQ: Max dB for MSK144
-    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max dB") {
+    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max dB"
+        && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -2525,7 +2533,8 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // CQ: Min dB for MSK144
-    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Min dB") {
+    if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Min dB"
+        && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5295,7 +5304,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
        // CQ: First
        if(((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled())
              or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign())))
-           && !filtered && !selected && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First") {
+           && !filtered && !selected && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First"
+           && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
          m_bDoubleClicked=true;
          selected = true;
          auto_tx_mode(true);
@@ -5307,7 +5317,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
        }
 
        // CQ: Max Dist
-       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist") {
+       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max Dist"
+           && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5343,7 +5354,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
        }
 
        // CQ: Max dB
-       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max dB") {
+       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Max dB"
+           && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5373,7 +5385,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
        }
 
        // CQ: Min dB
-       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Min dB") {
+       if((pounce or m_auto) && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: Min dB"
+           && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5471,14 +5484,16 @@ void MainWindow::readFromStdout()                             //readFromStdout
             if(messagePriority!="") {
               if(messagePriority=="New Call on Band"
                  and m_BestCQpriority!="New Call on Band"
-                 and m_BestCQpriority!="New Multiplier") {
+                 and m_BestCQpriority!="New Multiplier"
+                 and (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
                 m_BestCQpriority="New Call on Band";
                 m_bDoubleClicked = true;
                 processMessage(decodedtext0);
               }
               if(messagePriority=="New DXCC"
                  and m_BestCQpriority!="New DXCC"
-                 and m_BestCQpriority!="New Multiplier") {
+                 and m_BestCQpriority!="New Multiplier"
+                 and (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
                 m_BestCQpriority="New DXCC";
                 m_bDoubleClicked = true;
                 processMessage(decodedtext0);
@@ -10171,7 +10186,9 @@ void MainWindow::transmitDisplay (bool transmitting)
   if (transmitting == m_transmitting) {
     if (transmitting) {
       ui->signal_meter_widget->setValue(0,0);
-      if (m_monitoring) monitor (false);
+      if (m_monitoring && !ui->actionFull_Duplex_Mode->isChecked()) monitor (false);
+      m_txing=true;
+      QTimer::singleShot ((int(1000.0*m_TRperiod)), [=] {m_txing=false;});
       m_btxok=true;
     }
 

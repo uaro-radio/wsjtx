@@ -3786,7 +3786,7 @@ Double-click to reset to the standard 73 message</string>
      <x>0</x>
      <y>0</y>
      <width>840</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -3858,6 +3858,8 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionEnable_AP_DXcall"/>
     <addaction name="actionAuto_Clear_Avg"/>
     <addaction name="actionReduce_false_decodes"/>
+    <addaction name="separator"/>
+    <addaction name="actionFull_Duplex_Mode"/>
    </widget>
    <widget class="QMenu" name="menuSave">
     <property name="title">
@@ -4679,6 +4681,14 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>Highlight DX callsigns on VHF and 160m</string>
+   </property>
+  </action>
+  <action name="actionFull_Duplex_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full Duplex Mode</string>
    </property>
   </action>
  </widget>
