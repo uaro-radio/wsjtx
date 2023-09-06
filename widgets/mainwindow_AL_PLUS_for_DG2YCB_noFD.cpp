@@ -2860,6 +2860,8 @@ void MainWindow::on_autoButton_clicked (bool checked)
   } else {
       pounce = false;
       m_auto = false;
+      m_bCallingCQ = false;
+      tx_watchdog (false);
       ui->autoButton->setChecked(false);  // ensure autoButton is unchecked
       filtered = false;
       Dpoints=0;                          // reset points
@@ -2883,7 +2885,6 @@ void MainWindow::on_autoButton_clicked (bool checked)
   }
   m_tAutoOn=QDateTime::currentMSecsSinceEpoch()/1000;
   if(m_mode=="Echo") m_echoRunning=false;
-  if(!checked) tx_watchdog (false);
   check_button_color();
 }
 
