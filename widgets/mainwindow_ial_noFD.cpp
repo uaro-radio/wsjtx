@@ -3991,26 +3991,57 @@ void MainWindow::on_actionSpecial_mouse_commands_triggered()
   <tr>
     <td align="right">Waterfall:</td>
     <td><b>Click</b> to set Rx frequency.<br/>
-        <b>Shift-click</b> to set Tx frequency.<br/>
-        <b>Ctrl-click</b> or <b>Right-click</b> to set Rx and Tx frequencies.<br/>
-        <b>Double-click</b> to also decode at Rx frequency.<br/>
+        <b>Right-click</b> to set Tx frequency.<br/>
+        <b>Double-right-click</b> to set Rx and Tx frequencies.<br/>
     </td>
   </tr>
   <tr>
     <td align="right">Decoded text:</td>
-    <td><b>Double-click</b> to copy second callsign to Dx Call,<br/>
-        locator to Dx Grid, change Rx and Tx frequency to<br/>
-        decoded signal's frequency, and generate standard<br/>
-        messages.<br/>
-        If <b>Hold Tx Freq</b> is checked or first callsign in message<br/>
-        is your own call, Tx frequency is not changed unless <br/>
-        <b>Ctrl</b> is held down.<br/>
+    <td><b>Double-click</b> to copy second callsign to Dx Call, locator to Dx Grid,<br/>
+        change Rx and Tx frequency to decoded signal's frequency, and<br/>
+        generate standard messages.<br/>
+        Hold down <b>Alt</b> to prevent Tx from being enabled on <b>double-click</b>.<br/>
+        If <b>Hold Tx Freq</b> is checked or first callsign in message is your<br/>
+        own call, Tx frequency is not changed unless <b>Ctrl</b> is held down.<br/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">H Button</td>
+    <td><b>Click</b> to toggle FT8 Hound Mode On/Off.<br/>
+        <b>Right-click</b> to toggle last used Special Operating Activity On/Off.<br/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">Tx5 Button</td>
+    <td><b>Right-click</b> to retain Tx5 free text.<br/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">Tx Even/1st</td>
+    <td><b>Right-click</b> to freeze the state of the checkbox.<br/>
+        <b>Right-click on the FT8 Button</b> to unfreeze.<br/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">Enable Tx Button</td>
+    <td><b>Click</b> to toggle Auto-Tx mode On/Off.<br/>
+        <b>Right-click</b> to toggle Wait & Pounce On/Off.<br/>
     </td>
   </tr>
   <tr>
     <td align="right">Erase button:</td>
-    <td><b>Click</b> to erase QSO window.<br/>
-        <b>Double-click</b> to erase QSO and Band Activity windows.
+    <td><b>Click</b> to erase Rx Frequency window.<br/>
+        <b>Double-click</b> to erase Rx Frequency and Band Activity windows.<br/>
+        If <b>Alternate Erase button behavior</b> is checked:<br/>
+        <b>Click</b> to erase Band Activity window.<br/>
+        <b>Right-click</b> to erase Rx Frequency window.<br/>
+        <b>Double-click</b> to erase Rx Frequency and Band Activity windows.<br/>
+    </td>
+  </tr>
+  <tr>
+    <td align="right">DX Call Button</td>
+    <td><b>Click</b> to toggle Wait & Call On/Off.<br/>
+        <b>Right-click</b> to clear the Dx Call, Dx Grid and Std Msgs.<br/>
     </td>
   </tr>
 </table>)"), font});
