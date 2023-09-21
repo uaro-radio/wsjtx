@@ -615,7 +615,7 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
       if ((decodedText.clean_string () + " ").contains (QRegularExpression {regexp}))
         {
           QStringList tw=decodedText.string().mid(24).split(" ",SkipEmptyParts);
-          if (tw.size () > 0 && tw[0].contains(myCall)) {
+          if ((tw.size () > 0 && tw[0].contains(myCall)) or decodedText.clean_string().contains("; " + myCall)) {
             highlight_types types {Highlight::MyCall};
             set_colours (m_config, &bg, &fg, types);
             if (m_config->alert_MyCall()) play_MyCall = true;
