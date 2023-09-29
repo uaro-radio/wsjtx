@@ -9542,7 +9542,7 @@ void MainWindow::band_changed (Frequency f)
     }
   }
 
-  if (m_bandEdited) {
+  if (m_bandEdited && !keep_frequency) {
     if (m_mode!="WSPR" && !ui->pbBandHopping->isChecked() && !ui->DX_Call_Button->isChecked()) { // preserves auto Tx
       if (f + m_wideGraph->nStartFreq () > m_freqNominal + ui->TxFreqSpinBox->value ()
           || f + m_wideGraph->nStartFreq () + m_wideGraph->fSpan () <=
@@ -12749,9 +12749,10 @@ void MainWindow::bandHopping()
         Q_FALLTHROUGH();
     case 25:
         if (ui->cb80mDXp->isChecked()) {
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (3567000);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (3567000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12761,9 +12762,10 @@ void MainWindow::bandHopping()
         Q_FALLTHROUGH();
     case 26:
         if (ui->cb40mDXp->isChecked()) {
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (7056000);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (7056000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12773,9 +12775,10 @@ void MainWindow::bandHopping()
         Q_FALLTHROUGH();
     case 27:
         if (ui->cb30mDXp->isChecked()) {
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (10131000);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (10131000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12785,9 +12788,10 @@ void MainWindow::bandHopping()
         Q_FALLTHROUGH();
     case 28:
         if (ui->cb20mDXp->isChecked()) {
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (14090000);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (14090000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12797,9 +12801,10 @@ void MainWindow::bandHopping()
         Q_FALLTHROUGH();
     case 29:
         if (ui->cb17mDXp->isChecked()) {
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (18095000);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (18095000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12809,9 +12814,10 @@ void MainWindow::bandHopping()
         Q_FALLTHROUGH();
     case 30:
         if (ui->cb15mDXp->isChecked()) {
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (21091000);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (21091000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12821,9 +12827,10 @@ void MainWindow::bandHopping()
         Q_FALLTHROUGH();
     case 31:
         if (ui->cb10mDXp->isChecked()) {
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (28091000);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (28091000);});
             ui->pbBandHopping->setChecked(true);
             startIndex = 0;
             return;

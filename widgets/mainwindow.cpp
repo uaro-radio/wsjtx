@@ -9615,7 +9615,7 @@ void MainWindow::band_changed (Frequency f)
     }
   }
 
-  if (m_bandEdited) {
+  if (m_bandEdited && !keep_frequency) {
     if (m_mode!="WSPR" && !ui->pbBandHopping->isChecked() && !ui->DX_Call_Button->isChecked()) { // preserves auto Tx
       if (f + m_wideGraph->nStartFreq () > m_freqNominal + ui->TxFreqSpinBox->value ()
           || f + m_wideGraph->nStartFreq () + m_wideGraph->fSpan () <=
@@ -12811,9 +12811,10 @@ void MainWindow::bandHopping()
     case 23:
         if (ui->cbQRG1->isChecked()) {
             int f1 = ui->sbQRG1->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (f1);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (f1);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12824,9 +12825,10 @@ void MainWindow::bandHopping()
     case 24:
         if (ui->cbQRG2->isChecked()) {
             int f2 = ui->sbQRG2->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (f2);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (f2);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12837,9 +12839,10 @@ void MainWindow::bandHopping()
     case 25:
         if (ui->cbQRG3->isChecked()) {
             int f3 = ui->sbQRG3->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (f3);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (f3);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12850,9 +12853,10 @@ void MainWindow::bandHopping()
     case 26:
         if (ui->cbQRG4->isChecked()) {
             int f4 = ui->sbQRG4->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (f4);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (f4);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12863,9 +12867,10 @@ void MainWindow::bandHopping()
     case 27:
         if (ui->cbQRG5->isChecked()) {
             int f5 = ui->sbQRG5->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (f5);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (f5);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12876,9 +12881,10 @@ void MainWindow::bandHopping()
     case 28:
         if (ui->cbQRG6->isChecked()) {
             int f6 = ui->sbQRG6->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (f6);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (f6);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12889,9 +12895,10 @@ void MainWindow::bandHopping()
     case 29:
         if (ui->cbQRG7->isChecked()) {
             int f7 = ui->sbQRG7->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (f7);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (f7);});
             ui->pbBandHopping->setChecked(true);
             startIndex = nextStartIndex;
             return;
@@ -12902,9 +12909,10 @@ void MainWindow::bandHopping()
     case 30:
         if (ui->cbQRG8->isChecked()) {
             int f8 = ui->sbQRG8->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
             setRig (f8);
             on_actionFT8_triggered();
-            QTimer::singleShot (200, [=] {setRig (f8);});
             ui->pbBandHopping->setChecked(true);
             startIndex = 0;
             return;

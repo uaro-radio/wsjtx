@@ -9501,7 +9501,7 @@ void MainWindow::band_changed (Frequency f)
     }
   }
 
-  if (m_bandEdited) {
+  if (m_bandEdited && !keep_frequency) {
     if (m_mode!="WSPR" && !ui->pbBandHopping->isChecked() && !ui->DX_Call_Button->isChecked()) { // preserves auto Tx
       if (f + m_wideGraph->nStartFreq () > m_freqNominal + ui->TxFreqSpinBox->value ()
           || f + m_wideGraph->nStartFreq () + m_wideGraph->fSpan () <=
@@ -12432,371 +12432,379 @@ void MainWindow::bandHoppingTimer()
 
 void MainWindow::bandHopping()
 {
-   if(ui->pbBandHopping->isChecked() && !ui->autoButton->isChecked() && !ui->tuneButton->isChecked()) {
-     static int startIndex = 0;
-     int nextStartIndex = startIndex +1;
-     switch (startIndex){
+    if(ui->pbBandHopping->isChecked() && !ui->autoButton->isChecked() && !ui->tuneButton->isChecked()) {
+    static int startIndex = 0;
+    int nextStartIndex = startIndex +1;
+    switch (startIndex){
     case 0:
-            if (ui->cb160m->isChecked()) {
-        setRig (1840000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb160m->isChecked()) {
+            setRig (1840000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 1:
-            if (ui->cb80m->isChecked()) {
-        setRig (3573000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb80m->isChecked()) {
+            setRig (3573000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 2:
-            if (ui->cb60m->isChecked()) {
-        setRig (5357000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb60m->isChecked()) {
+            setRig (5357000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 3:
-            if (ui->cb40m->isChecked()) {
-        setRig (7074000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb40m->isChecked()) {
+            setRig (7074000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 4:
-            if (ui->cb30m->isChecked()) {
-        setRig (10136000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb30m->isChecked()) {
+            setRig (10136000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 5:
-            if (ui->cb20m->isChecked()) {
-        setRig (14074000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb20m->isChecked()) {
+            setRig (14074000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 6:
-            if (ui->cb17m->isChecked()) {
-        setRig (18100000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb17m->isChecked()) {
+            setRig (18100000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 7:
-            if (ui->cb15m->isChecked()) {
-        setRig (21074000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb15m->isChecked()) {
+            setRig (21074000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 8:
-            if (ui->cb12m->isChecked()) {
-        setRig (24915000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb12m->isChecked()) {
+            setRig (24915000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 9:
-            if (ui->cb10m->isChecked()) {
-        setRig (28074000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb10m->isChecked()) {
+            setRig (28074000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 10:
-            if (ui->cb6m->isChecked()) {
-        setRig (50313000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb6m->isChecked()) {
+            setRig (50313000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 11:
-            if (ui->cb4m->isChecked()) {
-        setRig (70154000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb4m->isChecked()) {
+            setRig (70154000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 12:
-            if (ui->cb2m->isChecked()) {
-        setRig (144174000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb2m->isChecked()) {
+            setRig (144174000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 13:
-            if (ui->cb70cm->isChecked()) {
-        setRig (432174000);
-        on_actionFT8_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb70cm->isChecked()) {
+            setRig (432174000);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 14:
-            if (ui->cb40mFT4->isChecked()) {
-        setRig (7047500);
-        on_actionFT4_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb40mFT4->isChecked()) {
+            setRig (7047500);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 15:
-            if (ui->cb30mFT4->isChecked()) {
-        setRig (10140000);
-        on_actionFT4_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb30mFT4->isChecked()) {
+            setRig (10140000);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 16:
-            if (ui->cb20mFT4->isChecked()) {
-        setRig (14080000);
-        on_actionFT4_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb20mFT4->isChecked()) {
+            setRig (14080000);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 17:
-            if (ui->cb17mFT4->isChecked()) {
-        setRig (18104000);
-        on_actionFT4_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb17mFT4->isChecked()) {
+            setRig (18104000);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
 
     case 18:
-            if (ui->cb15mFT4->isChecked()) {
-        setRig (21140000);
-        on_actionFT4_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb15mFT4->isChecked()) {
+            setRig (21140000);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 19:
-            if (ui->cb12mFT4->isChecked()) {
-        setRig (24919000);
-        on_actionFT4_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb12mFT4->isChecked()) {
+            setRig (24919000);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 20:
-            if (ui->cb10mFT4->isChecked()) {
-        setRig (28180000);
-        on_actionFT4_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb10mFT4->isChecked()) {
+            setRig (28180000);
+            on_actionFT4_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 21:
-            if (ui->cb6mMSK->isChecked()) {
-        setRig (50280000);
-        on_actionMSK144_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb6mMSK->isChecked()) {
+            setRig (50280000);
+            on_actionMSK144_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 22:
-            if (ui->cb2mMSK->isChecked()) {
-        setRig (144360000);
-        on_actionMSK144_triggered();
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cb2mMSK->isChecked()) {
+            setRig (144360000);
+            on_actionMSK144_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 23:
-            if (ui->cbQRG1->isChecked()) {
-        int f1 = ui->sbQRG1->value()*1000;
-        setRig (f1);
-        on_actionFT8_triggered();
-        QTimer::singleShot (200, [=] {setRig (f1);});
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cbQRG1->isChecked()) {
+            int f1 = ui->sbQRG1->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
+            setRig (f1);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 24:
-            if (ui->cbQRG2->isChecked()) {
-        int f2 = ui->sbQRG2->value()*1000;
-        setRig (f2);
-        on_actionFT8_triggered();
-        QTimer::singleShot (200, [=] {setRig (f2);});
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cbQRG2->isChecked()) {
+            int f2 = ui->sbQRG2->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
+            setRig (f2);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 25:
-            if (ui->cbQRG3->isChecked()) {
-        int f3 = ui->sbQRG3->value()*1000;
-        setRig (f3);
-        on_actionFT8_triggered();
-        QTimer::singleShot (200, [=] {setRig (f3);});
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cbQRG3->isChecked()) {
+            int f3 = ui->sbQRG3->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
+            setRig (f3);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 26:
-            if (ui->cbQRG4->isChecked()) {
-        int f4 = ui->sbQRG4->value()*1000;
-        setRig (f4);
-        on_actionFT8_triggered();
-        QTimer::singleShot (200, [=] {setRig (f4);});
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cbQRG4->isChecked()) {
+            int f4 = ui->sbQRG4->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
+            setRig (f4);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 27:
-            if (ui->cbQRG5->isChecked()) {
-        int f5 = ui->sbQRG5->value()*1000;
-        setRig (f5);
-        on_actionFT8_triggered();
-        QTimer::singleShot (200, [=] {setRig (f5);});
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cbQRG5->isChecked()) {
+            int f5 = ui->sbQRG5->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
+            setRig (f5);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 28:
-            if (ui->cbQRG6->isChecked()) {
-        int f6 = ui->sbQRG6->value()*1000;
-        setRig (f6);
-        on_actionFT8_triggered();
-        QTimer::singleShot (200, [=] {setRig (f6);});
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cbQRG6->isChecked()) {
+            int f6 = ui->sbQRG6->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
+            setRig (f6);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 29:
-            if (ui->cbQRG7->isChecked()) {
-        int f7 = ui->sbQRG7->value()*1000;
-        setRig (f7);
-        on_actionFT8_triggered();
-        QTimer::singleShot (200, [=] {setRig (f7);});
-        ui->pbBandHopping->setChecked(true);
-        startIndex = nextStartIndex;
-        return;
-            } else {
-        nextStartIndex++;
-            }
-            Q_FALLTHROUGH();
+        if (ui->cbQRG7->isChecked()) {
+            int f7 = ui->sbQRG7->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
+            setRig (f7);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = nextStartIndex;
+            return;
+        } else {
+            nextStartIndex++;
+        }
+        Q_FALLTHROUGH();
     case 30:
-            if (ui->cbQRG8->isChecked()) {
-        int f8 = ui->sbQRG8->value()*1000;
-        setRig (f8);
-        on_actionFT8_triggered();
-        QTimer::singleShot (200, [=] {setRig (f8);});
-        ui->pbBandHopping->setChecked(true);
-        startIndex = 0;
-        return;
-        bandHopping();
-            } else {
-        startIndex = 0;
-        bandHopping();
-            }
-     }
-   }
+        if (ui->cbQRG8->isChecked()) {
+            int f8 = ui->sbQRG8->value()*1000;
+            keep_frequency = true;
+            QTimer::singleShot (250, [=] {keep_frequency = false;});
+            setRig (f8);
+            on_actionFT8_triggered();
+            ui->pbBandHopping->setChecked(true);
+            startIndex = 0;
+            return;
+            bandHopping();
+        } else {
+            startIndex = 0;
+            bandHopping();
+        }
+    }
+  }
 }
 
 void MainWindow::on_actionDefault_event_logging_triggered()
