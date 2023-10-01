@@ -45,7 +45,7 @@ public:
                         QString const& name, QString const& strDialFreq, QString const& myCall,
                         QString const& m_myGrid, QString const& m_txPower, QString const& operator_call,
                         QString const& xSent, QString const& xRcvd, QString const& propmode,
-                        QString const& satellite, QString const& freqRx);
+                        QString const& satellite, QString const& satmode, QString const& freqRx);
 
   QString const cty_version() const;
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>468</width>
-    <height>418</height>
+    <width>480</width>
+    <height>420</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -135,7 +135,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,1,1,1,1,2">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
@@ -160,7 +160,7 @@
         <widget class="QLineEdit" name="mode">
          <property name="maximumSize">
           <size>
-           <width>70</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -192,7 +192,7 @@
         <widget class="QLineEdit" name="band">
          <property name="maximumSize">
           <size>
-           <width>50</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -224,7 +224,7 @@
         <widget class="QLineEdit" name="sent">
          <property name="maximumSize">
           <size>
-           <width>50</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -256,7 +256,7 @@
         <widget class="QLineEdit" name="rcvd">
          <property name="maximumSize">
           <size>
-           <width>50</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -288,7 +288,7 @@
         <widget class="QLineEdit" name="grid">
          <property name="maximumSize">
           <size>
-           <width>70</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -331,8 +331,8 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
+    <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0" columnstretch="0,1,0,0,0,0">
+     <item row="0" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Tx power</string>
@@ -342,49 +342,7 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLineEdit" name="txPower"/>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="cbTxPower">
-       <property name="text">
-        <string>Retain</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="lab10">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Comments</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comments">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
+     <item row="1" column="4">
       <widget class="QPushButton" name="addButton">
        <property name="maximumSize">
         <size>
@@ -400,18 +358,42 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="5">
+      <widget class="QCheckBox" name="cbTxPower">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Retain</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="5">
       <widget class="QCheckBox" name="cbComments">
        <property name="text">
         <string>Retain</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lab10">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Comments</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
       <widget class="QLabel" name="operatorLabel">
        <property name="font">
         <font>
@@ -426,34 +408,7 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLineEdit" name="loggedOperator">
-       <property name="maximumSize">
-        <size>
-         <width>300</width>
-         <height>16777215</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
+     <item row="3" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Exch sent</string>
@@ -463,44 +418,77 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLineEdit" name="exchSent">
-       <property name="maximumSize">
-        <size>
-         <width>120</width>
-         <height>16777215</height>
-        </size>
+     <item row="3" column="1" colspan="5">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLineEdit" name="exchSent">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Rcvd</string>
+         </property>
+         <property name="buddy">
+          <cstring>exchRcvd</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="exchRcvd">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="1" colspan="4">
+      <widget class="QLineEdit" name="txPower"/>
+     </item>
+     <item row="1" column="1" colspan="3">
+      <widget class="QComboBox" name="comments">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Rcvd</string>
-       </property>
-       <property name="buddy">
-        <cstring>exchRcvd</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="exchRcvd">
+     <item row="2" column="1" colspan="4">
+      <widget class="QLineEdit" name="loggedOperator">
        <property name="maximumSize">
         <size>
-         <width>120</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
@@ -509,8 +497,8 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,0,0,0">
-     <item>
+    <layout class="QGridLayout" name="gridLayout" columnstretch="0,2,0,0">
+     <item row="0" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Prop Mode</string>
@@ -520,46 +508,7 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QComboBox" name="comboBoxPropMode"/>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="cbPropMode">
-       <property name="text">
-        <string>Retain</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_10">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item>
+     <item row="1" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>Satellite</string>
@@ -569,49 +518,79 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QComboBox" name="comboBoxSatellite"/>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+     <item row="2" column="3">
+      <widget class="QCheckBox" name="cbSatMode">
+       <property name="text">
+        <string>Retain</string>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
+      </widget>
      </item>
-     <item>
+     <item row="0" column="3">
+      <widget class="QCheckBox" name="cbPropMode">
+       <property name="text">
+        <string>Retain</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Sat Mode</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
       <widget class="QCheckBox" name="cbSatellite">
        <property name="text">
         <string>Retain</string>
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_7">
-     <item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="comboBoxSatMode"/>
+     </item>
+     <item row="3" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>RX Frequency</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLineEdit" name="freqRx"/>
-     </item>
-     <item>
+     <item row="3" column="3">
       <widget class="QCheckBox" name="cbFreqRx">
        <property name="text">
         <string>Retain</string>
        </property>
       </widget>
+     </item>
+     <item row="2" column="2">
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>120</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="1" colspan="2">
+      <widget class="QComboBox" name="comboBoxPropMode"/>
+     </item>
+     <item row="1" column="1" colspan="2">
+      <widget class="QComboBox" name="comboBoxSatellite">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" colspan="2">
+      <widget class="QLineEdit" name="freqRx"/>
      </item>
     </layout>
    </item>
@@ -650,14 +629,6 @@
   <tabstop>rcvd</tabstop>
   <tabstop>grid</tabstop>
   <tabstop>name</tabstop>
-  <tabstop>txPower</tabstop>
-  <tabstop>cbTxPower</tabstop>
-  <tabstop>cbComments</tabstop>
-  <tabstop>loggedOperator</tabstop>
-  <tabstop>exchSent</tabstop>
-  <tabstop>exchRcvd</tabstop>
-  <tabstop>comboBoxPropMode</tabstop>
-  <tabstop>cbPropMode</tabstop>
  </tabstops>
  <resources/>
  <connections>

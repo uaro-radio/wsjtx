@@ -44,6 +44,7 @@ signals:
                   , QString const& my_call, QString const& my_grid
                   , QString const& exchange_sent, QString const& exchange_rcvd
                   , QString const& propmode, QString const& satellite
+                  , QString const& sat_mode
                   , QString const& freqRx, QByteArray const& ADIF);
 
 protected:

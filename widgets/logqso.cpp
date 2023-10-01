@@ -50,6 +50,34 @@ namespace
      , {"TEP", QT_TRANSLATE_NOOP ("LogQSO", "Trans-equatorial")}
      , {"TR", QT_TRANSLATE_NOOP ("LogQSO", "Troposheric ducting")}
     };
+  struct SatMode
+  {
+    char const * id_;
+    char const * name_;
+  };
+  constexpr SatMode sat_modes[] =
+    {
+      {"", ""}
+      , {"A", QT_TRANSLATE_NOOP ("LogQSO", "A")}
+      , {"B", QT_TRANSLATE_NOOP ("LogQSO", "B")}
+      , {"BS", QT_TRANSLATE_NOOP ("LogQSO", "BS")}
+      , {"JA", QT_TRANSLATE_NOOP ("LogQSO", "JA")}
+      , {"JD", QT_TRANSLATE_NOOP ("LogQSO", "JD")}
+      , {"K", QT_TRANSLATE_NOOP ("LogQSO", "K")}
+      , {"KA", QT_TRANSLATE_NOOP ("LogQSO", "KA")}
+      , {"KT", QT_TRANSLATE_NOOP ("LogQSO", "KT")}
+      , {"L", QT_TRANSLATE_NOOP ("LogQSO", "L")}
+      , {"LS", QT_TRANSLATE_NOOP ("LogQSO", "LS")}
+      , {"LU", QT_TRANSLATE_NOOP ("LogQSO", "LU")}
+      , {"LX", QT_TRANSLATE_NOOP ("LogQSO", "LX")}
+      , {"S", QT_TRANSLATE_NOOP ("LogQSO", "S")}
+      , {"SX", QT_TRANSLATE_NOOP ("LogQSO", "SX")}
+      , {"T", QT_TRANSLATE_NOOP ("LogQSO", "T")}
+      , {"US", QT_TRANSLATE_NOOP ("LogQSO", "US")}
+      , {"UV", QT_TRANSLATE_NOOP ("LogQSO", "UV")}
+      , {"VS", QT_TRANSLATE_NOOP ("LogQSO", "VS")}
+      , {"VU", QT_TRANSLATE_NOOP ("LogQSO", "VU")}
+    };
 }
 
 LogQSO::LogQSO(QString const& programTitle, QSettings * settings
@@ -81,6 +109,10 @@ LogQSO::LogQSO(QString const& programTitle, QSettings * settings
     {
       ui->comboBoxPropMode->addItem (prop_mode.name_, prop_mode.id_);
     }
+  for (auto const& sat_mode : sat_modes)
+    {
+      ui->comboBoxSatMode->addItem (sat_mode.name_, sat_mode.id_);
+    }
   loadSettings ();
   connect (ui->comboBoxPropMode, &QComboBox::currentTextChanged, this, &LogQSO::propModeChanged);
   connect (ui->comments, &QComboBox::currentTextChanged, this, &LogQSO::commentsChanged);
@@ -103,6 +135,7 @@ void LogQSO::loadSettings ()
   ui->cbComments->setChecked (m_settings->value ("SaveComments", false).toBool ());
   ui->cbPropMode->setChecked (m_settings->value ("SavePropMode", false).toBool ());
   ui->cbSatellite->setChecked (m_settings->value ("SaveSatellite", false).toBool ());
+  ui->cbSatMode->setChecked (m_settings->value ("SaveSatMode", false).toBool ());
   m_comments = m_settings->value ("LogComments", "").toString();
   m_txPower = m_settings->value ("TxPower", "").toString ();
 
@@ -112,6 +145,12 @@ void LogQSO::loadSettings ()
       prop_index = ui->comboBoxPropMode->findData (m_settings->value ("PropMode", "").toString());
     }
   ui->comboBoxPropMode->setCurrentIndex (prop_index);
+  int sat_mode_index {0};
+  if (ui->cbSatMode->isChecked ())
+    {
+      sat_mode_index = ui->comboBoxSatMode->findData (m_settings->value ("SatMode", "").toString());
+    }
+  ui->comboBoxSatMode->setCurrentIndex (sat_mode_index);
   int satellite {0};
   if (ui->cbSatellite->isChecked ())
     {
@@ -122,6 +161,8 @@ void LogQSO::loadSettings ()
   {
       ui->cbSatellite->setDisabled(true);
       ui->comboBoxSatellite->setDisabled(true);
+      ui->cbSatMode->setDisabled(true);
+      ui->comboBoxSatMode->setDisabled(true);
   }
   m_freqRx = m_settings->value ("FreqRx", "").toString ();
   ui->cbFreqRx->setChecked (m_settings->value ("SaveFreqRx", false).toBool ());
@@ -156,11 +197,13 @@ void LogQSO::storeSettings () const
   m_settings->setValue ("SaveComments", ui->cbComments->isChecked ());
   m_settings->setValue ("SavePropMode", ui->cbPropMode->isChecked ());
   m_settings->setValue ("SaveSatellite", ui->cbSatellite->isChecked ());
+  m_settings->setValue ("SaveSatMode", ui->cbSatMode->isChecked ());
   m_settings->setValue ("SaveFreqRx", ui->cbFreqRx->isChecked ());
   m_settings->setValue ("TxPower", m_txPower);
   m_settings->setValue ("LogComments", m_comments);
   m_settings->setValue ("PropMode", ui->comboBoxPropMode->currentData ());
   m_settings->setValue ("Satellite", ui->comboBoxSatellite->currentData ());
+  m_settings->setValue ("SatMode", ui->comboBoxSatMode->currentData ());
   m_settings->setValue ("FreqRx", m_freqRx);
   m_settings->endGroup ();
 }
@@ -237,6 +280,7 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
   if (!ui->cbSatellite->isChecked ())
     {
       ui->comboBoxSatellite->setCurrentIndex (-1);
+      ui->comboBoxSatMode->setCurrentIndex (-1);
     }
 
   using SpOp = Configuration::SpecialOperatingActivity;
@@ -369,6 +413,7 @@ void LogQSO::accept()
 
   auto const& prop_mode = ui->comboBoxPropMode->currentData ().toString ();
   auto const& satellite = ui->comboBoxSatellite->currentData ().toString ();
+  auto const& sat_mode = ui->comboBoxSatMode->currentData ().toString ();
   m_freqRx = ui->freqRx->text ();
   //Log this QSO to file "wsjtx.log"
   static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx.log")};
@@ -384,7 +429,7 @@ void LogQSO::accept()
       hisGrid + "," + strDialFreq + "," + mode +
       "," + rptSent + "," + rptRcvd + "," + m_txPower +
       "," + m_comments + "," + name + "," + prop_mode +
-      "," + satellite + "," + m_freqRx;
+      "," + satellite + "," + sat_mode + "," + m_freqRx;
     QTextStream out(&f);
     out << logEntry <<
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
@@ -415,6 +460,7 @@ void LogQSO::accept()
                     , xrcvd
                     , prop_mode
                     , satellite
+                    , sat_mode
                     , m_freqRx
                     , m_log->QSOToADIF (hisCall
                                         , hisGrid
@@ -435,6 +481,7 @@ void LogQSO::accept()
                                         , xrcvd
                                         , prop_mode
                                         , satellite
+                                        , sat_mode
                                         , m_freqRx));
   QDialog::accept();
 }
@@ -444,9 +491,13 @@ void LogQSO::propModeChanged()
   if (ui->comboBoxPropMode->currentData() != "SAT") {
       ui->comboBoxSatellite->setDisabled(true);
       ui->cbSatellite->setDisabled(true);
+      ui->comboBoxSatMode->setDisabled(true);
+      ui->cbSatMode->setDisabled(true);
   } else {
       ui->comboBoxSatellite->setDisabled(false);
       ui->cbSatellite->setDisabled(false);
+      ui->comboBoxSatMode->setDisabled(false);
+      ui->cbSatMode->setDisabled(false);
   }
 }
 

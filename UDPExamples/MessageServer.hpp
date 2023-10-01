@@ -111,7 +111,7 @@ public:
                             , QString const& name, QDateTime time_on, QString const& operator_call
                             , QString const& my_call, QString const& my_grid
                             , QString const& exchange_sent, QString const& exchange_rcvd, QString const& prop_mode
-                            , QString const& satellite, QString const& freqRx);
+                            , QString const& satellite, QString const& sat_mode, QString const& freqRx);
   Q_SIGNAL void decodes_cleared (ClientKey const&);
   Q_SIGNAL void logged_ADIF (ClientKey const&, QByteArray const& ADIF);
 
