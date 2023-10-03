@@ -551,7 +551,12 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
         }
       if ((decodedText.clean_string () + " ").contains (QRegularExpression {regexp}))
         {
-          QStringList tw=decodedText.string().mid(24).split(" ",SkipEmptyParts);
+        QStringList tw;
+        if (mode == "FT8" or mode == "FT4" or mode == "Q65" or mode == "MSK144" or mode == "FST4") {
+          tw=decodedText.string().mid(24).split(" ",SkipEmptyParts);
+        } else {
+          tw=decodedText.string().mid(22).split(" ",SkipEmptyParts);
+        }
           if ((tw.size () > 0 && tw[0].contains(myCall)) or decodedText.clean_string().contains("; " + myCall)) {
             highlight_types types {Highlight::MyCall};
             set_colours (m_config, &bg, &fg, types);
