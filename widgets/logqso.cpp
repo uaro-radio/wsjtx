@@ -412,8 +412,13 @@ void LogQSO::accept()
     }
 
   auto const& prop_mode = ui->comboBoxPropMode->currentData ().toString ();
-  auto const& satellite = ui->comboBoxSatellite->currentData ().toString ();
-  auto const& sat_mode = ui->comboBoxSatMode->currentData ().toString ();
+  auto satellite = ui->comboBoxSatellite->currentData ().toString ();
+  auto sat_mode = ui->comboBoxSatMode->currentData ().toString ();
+  // Add sat name and sat mode tags only if "Satellite" is selected as prop mode
+  if (prop_mode != "SAT") {
+    satellite = "";
+    sat_mode = "";
+  }
   m_freqRx = ui->freqRx->text ();
   //Log this QSO to file "wsjtx.log"
   static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx.log")};
