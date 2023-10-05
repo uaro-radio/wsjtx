@@ -4943,7 +4943,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         // Wait & Reply + FT4 NS (NCCC Sprints) reply to incoming RR73 messages
-        if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") && m_hisCall!=""
+        if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="JT4") && m_hisCall!=""
             && text.contains(m_config.my_callsign() + " " + m_hisCall) && ((!text.contains("73 ")
             && m_config.Wait_features_enabled() && (!ui->autoButton->isChecked() or m_specOp==SpecOp::HOUND))
             or (m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint()))) {
@@ -4958,8 +4958,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
               }
         }
 
-          // Wait & Call
-        if (wait_and_call && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4") &&
+        // Wait & Call
+        if (wait_and_call && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="JT4") &&
             m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && m_hisCall!="" && !no_wait_and_call &&
             (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
              or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))
@@ -4976,7 +4976,12 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
         // Filtering
         QString text2 = "";
-        QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
+        QStringList tw;
+        if (m_mode == "FT8" or m_mode == "FT4" or m_mode == "Q65" or m_mode == "FST4") {
+          tw=text.mid(24).split(" ",SkipEmptyParts);
+        } else {
+          tw=text.mid(22).split(" ",SkipEmptyParts);
+        }
         if (m_config.filters_for_word2()) {
               if (tw.size () < 2) {
                   text2 = "___";    // prevent segfault errors with free text messages
@@ -5291,7 +5296,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         // insert blank line, but only if not filtered and no decodes
         int ntime=6;
         if(m_TRperiod>=60) ntime=4;
-        if (line_read.left(ntime) != m_tBlankLine or !BlankLineInserted) {
+        if (line_read.left(ntime) != m_tBlankLine or ((m_mode == "FT8" or m_mode == "FT4" or m_mode == "Q65" or m_mode == "FST4") && !BlankLineInserted)) {
               ui->decodedTextBrowser->new_period ();
               if (m_config.insert_blank () && SpecOp::FOX != m_specOp
                   && (!filtered or m_config.filters_for_Wait_and_Pounce_only())) {
@@ -6317,7 +6322,7 @@ void MainWindow::guiUpdate()
         }
     }
 
-    bool b=("FT8"==m_mode or "FT4"==m_mode or "Q65"==m_mode) and ui->cbAutoSeq->isVisible ()
+    bool b=("FT8"==m_mode or "FT4"==m_mode or "Q65"==m_mode or "JT65"==m_mode or "JT9"==m_mode) and ui->cbAutoSeq->isVisible ()
         && ui->cbAutoSeq->isEnabled () && ui->cbAutoSeq->isChecked ();
     if(is_73 and (m_config.disable_TX_on_73() or b)) {
       m_nextCall="";  //### Temporary: disable use of "TU;" messages;
@@ -8859,9 +8864,9 @@ void MainWindow::on_actionJT4_triggered()
   }
   if(bVHF) {
     //                       01234567890123456789012345678901234567
-    displayWidgets(nWidgets("11111001001011011011110000000000000000"));
+    displayWidgets(nWidgets("11111001011011011011110000010000000000"));
   } else {
-    displayWidgets(nWidgets("11101000000011000011000000000000000000"));
+    displayWidgets(nWidgets("11101000010011000011000000010000000000"));
   }
   fast_config(false);
   statusChanged();
@@ -8902,7 +8907,7 @@ void MainWindow::on_actionJT9_triggered()
     ui->lh_decodes_headings_label->setText("  UTC   dB    T Freq    " + tr ("Message"));
     ui->rh_decodes_headings_label->setText("  UTC   dB    T Freq    " + tr ("Message"));
   } else {
-    ui->cbAutoSeq->setChecked(false);
+//    ui->cbAutoSeq->setChecked(false);
     if (m_mode != "FST4")
       {
         m_TRperiod=60.0;
@@ -8917,12 +8922,13 @@ void MainWindow::on_actionJT9_triggered()
   ui->rh_decodes_title_label->setText(tr ("Rx Frequency"));
   if(bVHF) {
     //                       01234567890123456789012345678901234567
-    displayWidgets(nWidgets("11111010100011111001000000000000000000"));
+    displayWidgets(nWidgets("11111010110011111001000000010000000000"));
   } else {
-    displayWidgets(nWidgets("11101000000011100001000000000000100000"));
+    displayWidgets(nWidgets("11101000010011100001000000010000100000"));
   }
   fast_config(m_bFastMode);
   ui->cbAutoSeq->setVisible(m_bFast9);
+
   statusChanged();
 }
 
@@ -8971,9 +8977,9 @@ void MainWindow::on_actionJT65_triggered()
   }
   if(bVHF) {
     //                       01234567890123456789012345678901234567
-    displayWidgets(nWidgets("11111001000011011010110001000000000000"));
+    displayWidgets(nWidgets("11111001010011011010110001010000000000"));
   } else {
-    displayWidgets(nWidgets("11101000000011100001000000000000100000"));
+    displayWidgets(nWidgets("11101000010011100001000000010000100000"));
   }
   fast_config(false);
   if(ui->cbShMsgs->isChecked()) {
@@ -13020,7 +13026,7 @@ void MainWindow::check_button_color()
 {
     if (!m_config.Tx_warning_disabled()) {
         // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
-        if((((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
+        if((((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="JT4") &&
               m_specOp==SpecOp::NONE && ui->cbAutoSeq->isChecked() && ui->cbAutoSeq->isChecked()
               && m_config.Wait_features_enabled()) or m_specOp==SpecOp::HOUND) && m_hisCall!="") {
             if (ui->DX_Call_Button->isChecked()) {
