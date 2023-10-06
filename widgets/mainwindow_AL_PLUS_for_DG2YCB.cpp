@@ -5346,10 +5346,20 @@ void MainWindow::readFromStdout()                             //readFromStdout
                    distance += QString::number(nAz) + "°";
               }
            }
-           ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
-                                                      m_logBook, m_currentBandPeriod, m_config.ppfx (),
-                                                      ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
-                                                      haveFSpread, fSpread, bDisplayPoints, m_points, distance);
+
+           // display country names for JT65 and JT9 like for FT8
+           if (m_mode == "JT65" or m_mode == "JT9" or m_mode == "JT4") {
+             DecodedText decodedtextJT {((QString::fromUtf8(line_read.left(44).constData())) + (QString::fromUtf8(line_read.mid(59, 2).constData())))};
+             ui->decodedTextBrowser->displayDecodedText (decodedtextJT, m_config.my_callsign (), m_mode, m_config.DXCC (),
+                                                        m_logBook, m_currentBandPeriod, m_config.ppfx (),
+                                                        ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
+                                                        haveFSpread, fSpread, bDisplayPoints, m_points, distance);
+           } else {
+             ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
+                                                        m_logBook, m_currentBandPeriod, m_config.ppfx (),
+                                                        ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
+                                                        haveFSpread, fSpread, bDisplayPoints, m_points, distance);
+           }
            if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
        }
 
@@ -5666,6 +5676,22 @@ void MainWindow::readFromStdout()                             //readFromStdout
       }
       if(m_mode=="Q65" and !bAvgMsg) bDisplayRight=false;
       if((m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") and decodedtext.string().contains(m_baseCall) && ui->actionInclude_averaging->isVisible() && !ui->actionInclude_averaging->isChecked()) bDisplayRight=true;
+
+      // AutoSeq for JT65/JT4 short messages
+      if ((m_mode=="JT65" or m_mode=="JT4") and m_config.enable_VHF_features() and ui->cbShMsgs->isChecked()) {
+        if (decodedtext.string().contains(" OOO")) {
+          setTxMsg(3);
+        }
+        if (decodedtext.string().contains(" RO")) {
+          setTxMsg(4);
+        }
+        if (decodedtext.string().contains(" RRR")) {
+          setTxMsg(5);
+        }
+        if (decodedtext.string().contains(" 73")) {
+          setTxMsg(5);
+        }
+      }
 
       if (bDisplayRight && !block_right_display) {
         // This msg is within 10 hertz of our tuned frequency, or a JT4 or JT65 avg,
@@ -8971,7 +8997,7 @@ void MainWindow::on_actionJT9_triggered()
     displayWidgets(nWidgets("11101000010011100001000000010000100000"));
   }
   fast_config(m_bFastMode);
-  ui->cbAutoSeq->setVisible(m_bFast9);
+//  ui->cbAutoSeq->setVisible(m_bFast9);
 
   statusChanged();
 }
@@ -9026,10 +9052,10 @@ void MainWindow::on_actionJT65_triggered()
     displayWidgets(nWidgets("11101000010011100001000000010000100000"));
   }
   fast_config(false);
-  if(ui->cbShMsgs->isChecked()) {
-    ui->cbAutoSeq->setChecked(false);
-    ui->cbAutoSeq->setVisible(false);
-  }
+//  if(ui->cbShMsgs->isChecked()) {
+//    ui->cbAutoSeq->setChecked(false);
+//    ui->cbAutoSeq->setVisible(false);
+//  }
   if (m_config.decode_at_52s() && m_config.auto_astro() && !ui->actionAstronomical_data->isChecked())
     ui->actionAstronomical_data->setChecked (true);
   statusChanged();
@@ -11273,7 +11299,7 @@ void MainWindow::on_cbCQonly_toggled(bool)
 void MainWindow::on_cbAutoSeq_toggled(bool b)
 {
   ui->respondComboBox->setVisible((m_mode=="FT8" or m_mode=="FT4" or m_mode=="FST4"
-                           or m_mode=="Q65" or m_mode=="MSK144") and b);
+      or m_mode=="Q65" or m_mode=="MSK144" or m_mode=="JT65" or m_mode=="JT9") and b);
   check_button_color();
 }
 
