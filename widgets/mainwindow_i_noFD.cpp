@@ -5232,9 +5232,17 @@ void MainWindow::readFromStdout()                             //readFromStdout
                     band = ' ' + m_config.bands ()->find (m_freqNominal);
                   }
                   if (ui->actionUse_Dark_Style->isChecked()) {
-                    ui->decodedTextBrowser->insertText(band.rightJustified(40, '-'), "#a2a2a2", "#000000");
+                    if (m_config.detailed_blank()) {
+                      ui->decodedTextBrowser->insertText(("----- " + m_dateTimeSeqStart.toString("yyyy-MM-dd hh:mm:ss' UTC --------'") + band), "#a2a2a2", "#000000");
+                    } else {
+                      ui->decodedTextBrowser->insertText(band.rightJustified(40, '-'), "#a2a2a2", "#000000");
+                    }
                   } else {
-                    ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
+                    if (m_config.detailed_blank()) {
+                      ui->decodedTextBrowser->insertLineSpacer ("----- " + m_dateTimeSeqStart.toString("yyyy-MM-dd hh:mm:ss' UTC --------'") + band);
+                    } else {
+                      ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
+                    }
                   }
                   BlankLineInserted = true;
                   QTimer::singleShot ((int(800.0*m_TRperiod)), [=] {BlankLineInserted = false;});

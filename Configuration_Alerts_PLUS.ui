@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>853</width>
-    <height>703</height>
+    <height>711</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -171,6 +171,33 @@
           <string>Display</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="insert_blank_check_box">
+            <property name="toolTip">
+             <string>Include a separator line between periods in the band activity window.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Blank line between decoding periods</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="cbHighlightDXgrid">
+            <property name="text">
+             <string>Highlight DX Grid in message</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QCheckBox" name="cb_detailed_blank_line">
+            <property name="toolTip">
+             <string>Show the separator line between periods with time stamp of the decode period.</string>
+            </property>
+            <property name="text">
+             <string>Show blank line with time stamp</string>
+            </property>
+           </widget>
+          </item>
           <item row="4" column="1">
            <widget class="QCheckBox" name="ppfx_check_box">
             <property name="text">
@@ -178,49 +205,52 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="2" rowspan="4">
-           <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="0">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetDefaultConstraint</enum>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="font_push_button">
+            <property name="toolTip">
+             <string>Set the font characteristics for the application.</string>
             </property>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
-              <item>
-               <widget class="QPushButton" name="font_push_button">
-                <property name="toolTip">
-                 <string>Set the font characteristics for the application.</string>
-                </property>
-                <property name="text">
-                 <string>Font...</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="decoded_text_font_push_button">
-                <property name="toolTip">
-                 <string>Set the font characteristics for the Band Activity and Rx Frequency areas.</string>
-                </property>
-                <property name="text">
-                 <string>Decoded Text Font...</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-           </layout>
+            <property name="text">
+             <string>Font...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="cbHighlightDXcall">
+            <property name="text">
+             <string>Highlight DX Call in message</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="miles_check_box">
+            <property name="toolTip">
+             <string>Show distance to DX station in miles rather than kilometers.</string>
+            </property>
+            <property name="text">
+             <string>Display dista&amp;nce in miles</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="decodes_from_top_check_box">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to have decodes for a new period start at the top of the Band Activity window and not scroll off the top when the window is full.&lt;/p&gt;&lt;p&gt;This is to aid selecting decodes to double-click while decoding is still in progress. Use the Band Activity vertical scroll bar to reveal decodes past the bottom of the window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Start new period decodes at top</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QPushButton" name="decoded_text_font_push_button">
+            <property name="toolTip">
+             <string>Set the font characteristics for the Band Activity and Rx Frequency areas.</string>
+            </property>
+            <property name="text">
+             <string>Decoded Text Font...</string>
+            </property>
+           </widget>
           </item>
           <item row="4" column="0">
            <widget class="QCheckBox" name="DXCC_check_box">
@@ -235,23 +265,10 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="decodes_from_top_check_box">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to have decodes for a new period start at the top of the Band Activity window and not scroll off the top when the window is full.&lt;/p&gt;&lt;p&gt;This is to aid selecting decodes to double-click while decoding is still in progress. Use the Band Activity vertical scroll bar to reveal decodes past the bottom of the window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
+          <item row="4" column="2">
+           <widget class="QCheckBox" name="show_country_names_check_box">
             <property name="text">
-             <string>Start new period decodes at top</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="miles_check_box">
-            <property name="toolTip">
-             <string>Show distance to DX station in miles rather than kilometers.</string>
-            </property>
-            <property name="text">
-             <string>Display dista&amp;nce in miles</string>
+             <string>Show DXCC for all messages</string>
             </property>
            </widget>
           </item>
@@ -262,37 +279,6 @@
             </property>
             <property name="text">
              <string>&amp;Tx messages to Rx frequency window</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QCheckBox" name="show_country_names_check_box">
-            <property name="text">
-             <string>Show DXCC for all messages</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="cbHighlightDXgrid">
-            <property name="text">
-             <string>Highlight DX Grid in message</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbHighlightDXcall">
-            <property name="text">
-             <string>Highlight DX Call in message</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="insert_blank_check_box">
-            <property name="toolTip">
-             <string>Include a separator line between periods in the band activity window.</string>
-            </property>
-            <property name="text">
-             <string>&amp;Blank line between decoding periods</string>
             </property>
            </widget>
           </item>
@@ -4145,8 +4131,6 @@ Right click for insert and delete options.</string>
   <tabstop>decodes_from_top_check_box</tabstop>
   <tabstop>miles_check_box</tabstop>
   <tabstop>DXCC_check_box</tabstop>
-  <tabstop>font_push_button</tabstop>
-  <tabstop>decoded_text_font_push_button</tabstop>
   <tabstop>monitor_off_check_box</tabstop>
   <tabstop>monitor_last_used_check_box</tabstop>
   <tabstop>quick_call_check_box</tabstop>
@@ -4313,13 +4297,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="split_mode_button_group"/>
-  <buttongroup name="special_op_activity_button_group"/>
-  <buttongroup name="TX_mode_button_group"/>
   <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="TX_audio_source_button_group"/>
   <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="TX_mode_button_group"/>
+  <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
  </buttongroups>
 </ui>

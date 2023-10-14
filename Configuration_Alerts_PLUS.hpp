@@ -174,6 +174,7 @@ public:
   bool autoLog() const;
   bool decodes_from_top () const;
   bool insert_blank () const;
+  bool detailed_blank () const;
   bool DXCC () const;
   bool GridMap() const;
   bool GridMapAll() const;
