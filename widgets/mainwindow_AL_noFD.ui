@@ -3840,6 +3840,8 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionHideAF"/>
     <addaction name="actionHideOC"/>
     <addaction name="actionHideAN"/>
+    <addaction name="separator"/>
+    <addaction name="actionHighlightB4"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -4669,6 +4671,14 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>Hide stations from Antarctica</string>
+   </property>
+  </action>
+  <action name="actionHighlightB4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Highlight callsigns worked B4 on band</string>
    </property>
   </action>
  </widget>

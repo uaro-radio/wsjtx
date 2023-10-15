@@ -2609,6 +2609,23 @@ void MainWindow::fastSink(qint64 frames)
             ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
     }
 
+    // highlight for callsigns worked B4 on band for MSK144
+    if (ui->actionHighlightB4->isChecked()) {
+        QString deCall;
+        QString deGrid;
+        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        bool callB4onBand;
+        bool countryB4onBand;
+        bool gridB4onBand;
+        bool continentB4onBand;
+        bool CQZoneB4onBand;
+        bool ITUZoneB4onBand;
+        auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+        m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+          continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+        if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
+    }
+
     // Highlight DX Call/Grid for MSK144
     if (!pounce && m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
         || (decodedtext.string().contains("<...> " + m_hisCall))))  {
@@ -5333,32 +5350,51 @@ void MainWindow::readFromStdout()                             //readFromStdout
            if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
        }
 
+       // highlight for callsigns worked B4 on band
+       //       if (ui->actionHighlightB4->isChecked()) {
+       //           QString deCall;
+       //           QString deGrid;
+       //           decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+       //           bool callB4onBand;
+       //           bool countryB4onBand;
+       //           bool gridB4onBand;
+       //           bool continentB4onBand;
+       //           bool CQZoneB4onBand;
+       //           bool ITUZoneB4onBand;
+       //           auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+       //           m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+       //             continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+       //           if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
+       //       }
+
        // highlight callsigns   // DG2YCB only
-       if(ui->actionHighlightCallsigns->isChecked()) {
+       if(ui->actionHighlightCallsigns->isChecked() or ui->actionHighlightB4->isChecked()) {
            QString deCall;
            QString deGrid;
            decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-           bool callB4;
-           bool countryB4;
-           bool gridB4;
-           bool continentB4;
-           bool CQZoneB4;
-           bool ITUZoneB4;
+           bool callB4onBand;
+           bool countryB4onBand;
+           bool gridB4onBand;
+           bool continentB4onBand;
+           bool CQZoneB4onBand;
+           bool ITUZoneB4onBand;
            auto const& looked_up = m_logBook.countries ()->lookup (deCall);
            auto countryName = looked_up.entity_name;
            QString continent = AD1CCty::continent (looked_up.continent);
-           m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4, countryB4, gridB4, continentB4, CQZoneB4, ITUZoneB4);
-           if (deCall!="" && (!countryB4 or ((m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm") && (!(countryName.contains("Germany") or
-               countryName.contains("Netherlands") or countryName.contains("Belgium") or countryName.contains("Denmark")))))) {
+           m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+             continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+           if (ui->actionHighlightCallsigns->isChecked() && deCall!="" && (m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm") && (!countryB4onBand and
+               (!(countryName.contains("Germany") or countryName.contains("Netherlands") or countryName.contains("Belgium"))))) {
               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,255,0), QColor(0,0,0), true);
            }
-           if ((m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm" or m_currentBandPeriod == "6m" or m_currentBandPeriod == "160m") && continent != "EU") {
+           if (ui->actionHighlightCallsigns->isChecked() && deCall!="" && (m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm" or m_currentBandPeriod == "6m" or m_currentBandPeriod == "160m") && continent != "EU") {
               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,130,255), QColor(0,0,0), true);
            }
-           if (deCall=="K1JT" or deCall=="K9AN" or deCall=="W2PU" or deCall=="N9ADG" or deCall=="IV3NWV")
+           if (ui->actionHighlightCallsigns->isChecked() && (deCall=="K1JT" or deCall=="K9AN" or deCall=="W2PU" or deCall=="N9ADG" or deCall=="IV3NWV"))
               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(170,0,225), QColor(255,255,255), true);
-           if (deCall=="MM0HVU" or deCall=="LZ2HV" or deCall=="ES1JA" or deCall=="UA3DJY" or deCall=="OE1MWW")
+           if (ui->actionHighlightCallsigns->isChecked() && (deCall=="MM0HVU" or deCall=="LZ2HV" or deCall=="ES1JA" or deCall=="UA3DJY" or deCall=="OE1MWW"))
               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,0,0), QColor(255,255,0), true);
+           if (ui->actionHighlightB4->isChecked() && callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
        }
 
        if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {

@@ -1352,6 +1352,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("disableWritingOfAllTxt", ui->actionDisable_writing_of_ALL_TXT->isChecked() );
   m_settings->setValue ("DisableEventLogging", ui->actionDisable_event_logging->isChecked() );
   m_settings->setValue ("DarkStyle", ui->actionUse_Dark_Style->isChecked() );
+  m_settings->setValue ("HighlightB4", ui->actionHighlightB4->isChecked() );
   m_settings->setValue ("HideB4", ui->actionHideB4->isChecked() );
   m_settings->setValue ("HideTerritory1", ui->actionHideTerritory1->isChecked() );
   m_settings->setValue ("HideTerritory2", ui->actionHideTerritory2->isChecked() );
@@ -1455,6 +1456,7 @@ void MainWindow::readSettings()
   ui->actionDisable_writing_of_ALL_TXT->setChecked(m_settings->value("disableWritingOfAllTxt", false).toBool());
   ui->actionDisable_event_logging->setChecked(m_settings->value("DisableEventLogging", false).toBool());
   ui->actionUse_Dark_Style->setChecked(m_settings->value("DarkStyle", false).toBool());
+  ui->actionHighlightB4->setChecked(m_settings->value("HighlightB4", false).toBool());
   ui->actionHideB4->setChecked(m_settings->value("HideB4", false).toBool());
   ui->actionHideTerritory1->setChecked(m_settings->value("HideTerritory1", false).toBool());
   ui->actionHideTerritory2->setChecked(m_settings->value("HideTerritory2", false).toBool());
@@ -2604,6 +2606,23 @@ void MainWindow::fastSink(qint64 frames)
             ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
         if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid))
             ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
+    }
+
+    // highlight for callsigns worked B4 on band for MSK144
+    if (ui->actionHighlightB4->isChecked()) {
+        QString deCall;
+        QString deGrid;
+        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        bool callB4onBand;
+        bool countryB4onBand;
+        bool gridB4onBand;
+        bool continentB4onBand;
+        bool CQZoneB4onBand;
+        bool ITUZoneB4onBand;
+        auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+        m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+          continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+        if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
     }
 
     // Highlight DX Call/Grid for MSK144
@@ -5316,6 +5335,23 @@ void MainWindow::readFromStdout()                             //readFromStdout
                                                         haveFSpread, fSpread, bDisplayPoints, m_points, distance);
            }
            if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
+       }
+
+       // highlight for callsigns worked B4 on band
+       if (ui->actionHighlightB4->isChecked()) {
+           QString deCall;
+           QString deGrid;
+           decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+           bool callB4onBand;
+           bool countryB4onBand;
+           bool gridB4onBand;
+           bool continentB4onBand;
+           bool CQZoneB4onBand;
+           bool ITUZoneB4onBand;
+           auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+           m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+             continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+           if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
        }
 
        if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {

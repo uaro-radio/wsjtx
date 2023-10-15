@@ -1743,7 +1743,7 @@ Double click to toggle the use of the Tx1 message to start a QSO with a station 
                           <item row="5" column="2">
                            <widget class="DoubleClickablePushButton" name="txb5">
                             <property name="focusPolicy">
-                            <enum>Qt::StrongFocus</enum>
+                             <enum>Qt::StrongFocus</enum>
                             </property>
                             <property name="toolTip">
                              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to this Tx message NOW&lt;/p&gt;&lt;p&gt;Double-click to reset to the standard 73 message&lt;/p&gt;&lt;p&gt;Right-click to retain Tx5 free text&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -3602,6 +3602,8 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionHideAF"/>
     <addaction name="actionHideOC"/>
     <addaction name="actionHideAN"/>
+    <addaction name="separator"/>
+    <addaction name="actionHighlightB4"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -4390,6 +4392,14 @@ QPushButton[state=&quot;ok&quot;] {
    </property>
    <property name="text">
     <string>Hide stations from Antarctica</string>
+   </property>
+  </action>
+  <action name="actionHighlightB4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Highlight callsigns worked B4 on band</string>
    </property>
   </action>
  </widget>

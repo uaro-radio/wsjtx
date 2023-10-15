@@ -3626,6 +3626,8 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionHideAF"/>
     <addaction name="actionHideOC"/>
     <addaction name="actionHideAN"/>
+    <addaction name="separator"/>
+    <addaction name="actionHighlightB4"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -4414,6 +4416,14 @@ QPushButton[state=&quot;ok&quot;] {
    </property>
    <property name="text">
     <string>Hide stations from Antarctica</string>
+   </property>
+  </action>
+  <action name="actionHighlightB4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Highlight callsigns worked B4 on band</string>
    </property>
   </action>
  </widget>
