@@ -5279,13 +5279,13 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   }
                   if (ui->actionUse_Dark_Style->isChecked()) {
                     if (m_config.detailed_blank()) {
-                      ui->decodedTextBrowser->insertText(("----- " + m_dateTimeSeqStart.toString("yyyy-MM-dd hh:mm:ss' UTC -----'") + band + " - " + m_mode + " -----"), "#a2a2a2", "#000000");
+                      ui->decodedTextBrowser->insertText(("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC -'") + band + " - " + m_mode), "#a2a2a2", "#000000");
                     } else {
                       ui->decodedTextBrowser->insertText(band.rightJustified(40, '-'), "#a2a2a2", "#000000");
                     }
                   } else {
                     if (m_config.detailed_blank()) {
-                      ui->decodedTextBrowser->insertLineSpacer ("----- " + m_dateTimeSeqStart.toString("yyyy-MM-dd hh:mm:ss' UTC -----'") + band + " - " + m_mode + " -----");
+                      ui->decodedTextBrowser->insertLineSpacer ("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC -'") + band + " - " + m_mode);
                     } else {
                       ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
                     }
