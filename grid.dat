@@ -326,8 +326,8 @@ DM<
 	49:UT,
 	51:AZ-NM,
 	52:AZ-NM,
-	53:AZ-NW,
-	54:AZ-NW,
+	53:AZ-NM,
+	54:AZ-NM,
 	55:AZ-NM,
 	56:AZ-NM,
 	57:UT-CO,
@@ -670,7 +670,7 @@ EN<
 	84:MI,
 	85:MI,
 	86:MI,
-	90:OH-WA-PA,
+	90:OH-WV-PA,
 	91:OH-PA,
 	92:PA>
 
