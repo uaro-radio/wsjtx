@@ -587,6 +587,9 @@ private:
   Q_SLOT void on_rescan_log_push_button_clicked (bool);
   Q_SLOT void on_CTY_download_button_clicked (bool);
   Q_SLOT void on_LotW_CSV_fetch_push_button_clicked (bool);
+  Q_SLOT void on_hamlib_download_button_clicked (bool);
+  void error_during_hamlib_download (QString const& reason);
+  void after_hamlib_downloaded();
 
   Q_SLOT void on_cbx2ToneSpacing_clicked(bool);
   Q_SLOT void on_cbx4ToneSpacing_clicked(bool);
@@ -3275,6 +3278,43 @@ void Configuration::impl::on_decoded_text_font_push_button_clicked ()
                                                   , tr ("WSJT-X Decoded Text Font Chooser")
                                                   , QFontDialog::MonospacedFonts
                                                   );
+}
+
+void Configuration::impl::on_hamlib_download_button_clicked (bool /*clicked*/)  // URUR
+{
+#ifdef WIN32
+  ui_->hamlib_download_button->setEnabled (false); // disable button until download is complete
+//  QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
+  QDir dataPath = QCoreApplication::applicationDirPath();
+  if (ui_->rbHamlib32->isChecked()) {
+    cty_download.configure(network_manager_,
+                           "https://n0nb.users.sourceforge.net/dll32/libhamlib-4.dll",
+                           dataPath.absoluteFilePath("libhamlib-4.dll"),
+                           "Downloading latest libhamlib-4.dll");
+  } else {
+    cty_download.configure(network_manager_,
+                           "https://n0nb.users.sourceforge.net/dll64/libhamlib-4.dll",
+                           dataPath.absoluteFilePath("libhamlib-4.dll"),
+                           "Downloading latest libhamlib-4.dll");
+  }
+  connect (&cty_download, &FileDownload::complete, this, &Configuration::impl::after_hamlib_downloaded, Qt::UniqueConnection);
+  connect (&cty_download, &FileDownload::error, this, &Configuration::impl::error_during_hamlib_download, Qt::UniqueConnection);
+  cty_download.start_download();
+#else
+  MessageBox::warning_message (this, tr ("Hamlib download only available on Windows."));
+#endif
+}
+
+void Configuration::impl::error_during_hamlib_download (QString const& reason)
+{
+  MessageBox::warning_message (this, tr ("Error Loading libhamlib-4.dll"), reason);
+  ui_->hamlib_download_button->setEnabled (true);
+}
+
+void Configuration::impl::after_hamlib_downloaded ()
+{
+  MessageBox::information_message (this, tr ("Download completed. Restart the program."));
+  ui_->hamlib_download_button->setEnabled (true);
 }
 
 void Configuration::impl::on_special_op_activity_button_group_buttonClicked (int /* id */)
