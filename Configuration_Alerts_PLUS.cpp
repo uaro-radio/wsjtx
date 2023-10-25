@@ -2120,7 +2120,8 @@ void Configuration::impl::read_settings ()
   ui_->Territory1->setText(Territory1_);
   ui_->Territory2->setText(Territory2_);
   ui_->Territory3->setText(Territory3_);
-  ui_->Territory4->setText(Territory4_);  ui_->highlight_orange_callsigns->setText(highlight_orange_callsigns_);
+  ui_->Territory4->setText(Territory4_);
+  ui_->highlight_orange_callsigns->setText(highlight_orange_callsigns_);
   ui_->highlight_blue_callsigns->setText(highlight_blue_callsigns_);
 
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
