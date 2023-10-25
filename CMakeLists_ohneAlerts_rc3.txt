@@ -71,7 +71,7 @@ message (STATUS "******************************************************")
 
 include (set_build_type)
 # RC 0 or omitted is a development build, GA is a General Availability release build
-set_build_type (GA)
+set_build_type (RC 3)
 set (wsjtx_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}${BUILD_TYPE_REVISION}")
 
 #
@@ -223,7 +223,6 @@ set (wsjt_qt_CXXSRCS
   widgets/DoubleClickableRadioButton.cpp
   Network/LotWUsers.cpp
   Network/FileDownload.cpp
-  Network/Cloudlog.cpp
   models/DecodeHighlightingModel.cpp
   widgets/DecodeHighlightingListView.cpp
   models/FoxLog.cpp
@@ -1653,21 +1652,16 @@ install (DIRECTORY
   #COMPONENT runtime
   )
 
-if (NOT UNIX)
-  install (DIRECTORY
-  ${PROJECT_SOURCE_DIR}/sounds
+if (WIN32)
+  install (FILES
+  OpenSSL/libcrypto-1_1.dll
+  OpenSSL/libssl-1_1.dll
+  OpenSSL/libcrypto-1_1-x64.dll
+  OpenSSL/libssl-1_1-x64.dll
   DESTINATION ${CMAKE_INSTALL_BINDIR}
   #COMPONENT runtime
   )
-  endif (NOT UNIX)
-	
-if (UNIX)
-  install (DIRECTORY
-  ${PROJECT_SOURCE_DIR}/sounds
-  DESTINATION $ENV{HOME}
-  #COMPONENT runtime
-  )
-  endif (UNIX)
+  endif (WIN32)
 
 #
 # Mac installer files

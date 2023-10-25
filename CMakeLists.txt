@@ -1660,6 +1660,17 @@ if (NOT UNIX)
   #COMPONENT runtime
   )
   endif (NOT UNIX)
+
+if (WIN32)
+  install (FILES
+  OpenSSL/libcrypto-1_1.dll
+  OpenSSL/libssl-1_1.dll
+  OpenSSL/libcrypto-1_1-x64.dll
+  OpenSSL/libssl-1_1-x64.dll
+  DESTINATION ${CMAKE_INSTALL_BINDIR}
+  #COMPONENT runtime
+  )
+  endif (WIN32)
 	
 if (UNIX)
   install (DIRECTORY
