@@ -2139,8 +2139,8 @@ void MainWindow::fastSink(qint64 frames)
                  || (text2.startsWith(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
                  || (text2.startsWith(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
                  )) {
-          filtered = true;
-          if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+          if (!ui->cbBypass->isChecked()) filtered = true;
+          if (!(m_config.filters_for_Wait_and_Pounce_only() or ui->cbBypass->isChecked()))  return;
           // reset dB score when filtered
           if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
                           or ui->respondComboBox->currentText()=="CQ: Max dB"
@@ -2168,8 +2168,8 @@ void MainWindow::fastSink(qint64 frames)
                    && !(text2.startsWith(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
                    && !(text2.startsWith(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
           ) {
-          filtered = true;
-          if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+          if (!ui->cbBypass->isChecked()) filtered = true;
+          if (!(m_config.filters_for_Wait_and_Pounce_only() or ui->cbBypass->isChecked()))  return;
           // reset dB score when filtered
           if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
                           or ui->respondComboBox->currentText()=="CQ: Max dB"
@@ -2288,8 +2288,8 @@ void MainWindow::fastSink(qint64 frames)
                  || (text.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
                  || (text.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
                  )) {
-          filtered = true;
-          if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+          if (!ui->cbBypass->isChecked()) filtered = true;
+          if (!(m_config.filters_for_Wait_and_Pounce_only() or ui->cbBypass->isChecked()))  return;
           // reset dB score when filtered
           if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
                           or ui->respondComboBox->currentText()=="CQ: Max dB"
@@ -2317,8 +2317,8 @@ void MainWindow::fastSink(qint64 frames)
                    && !(text.contains(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
                    && !(text.contains(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
           ) {
-          filtered = true;
-          if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+          if (!ui->cbBypass->isChecked()) filtered = true;
+          if (!(m_config.filters_for_Wait_and_Pounce_only() or ui->cbBypass->isChecked()))  return;
           // reset dB score when filtered
           if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
                           or ui->respondComboBox->currentText()=="CQ: Max dB"
@@ -4978,8 +4978,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                            || (text2.startsWith(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
                            || (text2.startsWith(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
                            )) {
-                    filtered = true;
-                    if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+                    if (!ui->cbBypass->isChecked()) filtered = true;
+                    if (!(m_config.filters_for_Wait_and_Pounce_only() or ui->cbBypass->isChecked()))  return;
                     // reset dB score when filtered
                     if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
                                     or ui->respondComboBox->currentText()=="CQ: Max dB"
@@ -5007,8 +5007,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                              && !(text2.startsWith(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
                              && !(text2.startsWith(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
                     ) {
-                    filtered = true;
-                    if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+                    if (!ui->cbBypass->isChecked()) filtered = true;
+                    if (!(m_config.filters_for_Wait_and_Pounce_only() or ui->cbBypass->isChecked()))  return;
                     // reset dB score when filtered
                     if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
                                     or ui->respondComboBox->currentText()=="CQ: Max dB"
@@ -5127,8 +5127,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                            || (text.contains(m_config.Blacklist11()) && (m_config.Blacklist11()!=""))
                            || (text.contains(m_config.Blacklist12()) && (m_config.Blacklist12()!=""))
                            )) {
-                    filtered = true;
-                    if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+                    if (!ui->cbBypass->isChecked()) filtered = true;
+                    if (!(m_config.filters_for_Wait_and_Pounce_only() or ui->cbBypass->isChecked()))  return;
                     // reset dB score when filtered
                     if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
                                     or ui->respondComboBox->currentText()=="CQ: Max dB"
@@ -5156,8 +5156,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                              && !(text.contains(m_config.Whitelist11()) && (m_config.Whitelist11()!=""))
                              && !(text.contains(m_config.Whitelist12()) && (m_config.Whitelist12()!=""))
                     ) {
-                    filtered = true;
-                    if (!m_config.filters_for_Wait_and_Pounce_only())  return;
+                    if (!ui->cbBypass->isChecked()) filtered = true;
+                    if (!(m_config.filters_for_Wait_and_Pounce_only() or ui->cbBypass->isChecked()))  return;
                     // reset dB score when filtered
                     if (pounce && (ui->respondComboBox->currentText()=="CQ: Max Dist"
                                     or ui->respondComboBox->currentText()=="CQ: Max dB"
