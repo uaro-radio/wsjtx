@@ -1132,9 +1132,16 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   // backup libhamlib-4.dll file, so it is still available after the next program update
   QDir dataPath = QCoreApplication::applicationDirPath();
   QFile f {dataPath.absolutePath() + "/" + "libhamlib-4_old.dll"};
-  if (!f.exists()) QFile::copy(dataPath.absolutePath() + "/" + "libhamlib-4.dll", dataPath.absolutePath() + "/" + "libhamlib-4_old.dll");
+  if (!f.exists()) {
+      QFile::copy(dataPath.absolutePath() + "/" + "libhamlib-4.dll", dataPath.absolutePath() + "/" + "libhamlib-4_old.dll");
+      QTimer::singleShot (5000, [=] {  //wait until hamlib has been started
+        extern char* hamlib_version2;
+        m_settings->beginGroup("Configuration");
+        m_settings->setValue ("HamlibBackedUp", hamlib_version2);
+        m_settings->endGroup();
+      });
+  }
 #endif
-
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
@@ -5392,7 +5399,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
            // display country names for JT65 and JT9 like for FT8
            if (m_mode == "JT65" or m_mode == "JT9" or m_mode == "JT4") {
-             DecodedText decodedtextJT {((QString::fromUtf8(line_read.left(44).constData())) + (QString::fromUtf8(line_read.mid(59, 2).constData())))};
+             DecodedText decodedtextJT {((QString::fromUtf8(line_read.left(44).constData())) + (QString::fromUtf8(line_read.mid(60, 2).constData())))};
              ui->decodedTextBrowser->displayDecodedText (decodedtextJT, m_config.my_callsign (), m_mode, m_config.DXCC (),
                                                         m_logBook, m_currentBandPeriod, m_config.ppfx (),
                                                         ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),

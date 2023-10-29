@@ -1548,23 +1548,23 @@ other hardware interface for PTT.</string>
        <item row="12" column="0">
         <widget class="QGroupBox" name="hamlib_groupBox">
          <property name="title">
-          <string>Update Hamlib (Windows only)</string>
+          <string>Update Hamlib</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_24">
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="rbHamlib64">
-            <property name="text">
-             <string>64-bit</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <widget class="QRadioButton" name="rbHamlib32">
             <property name="text">
              <string>32-bit</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="revert_update_button">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Revert the last Hamlib update. &lt;/p&gt;&lt;p&gt;Note: This function is only available on Windows.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Revert Update</string>
             </property>
            </widget>
           </item>
@@ -1584,13 +1584,51 @@ other hardware interface for PTT.</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QPushButton" name="revert_update_button">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Revert the last Hamlib update. &lt;/p&gt;&lt;p&gt;Note: This function is only available on Windows.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
+          <item row="1" column="0" colspan="4">
+           <layout class="QGridLayout" name="hamlib_version_gridLayout" columnstretch="0,1">
+            <item row="0" column="0">
+             <widget class="QLabel" name="in_use_text">
+              <property name="text">
+               <string>In use:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="in_use">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="backed_up_text">
+              <property name="text">
+               <string>Backed up:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="backed_up">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="rbHamlib64">
             <property name="text">
-             <string>Revert Update</string>
+             <string>64-bit</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -2853,6 +2891,90 @@ Right click for insert and delete options.</string>
        <string>Advanced</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_9">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;User-selectable parameters for JT65 VHF/UHF/Microwave decoding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="title">
+          <string>JT65 VHF/UHF/Microwave decoding parameters</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout_11">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Random erasure patterns:</string>
+            </property>
+            <property name="buddy">
+             <cstring>sbNtrials</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="sbNtrials">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of erasure patterns for stochastic soft-decision Reed Solomon decoder is 10^(n/2).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="minimum">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <number>12</number>
+            </property>
+            <property name="value">
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Aggressive decoding level:</string>
+            </property>
+            <property name="buddy">
+             <cstring>sbAggressive</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="sbAggressive">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Higher levels will increase the probability of decoding, but will also increase probability of a false decode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="maximum">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="cbTwoPass">
+            <property name="text">
+             <string>Two-pass decoding</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <spacer name="verticalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="1" column="0" colspan="2">
         <widget class="QGroupBox" name="gbSpecialOpActivity">
          <property name="title">
@@ -3239,90 +3361,6 @@ Right click for insert and delete options.</string>
           </item>
          </layout>
         </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_6">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;User-selectable parameters for JT65 VHF/UHF/Microwave decoding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="title">
-          <string>JT65 VHF/UHF/Microwave decoding parameters</string>
-         </property>
-         <layout class="QFormLayout" name="formLayout_11">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Random erasure patterns:</string>
-            </property>
-            <property name="buddy">
-             <cstring>sbNtrials</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="sbNtrials">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of erasure patterns for stochastic soft-decision Reed Solomon decoder is 10^(n/2).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="minimum">
-             <number>0</number>
-            </property>
-            <property name="maximum">
-             <number>12</number>
-            </property>
-            <property name="value">
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Aggressive decoding level:</string>
-            </property>
-            <property name="buddy">
-             <cstring>sbAggressive</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="sbAggressive">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Higher levels will increase the probability of decoding, but will also increase probability of a false decode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="maximum">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="cbTwoPass">
-            <property name="text">
-             <string>Two-pass decoding</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <spacer name="verticalSpacer_8">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item row="0" column="1">
         <widget class="QGroupBox" name="groupBox_5">
@@ -3983,13 +4021,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="CAT_handshake_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="TX_audio_source_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
-  <buttongroup name="TX_audio_source_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
  </buttongroups>
 </ui>
