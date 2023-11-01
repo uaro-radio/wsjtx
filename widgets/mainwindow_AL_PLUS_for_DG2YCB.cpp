@@ -11300,7 +11300,6 @@ void MainWindow::statusUpdate () const
                                   static_cast<quint8> (m_specOp),
                                   ftol, tr_period, m_multi_settings->configuration_name (),
                                   m_currentMessage);
-  check_button_color();
 }
 
 void MainWindow::childEvent (QChildEvent * e)
