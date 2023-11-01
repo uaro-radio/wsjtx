@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>840</width>
+    <width>854</width>
     <height>680</height>
    </rect>
   </property>
@@ -57,7 +57,6 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -527,7 +526,6 @@ QLabel[oob=&quot;true&quot;] {
           <property name="font">
            <font>
             <pointsize>10</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -669,7 +667,7 @@ QLabel[oob=&quot;true&quot;] {
          </widget>
         </item>
         <item>
-         <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,0" columnstretch="0,2,3">
+         <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,0" columnstretch="0,1,1">
           <property name="sizeConstraint">
            <enum>QLayout::SetMinimumSize</enum>
           </property>
@@ -953,12 +951,12 @@ QLabel[oob=&quot;true&quot;] {
                   <number>0</number>
                  </property>
                  <item>
-                  <layout class="QGridLayout" name="gridLayout_3" columnstretch="2,0">
+                  <layout class="QGridLayout" name="gridLayout_3" columnstretch="3,2">
                    <property name="spacing">
                     <number>0</number>
                    </property>
                    <item row="1" column="0" colspan="2">
-                    <layout class="QHBoxLayout" name="horizontalLayout_11">
+                    <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,1,1">
                      <property name="spacing">
                       <number>0</number>
                      </property>
@@ -1014,7 +1012,7 @@ Not available to nonstandard callsign holders.</string>
                     </layout>
                    </item>
                    <item row="3" column="0" colspan="2">
-                    <layout class="QHBoxLayout" name="horizontalLayout_15">
+                    <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="1,1,2,1">
                      <property name="spacing">
                       <number>0</number>
                      </property>
@@ -1096,7 +1094,7 @@ When not checked you can view the calibration results.</string>
                     </layout>
                    </item>
                    <item row="2" column="0" colspan="2">
-                    <layout class="QHBoxLayout" name="horizontalLayout_5">
+                    <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,0,0,0">
                      <property name="spacing">
                       <number>0</number>
                      </property>
@@ -1171,12 +1169,18 @@ When not checked you can view the calibration results.</string>
                     </layout>
                    </item>
                    <item row="0" column="0">
-                    <layout class="QVBoxLayout" name="verticalLayout_14" stretch="0,0,0,0,0,0">
+                    <layout class="QVBoxLayout" name="verticalLayout_14" stretch="1,1,1,1,1,1">
                      <property name="spacing">
                       <number>0</number>
                      </property>
                      <item>
                       <widget class="QCheckBox" name="txFirstCheckBox">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="focusPolicy">
                         <enum>Qt::StrongFocus</enum>
                        </property>
@@ -1193,6 +1197,12 @@ When not checked you can view the calibration results.</string>
                      </item>
                      <item>
                       <widget class="QSpinBox" name="TxFreqSpinBox">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="toolTip">
                         <string>Audio Tx frequency</string>
                        </property>
@@ -1315,6 +1325,12 @@ When not checked you can view the calibration results.</string>
                      </item>
                      <item>
                       <widget class="QSpinBox" name="RxFreqSpinBox">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="toolTip">
                         <string>Audio Rx frequency</string>
                        </property>
@@ -1340,6 +1356,12 @@ When not checked you can view the calibration results.</string>
                      </item>
                      <item>
                       <widget class="QSpinBox" name="rptSpinBox">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="toolTip">
                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Signal report: Signal-to-noise ratio in 2500 Hz reference bandwidth (dB).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                        </property>
@@ -1365,6 +1387,12 @@ When not checked you can view the calibration results.</string>
                      </item>
                      <item>
                       <widget class="RestrictedSpinBox" name="sbTR">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="toolTip">
                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tx/Rx or Frequency calibration sequence length&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                        </property>
@@ -1394,12 +1422,12 @@ When not checked you can view the calibration results.</string>
                     </layout>
                    </item>
                    <item row="0" column="1">
-                    <layout class="QVBoxLayout" name="verticalLayout_13">
+                    <layout class="QVBoxLayout" name="verticalLayout_13" stretch="1,1,1,1,1,1">
                      <property name="spacing">
                       <number>0</number>
                      </property>
                      <item>
-                      <layout class="QGridLayout" name="submode_gridLayout">
+                      <layout class="QGridLayout" name="submode_gridLayout" columnstretch="1,1">
                        <property name="spacing">
                         <number>0</number>
                        </property>
@@ -1474,6 +1502,12 @@ When not checked you can view the calibration results.</string>
                          </property>
                          <item>
                           <widget class="QSpinBox" name="sbSerialNumber">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
                            <property name="alignment">
                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                            </property>
@@ -1560,6 +1594,12 @@ When not checked you can view the calibration results.</string>
                      </item>
                      <item>
                       <widget class="LettersSpinBox" name="sbSubmode">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="toolTip">
                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Submode determines tone spacing; A is narrowest.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                        </property>
@@ -1582,6 +1622,12 @@ When not checked you can view the calibration results.</string>
                      </item>
                      <item>
                       <widget class="QSpinBox" name="syncSpinBox">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="toolTip">
                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Synchronizing threshold.  Lower numbers accept weaker sync signals.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                        </property>
@@ -1607,6 +1653,12 @@ When not checked you can view the calibration results.</string>
                      </item>
                      <item>
                       <widget class="QSpinBox" name="sbMaxDrift">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="alignment">
                         <set>Qt::AlignCenter</set>
                        </property>
@@ -2037,6 +2089,12 @@ When not checked you can view the calibration results.</string>
                             </property>
                             <item>
                              <widget class="QCheckBox" name="cbUploadWSPR_Spots">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
                               <property name="maximumSize">
                                <size>
                                 <width>16777215</width>
@@ -2099,6 +2157,12 @@ When not checked you can view the calibration results.</string>
                           </item>
                           <item>
                            <widget class="QSpinBox" name="sbNB">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
                             <property name="minimumSize">
                              <size>
                               <width>0</width>
@@ -2135,6 +2199,12 @@ When not checked you can view the calibration results.</string>
                             </property>
                             <item>
                              <widget class="QPushButton" name="pbTxNext">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
                               <property name="maximumSize">
                                <size>
                                 <width>16777215</width>
@@ -2173,6 +2243,12 @@ When not checked you can view the calibration results.</string>
                             </property>
                             <item>
                              <widget class="QComboBox" name="TxPowerComboBox">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
                               <property name="maximumSize">
                                <size>
                                 <width>16777215</width>
@@ -4209,8 +4285,8 @@ Double-click to reset to the standard 73 message</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>840</width>
-     <height>21</height>
+     <width>854</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
