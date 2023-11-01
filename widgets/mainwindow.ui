@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>879</width>
+    <width>840</width>
     <height>680</height>
    </rect>
   </property>
@@ -20,6 +20,12 @@
    <size>
     <width>0</width>
     <height>480</height>
+   </size>
+  </property>
+  <property name="sizeIncrement">
+   <size>
+    <width>1</width>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -51,6 +57,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -520,6 +527,7 @@ QLabel[oob=&quot;true&quot;] {
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2195,80 +2203,11 @@ When not checked you can view the calibration results.</string>
            </widget>
           </item>
           <item row="0" column="1">
-           <layout class="QGridLayout" name="gridLayout">
+           <layout class="QGridLayout" name="gridLayout_14" columnstretch="1,1,1,1">
             <property name="spacing">
              <number>0</number>
             </property>
-            <item row="0" column="2" alignment="Qt::AlignHCenter">
-             <widget class="QPushButton" name="ft8Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
-              <property name="toolTip">
-               <string>Switch to FT8 mode</string>
-              </property>
-              <property name="text">
-               <string>FT8</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="3" alignment="Qt::AlignHCenter">
-             <widget class="QPushButton" name="jt65Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Switch to JT65 mode</string>
-              </property>
-              <property name="text">
-               <string>JT65</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="2" alignment="Qt::AlignHCenter">
-             <widget class="QPushButton" name="q65Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to Q65 mode. Right-click to toggle Q65 Pileup mode On/Off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Q65</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" alignment="Qt::AlignLeft">
+            <item row="0" column="0">
              <widget class="QPushButton" name="houndButton">
               <property name="minimumSize">
                <size>
@@ -2282,6 +2221,12 @@ When not checked you can view the calibration results.</string>
                 <height>16777215</height>
                </size>
               </property>
+              <property name="sizeIncrement">
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
               </property>
@@ -2289,9 +2234,7 @@ When not checked you can view the calibration results.</string>
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle FT8 hound mode On/Off. Right-click to toggle last used contest mode On/Off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="styleSheet">
-               <string notr="true">QPushButton:checked {
-	background-color: red;
-}</string>
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>H</string>
@@ -2301,29 +2244,7 @@ When not checked you can view the calibration results.</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="4" alignment="Qt::AlignRight">
-             <widget class="QPushButton" name="fst4Button">
-              <property name="minimumSize">
-               <size>
-                <width>38</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>Switch to FST4 mode</string>
-              </property>
-              <property name="text">
-               <string>FST4</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="4" alignment="Qt::AlignRight">
+            <item row="0" column="3">
              <widget class="QPushButton" name="wsprButton">
               <property name="minimumSize">
                <size>
@@ -2337,6 +2258,12 @@ When not checked you can view the calibration results.</string>
                 <height>16777215</height>
                </size>
               </property>
+              <property name="sizeIncrement">
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="toolTip">
                <string>Switch to WSPR mode</string>
               </property>
@@ -2348,7 +2275,66 @@ When not checked you can view the calibration results.</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="0" alignment="Qt::AlignLeft">
+            <item row="0" column="1">
+             <widget class="QPushButton" name="ft8Button">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="sizeIncrement">
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>Switch to FT8 mode</string>
+              </property>
+              <property name="text">
+               <string>FT8</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QPushButton" name="ft4Button">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="sizeIncrement">
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Switch to FT4 mode</string>
+              </property>
+              <property name="text">
+               <string>FT4</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
              <widget class="QPushButton" name="msk144Button">
               <property name="minimumSize">
                <size>
@@ -2373,8 +2359,8 @@ When not checked you can view the calibration results.</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="3" alignment="Qt::AlignHCenter">
-             <widget class="QPushButton" name="ft4Button">
+            <item row="1" column="1">
+             <widget class="QPushButton" name="q65Button">
               <property name="minimumSize">
                <size>
                 <width>38</width>
@@ -2388,10 +2374,54 @@ When not checked you can view the calibration results.</string>
                </size>
               </property>
               <property name="toolTip">
-               <string>Switch to FT4 mode</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to Q65 mode. Right-click to toggle Q65 Pileup mode On/Off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
-               <string>FT4</string>
+               <string>Q65</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QPushButton" name="jt65Button">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Switch to JT65 mode</string>
+              </property>
+              <property name="text">
+               <string>JT65</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="QPushButton" name="fst4Button">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Switch to FST4 mode</string>
+              </property>
+              <property name="text">
+               <string>FST4</string>
               </property>
              </widget>
             </item>
@@ -4179,8 +4209,8 @@ Double-click to reset to the standard 73 message</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>879</width>
-     <height>22</height>
+     <width>840</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

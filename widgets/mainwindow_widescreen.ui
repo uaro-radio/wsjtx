@@ -45,6 +45,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -188,6 +189,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1426,42 +1428,42 @@ When not checked you can view the calibration results.</string>
                       <item row="0" column="1">
                        <layout class="QVBoxLayout" name="verticalLayout_13">
                         <item>
-                     <layout class="QGridLayout" name="submode_gridLayout">
-                      <item row="0" column="0">
-                       <widget class="QPushButton" name="pb30B">
-                        <property name="minimumSize">
-                         <size>
-                          <width>32</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 30 s and Submode B.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>30B</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="1">
-                       <widget class="QPushButton" name="pb60C">
-                        <property name="minimumSize">
-                         <size>
-                          <width>32</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 60 s and Submode C.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>60C</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
+                         <layout class="QGridLayout" name="submode_gridLayout">
+                          <item row="0" column="0">
+                           <widget class="QPushButton" name="pb30B">
+                            <property name="minimumSize">
+                             <size>
+                              <width>32</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="toolTip">
+                             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 30 s and Submode B.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                            </property>
+                            <property name="text">
+                             <string>30B</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="0" column="1">
+                           <widget class="QPushButton" name="pb60C">
+                            <property name="minimumSize">
+                             <size>
+                              <width>32</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="toolTip">
+                             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 60 s and Submode C.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                            </property>
+                            <property name="text">
+                             <string>60C</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
                          <widget class="QCheckBox" name="cbHoldTxFreq">
                           <property name="toolTip">
                            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to keep Tx frequency fixed when double-clicking on decoded text.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -3662,11 +3664,6 @@ QLabel[oob=&quot;true&quot;] {
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle FT8 hound mode On/Off. Right-click to toggle last used contest mode On/Off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
-                 <property name="styleSheet">
-                  <string notr="true">QPushButton:checked {
-	background-color: red;
-}</string>
-                 </property>
                  <property name="text">
                   <string>H</string>
                  </property>
@@ -3938,7 +3935,7 @@ QPushButton[state=&quot;ok&quot;] {
      <x>0</x>
      <y>0</y>
      <width>1165</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

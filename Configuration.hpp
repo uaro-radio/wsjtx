@@ -191,7 +191,7 @@ public:
   bool enable_VHF_features () const;
   bool decode_at_52s () const;
   bool Tune_watchdog_disabled () const;
-  bool Tx_warning_disabled () const;
+  bool button_coloring_disabled () const;
   bool Wait_features_enabled () const;
   bool showDistance() const ;
   bool showAzimuth() const ;

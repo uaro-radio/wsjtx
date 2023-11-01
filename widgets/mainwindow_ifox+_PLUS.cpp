@@ -3391,6 +3391,7 @@ void MainWindow::statusChanged()
     ui->pb30B->setVisible(false);
     ui->pb60C->setVisible(false);
   }
+  check_button_color();
 }
 
 bool MainWindow::eventFilter (QObject * object, QEvent * event)
@@ -6738,6 +6739,7 @@ void MainWindow::guiUpdate()
       ui->cbCQonly->setText("CQ only");
       ui->cbCQonly->setToolTip("CQ messages only.");
   }
+  check_button_color();
 
 }               //End of guiUpdate
 
@@ -10465,6 +10467,7 @@ void MainWindow::on_sbTR_valueChanged(int value)
 //  if(m_transmitting) on_stopTxButton_clicked();      //### Is this needed or desirable? ###
   on_sbSubmode_valueChanged(ui->sbSubmode->value());
   statusUpdate ();
+  check_button_color();
 }
 
 void MainWindow::on_sbTR_FST4W_valueChanged(int value)
@@ -10522,6 +10525,7 @@ void MainWindow::on_sbSubmode_valueChanged(int n)
   if (m_mode=="JT65") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_JT65",ui->sbSubmode->value());});}
   if (m_mode=="JT4") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_JT4",ui->sbSubmode->value());});}
   statusUpdate ();
+  check_button_color();
 }
 
 void MainWindow::on_cbFast9_clicked(bool b)
@@ -11246,6 +11250,7 @@ void MainWindow::statusUpdate () const
                                   static_cast<quint8> (m_specOp),
                                   ftol, tr_period, m_multi_settings->configuration_name (),
                                   m_currentMessage);
+  check_button_color();
 }
 
 void MainWindow::childEvent (QChildEvent * e)
@@ -13146,62 +13151,39 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
       {
         widget->updateGeometry ();
       }
+    statusChanged();
     guiUpdate();
 }
 
 void MainWindow::check_button_color()
 {
-    if (!m_config.Tx_warning_disabled()) {
-        // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
-        if((((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="JT4") &&
-              m_specOp==SpecOp::NONE && ui->cbAutoSeq->isChecked() && ui->cbAutoSeq->isChecked()
-              && m_config.Wait_features_enabled()) or m_specOp==SpecOp::HOUND) && m_hisCall!="") {
-            if (ui->DX_Call_Button->isChecked()) {
-                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ff0000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
-            } else {
-                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none;}");
-            }
-            if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
-            if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
-        } else {
-            ui->DX_Call_Button->setChecked(false);
-            if (m_useDarkStyle) {
-                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-                if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
-                if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
-            } else {
-                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
-                if (!m_auto) {
-                    ui->autoButton->setStyleSheet("");
-                    ui->autoButton->setStyleSheet("QPushButton {min-width: 5em;}");
-                }
-                if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
-            }
-        }
-    } else {
-        if((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
-           (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && m_hisCall!=""
-            && ui->DX_Call_Button->isChecked() && m_config.Wait_features_enabled()) {
+    // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
+    if((((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="JT4") &&
+          m_specOp==SpecOp::NONE && ui->cbAutoSeq->isChecked() && ui->cbAutoSeq->isChecked()
+          && m_config.Wait_features_enabled()) or m_specOp==SpecOp::HOUND) && m_hisCall!="") {
+        if (ui->DX_Call_Button->isChecked()) {
             ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ff0000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
         } else {
-            ui->DX_Call_Button->setChecked(false);
-            if (ui->actionUse_Dark_Style->isChecked()) {
-               ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-            } else {
-               ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
-            }
+            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none;}");
         }
-        if (m_auto) {
-            ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+        if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
+        if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+    } else {
+        ui->DX_Call_Button->setChecked(false);
+        if (m_useDarkStyle) {
+            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+            if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+            if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         } else {
-            if (m_useDarkStyle) {
-                ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
-            } else {
+            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+            if (!m_auto) {
                 ui->autoButton->setStyleSheet("");
                 ui->autoButton->setStyleSheet("QPushButton {min-width: 5em;}");
             }
+            if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         }
     }
+
     ui->autoButton->setToolTip("Toggle Auto-Tx On/Off");
     if (m_config.Wait_features_enabled()) {
         ui->DX_Call_Button->setToolTip("Toggle Wait & Call On/Off.\n"
@@ -13227,6 +13209,91 @@ void MainWindow::check_button_color()
     if (m_config.Territory2()!="") ui->actionHideTerritory2->setText("Hide callsigns from " + m_config.Territory2());
     if (m_config.Territory3()!="") ui->actionHideTerritory3->setText("Hide callsigns from " + m_config.Territory3());
     if (m_config.Territory4()!="") ui->actionHideTerritory4->setText("Hide callsigns from " + m_config.Territory4());
+
+    if (!m_config.button_coloring_disabled()) {
+      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==30 && m_nSubMode==1) {
+          ui->pb30B->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+      } else {
+          if (m_useDarkStyle) {
+              ui->pb30B->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+          } else {
+              ui->pb30B->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+          }
+      }
+      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==60 && m_nSubMode==2) {
+          ui->pb60C->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+      } else {
+          if (m_useDarkStyle) {
+             ui->pb60C->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+          } else {
+             ui->pb60C->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+          }
+      }
+      if (ui->houndButton->isChecked()) {
+          ui->houndButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+      } else {
+          if (m_useDarkStyle) {
+             ui->houndButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->houndButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
+      }
+      if (m_mode=="FT8") {
+          ui->ft8Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+      } else {
+          if (m_useDarkStyle) {
+             ui->ft8Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->ft8Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
+      }
+      if (m_mode=="FT4") {
+          ui->ft4Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+      } else {
+          if (m_useDarkStyle) {
+             ui->ft4Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->ft4Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
+      }
+      if (m_mode=="MSK144") {
+          ui->msk144Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+      } else {
+          if (m_useDarkStyle) {
+             ui->msk144Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->msk144Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
+      }
+      if (m_mode=="Q65") {
+          ui->q65Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+      } else {
+          if (m_useDarkStyle) {
+             ui->q65Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->q65Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
+      }
+      if (m_mode=="JT65") {
+          ui->jt65Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+      } else {
+          if (m_useDarkStyle) {
+             ui->jt65Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->jt65Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
+      }
+    }
+    if (ui->foxButton->isChecked()) {
+        ui->foxButton->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+    } else {
+        if (m_useDarkStyle) {
+           ui->foxButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+        } else {
+           ui->foxButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+        }
+    }
+  }
 }
 
 void MainWindow::read_txlog()
