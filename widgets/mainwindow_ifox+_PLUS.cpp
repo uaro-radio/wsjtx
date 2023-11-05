@@ -12642,6 +12642,15 @@ void MainWindow::on_jt65Button_clicked()
     on_actionJT65_triggered();
 }
 
+void MainWindow::on_echoButton_clicked()
+{
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
+    on_actionEcho_triggered();
+}
+
 void MainWindow::on_pb30B_clicked()
 {
     ui->sbTR->setValue(30);
@@ -13320,17 +13329,32 @@ void MainWindow::check_button_color()
              ui->jt65Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
           }
       }
+      if (ui->foxButton->isChecked()) {
+          ui->foxButton->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+      } else {
+          if (m_useDarkStyle) {
+             ui->foxButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->foxButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
+      }
+      if (m_mode=="Echo" && ui->echoButton->isVisible()) {
+          ui->echoButton->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+      } else {
+          if (m_useDarkStyle) {
+             ui->echoButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->echoButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
+      }
     }
-    if (ui->foxButton->isChecked()) {
-        ui->foxButton->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+    if (m_config.enable_VHF_features() && m_config.decode_at_52s()) {
+      ui->foxButton->setVisible (false);
+      ui->echoButton->setVisible (true);
     } else {
-        if (m_useDarkStyle) {
-           ui->foxButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
-        } else {
-           ui->foxButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
-        }
+      ui->foxButton->setVisible (true);
+      ui->echoButton->setVisible (false);
     }
-  }
 }
 
 void MainWindow::read_txlog()

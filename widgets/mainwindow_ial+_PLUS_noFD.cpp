@@ -12572,7 +12572,11 @@ void MainWindow::on_fst4Button_clicked()     // UR disable for normal + widescre
       m_config.setSpecial_None();
       m_specOp=m_config.special_op_id();
     }
-    on_actionFST4_triggered();
+    if (m_config.enable_VHF_features() && m_config.decode_at_52s()) {
+        on_actionEcho_triggered();
+    } else {
+        on_actionFST4_triggered();
+    }
 }
 
 void MainWindow::on_wsprButton_clicked()     // UR disable for normal + widescreen versions
@@ -13272,15 +13276,29 @@ void MainWindow::check_button_color()
             ui->wsprButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
         }
       }
-      if (m_mode=="FST4") {
-        ui->fst4Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
-      } else {
-        if (m_useDarkStyle) {
-            ui->fst4Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+    }
+    if (m_config.enable_VHF_features() && m_config.decode_at_52s()) {
+        ui->fst4Button->setText ("Echo");
+        if (m_mode=="Echo") {
+          ui->fst4Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
         } else {
-            ui->fst4Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+          if (m_useDarkStyle) {
+              ui->fst4Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+          } else {
+              ui->fst4Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+          }
         }
-      }
+    } else {
+        ui->fst4Button->setText ("FST4");
+        if (m_mode=="FST4") {
+          ui->fst4Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+        } else {
+          if (m_useDarkStyle) {
+              ui->fst4Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+          } else {
+              ui->fst4Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+          }
+        }
     }
 }
 

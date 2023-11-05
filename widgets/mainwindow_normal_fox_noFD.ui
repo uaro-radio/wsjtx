@@ -3456,6 +3456,22 @@ QLabel[oob=&quot;true&quot;] {
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="echoButton">
+             <property name="minimumSize">
+              <size>
+               <width>32</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to Echo mode&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string>Echo</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item row="2" column="4" colspan="2">
