@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
+    <width>640</width>
     <height>480</height>
    </size>
   </property>
@@ -57,6 +57,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -526,6 +527,7 @@ QLabel[oob=&quot;true&quot;] {
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -4225,6 +4227,9 @@ Double-click to reset to the standard 73 message</string>
                  <property name="text">
                   <string> Pwr</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -4286,7 +4291,7 @@ Double-click to reset to the standard 73 message</string>
      <x>0</x>
      <y>0</y>
      <width>854</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

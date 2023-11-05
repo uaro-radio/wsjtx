@@ -2878,6 +2878,7 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
     }
     ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
     set_mode(m_mode);
+
     configActiveStations();
     check_button_color();
   }
@@ -3442,8 +3443,9 @@ void MainWindow::createStatusBar()                           //createStatusBar
   last_tx_label.setFrameStyle (QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget (&last_tx_label);
 
+  if (m_config.PWR_and_SWR()) statusBar ()->addPermanentWidget (&band_hopping_label);
   band_hopping_label.setAlignment (Qt::AlignHCenter);
-  band_hopping_label.setMinimumSize (QSize {90, 18});
+  band_hopping_label.setMinimumSize (QSize {80, 18});
   band_hopping_label.setFrameStyle (QFrame::Panel | QFrame::Sunken);
 
   statusBar()->addPermanentWidget(&progressBar);
@@ -3494,6 +3496,7 @@ void MainWindow::setup_status_bar (bool vhf)
     if (!band_hopping_label.isVisible ()) {
       statusBar ()->addWidget (&band_hopping_label);
       band_hopping_label.show ();
+      band_hopping_label.setMinimumSize (QSize  {80, 18});
     }
   } else {
     if (band_hopping_label.isVisible ()) statusBar ()->removeWidget (&band_hopping_label);
@@ -9985,6 +9988,41 @@ void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const&
       m_tx_when_ready = false;
     }
   }
+
+  // Display PWR and SWR
+  if(m_config.PWR_and_SWR()) {
+    if (!band_hopping_label.isVisible ()) {
+      statusBar ()->addWidget (&band_hopping_label);
+      band_hopping_label.setMinimumSize (QSize  {80, 18});
+      band_hopping_label.show();
+    }
+    if (m_rigState.power() != s.power() && s.power() > 0) {
+      ui->label->setText(QString {tr("%1 W")}.arg (round(s.power()/1000.)));
+    } else {
+      ui->label->setText("Pwr");
+    }
+    if (m_rigState.swr() != s.swr()) {
+      if (s.swr() > 0) {
+        if (s.swr()>150) band_hopping_label.setStyleSheet ("QLabel{color: #000000; background-color: #ffff00}");
+        if (s.swr()>200) band_hopping_label.setStyleSheet ("QLabel{color: #ffffff; background-color: #ff0000}");
+        if (s.swr()>250 && m_config.check_SWR()) {
+          on_stopTxButton_clicked();
+          MessageBox::warning_message (this, tr ("SWR > 2.5 !!!\n\n"
+                                                 "Transmission was stopped\n\n"
+                                                 "Check your antenna"));
+        }
+        if (s.swr()<1000) {
+          band_hopping_label.setText(QString {"SWR: %1"}.arg (s.swr()/100.,0,'f',2));
+        } else {
+          band_hopping_label.setText(QString {"SWR: %1"}.arg (s.swr()/100.,0,'f',1));
+        }
+      } else {
+        band_hopping_label.setText("");
+        band_hopping_label.setStyleSheet("");
+      }
+    }
+  }
+
   m_rigState = s;
   auto old_freqNominal = m_freqNominal;
   if (!old_freqNominal)

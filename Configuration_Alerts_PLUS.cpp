@@ -581,6 +581,7 @@ private:
   Q_SLOT void handle_transceiver_failure (QString const& reason);
   Q_SLOT void on_special_op_activity_button_group_buttonClicked (int);
   Q_SLOT void on_DXCC_check_box_clicked(bool checked);
+  Q_SLOT void on_PWR_and_SWR_check_box_clicked(bool checked);
   Q_SLOT void on_reset_highlighting_to_defaults_push_button_clicked (bool);
   Q_SLOT void on_reset_highlighting_to_defaults2_push_button_clicked (bool);
   Q_SLOT void on_rescan_log_push_button_clicked (bool);
@@ -796,6 +797,8 @@ private:
   qint32 aggressive_;
   qint32 RxBandwidth_;
   qint32 cloudLogStationID_;
+  bool PWR_and_SWR_;
+  bool check_SWR_;
   double degrade_;
   double txDelay_;
   bool id_after_73_;
@@ -828,7 +831,7 @@ private:
   bool enable_VHF_features_;
   bool decode_at_52s_;
   bool Tune_watchdog_disabled_;
-  bool Tx_warning_disabled_;
+  bool button_coloring_disabled_;
   bool Wait_features_enabled_;
   bool showDistance_;
   bool showAzimuth_;
@@ -979,7 +982,7 @@ bool Configuration::TX_messages () const {return m_->TX_messages_;}
 bool Configuration::enable_VHF_features () const {return m_->enable_VHF_features_;}
 bool Configuration::decode_at_52s () const {return m_->decode_at_52s_;}
 bool Configuration::Tune_watchdog_disabled () const {return m_->Tune_watchdog_disabled_;}
-bool Configuration::Tx_warning_disabled () const {return m_->Tx_warning_disabled_;}
+bool Configuration::button_coloring_disabled () const {return m_->button_coloring_disabled_;}
 bool Configuration::Wait_features_enabled () const {return m_->Wait_features_enabled_;}
 bool Configuration::showDistance() const {return m_->showDistance_;}
 bool Configuration::showAzimuth() const {return m_->showAzimuth_;}
@@ -996,6 +999,8 @@ bool Configuration::Whitelisted() const {return m_->Whitelisted_;}
 bool Configuration::AlwaysPass() const {return m_->AlwaysPass_;}
 bool Configuration::filters_for_Wait_and_Pounce_only() const {return m_->filters_for_Wait_and_Pounce_only_;}
 bool Configuration::filters_for_word2() const {return m_->filters_for_word2_;}
+bool Configuration::PWR_and_SWR () const {return m_->PWR_and_SWR_;}
+bool Configuration::check_SWR () const {return m_->check_SWR_;}
 bool Configuration::x2ToneSpacing() const {return m_->x2ToneSpacing_;}
 bool Configuration::x4ToneSpacing() const {return m_->x4ToneSpacing_;}
 bool Configuration::split_mode () const {return m_->split_mode ();}
@@ -1850,7 +1855,9 @@ void Configuration::impl::initialize_models ()
   ui_->sbDegrade->setValue (degrade_);
   ui_->sbBandwidth->setValue (RxBandwidth_);
   ui_->PTT_method_button_group->button (rig_params_.ptt_type)->setChecked (true);
-
+  ui_->PWR_and_SWR_check_box->setChecked (PWR_and_SWR_);
+  ui_->check_SWR_check_box->setChecked (check_SWR_);
+  if (!ui_->PWR_and_SWR_check_box->isChecked()) ui_->check_SWR_check_box->setEnabled (false);
   ui_->save_path_display_label->setText (save_directory_.absolutePath ());
   ui_->azel_path_display_label->setText (azel_directory_.absolutePath ());
   ui_->CW_id_after_73_check_box->setChecked (id_after_73_);
@@ -1869,9 +1876,14 @@ void Configuration::impl::initialize_models ()
   ui_->insert_blank_check_box->setChecked (insert_blank_);
   ui_->cb_detailed_blank_line->setChecked (detailed_blank_);
   ui_->DXCC_check_box->setChecked (DXCC_);
+  ui_->ppfx_check_box->setChecked (ppfx_);
+  ui_->show_country_names_check_box->setChecked (show_country_names_);
+  if (!ui_->DXCC_check_box->isChecked()) {
+    ui_->ppfx_check_box->setEnabled (false);
+    ui_->show_country_names_check_box->setEnabled (false);
+  }
   ui_->Map_Grid_to_State->setChecked(gridMap_);
   ui_->Map_All_Messages->setChecked(gridMapAll_);
-  ui_->ppfx_check_box->setChecked (ppfx_);
   ui_->clear_DX_check_box->setChecked (clear_DX_);
   ui_->miles_check_box->setChecked (miles_);
   ui_->quick_call_check_box->setChecked (quick_call_);
@@ -1883,7 +1895,7 @@ void Configuration::impl::initialize_models ()
   ui_->enable_VHF_features_check_box->setChecked(enable_VHF_features_);
   ui_->decode_at_52s_check_box->setChecked(decode_at_52s_);
   ui_->disable_Tune_watchdog_check_box->setChecked(Tune_watchdog_disabled_);
-  ui_->disable_Tx_warning_check_box->setChecked(Tx_warning_disabled_);
+  ui_->disable_button_coloring_check_box->setChecked(button_coloring_disabled_);
   ui_->enable_Wait_features_check_box->setChecked(Wait_features_enabled_);
   ui_->cb_showDistance->setChecked(showDistance_);
   ui_->cb_showAzimuth->setChecked(showAzimuth_);
@@ -1894,6 +1906,7 @@ void Configuration::impl::initialize_models ()
   ui_->cbTwoPass->setChecked(twoPass_);
   ui_->cbContestName->setChecked(Individual_Contest_Name_);
   ui_->cb_NCCC_Sprint->setChecked(NCCC_Sprint_);
+  if (!ui_->rbNA_VHF_Contest->isChecked()) ui_->cb_NCCC_Sprint->setEnabled (false);
   ui_->cbZZ00->setChecked(ZZ00_);
   ui_->cbBlacklist->setChecked(Blacklisted_);
   ui_->cbWhitelist->setChecked(Whitelisted_);
@@ -1985,7 +1998,6 @@ void Configuration::impl::initialize_models ()
   ui_->highlight_orange_check_box->setChecked (highlight_orange_);
   ui_->highlight_blue_check_box->setChecked (highlight_blue_);
   ui_->alternate_erase_button_check_box->setChecked (alternate_erase_button_);
-  ui_->show_country_names_check_box->setChecked (show_country_names_);
   ui_->LotW_days_since_upload_spin_box->setValue (LotW_days_since_upload_);
   ui_->cbHighlightDXcall->setChecked(highlight_DXcall_);
   ui_->cbClearDXcall->setChecked(clear_DXcall_);
@@ -2124,6 +2136,8 @@ void Configuration::impl::read_settings ()
   ui_->Territory4->setText(Territory4_);
   ui_->highlight_orange_callsigns->setText(highlight_orange_callsigns_);
   ui_->highlight_blue_callsigns->setText(highlight_blue_callsigns_);
+  PWR_and_SWR_ = settings_->value ("PWRandSWR", false).toBool ();
+  check_SWR_ = settings_->value ("CheckSWR", false).toBool ();
 
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
       && next_font_ != font_)
@@ -2286,7 +2300,7 @@ void Configuration::impl::read_settings ()
   enable_VHF_features_ = settings_->value("VHFUHF",false).toBool ();
   decode_at_52s_ = settings_->value("Decode52",false).toBool ();
   Tune_watchdog_disabled_ = settings_->value("TuneWatchdogDisabled",false).toBool ();
-  Tx_warning_disabled_ = settings_->value("TxWarningDisabled",false).toBool ();
+  button_coloring_disabled_ = settings_->value("TxWarningDisabled",false).toBool ();
   Wait_features_enabled_ = settings_->value("WaitFeaturesEnabled",true).toBool ();
   showDistance_ = settings_->value("showDistance", false).toBool();
   showAzimuth_ = settings_->value("showAzimuth", false).toBool();
@@ -2440,6 +2454,9 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("Territory4", Territory4_);
   settings_->setValue ("HighlightOrangeCallsigns", highlight_orange_callsigns_);
   settings_->setValue ("HighlightBlueCallsigns", highlight_blue_callsigns_);
+  settings_->setValue ("PWRandSWR", PWR_and_SWR_);
+  settings_->setValue ("CheckSWR", check_SWR_);
+
   settings_->setValue ("Font", font_.toString ());
   settings_->setValue ("DecodedTextFont", decoded_text_font_.toString ());
   settings_->setValue ("IDint", id_interval_);
@@ -2524,7 +2541,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("VHFUHF", enable_VHF_features_);
   settings_->setValue ("Decode52", decode_at_52s_);
   settings_->setValue ("TuneWatchdogDisabled", Tune_watchdog_disabled_);
-  settings_->setValue ("TxWarningDisabled", Tx_warning_disabled_);
+  settings_->setValue ("TxWarningDisabled", button_coloring_disabled_);
   settings_->setValue ("WaitFeaturesEnabled", Wait_features_enabled_);
   settings_->setValue ("showDistance", showDistance_);
   settings_->setValue ("showAzimuth", showAzimuth_);
@@ -2644,11 +2661,21 @@ void Configuration::impl::set_rig_invariants ()
       ui_->test_PTT_push_button->setEnabled (TransceiverFactory::PTT_method_DTR == ptt_method
                                              || TransceiverFactory::PTT_method_RTS == ptt_method);
       ui_->TX_audio_source_group_box->setEnabled (false);
+      ui_->PWR_and_SWR_check_box->setChecked (false);
+      ui_->PWR_and_SWR_check_box->setEnabled (false);
+      ui_->check_SWR_check_box->setChecked (false);
+      ui_->check_SWR_check_box->setEnabled (false);
     }
   else
     {
       ui_->monitor_last_used_check_box->setEnabled (true);
       ui_->CAT_control_group_box->setEnabled (true);
+      if(!ui_->rig_combo_box->currentText().startsWith("OmniRig") && !ui_->rig_combo_box->currentText().startsWith("DX Lab") &&
+         !ui_->rig_combo_box->currentText().startsWith("Ham Radio") && !ui_->rig_combo_box->currentText().startsWith("Kenwood TS-480") &&
+         !ui_->rig_combo_box->currentText().startsWith("Kenwood TS-850") &&
+         !ui_->rig_combo_box->currentText().startsWith("Kenwood TS-870")) {
+         ui_->PWR_and_SWR_check_box->setEnabled (true);
+      }
       ui_->test_CAT_push_button->setEnabled (true);
       ui_->test_PTT_push_button->setEnabled (false);
       ui_->TX_audio_source_group_box->setEnabled (transceiver_factory_.has_CAT_PTT_mic_data (rig) && TransceiverFactory::PTT_method_CAT == ptt_method);
@@ -2836,6 +2863,7 @@ TransceiverFactory::ParameterPack Configuration::impl::gather_rig_data ()
   result.force_rts = ui_->force_RTS_combo_box->isEnabled () && ui_->force_RTS_combo_box->currentIndex () > 0;
   result.rts_high = ui_->force_RTS_combo_box->isEnabled () && 1 == ui_->force_RTS_combo_box->currentIndex ();
   result.poll_interval = ui_->CAT_poll_interval_spin_box->value ();
+  if (ui_->PWR_and_SWR_check_box->isChecked ()) result.poll_interval |= do__pwr;
   result.ptt_type = static_cast<TransceiverFactory::PTTMethod> (ui_->PTT_method_button_group->checkedId ());
   result.ptt_port = ui_->PTT_port_combo_box->currentText ();
   result.audio_source = static_cast<TransceiverFactory::TXAudioSource> (ui_->TX_audio_source_button_group->checkedId ());
@@ -2996,6 +3024,9 @@ void Configuration::impl::accept ()
   Territory4_= ui_->Territory4->text ();
   highlight_orange_callsigns_= ui_-> highlight_orange_callsigns->text ().toUpper ();
   highlight_blue_callsigns_= ui_-> highlight_blue_callsigns->text ().toUpper ();
+  PWR_and_SWR_ = ui_->PWR_and_SWR_check_box->isChecked ();
+  check_SWR_ = ui_->check_SWR_check_box->isChecked ();
+
   spot_to_psk_reporter_ = ui_->psk_reporter_check_box->isChecked ();
   psk_reporter_tcpip_ = ui_->psk_reporter_tcpip_check_box->isChecked ();
   id_interval_ = ui_->CW_id_interval_spin_box->value ();
@@ -3039,7 +3070,7 @@ void Configuration::impl::accept ()
   enable_VHF_features_ = ui_->enable_VHF_features_check_box->isChecked ();
   decode_at_52s_ = ui_->decode_at_52s_check_box->isChecked ();
   Tune_watchdog_disabled_ = ui_->disable_Tune_watchdog_check_box->isChecked ();
-  Tx_warning_disabled_ = ui_->disable_Tx_warning_check_box->isChecked ();
+  button_coloring_disabled_ = ui_->disable_button_coloring_check_box->isChecked ();
   Wait_features_enabled_ = ui_->enable_Wait_features_check_box->isChecked ();
   showDistance_ = ui_->cb_showDistance->isChecked();
   showAzimuth_ = ui_->cb_showAzimuth->isChecked();
@@ -3417,8 +3448,10 @@ void Configuration::impl::on_DXCC_check_box_clicked(bool checked)
 {
     if (checked) {
         ui_->ppfx_check_box->setEnabled (true);
+        ui_->show_country_names_check_box->setEnabled (true);
     } else {
         ui_->ppfx_check_box->setEnabled (false);
+        ui_->show_country_names_check_box->setEnabled (false);
     }
 }
 
@@ -3445,6 +3478,24 @@ void Configuration::impl::on_CAT_handshake_button_group_buttonClicked (int /* id
 void Configuration::impl::on_rig_combo_box_currentIndexChanged (int /* index */)
 {
   set_rig_invariants ();
+  if(ui_->rig_combo_box->currentText().startsWith("OmniRig") || ui_->rig_combo_box->currentText().startsWith("DX Lab") ||
+     ui_->rig_combo_box->currentText().startsWith("Ham Radio") || ui_->rig_combo_box->currentText().startsWith("Kenwood TS-480") ||
+     ui_->rig_combo_box->currentText().startsWith("Kenwood TS-850") ||
+     ui_->rig_combo_box->currentText().startsWith("Kenwood TS-870")) {
+     ui_->PWR_and_SWR_check_box->setChecked (false);
+     ui_->PWR_and_SWR_check_box->setEnabled (false);
+     ui_->check_SWR_check_box->setChecked (false);
+     ui_->check_SWR_check_box->setEnabled (false);
+  }
+}
+
+void Configuration::impl::on_PWR_and_SWR_check_box_clicked(bool checked)
+{
+    if (checked) {
+        ui_->check_SWR_check_box->setEnabled (true);
+    } else {
+        ui_->check_SWR_check_box->setEnabled (false);
+    }
 }
 
 void Configuration::impl::on_CAT_data_bits_button_group_buttonClicked (int /* id */)

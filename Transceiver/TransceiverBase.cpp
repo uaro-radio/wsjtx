@@ -257,6 +257,18 @@ void TransceiverBase::update_PTT (bool state)
   actual_.ptt (state);
 }
 
+void TransceiverBase::update_power (unsigned int p)
+{
+  CAT_TRACE ("power: " << p);
+  actual_.power (p);
+}
+
+void TransceiverBase::update_swr (unsigned int p)
+{
+  CAT_TRACE ("swr: " << p);
+  actual_.swr (p);
+}
+
 void TransceiverBase::update_complete (bool force_signal)
 {
   CAT_TRACE ("force signal: " << force_signal);

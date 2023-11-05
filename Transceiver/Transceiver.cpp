@@ -18,6 +18,8 @@ QDebug operator << (QDebug d, Transceiver::TransceiverState const& s)
     << " Frequency {" << s.rx_frequency_ << "Hz, " << s.tx_frequency_ << "Hz} " << s.mode_
     << "; SPLIT: " << (Transceiver::TransceiverState::Split::on == s.split_ ? "on" : Transceiver::TransceiverState::Split::off == s.split_ ? "off" : "unknown")
     << "; PTT: " << (s.ptt_ ? "on" : "off")
+    << "; POWER: " << s.power_ << "mWatts"
+    << "; SWR: " << s.swr_
     << ')';
   return d.space (); 
 }
@@ -36,6 +38,8 @@ std::ostream& operator << (std::ostream& os, Transceiver::TransceiverState const
     << " Frequency {" << s.rx_frequency_ << "Hz, " << s.tx_frequency_ << "Hz} Mode: " << s.mode_
     << "; SPLIT: " << (Transceiver::TransceiverState::Split::on == s.split_ ? "on" : Transceiver::TransceiverState::Split::off == s.split_ ? "off" : "unknown")
     << "; PTT: " << (s.ptt_ ? "on" : "off")
+    << "; POWER: " << s.power_ << "mWatts"
+    << "; SWR: " << s.swr_
     << ')';
 }
 
@@ -50,7 +54,9 @@ bool operator != (Transceiver::TransceiverState const& lhs, Transceiver::Transce
     || lhs.tx_frequency_ != rhs.tx_frequency_
     || lhs.mode_ != rhs.mode_
     || lhs.split_ != rhs.split_
-    || lhs.ptt_ != rhs.ptt_;
+    || lhs.ptt_ != rhs.ptt_
+    || lhs.power_ != rhs.power_
+    || lhs.swr_ != rhs.swr_;
 }
 
 bool operator == (Transceiver::TransceiverState const& lhs, Transceiver::TransceiverState const& rhs)

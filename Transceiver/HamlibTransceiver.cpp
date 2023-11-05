@@ -7,6 +7,7 @@
 #include <QString>
 #include <QStandardPaths>
 #include <QFile>
+#include <QTimer>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -148,6 +149,10 @@ public:
     , tickle_hamlib_ {false}
     , get_vfo_works_ {true}
     , set_vfo_works_ {true}
+    , do_snr_ {false}
+    , do_pwr_ {false}
+    , do_pwr2_ {false}
+    , do_swr_ {false}
   {
   }
 
@@ -167,6 +172,10 @@ public:
     , tickle_hamlib_ {false}
     , get_vfo_works_ {true}
     , set_vfo_works_ {true}
+    , do_snr_ {false}
+    , do_pwr_ {false}
+    , do_pwr2_ {false}
+    , do_swr_ {false}
   {
   }
 
@@ -207,6 +216,10 @@ public:
                                 // establish the Tx VFO
   bool get_vfo_works_;          // Net rigctl promises what it can't deliver
   bool set_vfo_works_;          // More rigctl promises which it can't deliver
+  bool do_snr_;
+  bool do_pwr_;
+  bool do_pwr2_;
+  bool do_swr_;
 
   static int debug_callback (enum rig_debug_level_e level, rig_ptr_t arg, char const * format, va_list ap);
 };
@@ -459,6 +472,9 @@ HamlibTransceiver::HamlibTransceiver (logger_type * logger,
 
   if (!m_->is_dummy_)
     {
+      // printf("Hamlib open params: power_on=%d power_off=%d ptt_share=%d\n",(params.poll_interval & rig__power) == rig__power,(params.poll_interval & rig__power_off) == rig__power_off,(params.poll_interval & ptt__share) == ptt__share);
+      if (params.poll_interval & do__pwr) { do_pwr_ = true; do_pwr2_ = true; do_swr_ = true;}
+
       switch (rig_get_caps_int (m_->model_, RIG_CAPS_PORT_TYPE))
         {
         case RIG_PORT_SERIAL:
@@ -630,6 +646,9 @@ int HamlibTransceiver::do_start ()
   m_->tickle_hamlib_ = false;
   m_->get_vfo_works_ = true;
   m_->set_vfo_works_ = true;
+  do_pwr_ &= (!m_->is_dummy_ && rig_get_function_ptr (m_->model_, RIG_FUNCTION_GET_LEVEL) && (rig_get_caps_int (m_->model_, RIG_CAPS_HAS_GET_LEVEL) & RIG_LEVEL_RFPOWER_METER_WATTS) == RIG_LEVEL_RFPOWER_METER_WATTS);
+  do_pwr2_ &= (!m_->is_dummy_ && rig_get_function_ptr (m_->model_, RIG_FUNCTION_GET_LEVEL) && (rig_get_caps_int (m_->model_, RIG_CAPS_HAS_GET_LEVEL) & RIG_LEVEL_RFPOWER) == RIG_LEVEL_RFPOWER);
+  do_swr_ &= (!m_->is_dummy_ && rig_get_function_ptr (m_->model_, RIG_FUNCTION_GET_LEVEL) && (rig_get_caps_int (m_->model_, RIG_CAPS_HAS_GET_LEVEL) & RIG_LEVEL_SWR) == RIG_LEVEL_SWR);
 
   // the Net rigctl back end promises all functions work but we must
   // test get_vfo as it determines our strategy for Icom rigs
@@ -1200,17 +1219,64 @@ void HamlibTransceiver::do_poll ()
           m_->error_check (rc, tr ("getting PTT state"));
           CAT_TRACE ("rig_get_ptt PTT=" << p);
           update_PTT (!(RIG_PTT_OFF == p));
-        }
+       }
     }
+
+  if (ptt_on_) {
+    // update PWR and SWR
+    value_t strength;
+    int rc;
+    if (do_pwr_) {
+      rc = rig_get_level (m_->rig_.data (), RIG_VFO_CURR, RIG_LEVEL_RFPOWER_METER_WATTS, &strength);
+      if (RIG_OK == rc) {
+          update_power (strength.f*1000);
+      } else {
+          CAT_TRACE ("rig_get_level RFPOWER_METER_WATTS failed with rc:" << rc << "ignoring");
+          update_power (0);
+      }
+      if (do_swr_) {
+          rc = rig_get_level (m_->rig_.data (), RIG_VFO_CURR, RIG_LEVEL_SWR, &strength);
+          if (RIG_OK == rc && ptt_on_) {
+            // printf ("SWR %.3f\n",strength.f);
+            if (strength.f >= 1.000)
+              update_swr (strength.f*100);
+            else
+              update_swr (0);
+          } else {
+            CAT_TRACE ("rig_get_level RIG_LEVEL_SWR failed with rc:" << rc << "ignoring");
+            update_swr (0);
+          }
+      }
+    } else if (do_pwr2_) {
+      rc = rig_get_level (m_->rig_.data (), RIG_VFO_CURR, RIG_LEVEL_RFPOWER, &strength);
+      if (RIG_OK == rc) {
+          unsigned int mwpower;
+          rc = rig_power2mW(m_->rig_.data (),&mwpower,strength.f,f,m);
+          if (RIG_OK != rc) {
+            CAT_TRACE ("rig_power2mW failed with rc:" << rc << "ignoring");
+            mwpower=0;
+          }
+          update_power (mwpower);
+          // printf ("POWER %.3f %.1f\n",strength.f,mwpower / 1000.);
+      } else {
+          CAT_TRACE ("rig_get_level RFPOWER failed with rc:" << rc << "ignoring");
+          update_power (0);
+      }
+    } else  update_power (0);
+  } else {
+    update_power (0);
+    update_swr (0);
+  }
 }
 
 void HamlibTransceiver::do_ptt (bool on)
 {
-  CAT_TRACE ("PTT: " << on << " " << state () << " reversed=" << m_->reversed_);
+    CAT_TRACE ("PTT: " << on << " " << state () << " reversed=" << m_->reversed_);
   if (on)
     {
-      if (RIG_PTT_NONE != m_->rig_->state.pttport.type.ptt)
+       if (RIG_PTT_NONE != m_->rig_->state.pttport.type.ptt)
         {
+          ptt_on_ = true;
           CAT_TRACE ("rig_set_ptt PTT=true");
           auto ptt_type = rig_get_caps_int (m_->model_, RIG_CAPS_PTT_TYPE);
           m_->error_check (rig_set_ptt (m_->rig_.data (), RIG_VFO_CURR
@@ -1222,6 +1288,7 @@ void HamlibTransceiver::do_ptt (bool on)
     {
       if (RIG_PTT_NONE != m_->rig_->state.pttport.type.ptt)
         {
+          ptt_on_ = false;
           CAT_TRACE ("rig_set_ptt PTT=false");
           m_->error_check (rig_set_ptt (m_->rig_.data (), RIG_VFO_CURR, RIG_PTT_OFF), tr ("setting PTT off"));
         }

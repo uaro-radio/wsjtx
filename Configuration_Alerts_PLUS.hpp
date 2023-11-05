@@ -144,6 +144,8 @@ public:
   QString Territory4() const;
   QString highlight_orange_callsigns() const;
   QString highlight_blue_callsigns() const;
+  bool PWR_and_SWR() const;
+  bool check_SWR() const;
 
   void setEU_VHF_Contest();
   QFont text_font () const;

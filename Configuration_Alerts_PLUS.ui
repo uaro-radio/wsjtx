@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>853</width>
+    <width>902</width>
     <height>711</height>
    </rect>
   </property>
@@ -706,70 +706,10 @@ quiet period when decoding is done.</string>
        <string>Radio interface configuration settings.</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="6" column="2">
-        <widget class="Line" name="line_6">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="2">
-        <spacer name="verticalSpacer_7">
+       <item row="13" column="2">
+        <spacer name="verticalSpacer_13">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="3" column="2">
-        <widget class="QGroupBox" name="TX_audio_source_group_box">
-         <property name="toolTip">
-          <string>Some radios can select the audio input using a CAT command,
-this setting allows you to select which audio input will be used
-(if it is available then generally the Rear/Data option is best).</string>
-         </property>
-         <property name="title">
-          <string>Transmit Audio Source</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_7">
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="TX_source_data_radio_button">
-            <property name="text">
-             <string>Rear&amp;/Data</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">TX_audio_source_button_group</string>
-            </attribute>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QRadioButton" name="TX_source_mic_radio_button">
-            <property name="text">
-             <string>&amp;Front/Mic</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">TX_audio_source_button_group</string>
-            </attribute>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="13" column="0">
-        <spacer name="verticalSpacer_5">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -830,10 +770,89 @@ this setting allows you to select which audio input will be used
          </layout>
         </widget>
        </item>
-       <item row="1" column="1" rowspan="13">
-        <widget class="Line" name="line">
+       <item row="13" column="0">
+        <spacer name="verticalSpacer_5">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="2">
+        <widget class="QGroupBox" name="mode_group_box">
+         <property name="toolTip">
+          <string>Modulation mode selected on radio.</string>
+         </property>
+         <property name="title">
+          <string>Mode</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_10">
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="mode_USB_radio_button">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;USB is usually the correct modulation mode,&lt;/p&gt;&lt;p&gt;unless the radio has a special data or packet mode setting&lt;/p&gt;&lt;p&gt;for AFSK operation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>US&amp;B</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">TX_mode_button_group</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="mode_none_radio_button">
+            <property name="toolTip">
+             <string>Don't allow the program to set the radio mode
+(not recommended but use if the wrong mode
+or bandwidth is selected).</string>
+            </property>
+            <property name="text">
+             <string>None</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">TX_mode_button_group</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QRadioButton" name="mode_data_radio_button">
+            <property name="toolTip">
+             <string>If this is available then it is usually the correct mode for this program.</string>
+            </property>
+            <property name="text">
+             <string>Data/P&amp;kt</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">TX_mode_button_group</string>
+            </attribute>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="Line" name="line_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -1243,6 +1262,13 @@ a few, particularly some Kenwood rigs, require it).</string>
          </layout>
         </widget>
        </item>
+       <item row="1" column="1" rowspan="13">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
        <item row="10" column="2">
         <layout class="QHBoxLayout" name="horizontalLayout_11">
          <item>
@@ -1301,111 +1327,8 @@ radio interface behave as expected.</string>
          </item>
         </layout>
        </item>
-       <item row="5" column="2">
-        <widget class="QGroupBox" name="mode_group_box">
-         <property name="toolTip">
-          <string>Modulation mode selected on radio.</string>
-         </property>
-         <property name="title">
-          <string>Mode</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_10">
-          <item row="0" column="1">
-           <widget class="QRadioButton" name="mode_USB_radio_button">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;USB is usually the correct modulation mode,&lt;/p&gt;&lt;p&gt;unless the radio has a special data or packet mode setting&lt;/p&gt;&lt;p&gt;for AFSK operation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>US&amp;B</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">TX_mode_button_group</string>
-            </attribute>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="mode_none_radio_button">
-            <property name="toolTip">
-             <string>Don't allow the program to set the radio mode
-(not recommended but use if the wrong mode
-or bandwidth is selected).</string>
-            </property>
-            <property name="text">
-             <string>None</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">TX_mode_button_group</string>
-            </attribute>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QRadioButton" name="mode_data_radio_button">
-            <property name="toolTip">
-             <string>If this is available then it is usually the correct mode for this program.</string>
-            </property>
-            <property name="text">
-             <string>Data/P&amp;kt</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">TX_mode_button_group</string>
-            </attribute>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="3">
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
-         <item>
-          <widget class="QLabel" name="rig_label">
-           <property name="text">
-            <string>Rig:</string>
-           </property>
-           <property name="buddy">
-            <cstring>rig_combo_box</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="rig_combo_box">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>1</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="CAT_poll_interval_label">
-           <property name="text">
-            <string>Poll Interval:</string>
-           </property>
-           <property name="buddy">
-            <cstring>CAT_poll_interval_spin_box</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="CAT_poll_interval_spin_box">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interval to poll rig for status. Longer intervals will mean that changes to the rig will take longer to be detected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="suffix">
-            <string> s</string>
-           </property>
-           <property name="minimum">
-            <number>1</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="2">
-        <widget class="Line" name="line_3">
+       <item row="6" column="2">
+        <widget class="Line" name="line_6">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -1528,26 +1451,6 @@ other hardware interface for PTT.</string>
          </layout>
         </widget>
        </item>
-       <item row="4" column="2">
-        <widget class="Line" name="line_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="2">
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="12" column="0">
         <widget class="QGroupBox" name="hamlib_groupBox">
          <property name="title">
@@ -1633,6 +1536,176 @@ other hardware interface for PTT.</string>
             <property name="checked">
              <bool>true</bool>
             </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="rig_label">
+           <property name="text">
+            <string>Rig:</string>
+           </property>
+           <property name="buddy">
+            <cstring>rig_combo_box</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="rig_combo_box">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="CAT_poll_interval_label">
+           <property name="text">
+            <string>Poll Interval:</string>
+           </property>
+           <property name="buddy">
+            <cstring>CAT_poll_interval_spin_box</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="CAT_poll_interval_spin_box">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interval to poll rig for status. Longer intervals will mean that changes to the rig will take longer to be detected.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="suffix">
+            <string> s</string>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="11" column="2">
+        <spacer name="verticalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="12" column="2">
+        <widget class="QGroupBox" name="rig_data_group_box">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Rig Data (Hamlib only)</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_25">
+          <item row="0" column="3">
+           <widget class="QCheckBox" name="check_SWR_check_box">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Stop transmitting immediately when SWR exceeds 2.5.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Halt Tx when SWR &gt; 2.5</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="PWR_and_SWR_check_box">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Read and display transmit PWR and SWR of your rig.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Read and display PWR and SWR</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="9" column="2">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="2">
+        <widget class="QGroupBox" name="TX_audio_source_group_box">
+         <property name="toolTip">
+          <string>Some radios can select the audio input using a CAT command,
+this setting allows you to select which audio input will be used
+(if it is available then generally the Rear/Data option is best).</string>
+         </property>
+         <property name="title">
+          <string>Transmit Audio Source</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="TX_source_data_radio_button">
+            <property name="text">
+             <string>Rear&amp;/Data</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">TX_audio_source_button_group</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="TX_source_mic_radio_button">
+            <property name="text">
+             <string>&amp;Front/Mic</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">TX_audio_source_button_group</string>
+            </attribute>
            </widget>
           </item>
          </layout>
@@ -4390,13 +4463,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="TX_audio_source_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
+  <buttongroup name="CAT_stop_bits_button_group"/>
+  <buttongroup name="TX_mode_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
   <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
   <buttongroup name="CAT_data_bits_button_group"/>
  </buttongroups>
 </ui>

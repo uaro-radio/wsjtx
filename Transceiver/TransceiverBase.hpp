@@ -121,6 +121,8 @@ protected:
   void update_split (bool);
   void update_mode (MODE);
   void update_PTT (bool = true);
+  void update_power (unsigned int = 0);
+  void update_swr (unsigned int = 0);
 
   // Calling this eventually triggers the Transceiver::update(State) signal.
   void update_complete (bool force_signal = false);
