@@ -1625,7 +1625,7 @@ other hardware interface for PTT.</string>
           </size>
          </property>
          <property name="title">
-          <string>Rig Data (Hamlib only)</string>
+          <string>Rig Data</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_25">
           <item row="0" column="3">
@@ -4466,13 +4466,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="CAT_data_bits_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
-  <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="PTT_method_button_group"/>
+  <buttongroup name="TX_mode_button_group"/>
   <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="CAT_stop_bits_button_group"/>
  </buttongroups>
 </ui>
