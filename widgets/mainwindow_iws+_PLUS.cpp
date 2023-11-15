@@ -5728,7 +5728,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       if((m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") and decodedtext.string().contains(m_baseCall) && ui->actionInclude_averaging->isVisible() && !ui->actionInclude_averaging->isChecked()) bDisplayRight=true;
 
       // AutoSeq for JT65/JT4 short messages
-      if ((m_mode=="JT65" or m_mode=="JT4") and m_config.enable_VHF_features() and ui->cbShMsgs->isChecked()) {
+      if ((m_mode=="JT65" or m_mode=="JT4") and m_config.enable_VHF_features() and ui->cbShMsgs->isChecked() && ui->cbAutoSeq->isChecked () && (abs(audioFreq - m_wideGraph->rxFreq()) <= 15)) {
         if (decodedtext.string().contains(" OOO")) {
           setTxMsg(3);
         }
