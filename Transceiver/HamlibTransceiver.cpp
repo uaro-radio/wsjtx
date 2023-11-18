@@ -1209,23 +1209,40 @@ void HamlibTransceiver::do_poll ()
     }
 
   if (RIG_PTT_NONE != m_->rig_->state.pttport.type.ptt && rig_get_function_ptr (m_->model_, RIG_FUNCTION_GET_PTT))
-    {
-      ptt_t p;
-      auto rc = rig_get_ptt (m_->rig_.data (), RIG_VFO_CURR, &p);
-      if (-RIG_ENAVAIL != rc && -RIG_ENIMPL != rc) // may fail if
-        // Net rig ctl and target doesn't
-        // support command
-        {
-          m_->error_check (rc, tr ("getting PTT state"));
-          CAT_TRACE ("rig_get_ptt PTT=" << p);
-          update_PTT (!(RIG_PTT_OFF == p));
-       }
-    }
+  {
+    ptt_t p;
+    auto rc = rig_get_ptt (m_->rig_.data (), RIG_VFO_CURR, &p);
+    if (-RIG_ENAVAIL != rc && -RIG_ENIMPL != rc) // may fail if
+      // Net rig ctl and target doesn't
+      // support command
+      {
+        m_->error_check (rc, tr ("getting PTT state"));
+        CAT_TRACE ("rig_get_ptt PTT=" << p);
+        update_PTT (!(RIG_PTT_OFF == p));
+     }
+   }
 
   if (ptt_on_) {
     // update PWR and SWR
     value_t strength;
     int rc;
+    if (do_swr_) {
+        rc = rig_get_level (m_->rig_.data (), RIG_VFO_CURR, RIG_LEVEL_SWR, &strength);
+        if (RIG_OK == rc && ptt_on_) {
+          // printf ("SWR %.3f\n",strength.f);
+          if (strength.f >= 1.000)
+          {
+            update_swr (strength.f*100);
+          }
+          else
+          {
+            update_swr (0);
+          }
+        } else {
+          CAT_TRACE ("rig_get_level RIG_LEVEL_SWR failed with rc:" << rc << "ignoring");
+          update_swr (0);
+        }
+    }
     if (do_pwr_) {
       rc = rig_get_level (m_->rig_.data (), RIG_VFO_CURR, RIG_LEVEL_RFPOWER_METER_WATTS, &strength);
       if (RIG_OK == rc) {
@@ -1233,19 +1250,6 @@ void HamlibTransceiver::do_poll ()
       } else {
           CAT_TRACE ("rig_get_level RFPOWER_METER_WATTS failed with rc:" << rc << "ignoring");
           update_power (0);
-      }
-      if (do_swr_) {
-          rc = rig_get_level (m_->rig_.data (), RIG_VFO_CURR, RIG_LEVEL_SWR, &strength);
-          if (RIG_OK == rc && ptt_on_) {
-            // printf ("SWR %.3f\n",strength.f);
-            if (strength.f >= 1.000)
-              update_swr (strength.f*100);
-            else
-              update_swr (0);
-          } else {
-            CAT_TRACE ("rig_get_level RIG_LEVEL_SWR failed with rc:" << rc << "ignoring");
-            update_swr (0);
-          }
       }
     } else if (do_pwr2_) {
       rc = rig_get_level (m_->rig_.data (), RIG_VFO_CURR, RIG_LEVEL_RFPOWER, &strength);
