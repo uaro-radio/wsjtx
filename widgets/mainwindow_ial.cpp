@@ -13291,6 +13291,15 @@ void MainWindow::check_button_color()
           }
         }
     }
+    if (m_mode=="JT65" && m_config.enable_VHF_features() && ui->cbShMsgs->isChecked()) {
+        ui->tx3->setStyleSheet("color: #000000; background-color: #66ffff");
+        ui->tx4->setStyleSheet("color: #000000; background-color: #66ffff");
+        ui->tx5->setStyleSheet("color: #000000; background-color: #66ffff");
+    } else {
+        ui->tx3->setStyleSheet("");
+        ui->tx4->setStyleSheet("");
+        ui->tx5->setStyleSheet("");
+    }
 }
 
 void MainWindow::read_txlog()
