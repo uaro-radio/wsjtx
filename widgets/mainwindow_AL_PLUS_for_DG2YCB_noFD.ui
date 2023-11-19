@@ -2350,7 +2350,7 @@ When not checked you can view the calibration results.</string>
                </size>
               </property>
               <property name="toolTip">
-               <string>Switch to JT65 mode</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to JT65 mode. &lt;br&gt;Right-click to switch to JT9 mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>JT65</string>

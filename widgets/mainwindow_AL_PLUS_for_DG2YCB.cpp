@@ -8321,6 +8321,9 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       m_specOp=m_config.special_op_id();
       on_actionQ65_triggered();
   }
+  if(ui->jt65Button->hasFocus() && (event->button() & Qt::RightButton)) {  // switch to JT9 mode
+      on_actionJT9_triggered();
+  }
   // Wait & Pounce
   if(ui->autoButton->hasFocus() && (event->button() & Qt::RightButton) && ui->respondComboBox->currentText()!="CQ: None") {
       if (!pounce && !m_auto && m_config.Wait_features_enabled()) {
