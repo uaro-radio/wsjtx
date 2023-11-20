@@ -218,6 +218,7 @@ QVector<QColor> g_ColorTbl;
 
 using SpecOp = Configuration::SpecialOperatingActivity;
 
+bool blocked = false;
 bool m_displayBand = false;
 bool wait_and_call = false;
 bool no_wait_and_call = false;
@@ -1265,6 +1266,12 @@ void MainWindow::writeSettings()
   m_settings->setValue ("SerialNumber",ui->sbSerialNumber->value ());
   m_settings->endGroup();
 
+  // do this in the General group because we save the parameters from various places
+  if(m_mode=="JT9") {
+        m_settings->setValue("SubMode",ui->sbSubmode->value());
+        m_settings->setValue("TRPeriod", ui->sbTR->value());
+  }
+
   m_settings->beginGroup("Common");
   m_settings->setValue("Mode",m_mode);
   m_settings->setValue("SaveNone",ui->actionNone->isChecked());
@@ -1278,10 +1285,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("FST4W_FTol",ui->sbFST4W_FTol->value());
   m_settings->setValue("FST4_FLow",ui->sbF_Low->value());
   m_settings->setValue("FST4_FHigh",ui->sbF_High->value());
-//  m_settings->setValue("SubMode",ui->sbSubmode->value());
-  if(m_mode=="JT9") m_settings->setValue("SubMode",ui->sbSubmode->value());
   m_settings->setValue("DTtol",m_DTtol);
-//  m_settings->setValue("Ftol", ui->sbFtol->value ());
   m_settings->setValue("MinSync",m_minSync);
   m_settings->setValue ("AutoSeq", ui->cbAutoSeq->isChecked ());
   m_settings->setValue ("RxAll", ui->cbRxAll->isChecked ());
@@ -1301,8 +1305,6 @@ void MainWindow::writeSettings()
   m_settings->setValue("UploadSpots",m_uploadWSPRSpots);
   m_settings->setValue("NoOwnCall",ui->cbNoOwnCall->isChecked());
   m_settings->setValue ("BandHopping", ui->band_hopping_group_box->isChecked ());
-//  m_settings->setValue ("TRPeriod", ui->sbTR->value ());
-  if(m_mode=="JT9") m_settings->setValue ("TRPeriod", ui->sbTR->value ());
   m_settings->setValue ("MaxDrift", ui->sbMaxDrift->value());
   m_settings->setValue ("TRPeriod_FST4W", ui->sbTR_FST4W->value ());
   m_settings->setValue("FastMode",m_bFastMode);
@@ -1387,6 +1389,7 @@ void MainWindow::readSettings()
 {
   ui->cbAutoSeq->setVisible(false);
   ui->respondComboBox->setVisible(false);
+
   m_settings->beginGroup("MainWindow");
   std::array<QByteArray, 3> the_geometries;
   the_geometries[0] = m_settings->value ("geometry", saveGeometry ()).toByteArray ();
@@ -1418,8 +1421,45 @@ void MainWindow::readSettings()
   ui->sbSerialNumber->setValue (m_settings->value ("SerialNumber", 1).toInt ());
   m_settings->endGroup();
 
+  m_settings->beginGroup("Common");
+  m_mode=m_settings->value("Mode","FT8").toString();
+  m_settings->endGroup();
+
   // do this outside of settings group because it uses groups internally
   ui->actionAstronomical_data->setChecked (displayAstro);
+
+  // do this in the General group because we save the parameters from various places
+  if(m_mode=="JT9") {
+    blocked=true;
+    m_nSubMode=m_settings->value("SubMode",0).toInt();
+    ui->sbSubmode->setValue(m_nSubMode);
+    ui->sbFtol->setValue (m_settings->value("Ftol_JT9", 50).toInt());
+    ui->sbTR->setValue (m_settings->value ("TRPeriod", 15).toInt());
+    QTimer::singleShot (50, [=] {blocked = false;});
+  }
+  if (m_mode=="Q65") {
+    m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();
+    ui->sbSubmode->setValue(m_nSubMode_Q65);
+    ui->sbFtol->setValue (m_settings->value("Ftol_Q65", 50).toInt());
+    ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());
+  }
+  if (m_mode=="JT65") {
+    m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();
+    ui->sbSubmode->setValue(m_nSubMode_JT65);
+    ui->sbFtol->setValue (m_settings->value("Ftol_JT65", 50).toInt());
+  }
+  if (m_mode=="JT4") {
+    m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();
+    ui->sbSubmode->setValue(m_nSubMode_JT4);
+    ui->sbFtol->setValue (m_settings->value("Ftol_JT4", 50).toInt());
+    ui->sbTR->setValue (m_settings->value ("TRPeriod_FST4", 60).toInt());
+  }
+  if (m_mode=="MSK144") {
+    ui->sbFtol->setValue (m_settings->value("Ftol_MSK144",50).toInt());
+    if (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m")) ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 30).toInt());
+    if (m_currentBand=="6m" or m_currentBand=="4m") ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144_6m", 15).toInt());
+    if (m_currentBand=="2m") ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144_2m", 30).toInt());
+  }
 
   m_settings->beginGroup("Common");
   ui->cb160m->setChecked(m_settings->value("bh_160m", false).toBool());
@@ -1475,7 +1515,7 @@ void MainWindow::readSettings()
   ui->actionHideAF->setChecked(m_settings->value("HideAF", false).toBool());
   ui->actionHideOC->setChecked(m_settings->value("HideOC", false).toBool());
   ui->actionHideAN->setChecked(m_settings->value("HideAN", false).toBool());
-  m_mode=m_settings->value("Mode","FT8").toString();
+//  m_mode=m_settings->value("Mode","FT8").toString();
   ui->actionNone->setChecked(m_settings->value("SaveNone",true).toBool());
   ui->actionSave_decoded->setChecked(m_settings->value("SaveDecoded",false).toBool());
   ui->actionSave_all->setChecked(m_settings->value("SaveAll",false).toBool());
@@ -1485,23 +1525,6 @@ void MainWindow::readSettings()
   ui->sbFST4W_RxFreq->setValue(m_settings->value("FST4W_RxFreq",1500).toInt());
   ui->sbF_Low->setValue(m_settings->value("FST4_FLow",600).toInt());
   ui->sbF_High->setValue(m_settings->value("FST4_FHigh",1400).toInt());
-//  m_nSubMode=m_settings->value("SubMode",0).toInt();
-  if(m_mode=="JT9") {
-    m_nSubMode=m_settings->value("SubMode",0).toInt();
-    ui->sbSubmode->setValue(m_nSubMode);
-  }
-  if (m_mode=="Q65") m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();
-  if (m_mode=="JT65") m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();
-  if (m_mode=="JT4") m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();
-//  ui->sbSubmode->setValue(m_nSubMode);
-  if (m_mode=="Q65") ui->sbSubmode->setValue(m_nSubMode_Q65);
-  if (m_mode=="JT65") ui->sbSubmode->setValue(m_nSubMode_JT65);
-  if (m_mode=="JT4") ui->sbSubmode->setValue(m_nSubMode_JT4);
-//  ui->sbFtol->setValue (m_settings->value("Ftol", 50).toInt());
-  if (m_mode=="Q65") ui->sbFtol->setValue (m_settings->value("Ftol_Q65", 50).toInt());
-  if (m_mode=="MSK144") ui->sbFtol->setValue (m_settings->value("Ftol_MSK144",50).toInt());
-  if (m_mode=="JT65") ui->sbFtol->setValue (m_settings->value("Ftol_JT65", 50).toInt());
-  if (m_mode=="JT4") ui->sbFtol->setValue (m_settings->value("Ftol_JT4", 50).toInt());
   ui->sbFST4W_FTol->setValue(m_settings->value("FST4W_FTol",100).toInt());
   m_minSync=m_settings->value("MinSync",0).toInt();
   ui->syncSpinBox->setValue(m_minSync);
@@ -1511,13 +1534,6 @@ void MainWindow::readSettings()
   m_bSWL=m_settings->value("SWL",false).toBool();
   m_bFast9=m_settings->value("Fast9",false).toBool();
   m_bFastMode=m_settings->value("FastMode",false).toBool();
-//  ui->sbTR->setValue (m_settings->value ("TRPeriod", 15).toInt());
-  if (m_mode=="JT9") ui->sbTR->setValue (m_settings->value ("TRPeriod", 15).toInt());
-  if (m_mode=="Q65") ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());
-  if (m_mode=="MSK144" && (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m"))) ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 30).toInt());
-  if (m_mode=="MSK144" && (m_currentBand=="6m" or m_currentBand=="4m")) ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144_6m", 15).toInt());
-  if (m_mode=="MSK144" && (m_currentBand=="2m")) ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144_2m", 30).toInt());
-  if (m_mode=="FST4") ui->sbTR->setValue (m_settings->value ("TRPeriod_FST4", 60).toInt());
   ui->sbMaxDrift->setValue (m_settings->value ("MaxDrift",0).toInt());
   ui->sbTR_FST4W->setValue (m_settings->value ("TRPeriod_FST4W", 15).toInt());
   m_lastMonitoredFrequency = m_settings->value ("DialFreq",
@@ -8635,6 +8651,10 @@ void MainWindow::on_actionFST4_triggered()
     on_sbSubmode_valueChanged(ui->sbSubmode->value());
   });
   m_mode="FST4";
+  if(m_specOp==SpecOp::HOUND) {
+  m_config.setSpecial_None();
+  m_specOp=m_config.special_op_id();
+  }
   ui->actionFST4->setChecked(true);
   m_bFast9=false;
   m_bFastMode=false;
@@ -8677,6 +8697,10 @@ void MainWindow::on_actionFST4_triggered()
 void MainWindow::on_actionFST4W_triggered()
 {
   m_mode="FST4W";
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
   ui->actionFST4W->setChecked(true);
   m_bFast9=false;
   m_bFastMode=false;
@@ -8712,6 +8736,10 @@ void MainWindow::on_actionFT4_triggered()
     on_sbSubmode_valueChanged(ui->sbSubmode->value());
   });
   m_mode="FT4";
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
   m_TRperiod=7.5;
   bool bVHF=m_config.enable_VHF_features();
   m_bFast9=false;
@@ -8886,6 +8914,10 @@ void MainWindow::on_actionJT4_triggered()
     ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
   });
   m_mode="JT4";
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
   bool bVHF=m_config.enable_VHF_features();
   WSPR_config(false);
   switch_mode (Modes::JT4);
@@ -8909,12 +8941,11 @@ void MainWindow::on_actionJT4_triggered()
   ui->lh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   ui->rh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   if(bVHF) {
-//    ui->sbSubmode->setValue(m_nSubMode);
-    QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();});
-    QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT4",0).toInt());});
-    QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
-    ui->sbFtol->setValue (m_settings->value ("Ftol_JT4", 50).toInt());       // remember FTol settings by mode
-    QTimer::singleShot (50, [=] {on_sbFtol_valueChanged (ui->sbFtol->value());});
+    // restore last used parameters
+    ui->sbFtol->setValue (m_settings->value ("Ftol_JT4", 50).toInt());
+    m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();
+    ui->sbSubmode->setValue(m_settings->value("SubMode_JT4",0).toInt());
+    QTimer::singleShot (50, [=] {on_sbSubmode_valueChanged(ui->sbSubmode->value());});
   } else {
     ui->sbSubmode->setValue(0);
   }
@@ -8931,7 +8962,22 @@ void MainWindow::on_actionJT4_triggered()
 void MainWindow::on_actionJT9_triggered()
 {
   m_mode="JT9";
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
   bool bVHF=m_config.enable_VHF_features();
+  // restore last used parameters
+  if(bVHF && m_mode!="JT65" && !blocked) {
+    ui->sbSubmode->setMaximum(7);
+    ui->sbFtol->setValue (m_settings->value ("Ftol_JT9", 50).toInt());
+    m_nSubMode=m_settings->value("SubMode",0).toInt();
+    ui->sbSubmode->setValue(m_nSubMode);
+    QTimer::singleShot (50, [=] {
+      on_sbTR_valueChanged (ui->sbTR->value());
+      on_sbSubmode_valueChanged(ui->sbSubmode->value());
+    });
+  }
   m_bFast9=ui->cbFast9->isChecked();
   m_bFastMode=m_bFast9;
   WSPR_config(false);
@@ -8955,6 +9001,7 @@ void MainWindow::on_actionJT9_triggered()
   ui->sbSubmode->setMaximum(7);
   if(m_bFast9) {
     ui->sbTR->values ({5, 10, 15, 30});
+    if(bVHF && m_mode!="JT65" && !blocked) ui->sbTR->setValue (m_settings->value ("TRPeriod", 15).toInt());  // restore last used TRperiod
     on_sbTR_valueChanged (ui->sbTR->value());
     m_wideGraph->hide();
     m_fastGraph->showNormal();
@@ -8995,6 +9042,10 @@ void MainWindow::on_actionJT65_triggered()
   });
   on_actionJT9_triggered();
   m_mode="JT65";
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
   bool bVHF=m_config.enable_VHF_features();
   WSPR_config(false);
   switch_mode (Modes::JT65);
@@ -9019,12 +9070,11 @@ void MainWindow::on_actionJT65_triggered()
   m_bFast9=false;
   ui->sbSubmode->setMaximum(2);
   if(bVHF) {
-//    ui->sbSubmode->setValue(m_nSubMode);
-      QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();});
-      QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_JT65",0).toInt());});
-      QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
-      ui->sbFtol->setValue (m_settings->value ("Ftol_JT65", 50).toInt());       // remember FTol settings by mode
-      QTimer::singleShot (50, [=] {on_sbFtol_valueChanged (ui->sbFtol->value());});
+    // restore last used parameters
+    ui->sbFtol->setValue (m_settings->value ("Ftol_JT65", 50).toInt());
+    m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();
+    ui->sbSubmode->setValue(m_settings->value("SubMode_JT65",0).toInt());
+    QTimer::singleShot (50, [=] {on_sbSubmode_valueChanged(ui->sbSubmode->value());});
   } else {
     ui->sbSubmode->setValue(0);
     ui->lh_decodes_title_label->setText(tr ("Band Activity"));
@@ -9053,6 +9103,10 @@ void MainWindow::on_actionQ65_triggered()
     ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
   });
   m_mode="Q65";
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
   ui->actionQ65->setChecked(true);
   switch_mode(Modes::Q65);
   ui->cbAutoSeq->setChecked(true);
@@ -9066,14 +9120,15 @@ void MainWindow::on_actionQ65_triggered()
   Q_EMIT FFTSize(m_FFTSize);
   m_hsymStop=49;
   ui->sbTR->values ({15, 30, 60, 120, 300});
-  ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());    // remember sbTR settings by mode
-  QTimer::singleShot (50, [=] {on_sbTR_valueChanged (ui->sbTR->value());});
-  ui->sbFtol->setValue (m_settings->value ("Ftol_Q65", 50).toInt());       // remember FTol settings by mode
-  QTimer::singleShot (50, [=] {on_sbFtol_valueChanged (ui->sbFtol->value());});
-//  ui->sbSubmode->setValue(m_nSubMode);
-  QTimer::singleShot (50, [=] {m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();});
-  QTimer::singleShot (75, [=] {ui->sbSubmode->setValue(m_settings->value("SubMode_Q65",0).toInt());});
-  QTimer::singleShot (100, [=] {on_sbSubmode_valueChanged(m_nSubMode);});
+  // restore last used parameters
+  ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());
+  ui->sbFtol->setValue (m_settings->value ("Ftol_Q65", 50).toInt());
+  m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();
+  ui->sbSubmode->setValue(m_settings->value("SubMode_Q65",0).toInt());
+  QTimer::singleShot (50, [=] {
+    on_sbTR_valueChanged (ui->sbTR->value());
+    on_sbSubmode_valueChanged(ui->sbSubmode->value());
+  });
   QString fname {QDir::toNativeSeparators(m_config.temp_dir().absoluteFilePath ("red.dat"))};
   m_wideGraph->setRedFile(fname);
   m_wideGraph->setMode(m_mode);
@@ -9137,6 +9192,10 @@ void MainWindow::on_actionMSK144_triggered()
     return;
   }
   m_mode="MSK144";
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
   ui->actionMSK144->setChecked(true);
   switch_mode (Modes::MSK144);
   m_nsps=6;
@@ -9150,16 +9209,13 @@ void MainWindow::on_actionMSK144_triggered()
   m_bFastMode=true;
   m_bFast9=false;
   ui->sbTR->values ({5, 10, 15, 30});
-  if (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m")) ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 30).toInt());    // remember sbTR settings by mode
-  if (m_currentBand=="6m" or m_currentBand=="4m") ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144_6m", 15).toInt());    // remember sbTR settings by mode
-  if (m_currentBand=="2m") ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144_2m", 30).toInt());    // remember sbTR settings by mode
+  // restore last used parameters
+  if (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m")) ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 30).toInt());
+  if (m_currentBand=="6m" or m_currentBand=="4m") ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144_6m", 15).toInt());
+  if (m_currentBand=="2m") ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144_2m", 30).toInt());
   ui->txFirstCheckBox->setEnabled(true);
-  QTimer::singleShot (50, [=] {
-      on_sbTR_valueChanged (ui->sbTR->value());
-      on_sbSubmode_valueChanged(ui->sbSubmode->value());
-  });
-  ui->sbFtol->setValue (m_settings->value ("Ftol_MSK144", 50).toInt());       // remember FTol settings by mode
-  QTimer::singleShot (50, [=] {on_sbFtol_valueChanged (ui->sbFtol->value());});
+  QTimer::singleShot (50, [=] {on_sbTR_valueChanged (ui->sbTR->value());});
+  ui->sbFtol->setValue (m_settings->value ("Ftol_MSK144", 50).toInt());   // restore last used parameter
   m_wideGraph->hide();
   m_fastGraph->showNormal();
   ui->TxFreqSpinBox->setValue(1500);
@@ -9200,6 +9256,10 @@ void MainWindow::on_actionMSK144_triggered()
 void MainWindow::on_actionWSPR_triggered()
 {
   m_mode="WSPR";
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
   WSPR_config(true);
   switch_mode (Modes::WSPR);
   m_TRperiod=120.0;
@@ -9236,6 +9296,10 @@ void MainWindow::on_actionEcho_triggered()
   if(nd==3) ui->actionDeepestDecode->setChecked (true);
 
   m_mode="Echo";
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
   ui->actionEcho->setChecked(true);
   m_TRperiod=3.0;
   m_modulator->setTRPeriod(m_TRperiod); // TODO - not thread safe
@@ -9270,6 +9334,10 @@ void MainWindow::on_actionFreqCal_triggered()
 {
   on_actionJT9_triggered();
   m_mode="FreqCal";
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
   ui->actionFreqCal->setChecked(true);
   switch_mode(Modes::FreqCal);
   m_wideGraph->setMode(m_mode);
@@ -10347,18 +10415,14 @@ void MainWindow::on_sbFtol_valueChanged(int value)
 {
   m_wideGraph->setTol (value);
   statusUpdate ();
-  if (m_mode=="Q65") {
-      QTimer::singleShot (200, [=] {m_settings->setValue ("Ftol_Q65", ui->sbFtol->value ());});
-  }
-  if (m_mode=="MSK144") {
-      QTimer::singleShot (200, [=] {m_settings->setValue ("Ftol_MSK144", ui->sbFtol->value ());});
-  }
-  if (m_mode=="JT65") {
-      QTimer::singleShot (200, [=] {m_settings->setValue ("Ftol_JT65", ui->sbFtol->value ());});
-  }
-  if (m_mode=="JT4") {
-      QTimer::singleShot (200, [=] {m_settings->setValue ("Ftol_JT4", ui->sbFtol->value ());});
-  }
+  // save last used parameters
+  QTimer::singleShot (200, [=] {
+    if (m_mode=="Q65") m_settings->setValue ("Ftol_Q65", ui->sbFtol->value());
+    if (m_mode=="MSK144") m_settings->setValue ("Ftol_MSK144", ui->sbFtol->value());
+    if (m_mode=="JT65") m_settings->setValue ("Ftol_JT65", ui->sbFtol->value ());
+    if (m_mode=="JT4") m_settings->setValue ("Ftol_JT4", ui->sbFtol->value());
+    if (m_mode=="JT9") m_settings->setValue ("Ftol_JT9", ui->sbFtol->value ());
+  });
 }
 
 void::MainWindow::VHF_features_enabled(bool b)
@@ -10420,26 +10484,26 @@ void MainWindow::on_sbTR_valueChanged(int value)
     m_wideGraph->setPeriod (value, m_nsps);
     progressBar.setMaximum (value);
   }
-  if (m_mode=="Q65") {
-      QTimer::singleShot (200, [=] {m_settings->setValue ("TRPeriod_Q65", ui->sbTR->value ());});
-  }
-  if (m_mode=="MSK144" && (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m"))) {
-      QTimer::singleShot (200, [=] {m_settings->setValue ("TRPeriod_MSK144", ui->sbTR->value ());});
-  }
-  if (m_mode=="MSK144" && (m_currentBand=="6m" or m_currentBand=="4m")) {
-      QTimer::singleShot (200, [=] {m_settings->setValue ("TRPeriod_MSK144_6m", ui->sbTR->value ());});
-  }
-  if (m_mode=="MSK144" && m_currentBand=="2m") {
-      QTimer::singleShot (200, [=] {m_settings->setValue ("TRPeriod_MSK144_2m", ui->sbTR->value ());});
-  }
-  if (m_mode=="FST4") {
-      chk_FST4_freq_range();
-      QTimer::singleShot (200, [=] {m_settings->setValue ("TRPeriod_FST4", ui->sbTR->value ());});
-  }
-//  if(m_transmitting) on_stopTxButton_clicked();      //### Is this needed or desirable? ###
+  //  if(m_transmitting) on_stopTxButton_clicked();      //### Is this needed or desirable? ###
+  if (m_mode=="FST4") chk_FST4_freq_range();
   on_sbSubmode_valueChanged(ui->sbSubmode->value());
   statusUpdate ();
   check_button_color();
+  // save last used parameters
+  QTimer::singleShot (200, [=] {
+    if (m_mode=="Q65") m_settings->setValue ("TRPeriod_Q65", ui->sbTR->value ());
+    if (m_mode=="MSK144" && (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m"))) {
+      m_settings->setValue ("TRPeriod_MSK144", ui->sbTR->value ());
+    }
+    if (m_mode=="MSK144" && (m_currentBand=="6m" or m_currentBand=="4m")) {
+      m_settings->setValue ("TRPeriod_MSK144_6m", ui->sbTR->value ());
+    }
+    if (m_mode=="MSK144" && m_currentBand=="2m") {
+      m_settings->setValue ("TRPeriod_MSK144_2m", ui->sbTR->value ());
+    }
+    if (m_mode=="FST4") m_settings->setValue ("TRPeriod_FST4", ui->sbTR->value ());
+    if (m_mode=="JT9") m_settings->setValue ("TRPeriod", ui->sbTR->value ());
+  });
 }
 
 void MainWindow::on_sbTR_FST4W_valueChanged(int value)
@@ -10493,11 +10557,15 @@ void MainWindow::on_sbSubmode_valueChanged(int n)
   }
   if(m_transmitting and m_bFast9 and m_nSubMode>=4) transmit (99.0);
   if (m_mode !="Q65") ui->TxFreqSpinBox->setStyleSheet("");
-  if (m_mode=="Q65") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_Q65",ui->sbSubmode->value());});}
-  if (m_mode=="JT65") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_JT65",ui->sbSubmode->value());});}
-  if (m_mode=="JT4") {QTimer::singleShot (200, [=] {m_settings->setValue("SubMode_JT4",ui->sbSubmode->value());});}
   statusUpdate ();
   check_button_color();
+  // save last used parameters
+  QTimer::singleShot (200, [=] {
+    if (m_mode=="Q65") m_settings->setValue("SubMode_Q65",ui->sbSubmode->value());
+    if (m_mode=="JT65") m_settings->setValue("SubMode_JT65",ui->sbSubmode->value());
+    if (m_mode=="JT4") m_settings->setValue("SubMode_JT4",ui->sbSubmode->value());
+    if (m_mode=="JT9") m_settings->setValue("SubMode",ui->sbSubmode->value());
+  });
 }
 
 void MainWindow::on_cbFast9_clicked(bool b)
@@ -10505,7 +10573,9 @@ void MainWindow::on_cbFast9_clicked(bool b)
   if(m_mode=="JT9") {
     m_bFast9=b;
 //    ui->cbAutoSeq->setVisible(b);
+    blocked=true;   // needed to prevent a loop
     on_actionJT9_triggered();
+    QTimer::singleShot (50, [=] {blocked = false;});   // needed to prevent a loop
   }
 
   if(b) {
@@ -12533,55 +12603,31 @@ void MainWindow::on_houndButton_clicked (bool checked)
 
 void MainWindow::on_ft8Button_clicked()
 {
-    if(m_specOp==SpecOp::HOUND) {
-      m_config.setSpecial_None();
-      m_specOp=m_config.special_op_id();
-    }
     on_actionFT8_triggered();
 }
 
 void MainWindow::on_ft4Button_clicked()
 {
-    if(m_specOp==SpecOp::HOUND) {
-      m_config.setSpecial_None();
-      m_specOp=m_config.special_op_id();
-    }
     on_actionFT4_triggered();
 }
 
 void MainWindow::on_msk144Button_clicked()
 {
-    if(m_specOp==SpecOp::HOUND) {
-      m_config.setSpecial_None();
-      m_specOp=m_config.special_op_id();
-    }
     on_actionMSK144_triggered();
 }
 
 void MainWindow::on_q65Button_clicked()
 {
-    if(m_specOp==SpecOp::HOUND) {
-      m_config.setSpecial_None();
-      m_specOp=m_config.special_op_id();
-    }
     on_actionQ65_triggered();
 }
 
 void MainWindow::on_jt65Button_clicked()
 {
-    if(m_specOp==SpecOp::HOUND) {
-      m_config.setSpecial_None();
-      m_specOp=m_config.special_op_id();
-    }
     on_actionJT65_triggered();
 }
 
 void MainWindow::on_echoButton_clicked()
 {
-    if(m_specOp==SpecOp::HOUND) {
-      m_config.setSpecial_None();
-      m_specOp=m_config.special_op_id();
-    }
     on_actionEcho_triggered();
 }
 
