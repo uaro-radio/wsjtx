@@ -9239,7 +9239,7 @@ void MainWindow::on_actionMSK144_triggered()
   ui->rptSpinBox->setMaximum(24);
   ui->rptSpinBox->setValue(0);
   ui->rptSpinBox->setSingleStep(1);
-  ui->sbFtol->values ({20, 50, 100, 200, 300, 400, 500});
+  ui->sbFtol->values ({20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500});
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("10111111010000000001000100011000000000"));
   fast_config(m_bFastMode);
@@ -9382,7 +9382,7 @@ void MainWindow::switch_mode (Mode mode)
   ui->rptSpinBox->setSingleStep(1);
   ui->rptSpinBox->setMinimum(-50);
   ui->rptSpinBox->setMaximum(49);
-  ui->sbFtol->values ({1, 2, 5, 10, 20, 50, 100, 200, 300, 400, 500, 1000});
+  ui->sbFtol->values ({1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900, 1000});
   ui->sbFST4W_FTol->values({1, 2, 5, 10, 20, 50, 100});
   if(m_mode=="MSK144") {
     ui->RxFreqSpinBox->setMinimum(1400);
