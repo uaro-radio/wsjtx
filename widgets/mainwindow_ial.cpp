@@ -1267,6 +1267,9 @@ void MainWindow::writeSettings()
         m_settings->setValue("SubMode",ui->sbSubmode->value());
         m_settings->setValue("TRPeriod", ui->sbTR->value());
   }
+  if(m_mode=="Q65") m_settings->setValue("ShMsgs_Q65",m_bShMsgs);
+  if(m_mode=="JT65") m_settings->setValue("ShMsgs_JT65",m_bShMsgs);
+  if(m_mode=="JT4") m_settings->setValue("ShMsgs_JT4",m_bShMsgs);
 
   m_settings->beginGroup("Common");
   m_settings->setValue("Mode",m_mode);
@@ -1285,7 +1288,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("MinSync",m_minSync);
   m_settings->setValue ("AutoSeq", ui->cbAutoSeq->isChecked ());
   m_settings->setValue ("RxAll", ui->cbRxAll->isChecked ());
-  m_settings->setValue("ShMsgs",m_bShMsgs);
+// m_settings->setValue("ShMsgs",m_bShMsgs);
   m_settings->setValue("SWL",ui->cbSWL->isChecked());
   m_settings->setValue ("DialFreq", QVariant::fromValue(m_lastMonitoredFrequency));
   m_settings->setValue("OutAttenuation", ui->outAttenuation->value ());
@@ -1465,6 +1468,9 @@ void MainWindow::readSettings()
     if (m_currentBand=="6m" or m_currentBand=="4m") ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144_6m", 15).toInt());
     if (m_currentBand=="2m") ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144_2m", 30).toInt());
   }
+  if (m_mode=="Q65") m_bShMsgs=m_settings->value("ShMsgs_Q65",false).toBool();
+  if (m_mode=="JT65") m_bShMsgs=m_settings->value("ShMsgs_JT65",false).toBool();
+  if (m_mode=="JT4") m_bShMsgs=m_settings->value("ShMsgs_JT4",false).toBool();
 
   m_settings->beginGroup("Common");
   ui->cb160m->setChecked(m_settings->value("bh_160m", false).toBool());
@@ -1543,7 +1549,7 @@ void MainWindow::readSettings()
   ui->syncSpinBox->setValue(m_minSync);
   ui->cbAutoSeq->setChecked (m_settings->value ("AutoSeq", false).toBool());
   ui->cbRxAll->setChecked (m_settings->value ("RxAll", false).toBool());
-  m_bShMsgs=m_settings->value("ShMsgs",false).toBool();
+// m_bShMsgs=m_settings->value("ShMsgs",false).toBool();
   m_bSWL=m_settings->value("SWL",false).toBool();
   m_bFast9=m_settings->value("Fast9",false).toBool();
   m_bFastMode=m_settings->value("FastMode",false).toBool();
@@ -8949,6 +8955,8 @@ void MainWindow::on_actionJT4_triggered()
     m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();
     ui->sbSubmode->setValue(m_settings->value("SubMode_JT4",0).toInt());
     QTimer::singleShot (50, [=] {on_sbSubmode_valueChanged(ui->sbSubmode->value());});
+    m_bShMsgs=m_settings->value("ShMsgs_JT4",false).toBool();
+    ui->cbShMsgs->setChecked(m_bShMsgs);
   } else {
     ui->sbSubmode->setValue(0);
   }
@@ -9078,6 +9086,8 @@ void MainWindow::on_actionJT65_triggered()
     m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();
     ui->sbSubmode->setValue(m_settings->value("SubMode_JT65",0).toInt());
     QTimer::singleShot (50, [=] {on_sbSubmode_valueChanged(ui->sbSubmode->value());});
+    m_bShMsgs=m_settings->value("ShMsgs_JT65",false).toBool();
+    ui->cbShMsgs->setChecked(m_bShMsgs);
   } else {
     ui->sbSubmode->setValue(0);
     ui->lh_decodes_title_label->setText(tr ("Band Activity"));
@@ -9132,6 +9142,8 @@ void MainWindow::on_actionQ65_triggered()
     on_sbTR_valueChanged (ui->sbTR->value());
     on_sbSubmode_valueChanged(ui->sbSubmode->value());
   });
+  m_bShMsgs=m_settings->value("ShMsgs_Q65",false).toBool();
+  ui->cbShMsgs->setChecked(m_bShMsgs);
   QString fname {QDir::toNativeSeparators(m_config.temp_dir().absoluteFilePath ("red.dat"))};
   m_wideGraph->setRedFile(fname);
   m_wideGraph->setMode(m_mode);
@@ -10612,6 +10624,11 @@ void MainWindow::on_cbShMsgs_toggled(bool b)
   if(ntx==4) ui->txrb4->setChecked(true);
   if(ntx==5) ui->txrb5->setChecked(true);
   if(ntx==6) ui->txrb6->setChecked(true);
+  QTimer::singleShot (200, [=] {
+    if(m_mode=="Q65") m_settings->setValue("ShMsgs_Q65",m_bShMsgs);
+    if(m_mode=="JT65") m_settings->setValue("ShMsgs_JT65",m_bShMsgs);
+    if(m_mode=="JT4") m_settings->setValue("ShMsgs_JT4",m_bShMsgs);
+  });
 }
 
 void MainWindow::on_cbSWL_toggled(bool b)
