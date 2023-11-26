@@ -11504,6 +11504,11 @@ void MainWindow::tx_watchdog (bool triggered)
       if (m_auto) auto_tx_mode (false);
       tx_status_label.setStyleSheet ("QLabel{color: #000000; background-color: #ff0000}");
       tx_status_label.setText (tr ("Runaway Tx watchdog"));
+      // Highlight watchdog label red when watchdog stops TXing, and keep the value
+      if ((m_config.watchdog () && m_mode!="WSPR" && m_mode!="FST4W") && !m_config.button_coloring_disabled()) {
+        watchdog_label.setStyleSheet ("QLabel{color: #ffffff; background-color: #ff0000}");
+        watchdog_label.setText (tr (" WD:0m "));
+      }
       QApplication::alert (this);
     }
   else
@@ -11518,8 +11523,12 @@ void MainWindow::update_watchdog_label ()
 {
   if (m_config.watchdog () && m_mode!="WSPR" && m_mode!="FST4W")
     {
-      watchdog_label.setText (tr ("WD:%1m").arg (m_config.watchdog () - m_idleMinutes));
+      watchdog_label.setText (tr (" WD:%1m ").arg (m_config.watchdog () - m_idleMinutes));
       watchdog_label.setVisible (true);
+      // Highlight watchdog label yellow when there is less than one minute left
+      if ((m_config.watchdog() - m_idleMinutes == 1) && (m_auto or m_tune))
+        watchdog_label.setStyleSheet ("QLabel{color: #000000; background-color: #ffff00}");
+      if (m_config.watchdog() - m_idleMinutes > 1) watchdog_label.setStyleSheet ("");
     }
   else
     {
