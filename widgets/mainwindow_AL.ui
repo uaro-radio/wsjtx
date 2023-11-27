@@ -57,7 +57,6 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -206,7 +205,7 @@
            <widget class="QPushButton" name="logQSOButton">
             <property name="minimumSize">
              <size>
-              <width>50</width>
+              <width>0</width>
               <height>0</height>
              </size>
             </property>
@@ -272,6 +271,12 @@
            <widget class="QPushButton" name="ClrAvgButton">
             <property name="enabled">
              <bool>true</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
             </property>
             <property name="toolTip">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clear the accumulating message average.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -527,7 +532,6 @@ QLabel[oob=&quot;true&quot;] {
           <property name="font">
            <font>
             <pointsize>10</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2473,6 +2477,9 @@ When not checked you can view the calibration results.</string>
                 <height>16777215</height>
                </size>
               </property>
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to JT65 mode. &lt;br&gt;Right-click to switch to JT9 mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -2604,6 +2611,12 @@ When not checked you can view the calibration results.</string>
              </item>
              <item>
               <widget class="QPushButton" name="tuneButton">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle a pure Tx tone On/Off&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
@@ -2618,7 +2631,7 @@ When not checked you can view the calibration results.</string>
 	border-width: 1px;
 	border-radius: 5px;
 	border-color: black;
-	min-width: 5em;
+	min-width: 4em;
 	padding: 3px;
 }</string>
                </property>
@@ -4225,7 +4238,7 @@ Double-click to reset to the standard 73 message</string>
                   </size>
                  </property>
                  <property name="text">
-                  <string> Pwr</string>
+                  <string>Pwr</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -4291,7 +4304,7 @@ Double-click to reset to the standard 73 message</string>
      <x>0</x>
      <y>0</y>
      <width>854</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

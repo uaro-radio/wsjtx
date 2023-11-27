@@ -1678,6 +1678,11 @@ void MainWindow::set_application_font (QFont const& font)
 
   // ensure a balanced layout
   qreal pointSize = m_config.text_font().pointSizeF();
+  if (m_config.PWR_and_SWR()) {
+      ui->label->setMinimumWidth (2.8*pointSize + 8);
+      ui->label->setAlignment(Qt::AlignCenter);
+      ui->outAttenuation->setMinimumWidth (2.8*pointSize + 8);
+  }
   if (pointSize < 11) {
 //      ui->tabWidget->setMaximumHeight(210);                           // UR for AL
       if (ui->actionUse_Dark_Style->isChecked()) {
@@ -2858,6 +2863,14 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
     }
     ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
     set_mode(m_mode);
+
+  // ensure a balanced layout
+  qreal pointSize = m_config.text_font().pointSizeF();
+  if (m_config.PWR_and_SWR()) {
+      ui->label->setMinimumWidth (2.8*pointSize + 8);
+      ui->label->setAlignment(Qt::AlignCenter);
+      ui->outAttenuation->setMinimumWidth (2.8*pointSize + 8);
+  }
 
     configActiveStations();
     check_button_color();
@@ -10010,6 +10023,12 @@ void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const&
     }
     if (m_rigState.power() != s.power() && s.power() > 0) {
       ui->label->setText(QString {tr("%1 W")}.arg (round(s.power()/1000.)));
+      if (round(s.power()/1000.) >= 100) {
+        qreal pointSize = m_config.text_font().pointSizeF();
+
+        ui->label->setMinimumWidth (2.8*pointSize + 16);
+        ui->outAttenuation->setMinimumWidth (2.8*pointSize + 16);
+      }
     } else {
       ui->label->setText("Pwr");
     }
