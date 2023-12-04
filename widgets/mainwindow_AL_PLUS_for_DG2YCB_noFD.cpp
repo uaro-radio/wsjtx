@@ -4869,8 +4869,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
     QString message0 {QString::fromUtf8(line_read.constData())};
 
-  // Don't allow a7 decodes during the first period because they can be leftovers from the previous band
-  if ((!(no_a7_decodes && line_read.contains("a7")))
+  // Don't allow a7 decodes during the first period and for non-contest messages when in any contest mode
+  if ((!((no_a7_decodes && line_read.contains("a7")) or (line_read.contains("a7") && SpecOp::NONE!=m_specOp
+          && !(line_read.contains(" R ") or line_read.contains("RR73") or line_read.contains("CQ ")))))
 
   // Filtering out some false decodes, and don't write all.txt for such
       // FDR step 1
