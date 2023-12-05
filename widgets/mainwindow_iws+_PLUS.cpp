@@ -5424,7 +5424,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                     }
                   }
                   BlankLineInserted = true;
-                  QTimer::singleShot ((int(800.0*m_TRperiod)), [=] {BlankLineInserted = false;});
+                  QTimer::singleShot ((int(900.0*m_TRperiod)), [=] {if (!m_decoderBusy) BlankLineInserted = false;});
               }
               m_tBlankLine = line_read.left(ntime);
         }
