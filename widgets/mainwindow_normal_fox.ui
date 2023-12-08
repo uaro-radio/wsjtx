@@ -774,9 +774,12 @@
               </item>
               <item row="1" column="1">
                <widget class="QPushButton" name="addButton">
-                <property name="toolTip">
-                 <string>Add callsign and locator to database</string>
-                </property>
+                <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add callsign and locator to database. &lt;br&gt;Right-click searches for callsign on hamqth.com.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
                 <property name="text">
                  <string>Add</string>
                 </property>

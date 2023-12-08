@@ -4217,7 +4217,14 @@ void MainWindow::on_actionSpecial_mouse_commands_triggered()
   </tr>
   <tr>
     <td align="right">Lookup Button:</td>
-    <td><b>Right-click</b> or <b>Double-click</b> to search for Dx Call on QRZ.com.
+    <td><b>Right-click</b> or <b>Double-click</b> to search for Dx Call on QRZ.com.<br/>
+        <b>Crtl + Right-click</b> to search for Dx Call on hamqth.com.<br/>
+        <b>Alt + Right-click</b> to search for Dx Call on qrzcq.com.
+    </td>
+  </tr>
+  <tr>
+    <td align="right">Add Button:</td>
+    <td><b>Right-click</b> to search for Dx Call on hamqth.com.
     </td>
   </tr>
 </table>)"), font});
@@ -8051,14 +8058,13 @@ void MainWindow::lookup()
 
 void MainWindow::on_lookupButton_clicked()                    //Lookup button
 {
-    qint64 ms=QDateTime::currentMSecsSinceEpoch();
-    ui->dxGridEntry->clear();   // UR clear dxGridEntry is required to let call3.txt lookup work.
-    lookup();
-    if((ms-m_msErase)<500) {
-        QString hisCall=ui->dxCallEntry->text();
-        if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.qrz.com/db/" + hisCall});
-    }
-    m_msErase=ms;
+  qint64 ms=QDateTime::currentMSecsSinceEpoch();
+  lookup();
+  if((ms-m_msErase)<500) {
+    QString hisCall=ui->dxCallEntry->text();
+    if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.qrz.com/db/" + hisCall});
+  }
+  m_msErase=ms;
 }
 
 void MainWindow::on_addButton_clicked()                       //Add button
@@ -8293,9 +8299,19 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
   if(ui->jt65Button->hasFocus() && (event->button() & Qt::RightButton)) {    // switch to JT9 mode
       on_actionJT9_triggered();
   }
-  if(ui->lookupButton->hasFocus() && (event->button() & Qt::RightButton)) {  // search callsign at QRZ.com
-      QString hisCall=ui->dxCallEntry->text();
-      if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.qrz.com/db/" + hisCall});
+  if(ui->lookupButton->hasFocus() && (event->button() & Qt::RightButton)) {  // search callsign on ...
+    QString hisCall=ui->dxCallEntry->text();
+    if (Qt::ControlModifier & QApplication::keyboardModifiers() && hisCall !="") {
+      QDesktopServices::openUrl (QUrl {"https://www.hamqth.com/" + hisCall});          // hamqth.com
+    } else if (Qt::AltModifier & QApplication::keyboardModifiers() && hisCall !="") {
+      QDesktopServices::openUrl (QUrl {"https://www.qrzcq.com/call/" + hisCall});      // qrzcq.com
+    } else if (hisCall !="") {
+      QDesktopServices::openUrl (QUrl {"https://www.qrz.com/db/" + hisCall});          // QRZ.com
+    }
+  }
+  if(ui->addButton->hasFocus() && (event->button() & Qt::RightButton)) {     // search callsign on ...
+    QString hisCall=ui->dxCallEntry->text();
+    if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.hamqth.com/" + hisCall});  // hamqth.com
   }
 
   // Wait & Pounce
