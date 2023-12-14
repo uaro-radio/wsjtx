@@ -8240,7 +8240,8 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
 void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
 {
   if(ui->DX_Call_Button->hasFocus() && (event->button() & Qt::RightButton)) {  // DX_Call_Button
-      clearDX();                     // clear dxCallEntry
+      clearDX();                                   // clear dxCallEntry
+      ui->dxGridEntry->clear ();                   // clear dxGridEntry
       if (!keepTx5) ui->tx5->setCurrentText("");   // clear tx5
       if (ui->respondComboBox->isVisible()) {
       Dpoints=0;                          // reset points
@@ -8367,7 +8368,7 @@ void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {
   set_dateTimeQSO (-1);  // reset the QSO start time when DXCall changes
   m_hisCall = call;
-//  ui->dxGridEntry->clear();    // UR disabled because not useful with highlightDXCall/DXGrid feature
+  if (!blocked) ui->dxGridEntry->clear();  // conditional because not always useful with highlightDXCall/DXGrid feature
   if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
   statusChanged();
   statusUpdate ();
@@ -8568,8 +8569,10 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
     m_cloudlog.logQso(ADIF);
   }
 
+  blocked=true;                                      // needed to clear DXgrid only optionally
   if (m_config.clear_DXcall ()) clearDX ();
   if (m_config.clear_DXgrid ()) ui->dxGridEntry->clear ();
+  QTimer::singleShot (50, [=] {blocked = false;});   // needed to clear DXgrid only optionally
   m_dateTimeQSOOn = QDateTime {};
   if(m_specOp!=SpecOp::NONE and m_specOp!=SpecOp::FOX and m_specOp!=SpecOp::HOUND) {
     ui->sbSerialNumber->setValue(ui->sbSerialNumber->value() + 1);
