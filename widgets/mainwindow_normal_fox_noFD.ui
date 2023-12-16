@@ -3684,6 +3684,7 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionHideAN"/>
     <addaction name="separator"/>
     <addaction name="actionHighlightB4"/>
+	<addaction name="actionHighlightToday"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -4479,7 +4480,15 @@ QPushButton[state=&quot;ok&quot;] {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Highlight callsigns worked B4 on band</string>
+    <string>Highlight callsigns worked before on band</string>
+   </property>
+  </action>
+  <action name="actionHighlightToday">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Highlight callsigns worked today</string>
    </property>
   </action>
  </widget>

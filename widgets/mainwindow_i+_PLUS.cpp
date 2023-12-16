@@ -1384,6 +1384,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("DisableEventLogging", ui->actionDisable_event_logging->isChecked() );
   m_settings->setValue ("DarkStyle", ui->actionUse_Dark_Style->isChecked() );
   m_settings->setValue ("HighlightB4", ui->actionHighlightB4->isChecked() );
+  m_settings->setValue ("HighlightToday", ui->actionHighlightToday->isChecked() );
   m_settings->setValue ("HideB4", ui->actionHideB4->isChecked() );
   m_settings->setValue ("HideTerritory1", ui->actionHideTerritory1->isChecked() );
   m_settings->setValue ("HideTerritory2", ui->actionHideTerritory2->isChecked() );
@@ -1530,6 +1531,7 @@ void MainWindow::readSettings()
   ui->actionDisable_event_logging->setChecked(m_settings->value("DisableEventLogging", false).toBool());
   ui->actionUse_Dark_Style->setChecked(m_settings->value("DarkStyle", false).toBool());
   ui->actionHighlightB4->setChecked(m_settings->value("HighlightB4", false).toBool());
+  ui->actionHighlightToday->setChecked(m_settings->value("HighlightToday", false).toBool());
   ui->actionHideB4->setChecked(m_settings->value("HideB4", false).toBool());
   ui->actionHideTerritory1->setChecked(m_settings->value("HideTerritory1", false).toBool());
   ui->actionHideTerritory2->setChecked(m_settings->value("HideTerritory2", false).toBool());
@@ -2687,8 +2689,9 @@ void MainWindow::fastSink(qint64 frames)
             ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
     }
 
-    // highlight for callsigns worked B4 on band for MSK144
-    if (ui->actionHighlightB4->isChecked()) {
+    // highlight callsigns worked B4 on band or worked today for MSK144
+    if (ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked()) {
+        QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -2698,10 +2701,15 @@ void MainWindow::fastSink(qint64 frames)
         bool continentB4onBand;
         bool CQZoneB4onBand;
         bool ITUZoneB4onBand;
-        auto const& looked_up = m_logBook.countries ()->lookup (deCall);
-        m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
-          continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
-        if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
+        if (ui->actionHighlightB4->isChecked()) {
+            auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+            m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+                             continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+            if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
+        }
+        if (ui->actionHighlightToday->isChecked() && txlog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+           ui->decodedTextBrowser->highlight_callsign(deCall, QColor(100,100,100), QColor(255,255,0), true);
+        }
     }
 
     // Highlight DX Call/Grid for MSK144
@@ -5489,8 +5497,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
            if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
        }
 
-       // highlight for callsigns worked B4 on band
-       if (ui->actionHighlightB4->isChecked()) {
+       // highlight callsigns worked B4 on band or worked today for MSK144
+       if (ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked()) {
+           QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
            QString deCall;
            QString deGrid;
            decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5500,10 +5509,15 @@ void MainWindow::readFromStdout()                             //readFromStdout
            bool continentB4onBand;
            bool CQZoneB4onBand;
            bool ITUZoneB4onBand;
-           auto const& looked_up = m_logBook.countries ()->lookup (deCall);
-           m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
-             continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
-           if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
+           if (ui->actionHighlightB4->isChecked()) {
+               auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+               m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+                                continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+               if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
+           }
+           if (ui->actionHighlightToday->isChecked() && txlog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+              ui->decodedTextBrowser->highlight_callsign(deCall, QColor(100,100,100), QColor(255,255,0), true);
+           }
        }
 
        if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
