@@ -1903,7 +1903,7 @@ void Configuration::impl::initialize_models ()
   ui_->cbTwoPass->setChecked(twoPass_);
   ui_->cbContestName->setChecked(Individual_Contest_Name_);
   ui_->cb_NCCC_Sprint->setChecked(NCCC_Sprint_);
-  if (!ui_->rbNA_VHF_Contest->isChecked()) ui_->cb_NCCC_Sprint->setEnabled (false);
+//  if (!ui_->rbNA_VHF_Contest->isChecked()) ui_->cb_NCCC_Sprint->setEnabled (false);
   ui_->cbZZ00->setChecked(ZZ00_);
   ui_->cbBlacklist->setChecked(Blacklisted_);
   ui_->cbWhitelist->setChecked(Whitelisted_);
@@ -3434,7 +3434,7 @@ void Configuration::impl::on_special_op_activity_button_group_buttonClicked (int
   if (ui_->rbNA_VHF_Contest->isChecked()) {
     ui_->cb_NCCC_Sprint->setEnabled (true);
   } else {
-    ui_->cb_NCCC_Sprint->setEnabled (false);
+//    ui_->cb_NCCC_Sprint->setEnabled (false);
   }
 }
 

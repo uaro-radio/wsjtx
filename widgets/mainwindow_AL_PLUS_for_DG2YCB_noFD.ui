@@ -51,7 +51,6 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -183,6 +182,13 @@
             </property>
             <property name="text">
              <string>CQ only</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbBypass">
+            <property name="text">
+             <string>BP</string>
             </property>
            </widget>
           </item>
@@ -511,7 +517,6 @@ QLabel[oob=&quot;true&quot;] {
           <property name="font">
            <font>
             <pointsize>10</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -2358,7 +2363,7 @@ When not checked you can view the calibration results.</string>
                 <height>16777215</height>
                </size>
               </property>
-			  <property name="focusPolicy">
+              <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
               </property>
               <property name="toolTip">
@@ -3834,7 +3839,7 @@ Double-click to reset to the standard 73 message</string>
      <x>0</x>
      <y>0</y>
      <width>840</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -3891,7 +3896,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="separator"/>
     <addaction name="actionHighlightCallsigns"/>
     <addaction name="actionHighlightB4"/>
-	<addaction name="actionHighlightToday"/>
+    <addaction name="actionHighlightToday"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">

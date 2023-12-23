@@ -8522,7 +8522,13 @@ void MainWindow::cease_auto_Tx_after_QSO ()
 
 void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
 {
-  if (!(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65"))) cease_auto_Tx_after_QSO ();
+  if (!(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65"))) {
+    if (SpecOp::NA_VHF==m_specOp && m_mode=="FT4" && m_config.NCCC_Sprint()) {
+      QTimer::singleShot (int(850.0*m_TRperiod), [=] {cease_auto_Tx_after_QSO ();});
+    } else {
+      cease_auto_Tx_after_QSO ();
+    }
+  }
 
   if (!m_hisCall.size ()) {
     MessageBox::warning_message (this, tr ("Warning:  DX Call field is empty."));
