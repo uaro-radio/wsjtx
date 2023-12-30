@@ -1126,6 +1126,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   update_foxLogWindow_rate(); // update the rate on the window
   check_button_color();
   read_txlog();
+  if (ui->actionRemove_after_30days->isChecked ()) {
+    remove_old_files(m_config.save_directory().absolutePath(), 30); // remove saved audio files after 30 days
+  }
 
   QString jpleph = m_config.data_dir().absoluteFilePath("JPLEPH");
   jpl_setup_(const_cast<char *>(jpleph.toLocal8Bit().constData()),256);
@@ -1283,6 +1286,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("SaveNone",ui->actionNone->isChecked());
   m_settings->setValue("SaveDecoded",ui->actionSave_decoded->isChecked());
   m_settings->setValue("SaveAll",ui->actionSave_all->isChecked());
+  m_settings->setValue("RemoveAudioFiles",ui->actionRemove_after_30days->isChecked());
   m_settings->setValue("NDepth",m_ndepth);
   m_settings->setValue("RxFreq",ui->RxFreqSpinBox->value());
   m_settings->setValue("TxFreq",ui->TxFreqSpinBox->value());
@@ -1548,6 +1552,7 @@ void MainWindow::readSettings()
   ui->actionNone->setChecked(m_settings->value("SaveNone",true).toBool());
   ui->actionSave_decoded->setChecked(m_settings->value("SaveDecoded",false).toBool());
   ui->actionSave_all->setChecked(m_settings->value("SaveAll",false).toBool());
+  ui->actionRemove_after_30days->setChecked(m_settings->value("RemoveAudioFiles",false).toBool());
   ui->RxFreqSpinBox->setValue(0); // ensure a change is signaled
   ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq",1500).toInt());
   ui->sbFST4W_RxFreq->setValue(0);
@@ -13581,5 +13586,26 @@ void MainWindow::read_txlog()
         }
         logstream.flush();
         logfile.close();
+    }
+}
+
+void MainWindow::remove_old_files(const QString &directoryPath, int daysOld)
+{
+    QDir dir(directoryPath);
+    if (!dir.exists()) {
+        qWarning() << "Directory does not exist:" << directoryPath;
+        return;
+    }
+    dir.setFilter(QDir::Files);
+    QDateTime timeThreshold = QDateTime::currentDateTime().addDays(-daysOld);
+    QFileInfoList fileList = dir.entryInfoList();
+    foreach(QFileInfo fileInfo, fileList) {
+        if(fileInfo.lastModified() < timeThreshold) {
+            if(!QFile::remove(fileInfo.absoluteFilePath())) {
+              qWarning() << "Could not delete file:" << fileInfo.absoluteFilePath();
+            } else {
+              qDebug() << "Deleted old file:" << fileInfo.absoluteFilePath();
+            }
+        }
     }
 }

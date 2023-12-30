@@ -4073,6 +4073,7 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionNone"/>
     <addaction name="actionSave_decoded"/>
     <addaction name="actionSave_all"/>
+	<addaction name="actionRemove_after_30days"/>
     <addaction name="separator"/>
     <addaction name="actionDon_t_split_ALL_TXT"/>
     <addaction name="actionSplit_ALL_TXT_yearly"/>
@@ -4234,6 +4235,14 @@ QPushButton[state=&quot;ok&quot;] {
     <string>Save all</string>
    </property>
   </action>
+    <action name="actionRemove_after_30days">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Remove saved files after 30 days</string>
+   </property>
+  </action>  
   <action name="actionOnline_User_Guide">
    <property name="text">
     <string>Online User Guide</string>

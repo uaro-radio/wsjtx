@@ -237,6 +237,7 @@ private slots:
   void on_genStdMsgsPushButton_clicked();
   void on_logQSOButton_clicked();
   void read_txlog();
+  void remove_old_files(const QString &directoryPath, int daysOld);
   void on_actionJT9_triggered();
   void on_actionJT65_triggered();
   void on_actionJT4_triggered();
