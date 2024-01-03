@@ -546,6 +546,8 @@ private:
   void delete_stations ();
   void insert_station ();
 
+  void read_CALL3_version ();
+
   Q_SLOT void on_font_push_button_clicked ();
   Q_SLOT void on_decoded_text_font_push_button_clicked ();
   Q_SLOT void on_PTT_port_combo_box_activated (int);
@@ -2270,6 +2272,7 @@ void Configuration::impl::read_settings ()
   clear_DXgrid_ = settings_->value("clear_DXgrid",false).toBool ();
   erase_BandActivity_ = settings_->value("erase_BandActivity",false).toBool ();
   set_RXtoTX_ = settings_->value("set_RXtoTX",false).toBool ();
+  read_CALL3_version ();
 #ifdef WIN32
   QTimer::singleShot (2500, [=] {display_file_information ();});
 #else
@@ -3186,6 +3189,8 @@ void Configuration::impl::on_CALL3_download_button_clicked (bool /*clicked*/)
 {
   ui_->CALL3_download_button->setEnabled (false); // disable button until download is complete
   QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
+  QFile g {dataPath.absolutePath() + "/" + "CALL3_backup.TXT"};
+  if (g.exists()) QFile::rename(dataPath.absolutePath() + "/" + "CALL3_backup.TXT", dataPath.absolutePath() + "/" + "CALL3_backup.tmp");
   QFile f {dataPath.absolutePath() + "/" + "CALL3.TXT"};
   if (f.exists()) QFile::rename(dataPath.absolutePath() + "/" + "CALL3.TXT", dataPath.absolutePath() + "/" + "CALL3_backup.TXT");
   cty_download.configure(network_manager_,
@@ -3203,6 +3208,8 @@ void Configuration::impl::on_CALL3_EME_download_button_clicked (bool /*clicked*/
 {
   ui_->CALL3_EME_download_button->setEnabled (false); // disable button until download is complete
   QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
+  QFile g {dataPath.absolutePath() + "/" + "CALL3_backup.TXT"};
+  if (g.exists()) QFile::rename(dataPath.absolutePath() + "/" + "CALL3_backup.TXT", dataPath.absolutePath() + "/" + "CALL3_backup.tmp");
   QFile f {dataPath.absolutePath() + "/" + "CALL3.TXT"};
   if (f.exists()) QFile::rename(dataPath.absolutePath() + "/" + "CALL3.TXT", dataPath.absolutePath() + "/" + "CALL3_backup.TXT");
   cty_download.configure(network_manager_,
@@ -3224,12 +3231,50 @@ void Configuration::impl::error_during_CALL3_download (QString const& reason)
   QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
   QFile f {dataPath.absolutePath() + "/" + "CALL3.TXT"};
   if (!f.exists()) QFile::copy(dataPath.absolutePath() + "/" + "CALL3_backup.TXT", dataPath.absolutePath() + "/" + "CALL3.TXT");
+  QFile g {dataPath.absolutePath() + "/" + "CALL3_backup.TXT"};
+  QFile h {dataPath.absolutePath() + "/" + "CALL3_backup.tmp"};
+  if (!g.exists() and h.exists()) {
+    QFile::rename(dataPath.absolutePath() + "/" + "CALL3_backup.tmp", dataPath.absolutePath() + "/" + "CALL3_backup.TXT");
+  } else {
+    if (h.exists()) QFile::remove(dataPath.absolutePath() + "/" + "CALL3_backup.tmp");
+  }
+  read_CALL3_version ();
 }
 
 void Configuration::impl::after_CALL3_downloaded ()
 {
   ui_->CALL3_download_button->setEnabled (true);
   ui_->CALL3_EME_download_button->setEnabled (true);
+  QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
+  QFile g {dataPath.absolutePath() + "/" + "CALL3_backup.TXT"};
+  QFile h {dataPath.absolutePath() + "/" + "CALL3_backup.tmp"};
+  if (!g.exists() and h.exists()) {
+    QFile::rename(dataPath.absolutePath() + "/" + "CALL3_backup.tmp", dataPath.absolutePath() + "/" + "CALL3_backup.TXT");
+  } else {
+    if (h.exists()) QFile::remove(dataPath.absolutePath() + "/" + "CALL3_backup.tmp");
+  }
+  read_CALL3_version ();
+}
+
+void Configuration::impl::read_CALL3_version ()
+{
+  QString text;
+  QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
+  QFile call3file {dataPath.absolutePath() + "/" + "CALL3.TXT"};
+    QTextStream call3stream(&call3file);
+    if(call3file.open (QIODevice::ReadOnly | QIODevice::Text)) {
+        while (!call3stream.atEnd()) {
+            text = call3stream.readLine(0);
+            if (text.contains("// Version:")) break;
+        }
+        call3stream.flush();
+        call3file.close();
+    }
+  if (text.contains("// Version:")) {
+    ui_->CALL3_file_label->setText("CALL3 File Version: " + text.mid(11.30));
+  } else {
+    ui_->CALL3_file_label->setText("CALL3 File Version: not available");
+  }
 }
 
 void Configuration::impl::on_LotW_CSV_fetch_push_button_clicked (bool /*checked*/)
