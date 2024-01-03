@@ -13575,13 +13575,9 @@ void MainWindow::check_button_color()
 
 void MainWindow::read_txlog()
 {
-#if defined(Q_OS_WIN)
     static QFile logfile {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx.log")};
-#else
-    static QFile logfile {QDir {QStandardPaths::writableLocation (QStandardPaths::ConfigLocation)}.absoluteFilePath ("wsjtx.log")};
-#endif
     QTextStream logstream(&logfile);
-    if(logfile.open (QIODevice::ReadOnly | QIODevice::Text)) {
+    if(logfile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         while (!logstream.atEnd()) {
             txlog = logstream.readAll();
         }
