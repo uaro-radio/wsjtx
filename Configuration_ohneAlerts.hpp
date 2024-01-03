@@ -321,6 +321,7 @@ public:
   void transceiver_offline ();
 
   void set_CTY_DAT_version(QString const& version);
+  void read_CALL3_version ();
 
   // Set transceiver frequency in Hertz.
   Q_SLOT void transceiver_frequency (Frequency);

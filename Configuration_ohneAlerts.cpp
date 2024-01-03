@@ -546,8 +546,6 @@ private:
   void delete_stations ();
   void insert_station ();
 
-  void read_CALL3_version ();
-
   Q_SLOT void on_font_push_button_clicked ();
   Q_SLOT void on_decoded_text_font_push_button_clicked ();
   Q_SLOT void on_PTT_port_combo_box_activated (int);
@@ -574,6 +572,7 @@ private:
   void error_during_CTY_download (QString const& reason);
   void after_CALL3_downloaded();
   void error_during_CALL3_download (QString const& reason);
+  void read_CALL3_version();
   Q_SLOT void on_udp_server_line_edit_textChanged (QString const&);
   Q_SLOT void on_udp_server_line_edit_editingFinished ();
   Q_SLOT void on_save_path_select_push_button_clicked (bool);
@@ -1033,6 +1032,11 @@ bool Configuration::set_RXtoTX () const {return m_->set_RXtoTX_;}
 void Configuration::set_CTY_DAT_version(QString const& version)
 {
   m_->set_CTY_DAT_version(version);
+}
+
+void Configuration::read_CALL3_version ()
+{
+  m_->read_CALL3_version ();
 }
 
 void Configuration::set_calibration (CalibrationParams params)
@@ -2272,7 +2276,6 @@ void Configuration::impl::read_settings ()
   clear_DXgrid_ = settings_->value("clear_DXgrid",false).toBool ();
   erase_BandActivity_ = settings_->value("erase_BandActivity",false).toBool ();
   set_RXtoTX_ = settings_->value("set_RXtoTX",false).toBool ();
-  read_CALL3_version ();
 #ifdef WIN32
   QTimer::singleShot (2500, [=] {display_file_information ();});
 #else
@@ -3264,14 +3267,14 @@ void Configuration::impl::read_CALL3_version ()
     QTextStream call3stream(&call3file);
     if(call3file.open (QIODevice::ReadOnly | QIODevice::Text)) {
         while (!call3stream.atEnd()) {
-            text = call3stream.readLine(0);
+            text = call3stream.readLine();
             if (text.contains("// Version:")) break;
         }
         call3stream.flush();
         call3file.close();
     }
   if (text.contains("// Version:")) {
-    ui_->CALL3_file_label->setText("CALL3 File Version: " + text.mid(11.30));
+    ui_->CALL3_file_label->setText("CALL3 File Version:" + text.mid(11.30));
   } else {
     ui_->CALL3_file_label->setText("CALL3 File Version: not available");
   }
