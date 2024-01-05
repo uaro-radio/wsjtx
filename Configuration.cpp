@@ -2299,7 +2299,7 @@ void Configuration::impl::read_settings ()
   gridMapAll_ = settings_->value("MapGridAllEntity", true).toBool();
   ppfx_ = settings_->value ("PrincipalPrefix", false).toBool ();
   miles_ = settings_->value ("Miles", false).toBool ();
-  quick_call_ = settings_->value ("QuickCall", false).toBool ();
+  quick_call_ = settings_->value ("QuickCall", true).toBool ();
   disable_TX_on_73_ = settings_->value ("73TxDisable", true).toBool ();
   force_call_1st_ = settings_->value ("ForceCallFirst", false).toBool ();
   alternate_bindings_ = settings_->value ("AlternateBindings", false).toBool ();
@@ -2312,9 +2312,9 @@ void Configuration::impl::read_settings ()
   Wait_features_enabled_ = settings_->value("WaitFeaturesEnabled",true).toBool ();
   showDistance_ = settings_->value("showDistance", false).toBool();
   showAzimuth_ = settings_->value("showAzimuth", false).toBool();
-  align_ = settings_->value("AlignDistanceAzimuth", false).toBool();
+  align_ = settings_->value("AlignDistanceAzimuth", true).toBool();
   repeat_Tx_ = settings_->value("RepeatTx",false).toBool ();
-  auto_astro_ = settings_->value("AutoAstroWindow",false).toBool ();
+  auto_astro_ = settings_->value("AutoAstroWindow",true).toBool ();
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
   twoPass_ = settings_->value("TwoPass",true).toBool ();
   Individual_Contest_Name_ = settings_->value("Individual_Contest_Name",false).toBool ();

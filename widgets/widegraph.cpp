@@ -64,7 +64,7 @@ WideGraph::WideGraph(QSettings * settings, QWidget *parent) :
     m_freq=m_settings->value("Freq",true).toBool();
     ui->cbFreq->setChecked(m_freq);
     ui->widePlot->showFreq(m_freq);
-    int n = m_settings->value("BinsPerPixel",4).toInt();
+    int n = m_settings->value("BinsPerPixel",5).toInt();
     m_bFlatten=m_settings->value("Flatten",true).toBool();
     m_bRef=m_settings->value("UseRef",false).toBool();
     ui->cbFlatten->setChecked(m_bFlatten);

@@ -2223,7 +2223,7 @@ void Configuration::impl::read_settings ()
   gridMapAll_ = settings_->value("MapGridAllEntity", true).toBool();
   ppfx_ = settings_->value ("PrincipalPrefix", false).toBool ();
   miles_ = settings_->value ("Miles", false).toBool ();
-  quick_call_ = settings_->value ("QuickCall", false).toBool ();
+  quick_call_ = settings_->value ("QuickCall", true).toBool ();
   disable_TX_on_73_ = settings_->value ("73TxDisable", true).toBool ();
   force_call_1st_ = settings_->value ("ForceCallFirst", false).toBool ();
   alternate_bindings_ = settings_->value ("AlternateBindings", false).toBool ();
