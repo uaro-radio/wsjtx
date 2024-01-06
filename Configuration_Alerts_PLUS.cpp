@@ -3404,7 +3404,7 @@ void Configuration::impl::read_CALL3_version ()
         call3file.close();
     }
   if (text.contains("// Version:")) {
-    ui_->CALL3_file_label->setText("CALL3 File Version:" + text.mid(11.30));
+    ui_->CALL3_file_label->setText("CALL3 File Version:" + text.mid(11,30));
   } else {
     ui_->CALL3_file_label->setText("CALL3 File Version: not available");
   }
