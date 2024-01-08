@@ -71,7 +71,7 @@ message (STATUS "******************************************************")
 
 include (set_build_type)
 # RC 0 or omitted is a development build, GA is a General Availability release build
-set_build_type (RC 2)
+set_build_type (RC 3)
 set (wsjtx_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}${BUILD_TYPE_REVISION}")
 
 #
@@ -493,6 +493,7 @@ set (wsjt_FSRCS
   lib/msk144sim.f90
   lib/mskrtd.f90
   lib/nuttal_window.f90
+  lib/decode_msk144.f90
   lib/ft4/ft4sim.f90
   lib/ft4/ft4sim_mult.f90
   lib/ft4/ft4_downsample.f90
