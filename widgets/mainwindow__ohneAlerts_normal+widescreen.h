@@ -147,6 +147,18 @@ private slots:
   void initialize_fonts ();
   void ScrollBarPosition(int n);
   void on_actionUse_Dark_Style_triggered (bool checked);
+  void on_pb160_clicked();
+  void on_pb80_clicked();
+  void on_pb60_clicked();
+  void on_pb40_clicked();
+  void on_pb30_clicked();
+  void on_pb20_clicked();
+  void on_pb17_clicked();
+  void on_pb15_clicked();
+  void on_pb12_clicked();
+  void on_pb10_clicked();
+  void on_pb6_clicked();
+  void on_pb2_clicked();
   void check_button_color();
   void stopWRTimeout();
   void stopWCTimeout();
