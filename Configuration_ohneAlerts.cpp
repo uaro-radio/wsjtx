@@ -601,51 +601,51 @@ private:
   Q_SLOT void on_cbx4ToneSpacing_clicked(bool);
   Q_SLOT void on_prompt_to_log_check_box_clicked(bool);
   Q_SLOT void on_cbAutoLog_clicked(bool);
-  Q_SLOT void on_Field_Day_Exchange_textEdited (QString const&);
-  Q_SLOT void on_RTTY_Exchange_textEdited (QString const&);
-  Q_SLOT void on_Contest_Name_textEdited (QString const&);
-  Q_SLOT void on_Blacklist1_textEdited (QString const&);
-  Q_SLOT void on_Blacklist2_textEdited (QString const&);
-  Q_SLOT void on_Blacklist3_textEdited (QString const&);
-  Q_SLOT void on_Blacklist4_textEdited (QString const&);
-  Q_SLOT void on_Blacklist5_textEdited (QString const&);
-  Q_SLOT void on_Blacklist6_textEdited (QString const&);
-  Q_SLOT void on_Blacklist7_textEdited (QString const&);
-  Q_SLOT void on_Blacklist8_textEdited (QString const&);
-  Q_SLOT void on_Blacklist9_textEdited (QString const&);
-  Q_SLOT void on_Blacklist10_textEdited (QString const&);
-  Q_SLOT void on_Blacklist11_textEdited (QString const&);
-  Q_SLOT void on_Blacklist12_textEdited (QString const&);
-  Q_SLOT void on_Whitelist1_textEdited (QString const&);
-  Q_SLOT void on_Whitelist2_textEdited (QString const&);
-  Q_SLOT void on_Whitelist3_textEdited (QString const&);
-  Q_SLOT void on_Whitelist4_textEdited (QString const&);
-  Q_SLOT void on_Whitelist5_textEdited (QString const&);
-  Q_SLOT void on_Whitelist6_textEdited (QString const&);
-  Q_SLOT void on_Whitelist7_textEdited (QString const&);
-  Q_SLOT void on_Whitelist8_textEdited (QString const&);
-  Q_SLOT void on_Whitelist9_textEdited (QString const&);
-  Q_SLOT void on_Whitelist10_textEdited (QString const&);
-  Q_SLOT void on_Whitelist11_textEdited (QString const&);
-  Q_SLOT void on_Whitelist12_textEdited (QString const&);
-  Q_SLOT void on_Pass1_textEdited (QString const&);
-  Q_SLOT void on_Pass2_textEdited (QString const&);
-  Q_SLOT void on_Pass3_textEdited (QString const&);
-  Q_SLOT void on_Pass4_textEdited (QString const&);
-  Q_SLOT void on_Pass5_textEdited (QString const&);
-  Q_SLOT void on_Pass6_textEdited (QString const&);
-  Q_SLOT void on_Pass7_textEdited (QString const&);
-  Q_SLOT void on_Pass8_textEdited (QString const&);
-  Q_SLOT void on_Pass9_textEdited (QString const&);
-  Q_SLOT void on_Pass10_textEdited (QString const&);
-  Q_SLOT void on_Pass11_textEdited (QString const&);
-  Q_SLOT void on_Pass12_textEdited (QString const&);
-  Q_SLOT void on_Territory1_textEdited (QString const&);
-  Q_SLOT void on_Territory2_textEdited (QString const&);
-  Q_SLOT void on_Territory3_textEdited (QString const&);
-  Q_SLOT void on_Territory4_textEdited (QString const&);
-  Q_SLOT void on_highlight_orange_callsigns_textEdited (QString const&);
-  Q_SLOT void on_highlight_blue_callsigns_textEdited (QString const&);
+  Q_SLOT void on_Field_Day_Exchange_editingFinished (QString const&);
+  Q_SLOT void on_RTTY_Exchange_editingFinished (QString const&);
+  Q_SLOT void on_Contest_Name_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist1_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist2_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist3_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist4_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist5_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist6_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist7_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist8_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist9_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist10_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist11_editingFinished (QString const&);
+  Q_SLOT void on_Blacklist12_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist1_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist2_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist3_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist4_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist5_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist6_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist7_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist8_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist9_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist10_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist11_editingFinished (QString const&);
+  Q_SLOT void on_Whitelist12_editingFinished (QString const&);
+  Q_SLOT void on_Pass1_editingFinished (QString const&);
+  Q_SLOT void on_Pass2_editingFinished (QString const&);
+  Q_SLOT void on_Pass3_editingFinished (QString const&);
+  Q_SLOT void on_Pass4_editingFinished (QString const&);
+  Q_SLOT void on_Pass5_editingFinished (QString const&);
+  Q_SLOT void on_Pass6_editingFinished (QString const&);
+  Q_SLOT void on_Pass7_editingFinished (QString const&);
+  Q_SLOT void on_Pass8_editingFinished (QString const&);
+  Q_SLOT void on_Pass9_editingFinished (QString const&);
+  Q_SLOT void on_Pass10_editingFinished (QString const&);
+  Q_SLOT void on_Pass11_editingFinished (QString const&);
+  Q_SLOT void on_Pass12_editingFinished (QString const&);
+  Q_SLOT void on_Territory1_editingFinished (QString const&);
+  Q_SLOT void on_Territory2_editingFinished (QString const&);
+  Q_SLOT void on_Territory3_editingFinished (QString const&);
+  Q_SLOT void on_Territory4_editingFinished (QString const&);
+  Q_SLOT void on_highlight_orange_callsigns_editingFinished (QString const&);
+  Q_SLOT void on_highlight_blue_callsigns_editingFinished (QString const&);
 
   // typenames used as arguments must match registered type names :(
   Q_SIGNAL void start_transceiver (unsigned seqeunce_number) const;
@@ -3936,7 +3936,7 @@ void Configuration::impl::on_cbx4ToneSpacing_clicked(bool b)
   if(b) ui_->cbx2ToneSpacing->setChecked(false);
 }
 
-void Configuration::impl::on_Field_Day_Exchange_textEdited (QString const& exchange)
+void Configuration::impl::on_Field_Day_Exchange_editingFinished (QString const& exchange)
 {
   auto text = exchange.simplified ().toUpper ();
   auto class_pos = text.indexOf (QRegularExpression {R"([A-H])"});
@@ -3947,222 +3947,222 @@ void Configuration::impl::on_Field_Day_Exchange_textEdited (QString const& excha
   ui_->Field_Day_Exchange->setText (text);
 }
 
-void Configuration::impl::on_RTTY_Exchange_textEdited (QString const& exchange)
+void Configuration::impl::on_RTTY_Exchange_editingFinished (QString const& exchange)
 {
   ui_->RTTY_Exchange->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Contest_Name_textEdited (QString const& exchange)
+void Configuration::impl::on_Contest_Name_editingFinished (QString const& exchange)
 {
   ui_->Contest_Name->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist1_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist1_editingFinished (QString const& exchange)
 {
   ui_->Blacklist1->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist2_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist2_editingFinished (QString const& exchange)
 {
   ui_->Blacklist2->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist3_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist3_editingFinished (QString const& exchange)
 {
   ui_->Blacklist3->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist4_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist4_editingFinished (QString const& exchange)
 {
   ui_->Blacklist4->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist5_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist5_editingFinished (QString const& exchange)
 {
   ui_->Blacklist5->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist6_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist6_editingFinished (QString const& exchange)
 {
   ui_->Blacklist6->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist7_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist7_editingFinished (QString const& exchange)
 {
   ui_->Blacklist7->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist8_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist8_editingFinished (QString const& exchange)
 {
   ui_->Blacklist8->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist9_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist9_editingFinished (QString const& exchange)
 {
   ui_->Blacklist9->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist10_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist10_editingFinished (QString const& exchange)
 {
   ui_->Blacklist10->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist11_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist11_editingFinished (QString const& exchange)
 {
   ui_->Blacklist11->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Blacklist12_textEdited (QString const& exchange)
+void Configuration::impl::on_Blacklist12_editingFinished (QString const& exchange)
 {
   ui_->Blacklist12->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist1_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist1_editingFinished (QString const& exchange)
 {
   ui_->Whitelist1->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist2_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist2_editingFinished (QString const& exchange)
 {
   ui_->Whitelist2->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist3_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist3_editingFinished (QString const& exchange)
 {
   ui_->Whitelist3->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist4_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist4_editingFinished (QString const& exchange)
 {
   ui_->Whitelist4->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist5_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist5_editingFinished (QString const& exchange)
 {
   ui_->Whitelist5->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist6_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist6_editingFinished (QString const& exchange)
 {
   ui_->Whitelist6->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist7_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist7_editingFinished (QString const& exchange)
 {
   ui_->Whitelist7->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist8_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist8_editingFinished (QString const& exchange)
 {
   ui_->Whitelist8->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist9_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist9_editingFinished (QString const& exchange)
 {
   ui_->Whitelist9->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist10_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist10_editingFinished (QString const& exchange)
 {
   ui_->Whitelist10->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist11_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist11_editingFinished (QString const& exchange)
 {
   ui_->Whitelist11->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Whitelist12_textEdited (QString const& exchange)
+void Configuration::impl::on_Whitelist12_editingFinished (QString const& exchange)
 {
   ui_->Whitelist12->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass1_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass1_editingFinished (QString const& exchange)
 {
   ui_->Pass1->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass2_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass2_editingFinished (QString const& exchange)
 {
   ui_->Pass2->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass3_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass3_editingFinished (QString const& exchange)
 {
   ui_->Pass3->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass4_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass4_editingFinished (QString const& exchange)
 {
   ui_->Pass4->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass5_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass5_editingFinished (QString const& exchange)
 {
   ui_->Pass5->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass6_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass6_editingFinished (QString const& exchange)
 {
   ui_->Pass6->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass7_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass7_editingFinished (QString const& exchange)
 {
   ui_->Pass7->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass8_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass8_editingFinished (QString const& exchange)
 {
   ui_->Pass8->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass9_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass9_editingFinished (QString const& exchange)
 {
   ui_->Pass9->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass10_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass10_editingFinished (QString const& exchange)
 {
   ui_->Pass10->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass11_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass11_editingFinished (QString const& exchange)
 {
   ui_->Pass11->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Pass12_textEdited (QString const& exchange)
+void Configuration::impl::on_Pass12_editingFinished (QString const& exchange)
 {
   ui_->Pass12->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_Territory1_textEdited (QString const& exchange)
+void Configuration::impl::on_Territory1_editingFinished (QString const& exchange)
 {
   ui_->Territory1->setText (exchange);
 }
 
-void Configuration::impl::on_Territory2_textEdited (QString const& exchange)
+void Configuration::impl::on_Territory2_editingFinished (QString const& exchange)
 {
   ui_->Territory2->setText (exchange);
 }
 
-void Configuration::impl::on_Territory3_textEdited (QString const& exchange)
+void Configuration::impl::on_Territory3_editingFinished (QString const& exchange)
 {
   ui_->Territory3->setText (exchange);
 }
 
-void Configuration::impl::on_Territory4_textEdited (QString const& exchange)
+void Configuration::impl::on_Territory4_editingFinished (QString const& exchange)
 {
   ui_->Territory4->setText (exchange);
 }
 
-void Configuration::impl::on_highlight_orange_callsigns_textEdited (QString const& exchange)
+void Configuration::impl::on_highlight_orange_callsigns_editingFinished (QString const& exchange)
 {
   ui_->highlight_orange_callsigns->setText (exchange.toUpper ());
 }
 
-void Configuration::impl::on_highlight_blue_callsigns_textEdited (QString const& exchange)
+void Configuration::impl::on_highlight_blue_callsigns_editingFinished (QString const& exchange)
 {
   ui_->highlight_blue_callsigns->setText (exchange.toUpper ());
 }

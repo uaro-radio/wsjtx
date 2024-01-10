@@ -182,9 +182,7 @@ void LogQSO::loadSettings ()
   } else {
       ui->comments->addItem ("");
   }
-
-  ui->comments->setCurrentIndex(0);
-  ui->comments->setItemText (ui->comments->currentIndex(), m_comments);
+  if (ui->cbComments->isChecked ()) ui->comments->setItemText(ui->comments->currentIndex(), m_comments);
 
   m_settings->endGroup ();
 }
@@ -244,7 +242,6 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
     }
   if (ui->cbComments->isChecked ())
     {
-      ui->comments->setCurrentIndex(0);
       ui->comments->setItemText(ui->comments->currentIndex(), m_comments);
     }
   else
@@ -506,16 +503,15 @@ void LogQSO::propModeChanged()
   }
 }
 
-void LogQSO::commentsChanged(const QString& text)   // UR
+void LogQSO::commentsChanged(const QString& text)
 {
   int index = ui->comments->findText(text);
   if(index != -1)
   {
     ui->comments->setCurrentIndex(index);
-   }
-  ui->comments->setItemText(ui->comments->currentIndex(), text);
-  m_comments = text;
-  m_comments_temp = text;
+  }
+  m_comments = (ui->comments->currentIndex(), text);
+  m_comments_temp = (ui->comments->currentIndex(), text);
 }
 
 void LogQSO::on_addButton_clicked()
@@ -568,11 +564,6 @@ void LogQSO::on_addButton_clicked()
           }
           stream2.flush();
           file2.close();
-          if (ui->cbComments->isChecked ()) {
-              m_comments = m_settings->value ("LogComments", "").toString();
-              ui->comments->setCurrentIndex(0);
-              ui->comments->setItemText (ui->comments->currentIndex(), m_comments);
-          }
       }
   }
 }
