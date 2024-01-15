@@ -4503,6 +4503,8 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionDelete_all_wav_files_in_SaveDir"/>
     <addaction name="actionErase_ALL_TXT"/>
     <addaction name="actionErase_wsjtx_log_adi"/>
+    <addaction name="actionErase_Tx_Log"/>
+    <addaction name="actionErase_Ignore_List"/>
     <addaction name="actionErase_WSPR_hashtable"/>
     <addaction name="actionErase_list_of_Q65_callers"/>
     <addaction name="reset_cabrillo_log_action"/>
@@ -4529,8 +4531,17 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionSWL_Mode"/>
     <addaction name="actionBand_Buttons"/>
     <addaction name="actionUse_Dark_Style"/>
-    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuFilters">
+    <property name="title">
+     <string>Filters</string>
+    </property>
     <addaction name="actionHideB4"/>
+    <addaction name="actionHideToday"/>
+    <addaction name="actionHideIgnored"/>
+    <addaction name="separator"/>
+    <addaction name="actionIgnoreToday"/>
+    <addaction name="actionIgnoreIgnored"/>
     <addaction name="separator"/>
     <addaction name="actionHideTerritory1"/>
     <addaction name="actionHideTerritory2"/>
@@ -4547,6 +4558,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="separator"/>
     <addaction name="actionHighlightB4"/>
     <addaction name="actionHighlightToday"/>
+    <addaction name="actionHighlightIgnored"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -4651,6 +4663,7 @@ Double-click to reset to the standard 73 message</string>
    <addaction name="menuFile"/>
    <addaction name="menuConfig"/>
    <addaction name="menuView"/>
+   <addaction name="menuFilters"/>
    <addaction name="menuMode"/>
    <addaction name="menuDecode"/>
    <addaction name="menuSave"/>
@@ -4810,6 +4823,16 @@ Double-click to reset to the standard 73 message</string>
   <action name="actionErase_wsjtx_log_adi">
    <property name="text">
     <string>Erase wsjtx_log.adi</string>
+   </property>
+  </action>
+  <action name="actionErase_Tx_Log">
+   <property name="text">
+    <string>Erase Tx Log</string>
+   </property>
+  </action>
+  <action name="actionErase_Ignore_List">
+   <property name="text">
+    <string>Erase Ignore List</string>
    </property>
   </action>
   <action name="actionJT65">
@@ -5309,7 +5332,39 @@ Double-click to reset to the standard 73 message</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide callsigns worked before on band</string>
+    <string>Hide stations worked before on band</string>
+   </property>
+  </action>
+  <action name="actionHideToday">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide stations worked today</string>
+   </property>
+  </action>
+  <action name="actionHideIgnored">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide stations from Ignore List</string>
+   </property>
+  </action>
+  <action name="actionIgnoreToday">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ignore stations worked today</string>
+   </property>
+  </action>
+  <action name="actionIgnoreIgnored">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ignore stations from Ignore List</string>
    </property>
   </action>
   <action name="actionHideTerritory1">
@@ -5317,7 +5372,7 @@ Double-click to reset to the standard 73 message</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide callsigns from Territory 1</string>
+    <string>Hide stations from Territory 1</string>
    </property>
   </action>
   <action name="actionHideTerritory2">
@@ -5325,7 +5380,7 @@ Double-click to reset to the standard 73 message</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide callsigns from Territory 2</string>
+    <string>Hide stations from Territory 2</string>
    </property>
   </action>
   <action name="actionHideTerritory3">
@@ -5333,7 +5388,7 @@ Double-click to reset to the standard 73 message</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide callsigns from Territory 3</string>
+    <string>Hide stations from Territory 3</string>
    </property>
   </action>
   <action name="actionHideTerritory4">
@@ -5341,7 +5396,7 @@ Double-click to reset to the standard 73 message</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide callsigns from Territory 4</string>
+    <string>Hide stations from Territory 4</string>
    </property>
   </action>
   <action name="actionHideEU">
@@ -5430,6 +5485,14 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>Highlight callsigns worked today</string>
+   </property>
+  </action>
+  <action name="actionHighlightIgnored">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Highlight callsigns from Ignore List</string>
    </property>
   </action>
  </widget>

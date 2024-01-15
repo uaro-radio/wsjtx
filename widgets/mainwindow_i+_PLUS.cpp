@@ -236,13 +236,15 @@ int maxdBPoints=-28;
 int mindBPoints=99;
 bool pounce = false;
 bool filtered = false;
+bool ignored = false;
 bool selected = false;
 bool keepTx5 = false;
 bool no_logging = false;
 bool BlankLineInserted = false;
 bool m_txing;
 bool HoldTxFreqStatus;
-QString txlog;
+QString txLog;
+QString ignoreList;
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
 struct {
@@ -1125,7 +1127,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   update_foxLogWindow_rate(); // update the rate on the window
   check_button_color();
-  read_txlog();
+  read_txLog();
+  read_ignoreList();
   if (ui->actionRemove_after_30days->isChecked ()) {
     remove_old_files(m_config.save_directory().absolutePath(), 30); // remove saved audio files after 30 days
   }
@@ -1390,7 +1393,12 @@ void MainWindow::writeSettings()
   m_settings->setValue ("BandButtons", ui->actionBand_Buttons->isChecked() );
   m_settings->setValue ("HighlightB4", ui->actionHighlightB4->isChecked() );
   m_settings->setValue ("HighlightToday", ui->actionHighlightToday->isChecked() );
+  m_settings->setValue ("HighlightIgnored", ui->actionHighlightIgnored->isChecked() );
   m_settings->setValue ("HideB4", ui->actionHideB4->isChecked() );
+  m_settings->setValue ("HideToday", ui->actionHideToday->isChecked() );
+  m_settings->setValue ("HideIgnored", ui->actionHideIgnored->isChecked() );
+  m_settings->setValue ("IgnoreToday", ui->actionIgnoreToday->isChecked() );
+  m_settings->setValue ("IgnoreIgnored", ui->actionIgnoreIgnored->isChecked() );
   m_settings->setValue ("HideTerritory1", ui->actionHideTerritory1->isChecked() );
   m_settings->setValue ("HideTerritory2", ui->actionHideTerritory2->isChecked() );
   m_settings->setValue ("HideTerritory3", ui->actionHideTerritory3->isChecked() );
@@ -1538,7 +1546,12 @@ void MainWindow::readSettings()
   ui->actionBand_Buttons->setChecked(m_settings->value("BandButtons", false).toBool());
   ui->actionHighlightB4->setChecked(m_settings->value("HighlightB4", false).toBool());
   ui->actionHighlightToday->setChecked(m_settings->value("HighlightToday", false).toBool());
+  ui->actionHighlightIgnored->setChecked(m_settings->value("HighlightIgnored", false).toBool());
   ui->actionHideB4->setChecked(m_settings->value("HideB4", false).toBool());
+  ui->actionHideToday->setChecked(m_settings->value("HideToday", false).toBool());
+  ui->actionHideIgnored->setChecked(m_settings->value("HideIgnored", false).toBool());
+  ui->actionIgnoreToday->setChecked(m_settings->value("IgnoreToday", false).toBool());
+  ui->actionIgnoreIgnored->setChecked(m_settings->value("IgnoreIgnored", false).toBool());
   ui->actionHideTerritory1->setChecked(m_settings->value("HideTerritory1", false).toBool());
   ui->actionHideTerritory2->setChecked(m_settings->value("HideTerritory2", false).toBool());
   ui->actionHideTerritory3->setChecked(m_settings->value("HideTerritory3", false).toBool());
@@ -2137,6 +2150,7 @@ void MainWindow::fastSink(qint64 frames)
   int k (frames);
   bool decodeNow=false;
   filtered = false;
+  ignored = false;
   if(k < m_k0) {                                 //New sequence ?
     memcpy(fast_green2,fast_green,4*703);        //Copy fast_green[] to fast_green2[]
     memcpy(fast_s2,fast_s,4*703*64);             //Copy fast_s[] into fast_s2[]
@@ -2529,7 +2543,7 @@ void MainWindow::fastSink(qint64 frames)
 
     // CQ: First for MSK144
     if(((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled())
-        or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign())))
+        or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign()))) && !ignored
         && !filtered && !selected && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First"
         && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
                   m_bDoubleClicked=true;
@@ -2548,8 +2562,8 @@ void MainWindow::fastSink(qint64 frames)
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-        if (!filtered && (deGrid.contains(grid_regexp) or m_bCallingCQ) && (
-             (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+        if (!filtered && !ignored && (deGrid.contains(grid_regexp) or m_bCallingCQ) && (
+             (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
              (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
                                                                     )) {
             double utch=0.0;
@@ -2585,8 +2599,8 @@ void MainWindow::fastSink(qint64 frames)
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-        if (!filtered && (
-             (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+        if (!filtered && !ignored && (
+             (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
              (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
                           )) {
             dBpoints=decodedtext.string().mid(7,3).toInt();
@@ -2616,8 +2630,8 @@ void MainWindow::fastSink(qint64 frames)
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-        if (!filtered && (
-             (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+        if (!filtered && !ignored && (
+             (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
              (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
                           )) {
             dBpoints2=decodedtext.string().mid(7,3).toInt();
@@ -2638,6 +2652,22 @@ void MainWindow::fastSink(qint64 frames)
                 auto now = QDateTime::currentDateTimeUtc();
                 m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
             }
+        }
+    }
+
+    // hide or ignore callsigns for MSK144
+    if(ui->actionHideIgnored->isChecked() or ui->actionHideToday->isChecked() or ui->actionIgnoreIgnored->isChecked() or ui->actionIgnoreToday->isChecked()) {
+        QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
+        QString deCall;
+        QString deGrid;
+        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        if (ui->actionHideIgnored->isChecked() && !ui->cbBypass->isChecked() && ignoreList.contains(deCall + ",")) filtered = true;
+        if (ui->actionHideToday->isChecked() && !ui->cbBypass->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+           filtered = true;
+        }
+        if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) ignored = true;
+        if (ui->actionIgnoreToday->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+           ignored = true;
         }
     }
 
@@ -2696,8 +2726,8 @@ void MainWindow::fastSink(qint64 frames)
             ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
     }
 
-    // highlight callsigns worked B4 on band or worked today for MSK144
-    if (ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked()) {
+    // highlight callsigns worked B4 on band or worked today or from the Ignore List for MSK144
+    if (ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked() or ui->actionHighlightIgnored->isChecked()) {
         QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
         QString deCall;
         QString deGrid;
@@ -2714,8 +2744,11 @@ void MainWindow::fastSink(qint64 frames)
                              continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
             if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
         }
-        if (ui->actionHighlightToday->isChecked() && txlog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+        if (ui->actionHighlightToday->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
            ui->decodedTextBrowser->highlight_callsign(deCall, QColor(100,100,100), QColor(255,255,0), true);
+        }
+        if (ui->actionHighlightIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
+           ui->decodedTextBrowser->highlight_callsign(deCall, QColor(85,0,0), QColor(255,255,0), true);
         }
     }
 
@@ -3015,6 +3048,7 @@ void MainWindow::on_autoButton_clicked (bool checked)
       tx_watchdog (false);
       ui->autoButton->setChecked(false);  // ensure autoButton is unchecked
       filtered = false;
+      ignored = false;
       Dpoints=0;                          // reset points
       maxDPoints=0;                       // reset points
       dBpoints=-28;                       // reset points
@@ -3236,6 +3270,12 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
     case Qt::Key_H:
       if(e->modifiers() & Qt::AltModifier) {
         on_stopTxButton_clicked();
+        return;
+      }
+      break;
+    case Qt::Key_I:
+      if(e->modifiers() & Qt::ControlModifier) {
+        addCallsignToignoreList();
         return;
       }
       break;
@@ -3664,6 +3704,7 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
   pounce = false;
   ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
   filtered = false;
+  ignored = false;
   check_button_color();
 }
 
@@ -4185,6 +4226,8 @@ void MainWindow::on_actionKeyboard_shortcuts_triggered()
   <tr><td><b>Alt+S    </b></td><td>Stop monitoring</td></tr>
   <tr><td><b>Alt+T    </b></td><td>Toggle Tune status</td></tr>
   <tr><td><b>Alt+Z    </b></td><td>Clear hung decoder status</td></tr>
+  <tr><td><b>Ctrl+I   </b></td><td>Add DX Call to the Ignore List</td></tr>
+
 </table>)"), font});
     }
   m_shortcuts->showNormal ();
@@ -4910,6 +4953,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 {
   bool bDisplayPoints = false;
   filtered = false;
+  ignored = false;
   if(m_ActiveStationsWidget!=NULL) {
     bDisplayPoints=(m_mode=="FT4" or m_mode=="FT8") and
       (m_specOp==SpecOp::ARRL_DIGI or m_ActiveStationsWidget->isVisible());
@@ -5427,6 +5471,22 @@ void MainWindow::readFromStdout()                             //readFromStdout
               }
         }
 
+        // hide or ignore callsigns
+        if(ui->actionHideIgnored->isChecked() or ui->actionHideToday->isChecked() or ui->actionIgnoreIgnored->isChecked() or ui->actionIgnoreToday->isChecked()) {
+            QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
+            QString deCall;
+            QString deGrid;
+            decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+            if (ui->actionHideIgnored->isChecked() && !ui->cbBypass->isChecked() && ignoreList.contains(deCall + ",")) filtered = true;
+            if (ui->actionHideToday->isChecked() && !ui->cbBypass->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+               filtered = true;
+            }
+            if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) ignored = true;
+            if (ui->actionIgnoreToday->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+               ignored = true;
+            }
+        }
+
         // insert blank line, but only if not filtered and no decodes
         int ntime=6;
         if (m_TRperiod>=60) ntime=4;
@@ -5504,8 +5564,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
            if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
        }
 
-       // highlight callsigns worked B4 on band or worked today for MSK144
-       if (ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked()) {
+       // highlight callsigns worked B4 on band or worked today
+       if (ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked() or ui->actionHighlightIgnored->isChecked()) {
            QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
            QString deCall;
            QString deGrid;
@@ -5522,8 +5582,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
                                 continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
                if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
            }
-           if (ui->actionHighlightToday->isChecked() && txlog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+           if (ui->actionHighlightToday->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(100,100,100), QColor(255,255,0), true);
+           }
+           if (ui->actionHighlightIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
+              ui->decodedTextBrowser->highlight_callsign(deCall, QColor(85,0,0), QColor(255,255,0), true);
            }
        }
 
@@ -5536,7 +5599,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
        // CQ: First
        if(((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled())
-             or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign())))
+             or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign()))) && !ignored
            && !filtered && !selected && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First"
            && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
          m_bDoubleClicked=true;
@@ -5555,8 +5618,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-         if (!filtered && (deGrid.contains(grid_regexp) or m_bCallingCQ) && (
-             (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+         if (!filtered && !ignored && (deGrid.contains(grid_regexp) or m_bCallingCQ) && (
+             (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
              (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
                                                            )) {
             double utch=0.0;
@@ -5592,8 +5655,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-         if (!filtered && (
-              (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+         if (!filtered && !ignored && (
+              (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
               (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
                            )) {
                dBpoints=decodedtext.string().mid(7,3).toInt();
@@ -5623,8 +5686,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
          QString deCall;
          QString deGrid;
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-         if (!filtered && (
-              (pounce && text.contains(" CQ ") && !txlog.contains(deCall) && m_config.Wait_features_enabled()) or
+         if (!filtered && !ignored && (
+              (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
               (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
                            )) {
                dBpoints2=decodedtext.string().mid(7,3).toInt();
@@ -5712,7 +5775,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
            }
        });                                                  // UR delete for versions without alerts
 
-          if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
+          if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress && !ignored && !filtered) {
             QString messagePriority=ui->decodedTextBrowser->CQPriority();
             if(messagePriority!="") {
               if(messagePriority=="New Call on Band"
@@ -6794,6 +6857,7 @@ void MainWindow::guiUpdate()
         // switching tx_status_label text and color when filters are enabled
         if ((SpecOp::NONE==m_specOp && !m_config.filters_for_Wait_and_Pounce_only() &&
              (m_config.Blacklisted () or m_config.Whitelisted ())) or (ui->cbCQonly->isChecked() && ui->cbCQonly->isVisible())
+              or ui->actionHideToday->isChecked() or ui->actionHideIgnored->isChecked()
               or ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked()
               or ui->actionHideTerritory3->isChecked() or ui->actionHideTerritory4->isChecked()
               or ui->actionHideB4->isChecked() or ui->actionHideEU->isChecked() or ui->actionHideAS->isChecked()
@@ -8631,11 +8695,11 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
   QTimer::singleShot (2000, [=] {
       pounce = false;
       filtered = false;
-      read_txlog();
+      read_txLog();
       check_button_color();
   });
   QTimer::singleShot (7000, [=] {
-      read_txlog();
+      read_txLog();
   });
   stopWRTimer.stop();           // Stop any Wait & Reply timeout
   stopWCTimer.stop();           // Stop any Wait & Call timeout
@@ -9762,7 +9826,6 @@ void MainWindow::on_actionErase_list_of_Q65_callers_triggered()
   }
 }
 
-
 void MainWindow::on_reset_cabrillo_log_action_triggered ()
 {
   if (MessageBox::Yes == MessageBox::query_message (this, tr ("Confirm Reset"),
@@ -10049,6 +10112,7 @@ void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
   pounce = false;
   ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
   filtered = false;
+  ignored = false;
   check_button_color();
 }
 
@@ -13448,10 +13512,10 @@ void MainWindow::check_button_color()
         ui->autoButton->setStyleSheet("QPushButton {background-color: #ff7a05; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
     }
-    if (m_config.Territory1()!="") ui->actionHideTerritory1->setText("Hide callsigns from " + m_config.Territory1());
-    if (m_config.Territory2()!="") ui->actionHideTerritory2->setText("Hide callsigns from " + m_config.Territory2());
-    if (m_config.Territory3()!="") ui->actionHideTerritory3->setText("Hide callsigns from " + m_config.Territory3());
-    if (m_config.Territory4()!="") ui->actionHideTerritory4->setText("Hide callsigns from " + m_config.Territory4());
+    if (m_config.Territory1()!="") ui->actionHideTerritory1->setText("Hide stations from " + m_config.Territory1());
+    if (m_config.Territory2()!="") ui->actionHideTerritory2->setText("Hide stations from " + m_config.Territory2());
+    if (m_config.Territory3()!="") ui->actionHideTerritory3->setText("Hide stations from " + m_config.Territory3());
+    if (m_config.Territory4()!="") ui->actionHideTerritory4->setText("Hide stations from " + m_config.Territory4());
 
     if (!m_config.button_coloring_disabled()) {
       if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==30 && m_nSubMode==1) {
@@ -13862,17 +13926,74 @@ void MainWindow::on_pb70_clicked()
     }
 }
 
-void MainWindow::read_txlog()
+void MainWindow::read_txLog()
 {
     static QFile logfile {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx.log")};
     QTextStream logstream(&logfile);
     if(logfile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         while (!logstream.atEnd()) {
-            txlog = logstream.readAll();
+            txLog = logstream.readAll();
         }
         logstream.flush();
         logfile.close();
     }
+}
+
+void MainWindow::on_actionErase_Tx_Log_triggered()
+{
+  int ret = MessageBox::query_message (this, tr ("Confirm Erase"),
+          tr ("Are you sure you want to erase the Tx Log?"));
+  if(ret==MessageBox::Yes) {
+    static QFile logFile {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx.log")};
+    logFile.remove();
+    txLog = "";
+  }
+}
+
+void MainWindow::addCallsignToignoreList()
+{
+  if (m_hisCall!="") {
+    static QFile ignoreFile {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("ignore.list")};
+    if(ignoreFile.open(QIODevice::Text | QIODevice::Append)) {
+      QString ignoreEntry= (m_hisCall + ",");
+      QTextStream out(&ignoreFile);
+      out << ignoreEntry <<
+  #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+                   endl
+  #else
+                   Qt::endl
+  #endif
+                   ;
+      ignoreFile.close();
+      QTimer::singleShot (2000, [=] {read_ignoreList();});
+      QTimer::singleShot (7000, [=] {read_ignoreList();});
+      MessageBox::information_message (this, tr ("\"%1\" added to Ignore List").arg (m_hisCall));
+    }
+  }
+}
+
+void MainWindow::read_ignoreList()
+{
+    static QFile ignoreFile {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("ignore.list")};
+    QTextStream ignoreStream(&ignoreFile);
+    if(ignoreFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        while (!ignoreStream.atEnd()) {
+            ignoreList = ignoreStream.readAll();
+        }
+        ignoreStream.flush();
+        ignoreFile.close();
+    }
+}
+
+void MainWindow::on_actionErase_Ignore_List_triggered()
+{
+  int ret = MessageBox::query_message (this, tr ("Confirm Erase"),
+          tr ("Are you sure you want to erase the Ignore List?"));
+  if(ret==MessageBox::Yes) {
+    static QFile ignoreFile {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("ignore.list")};
+    ignoreFile.remove();
+    ignoreList = "";
+  }
 }
 
 void MainWindow::remove_old_files(const QString &directoryPath, int daysOld)

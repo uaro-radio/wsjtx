@@ -249,7 +249,11 @@ private slots:
   void on_dxCallEntry_returnPressed ();
   void on_genStdMsgsPushButton_clicked();
   void on_logQSOButton_clicked();
-  void read_txlog();
+  void read_txLog();
+  void on_actionErase_Tx_Log_triggered();
+  void read_ignoreList();
+  void addCallsignToignoreList();
+  void on_actionErase_Ignore_List_triggered();
   void remove_old_files(const QString &directoryPath, int daysOld);
   void on_actionJT9_triggered();
   void on_actionJT65_triggered();
