@@ -2519,6 +2519,26 @@ void MainWindow::fastSink(qint64 frames)
       }
     }
 
+    // hide or ignore callsigns for MSK144
+    if(ui->actionHideIgnored->isChecked() or ui->actionHideToday->isChecked() or ui->actionIgnoreIgnored->isChecked() or ui->actionIgnoreToday->isChecked()) {
+        QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
+        QString yesterday = QDateTime::currentDateTimeUtc().addDays(-1).toString ("yyyy-MM-dd");
+        QString deCall;
+        QString deGrid;
+        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        if (ui->actionHideIgnored->isChecked() && !ui->cbBypass->isChecked() && ignoreList.contains(deCall + ",")) filtered = true;
+        if (ui->actionHideToday->isChecked() && !ui->cbBypass->isChecked() && (
+              txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
+              or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
+           filtered = true;
+        }
+        if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) ignored = true;
+        if (ui->actionIgnoreToday->isChecked() && (txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
+            or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
+           ignored = true;
+        }
+    }
+
     // Wait & Reply for MSK144
     if (text.contains(m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
         !text.contains("73 ") && m_mode=="MSK144" && m_config.Wait_features_enabled()
@@ -2656,27 +2676,6 @@ void MainWindow::fastSink(qint64 frames)
             }
         }
     }
-
-    // hide or ignore callsigns for MSK144
-    if(ui->actionHideIgnored->isChecked() or ui->actionHideToday->isChecked() or ui->actionIgnoreIgnored->isChecked() or ui->actionIgnoreToday->isChecked()) {
-        QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
-        QString yesterday = QDateTime::currentDateTimeUtc().addDays(-1).toString ("yyyy-MM-dd");
-        QString deCall;
-        QString deGrid;
-        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-        if (ui->actionHideIgnored->isChecked() && !ui->cbBypass->isChecked() && ignoreList.contains(deCall + ",")) filtered = true;
-        if (ui->actionHideToday->isChecked() && !ui->cbBypass->isChecked() && (
-              txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
-              or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
-           filtered = true;
-        }
-        if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) ignored = true;
-        if (ui->actionIgnoreToday->isChecked() && (txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
-            or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
-           ignored = true;
-        }
-    }
-
     // show distance and bearing for MSK144
     if (!filtered or m_config.filters_for_Wait_and_Pounce_only()) {
         QString distance;
