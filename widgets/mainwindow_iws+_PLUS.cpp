@@ -2657,15 +2657,19 @@ void MainWindow::fastSink(qint64 frames)
     // hide or ignore callsigns for MSK144
     if(ui->actionHideIgnored->isChecked() or ui->actionHideToday->isChecked() or ui->actionIgnoreIgnored->isChecked() or ui->actionIgnoreToday->isChecked()) {
         QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
+        QString yesterday = QDateTime::currentDateTimeUtc().addDays(-1).toString ("yyyy-MM-dd");
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
         if (ui->actionHideIgnored->isChecked() && !ui->cbBypass->isChecked() && ignoreList.contains(deCall + ",")) filtered = true;
-        if (ui->actionHideToday->isChecked() && !ui->cbBypass->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+        if (ui->actionHideToday->isChecked() && !ui->cbBypass->isChecked() && (
+              txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
+              or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
            filtered = true;
         }
         if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) ignored = true;
-        if (ui->actionIgnoreToday->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+        if (ui->actionIgnoreToday->isChecked() && (txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
+            or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
            ignored = true;
         }
     }
@@ -2728,6 +2732,7 @@ void MainWindow::fastSink(qint64 frames)
     // highlight callsigns worked B4 on band or worked today or from the Ignore List for MSK144
     if (ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked() or ui->actionHighlightIgnored->isChecked()) {
         QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
+        QString yesterday = QDateTime::currentDateTimeUtc().addDays(-1).toString ("yyyy-MM-dd");
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -2743,7 +2748,9 @@ void MainWindow::fastSink(qint64 frames)
                              continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
             if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
         }
-        if (ui->actionHighlightToday->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+        if (ui->actionHighlightToday->isChecked() && (
+              txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
+              or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
            ui->decodedTextBrowser->highlight_callsign(deCall, QColor(100,100,100), QColor(255,255,0), true);
         }
         if (ui->actionHighlightIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
@@ -4315,14 +4322,20 @@ void MainWindow::on_actionSpecial_mouse_commands_triggered()
   </tr>
   <tr>
     <td align="right">Lookup Button:</td>
-    <td><b>Right-click</b> or <b>Double-click</b> to search for Dx Call on QRZ.com.<br/>
-        <b>Crtl + Right-click</b> to search for Dx Call on hamqth.com.<br/>
-        <b>Alt + Right-click</b> to search for Dx Call on qrzcq.com.
+    <td><b>Click</b> to search for callsign in database.<br/>
+        <b>Right-click</b> to search for Dx Call on qrz.com.
     </td>
   </tr>
   <tr>
     <td align="right">Add Button:</td>
-    <td><b>Right-click</b> to search for Dx Call on hamqth.com.
+    <td><b>Click</b> to add callsign and locator to database.<br/>
+        <b>Right-click</b> to search for Dx Call on hamqth.com.
+    </td>
+  </tr>
+  <tr>
+    <td align="right">Ignore Button:</td>
+    td><b>Click</b> to put callsign on the Ignore List.<br/>
+       <b>Right-click</b> to search for Dx Call on qrzcq.com.
     </td>
   </tr>
 </table>)"), font});
@@ -5473,15 +5486,19 @@ void MainWindow::readFromStdout()                             //readFromStdout
         // hide or ignore callsigns
         if(ui->actionHideIgnored->isChecked() or ui->actionHideToday->isChecked() or ui->actionIgnoreIgnored->isChecked() or ui->actionIgnoreToday->isChecked()) {
             QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
+            QString yesterday = QDateTime::currentDateTimeUtc().addDays(-1).toString ("yyyy-MM-dd");
             QString deCall;
             QString deGrid;
             decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
             if (ui->actionHideIgnored->isChecked() && !ui->cbBypass->isChecked() && ignoreList.contains(deCall + ",")) filtered = true;
-            if (ui->actionHideToday->isChecked() && !ui->cbBypass->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+            if (ui->actionHideToday->isChecked() && !ui->cbBypass->isChecked() && (
+                  txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
+                  or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
                filtered = true;
             }
             if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) ignored = true;
-            if (ui->actionIgnoreToday->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+            if (ui->actionIgnoreToday->isChecked() && (txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
+                or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
                ignored = true;
             }
         }
@@ -5566,6 +5583,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
        // highlight callsigns worked B4 on band or worked today
        if (ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked() or ui->actionHighlightIgnored->isChecked()) {
            QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
+           QString yesterday = QDateTime::currentDateTimeUtc().addDays(-1).toString ("yyyy-MM-dd");
            QString deCall;
            QString deGrid;
            decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5581,7 +5599,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
                                 continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
                if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
            }
-           if (ui->actionHighlightToday->isChecked() && txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})) {
+           if (ui->actionHighlightToday->isChecked() && (
+                 txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
+                 or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(100,100,100), QColor(255,255,0), true);
            }
            if (ui->actionHighlightIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
@@ -8303,6 +8323,11 @@ void MainWindow::on_addButton_clicked()                       //Add button
   }
 }
 
+void MainWindow::on_ignoreButton_clicked()                    //Ignore button
+{
+  addCallsignToignoreList();
+}
+
 void MainWindow::msgtype(QString t, QLineEdit* tx)               //msgtype()
 {
 // Set background colors of the Tx message boxes, depending on message type
@@ -8443,17 +8468,15 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
   }
   if(ui->lookupButton->hasFocus() && (event->button() & Qt::RightButton)) {  // search callsign on ...
     QString hisCall=ui->dxCallEntry->text();
-    if (Qt::ControlModifier & QApplication::keyboardModifiers() && hisCall !="") {
-      QDesktopServices::openUrl (QUrl {"https://www.hamqth.com/" + hisCall});          // hamqth.com
-    } else if (Qt::AltModifier & QApplication::keyboardModifiers() && hisCall !="") {
-      QDesktopServices::openUrl (QUrl {"https://www.qrzcq.com/call/" + hisCall});      // qrzcq.com
-    } else if (hisCall !="") {
-      QDesktopServices::openUrl (QUrl {"https://www.qrz.com/db/" + hisCall});          // QRZ.com
-    }
+    if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.qrz.com/db/" + hisCall});  // QRZ.com
   }
   if(ui->addButton->hasFocus() && (event->button() & Qt::RightButton)) {     // search callsign on ...
     QString hisCall=ui->dxCallEntry->text();
     if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.hamqth.com/" + hisCall});  // hamqth.com
+  }
+  if(ui->ignoreButton->hasFocus() && (event->button() & Qt::RightButton)) {     // search callsign on ...
+    QString hisCall=ui->dxCallEntry->text();
+    if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.qrzcq.com/call/" + hisCall});  // qrzcq.com
   }
 
   // Wait & Pounce
