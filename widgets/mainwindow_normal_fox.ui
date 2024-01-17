@@ -5024,7 +5024,7 @@ QPushButton[state=&quot;ok&quot;] {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide stations worked today</string>
+    <string>Hide stations worked today or yesterday</string>
    </property>
   </action>
   <action name="actionHideIgnored">
@@ -5040,7 +5040,7 @@ QPushButton[state=&quot;ok&quot;] {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Ignore stations worked today</string>
+    <string>Ignore stations worked today or yesterday</string>
    </property>
   </action>
   <action name="actionIgnoreIgnored">
@@ -5160,7 +5160,7 @@ QPushButton[state=&quot;ok&quot;] {
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Highlight callsigns worked today</string>
+    <string>Highlight callsigns worked today or yesterday</string>
    </property>
   </action>
   <action name="actionHighlightIgnored">
