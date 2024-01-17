@@ -4219,6 +4219,7 @@ void MainWindow::on_actionKeyboard_shortcuts_triggered()
   <tr><td><b>Ctrl+F   </b></td><td>Edit the free text message box</td></tr>
   <tr><td><b>Alt+G    </b></td><td>Generate standard messages</td></tr>
   <tr><td><b>Alt+H    </b></td><td>Halt Tx</td></tr>
+  <tr><td><b>Ctrl+I   </b></td><td>Add Dx Call to the Ignore List</td></tr>
   <tr><td><b>Ctrl+L   </b></td><td>Lookup callsign in database, generate standard messages</td></tr>
   <tr><td><b>Alt+M    </b></td><td>Monitor</td></tr>
   <tr><td><b>Alt+N    </b></td><td>Toggle "Enable Tx"</td></tr>
@@ -4231,7 +4232,6 @@ void MainWindow::on_actionKeyboard_shortcuts_triggered()
   <tr><td><b>Alt+S    </b></td><td>Stop monitoring</td></tr>
   <tr><td><b>Alt+T    </b></td><td>Toggle Tune status</td></tr>
   <tr><td><b>Alt+Z    </b></td><td>Clear hung decoder status</td></tr>
-  <tr><td><b>Ctrl+I   </b></td><td>Add DX Call to the Ignore List</td></tr>
 
 </table>)"), font});
     }
@@ -4333,7 +4333,7 @@ void MainWindow::on_actionSpecial_mouse_commands_triggered()
   </tr>
   <tr>
     <td align="right">Ignore Button:</td>
-    td><b>Click</b> to put callsign on the Ignore List.<br/>
+    <td><b>Click</b> to add callsign to the Ignore List.<br/>
        <b>Right-click</b> to search for Dx Call on qrzcq.com.
     </td>
   </tr>
