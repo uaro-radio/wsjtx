@@ -13739,6 +13739,7 @@ void MainWindow::on_pb160_clicked()
       setRig(1837000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb80_clicked()
@@ -13752,6 +13753,7 @@ void MainWindow::on_pb80_clicked()
       setRig(3576000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb60_clicked()
@@ -13759,6 +13761,7 @@ void MainWindow::on_pb60_clicked()
     keep_frequency = true;
     setRig(5357000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb40_clicked()
@@ -13772,6 +13775,7 @@ void MainWindow::on_pb40_clicked()
       setRig(7077000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb30_clicked()
@@ -13785,6 +13789,7 @@ void MainWindow::on_pb30_clicked()
       setRig(10139000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb20_clicked()
@@ -13798,6 +13803,7 @@ void MainWindow::on_pb20_clicked()
       setRig(14077000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb17_clicked()
@@ -13811,6 +13817,7 @@ void MainWindow::on_pb17_clicked()
       setRig(18103000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb15_clicked()
@@ -13824,6 +13831,7 @@ void MainWindow::on_pb15_clicked()
       setRig(21077000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb12_clicked()
@@ -13837,6 +13845,7 @@ void MainWindow::on_pb12_clicked()
       setRig(24918000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb10_clicked()
@@ -13850,6 +13859,7 @@ void MainWindow::on_pb10_clicked()
       setRig(28077000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb6_clicked()
@@ -13863,6 +13873,7 @@ void MainWindow::on_pb6_clicked()
       setRig(50316000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb2_clicked()
@@ -13876,6 +13887,7 @@ void MainWindow::on_pb2_clicked()
       setRig(144077000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::on_pb70_clicked()
@@ -13889,6 +13901,7 @@ void MainWindow::on_pb70_clicked()
       setRig(432077000);
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
+    setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::read_txLog()
