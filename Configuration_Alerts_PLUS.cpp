@@ -3329,7 +3329,7 @@ void Configuration::impl::on_CALL3_download_button_clicked (bool /*clicked*/)
   cty_download.configure(network_manager_,
                          "http://dr-risse-consulting.de/hamlib/call3/CALL3.TXT",
                          dataPath.absoluteFilePath("CALL3.TXT"),
-                         "Downloadeing latest CALL3.TXT file");
+                         "Downloading latest CALL3.TXT file");
 
   // set up CALL3.TXT file fetching
   connect (&cty_download, &FileDownload::complete, this, &Configuration::impl::after_CALL3_downloaded, Qt::UniqueConnection);
@@ -3348,7 +3348,7 @@ void Configuration::impl::on_CALL3_EME_download_button_clicked (bool /*clicked*/
   cty_download.configure(network_manager_,
                          "http://dr-risse-consulting.de/hamlib/call3/CALL3_EME.TXT",
                          dataPath.absoluteFilePath("CALL3.TXT"),
-                         "Downloadeing latest CALL3.TXT file");
+                         "Downloading latest CALL3.TXT file");
 
   // set up CALL3.TXT file fetching
   connect (&cty_download, &FileDownload::complete, this, &Configuration::impl::after_CALL3_downloaded, Qt::UniqueConnection);
