@@ -7811,18 +7811,6 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
 
   if (m_bDoubleClicked)
     {
-      // URUR  has no effect yet
-//      if (ui->actionIgnoreToday->isChecked() && hiscall != ""
-//          && txLog.contains(hiscall + ";")) on_stopTxButton_clicked ();
-//      if (ui->actionIgnoreIgnored->isChecked() && hiscall != ""
-//          && ignoreList.contains(hiscall + ";")) on_stopTxButton_clicked ();
-      // URUR  has no effect yet
-      if (ui->actionIgnoreToday->isChecked() && (ui->dxCallEntry->text() != "")
-          && txLog.contains(ui->dxCallEntry->text() + ";")) on_stopTxButton_clicked ();
-      if (ui->actionIgnoreIgnored->isChecked() && (ui->dxCallEntry->text() != "")
-          && ignoreList.contains(ui->dxCallEntry->text() + ";")) on_stopTxButton_clicked ();
-      // URUR
-
       // extract our report if present
       message.report (m_baseCall, Radio::base_callsign(ui->dxCallEntry->text()), m_rptRcvd);
     }
