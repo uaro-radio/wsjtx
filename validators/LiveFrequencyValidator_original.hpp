@@ -5,7 +5,6 @@
 #include <QRegExpValidator>
 
 #include "Radio.hpp"
-#include "Configuration.hpp"
 
 class Bands;
 class FrequencyList_v2_101;
@@ -38,7 +37,6 @@ public:
                           , Bands const * bands // bands model
                           , FrequencyList_v2_101 const * frequencies // working frequencies model
                           , Frequency const * nominal_frequency
-                          , bool kHz_without_k
                           , QWidget * parent = nullptr);
 
   State validate (QString& input, int& pos) const override;
@@ -51,7 +49,6 @@ private:
   FrequencyList_v2_101 const * frequencies_;
   Frequency const * nominal_frequency_;
   QComboBox * combo_box_;
-  bool kHz_without_k_ = false;
 };
 
 #endif

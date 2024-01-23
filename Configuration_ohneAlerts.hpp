@@ -186,6 +186,7 @@ public:
   bool split_mode () const;
   bool enable_VHF_features () const;
   bool decode_at_52s () const;
+  bool kHz_without_k () const;
   bool Tune_watchdog_disabled () const;
   bool Tx_warning_disabled () const;
   bool Wait_features_enabled () const;

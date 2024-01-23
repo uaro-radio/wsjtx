@@ -836,6 +836,7 @@ private:
   bool TX_messages_;
   bool enable_VHF_features_;
   bool decode_at_52s_;
+  bool kHz_without_k_;
   bool Tune_watchdog_disabled_;
   bool button_coloring_disabled_;
   bool Wait_features_enabled_;
@@ -986,6 +987,7 @@ int Configuration::watchdog () const {return m_->watchdog_;}
 bool Configuration::TX_messages () const {return m_->TX_messages_;}
 bool Configuration::enable_VHF_features () const {return m_->enable_VHF_features_;}
 bool Configuration::decode_at_52s () const {return m_->decode_at_52s_;}
+bool Configuration::kHz_without_k () const {return m_->kHz_without_k_;}
 bool Configuration::Tune_watchdog_disabled () const {return m_->Tune_watchdog_disabled_;}
 bool Configuration::button_coloring_disabled () const {return m_->button_coloring_disabled_;}
 bool Configuration::Wait_features_enabled () const {return m_->Wait_features_enabled_;}
@@ -1903,6 +1905,7 @@ void Configuration::impl::initialize_models ()
   ui_->TX_messages_check_box->setChecked (TX_messages_);
   ui_->enable_VHF_features_check_box->setChecked(enable_VHF_features_);
   ui_->decode_at_52s_check_box->setChecked(decode_at_52s_);
+  ui_->kHz_without_k_check_box->setChecked(kHz_without_k_);
   ui_->disable_Tune_watchdog_check_box->setChecked(Tune_watchdog_disabled_);
   ui_->disable_button_coloring_check_box->setChecked(button_coloring_disabled_);
   ui_->enable_Wait_features_check_box->setChecked(Wait_features_enabled_);
@@ -2307,6 +2310,7 @@ void Configuration::impl::read_settings ()
   TX_messages_ = settings_->value ("Tx2QSO", true).toBool ();
   enable_VHF_features_ = settings_->value("VHFUHF",false).toBool ();
   decode_at_52s_ = settings_->value("Decode52",false).toBool ();
+  kHz_without_k_ = settings_->value("kHzWithoutK",false).toBool ();
   Tune_watchdog_disabled_ = settings_->value("TuneWatchdogDisabled",false).toBool ();
   button_coloring_disabled_ = settings_->value("TxWarningDisabled",false).toBool ();
   Wait_features_enabled_ = settings_->value("WaitFeaturesEnabled",true).toBool ();
@@ -2547,6 +2551,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("SplitMode", QVariant::fromValue (rig_params_.split_mode));
   settings_->setValue ("VHFUHF", enable_VHF_features_);
   settings_->setValue ("Decode52", decode_at_52s_);
+  settings_->setValue ("kHzWithoutK", kHz_without_k_);
   settings_->setValue ("TuneWatchdogDisabled", Tune_watchdog_disabled_);
   settings_->setValue ("TxWarningDisabled", button_coloring_disabled_);
   settings_->setValue ("WaitFeaturesEnabled", Wait_features_enabled_);
@@ -3075,6 +3080,7 @@ void Configuration::impl::accept ()
   azel_directory_.setPath (ui_->azel_path_display_label->text ());
   enable_VHF_features_ = ui_->enable_VHF_features_check_box->isChecked ();
   decode_at_52s_ = ui_->decode_at_52s_check_box->isChecked ();
+  kHz_without_k_ = ui_->kHz_without_k_check_box->isChecked ();
   Tune_watchdog_disabled_ = ui_->disable_Tune_watchdog_check_box->isChecked ();
   button_coloring_disabled_ = ui_->disable_button_coloring_check_box->isChecked ();
   Wait_features_enabled_ = ui_->enable_Wait_features_check_box->isChecked ();

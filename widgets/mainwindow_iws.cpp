@@ -834,6 +834,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
                                                     , m_config.bands ()
                                                     , m_config.frequencies ()
                                                     , &m_freqNominal
+                                                    , m_config.kHz_without_k ()
                                                     , this};
   ui->bandComboBox->setValidator (band_validator);
 
