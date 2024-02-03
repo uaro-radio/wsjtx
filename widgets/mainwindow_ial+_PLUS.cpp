@@ -10082,9 +10082,12 @@ void MainWindow::band_changed (Frequency f)
     setXIT (ui->TxFreqSpinBox->value ());
     m_specOp=m_config.special_op_id();
     if (m_specOp==SpecOp::FOX) FoxReset("BandChange");  // when changing bands, don't preserve the Fox queues
-    if (m_config.erase_BandActivity () && !not_erase) ui->decodedTextBrowser->erase ();   // Mod for WD5DHK
   }
 
+  if (m_config.erase_BandActivity () && !not_erase) {
+    ui->decodedTextBrowser->erase ();   // Mod for WD5DHK
+    ui->decodedTextBrowser2->erase ();
+  }
 }
 
 void MainWindow::enable_DXCC_entity (bool on)
@@ -13978,9 +13981,15 @@ void MainWindow::on_pb80_clicked()
 
 void MainWindow::on_pb60_clicked()
 {
-    keep_frequency = true;
-    setRig(5357000);
-    QTimer::singleShot (250, [=] {keep_frequency = false;});
+    auto const& row = m_config.frequencies ()->best_working_frequency (5357000);
+    ui->bandComboBox->setCurrentIndex (row);
+    if (row >= 0) {
+      on_bandComboBox_activated (row);
+    } else {
+      keep_frequency = true;
+      setRig(5357000);
+      QTimer::singleShot (250, [=] {keep_frequency = false;});
+    }
     setXIT (ui->TxFreqSpinBox->value ());
 }
 
