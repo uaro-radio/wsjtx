@@ -7258,14 +7258,30 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
   } else {
     cursor=ui->decodedTextBrowser2->textCursor();
   }
-
+  DecodedText message {cursor.block().text().trimmed().left(61).remove("TU; ")};
+  if(message.string().contains(";") && message.string().contains("<")) {
+    QVector<qint32> Freq = {1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000,3575000,7047500,10140000,14080000,18104000,21140000,24919000,28180000,50318000};
+    for(int i=0; i<Freq.length()-1; i++) {
+        int kHzdiff=m_freqNominal - Freq[i];
+        if(qAbs(kHzdiff) < 3000 ) {
+        m_bTxTime=false;
+        if (m_auto) auto_tx_mode (false);
+        if (m_tune) stop_tuning();
+//        auto const& msg2 = tr("Double-clicking on combined messages\n"
+//                              "not allowed on the standard FT8 sub-bands.");
+//        QTimer::singleShot (0, [=] {               // don't block guiUpdate
+//          MessageBox::warning_message (this, tr ("Potential hash collision"), msg2);
+//        });
+        return;
+        }
+    }
+  }
   if(modifiers==(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier)) {
     //### What was the purpose of this ???  ###
     cursor.setPosition(0);
   } else {
     cursor.setPosition(cursor.selectionStart());
   }
-
   if(SpecOp::FOX==m_specOp and m_decodedText2) {
     if(m_houndQueue.count()<10 and m_nSortedHounds>0) {
       QString t=cursor.block().text();
@@ -7273,7 +7289,6 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     }
     return;
   }
-  DecodedText message {cursor.block().text().trimmed().left(61).remove("TU; ")};
   int nmod = fmod(double(message.timeInSeconds()),2.0*m_TRperiod);
   if(ui->txFirstCheckBox->isVisible() && !ui->txFirstCheckBox->isEnabled() && (
         (nmod!=0 && !ui->txFirstCheckBox->isChecked()) or
