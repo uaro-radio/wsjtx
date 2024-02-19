@@ -2771,8 +2771,11 @@ Double-click to reset to the standard 73 message</string>
                                  <height>34</height>
                                 </size>
                                </property>
+						       <property name="focusPolicy">
+						        <enum>Qt::StrongFocus</enum>
+						       </property>
                                <property name="toolTip">
-                                <string>Toggle band hopping On/Off. Band hopping occurs every other full minute. Changes to the checkboxes take effect immediately.</string>
+                                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle band hopping On/Off. Band hopping occurs every other full minute. Changes to the checkboxes take effect immediately.&lt;br&gt;Right-click to test the default audio device.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                                </property>
                                <property name="styleSheet">
                                 <string notr="true">QPushButton:checked {

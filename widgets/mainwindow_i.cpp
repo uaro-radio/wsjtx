@@ -7213,7 +7213,7 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
         if (m_auto) auto_tx_mode (false);
         if (m_tune) stop_tuning();
 //        auto const& msg2 = tr("Double-clicking on combined messages\n"
-//                              "not allowed on the standard FT8 sub-bands.");
+//                              "not allowed on the standard sub-bands.");
 //        QTimer::singleShot (0, [=] {               // don't block guiUpdate
 //          MessageBox::warning_message (this, tr ("Potential hash collision"), msg2);
 //        });
@@ -8576,6 +8576,30 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
     setRig(50323000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
   }
+// Testing the default audio device
+#ifdef WIN32
+  if (ui->pbBandHopping->hasFocus() && event->button() & Qt::RightButton) {
+      QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
+      QString binPath = QCoreApplication::applicationDirPath();
+      QAudioFormat format;
+      format.setCodec("audio/pcm");
+      format.setSampleRate (48000);
+      format.setChannelCount (1);
+      format.setSampleSize (16);
+      format.setSampleType(QAudioFormat::SignedInt);
+      QAudioOutput* audio;
+      audio = new QAudioOutput(format, this);
+      QFile *effect = new QFile(this);
+      effect->setFileName(QString("%1/%2").arg(binPath, "/sounds/Testing_long.wav"));
+      effect->open(QIODevice::ReadOnly);
+      audio->start(effect);
+  }
+#else
+  if (ui->pbBandHopping->hasFocus() && event->button() & Qt::RightButton) {
+      QString homePath = QDir::homePath();
+      QSound::play(QDir::homePath() + "/sounds/Testing_long.wav");  // for Linux and macOS
+  }
+#endif
 }
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
