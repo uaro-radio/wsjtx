@@ -3054,7 +3054,6 @@ void MainWindow::on_autoButton_clicked (bool checked)
       pounce = false;
       m_auto = false;
       m_bCallingCQ = false;
-      tx_watchdog (false);
       ui->autoButton->setChecked(false);  // ensure autoButton is unchecked
       filtered = false;
       ignored = false;
@@ -11767,13 +11766,13 @@ void MainWindow::tx_watchdog (bool triggered)
       m_bTxTime=false;
       if (m_tune) stop_tuning ();
       if (m_auto) auto_tx_mode (false);
-      tx_status_label.setStyleSheet ("QLabel{color: #000000; background-color: #ff0000}");
-      tx_status_label.setText (tr ("Runaway Tx watchdog"));
       // Highlight watchdog label red when watchdog stops TXing, and keep the value
       if ((m_config.watchdog () && m_mode!="WSPR" && m_mode!="FST4W") && !m_config.button_coloring_disabled()) {
         watchdog_label.setStyleSheet ("QLabel{color: #ffffff; background-color: #ff0000}");
         watchdog_label.setText (tr (" WD:0m "));
       }
+      tx_status_label.setStyleSheet ("QLabel{color: #ffffff; background-color: #ff0000}");
+      tx_status_label.setText (tr (" Runaway Tx watchdog "));
       QApplication::alert (this);
     }
   else
