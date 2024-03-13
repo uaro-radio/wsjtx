@@ -203,6 +203,7 @@ public:
   bool auto_astro () const;
   bool single_decode () const;
   bool twoPass() const;
+  bool superFox() const;
   bool bFox() const;
   bool bHound() const;
   bool bLowSidelobes() const;
