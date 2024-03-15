@@ -3120,13 +3120,13 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
       case Qt::Key_Backspace:
         qDebug() << "Key Backspace";
         return;
-#ifdef DEBUG_FOX
+//#ifdef DEBUG_FOX
       case Qt::Key_X:
         if(e->modifiers() & Qt::AltModifier) {
             foxTest();
             return;
           }
-#endif
+//#endif
     }
     QMainWindow::keyPressEvent (e);
   }
