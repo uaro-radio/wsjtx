@@ -198,6 +198,7 @@ public:
   bool auto_astro () const;
   bool single_decode () const;
   bool twoPass() const;
+  bool superFox() const;
   bool bFox() const;
   bool bHound() const;
   bool bLowSidelobes() const;
@@ -254,6 +255,7 @@ public:
   void setSpecial_Fox();
   void setSpecial_None();
   void setSpecial_On();
+  void toggle_SF();
   bool highlight_DXcall () const;
   bool clear_DXcall () const;
   bool highlight_DXgrid () const;

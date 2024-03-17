@@ -420,6 +420,7 @@ private:
   void chkFT4();
   bool elide_tx1_not_allowed () const;
   void configActiveStations();
+  void sfox_tx();
   bool play_DXcall = false;
   void readWidebandDecodes();
 
@@ -666,6 +667,9 @@ private:
   NonInheritingProcess proc_jt9;
   NonInheritingProcess p1;
   NonInheritingProcess p3;
+
+  QProcess p2;
+  QProcess p4;
 
   WSPRNet *wsprNet;
 

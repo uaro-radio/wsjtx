@@ -181,7 +181,9 @@ extern "C" {
   void calibrate_(char const * data_dir, int* iz, double* a, double* b, double* rms,
                   double* sigmaa, double* sigmab, int* irc, fortran_charlen_t);
 
-  void foxgen_();
+  void foxgen_(bool* bSuperFox, char const * fname, FCL len);
+
+  void sfox_wave_(char const * fname, FCL len);
 
   void plotsave_(float swide[], int* m_w , int* m_h1, int* irow);
 
@@ -3105,13 +3107,13 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
       case Qt::Key_Backspace:
         qDebug() << "Key Backspace";
         return;
-#ifdef DEBUG_FOX
+//#ifdef DEBUG_FOX
       case Qt::Key_X:
         if(e->modifiers() & Qt::AltModifier) {
             foxTest();
             return;
           }
-#endif
+//#endif
     }
     QMainWindow::keyPressEvent (e);
   }
@@ -4464,6 +4466,12 @@ void MainWindow::decode()                                       //decode()
   dec_data.params.nfb=m_wideGraph->Fmax();
   if(m_mode=="FT8" and SpecOp::HOUND == m_specOp and !ui->cbRxAll->isChecked()) dec_data.params.nfb=1000;
   if(m_mode=="FT8" and SpecOp::FOX == m_specOp ) dec_data.params.nfqso=200;
+  dec_data.params.b_even_seq=(dec_data.params.nutc%10)==0;
+  dec_data.params.b_superfox=(m_config.superFox() and (SpecOp::FOX == m_specOp or SpecOp::HOUND == m_specOp));
+  if(dec_data.params.b_superfox and dec_data.params.b_even_seq and m_ihsym<50) return;
+//  qDebug() << "aa" << dec_data.params.nutc << dec_data.params.b_even_seq
+//           << dec_data.params.b_superfox << m_ihsym;
+
   dec_data.params.ntol=ui->sbFtol->value ();
   if(!m_config.enable_VHF_features()) {
     dec_data.params.ntol=20;
@@ -6511,7 +6519,10 @@ void MainWindow::guiUpdate()
               if(m_config.split_mode()) foxcom_.nfreq = foxcom_.nfreq - m_XIT;  //Fox Tx freq
               QString foxCall=m_config.my_callsign() + "         ";
               ::memcpy(foxcom_.mycall, foxCall.toLatin1(), sizeof foxcom_.mycall); //Copy Fox callsign into foxcom_
-              foxgen_();
+              bool bSuperFox=m_config.superFox();
+              auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
+              foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
+              if(bSuperFox) sfox_tx();
             }
           }
         }
@@ -8513,7 +8524,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
   if(ui->txFirstCheckBox->isVisible() && ui->txFirstCheckBox->hasFocus() && (event->button() & Qt::RightButton)) {
       ui->txFirstCheckBox->setEnabled(false);  // freeze txFirstCheckBox
   }
-  if((ui->ft8Button->hasFocus() or ui->msk144Button->hasFocus()) && (event->button() & Qt::RightButton)) {
+  if(ui->msk144Button->hasFocus() && (event->button() & Qt::RightButton)) {
       ui->txFirstCheckBox->setEnabled(true);  // unfreeze txFirstCheckBox
   }
   if(ui->q65Button->hasFocus() && (event->button() & Qt::RightButton)) {     // switch to Q65_Pileup mode
@@ -8524,6 +8535,19 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
   if(ui->jt65Button->hasFocus() && (event->button() & Qt::RightButton)) {    // switch to JT9 mode
       on_actionJT9_triggered();
   }
+  // Switch SuperFox mode on/off
+  if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {
+      not_erase = true;  // prevent erasing the decodedTextBrowser
+      keep_frequency = true;
+      m_config.toggle_SF();
+      QTimer::singleShot (250, [=] {
+        keep_frequency = false;
+        not_erase = false;
+      });
+      on_actionFT8_triggered();
+      check_button_color();
+  }
+  // Search callsign on qrz.com, qrzcq.com or hamqth.com
   if(ui->lookupButton->hasFocus() && (event->button() & Qt::RightButton)) {  // search callsign on ...
     QString hisCall=ui->dxCallEntry->text();
     if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.qrz.com/db/" + hisCall});  // QRZ.com
@@ -8536,7 +8560,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
     QString hisCall=ui->dxCallEntry->text();
     if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.qrzcq.com/call/" + hisCall});  // qrzcq.com
   }
-
   // Wait & Pounce
   if(ui->autoButton->hasFocus() && (event->button() & Qt::RightButton) && ui->respondComboBox->currentText()!="CQ: None") {
       if (!pounce && !m_auto && m_config.Wait_features_enabled()) {
@@ -9234,7 +9257,11 @@ void MainWindow::on_actionFT8_triggered()
     ui->TxFreqSpinBox->setValue(300);
   //                         01234567890123456789012345678901234567
     displayWidgets(nWidgets("11101000010011100001000000000010000000"));
-    ui->labDXped->setText(tr ("Fox"));
+    if(m_config.superFox()) {
+      ui->labDXped->setText(tr ("Super Fox"));
+    } else {
+      ui->labDXped->setText(tr ("Fox"));
+    }
     on_fox_log_action_triggered();
   }
   if(SpecOp::HOUND == m_specOp) {
@@ -9246,7 +9273,11 @@ void MainWindow::on_actionFT8_triggered()
     ui->cbHoldTxFreq->setChecked(true);
     //                       01234567890123456789012345678901234567
     displayWidgets(nWidgets("11101000010011000001000000000011000000"));
-    ui->labDXped->setText(tr ("Hound"));
+    if(m_config.superFox()) {
+      ui->labDXped->setText(tr ("Super Hound"));
+    } else {
+      ui->labDXped->setText(tr ("Hound"));
+    }
     ui->txrb1->setChecked(true);
     ui->txrb2->setEnabled(false);
     ui->txrb4->setEnabled(false);
@@ -12494,7 +12525,10 @@ Transmit:
   if(m_config.split_mode()) foxcom_.nfreq = foxcom_.nfreq - m_XIT;  //Fox Tx freq
   QString foxCall=m_config.my_callsign() + "         ";
   ::memcpy(foxcom_.mycall, foxCall.toLatin1(),sizeof foxcom_.mycall);   //Copy Fox callsign into foxcom_
-  foxgen_();
+  bool bSuperFox=m_config.superFox();
+  auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
+  foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
+  if(bSuperFox) sfox_tx();
   m_tFoxTxSinceCQ++;
 
   for(QString hc: m_foxQSO.keys()) {               //Check for strikeout or timeout
@@ -13076,6 +13110,21 @@ void MainWindow::on_jt65Button_clicked()
 void MainWindow::on_echoButton_clicked()
 {
     on_actionEcho_triggered();
+}
+
+void MainWindow::sfox_tx()
+{
+//  qint64 ms0 = QDateTime::currentMSecsSinceEpoch();
+  auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
+#ifdef WIN32
+  p2.start("sftx", QStringList {fname});
+#else
+  p2.start("./sftx", QStringList {fname});
+#endif
+  p2.waitForFinished();
+  auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};
+  sfox_wave_(fname2.constData(), (FCL)fname2.size());
+//  qDebug() << "cc" << QDateTime::currentMSecsSinceEpoch() - ms0;
 }
 
 void MainWindow::on_pb30B_clicked()

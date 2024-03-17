@@ -419,6 +419,7 @@ private:
   bool elide_tx1_not_allowed () const;
   void readWidebandDecodes();
   void configActiveStations();
+  void sfox_tx();
 
   QProcessEnvironment const& m_env;
   NetworkAccessManager m_network_manager;
@@ -662,6 +663,9 @@ private:
   NonInheritingProcess proc_jt9;
   NonInheritingProcess p1;
   NonInheritingProcess p3;
+
+  QProcess p2;
+  QProcess p4;
 
   WSPRNet *wsprNet;
 
