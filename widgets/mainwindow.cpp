@@ -10204,6 +10204,10 @@ void MainWindow::band_changed (Frequency f)
     if (m_specOp==SpecOp::FOX) FoxReset("BandChange");  // when changing bands, don't preserve the Fox queues
   }
 
+  // Erase the decodedTextBrowsers only if the band really changed
+  static QString band_save;
+  if (m_config.bands()->find(f) == band_save) return; // band didn't change
+  band_save = m_config.bands()->find(f);
   if (m_config.erase_BandActivity () && !not_erase) {
     ui->decodedTextBrowser->erase ();   // Mod for WD5DHK
     ui->decodedTextBrowser2->erase ();
@@ -13172,7 +13176,11 @@ void MainWindow::sfox_tx()
 {
 //  qint64 ms0 = QDateTime::currentMSecsSinceEpoch();
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
+#ifdef WIN32
   p2.start("sftx", QStringList {fname});
+#else
+  p2.start("./sftx", QStringList {fname});
+#endif
   p2.waitForFinished();
   auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};
   sfox_wave_(fname2.constData(), (FCL)fname2.size());
