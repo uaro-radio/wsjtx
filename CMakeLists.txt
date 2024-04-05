@@ -1292,7 +1292,9 @@ set (LANGUAGES
   ru				# Russian
   #sv				# Swedish
   zh				# Chinese
+  zh_HK				# Chinese per Hong Kong
   zh_TW				# Chinese traditional
+  it				# Italian
   )
 foreach (lang_ ${LANGUAGES})
   file (TO_NATIVE_PATH ${CMAKE_SOURCE_DIR}/translations/wsjtx_${lang_}.ts ts_)
@@ -1658,11 +1660,21 @@ install (DIRECTORY
   #COMPONENT runtime
   )
 
-install (DIRECTORY
+if (NOT UNIX)
+  install (DIRECTORY
   ${PROJECT_SOURCE_DIR}/sounds
   DESTINATION ${CMAKE_INSTALL_BINDIR}
   #COMPONENT runtime
   )
+  endif (NOT UNIX)
+	
+if (UNIX)
+  install (DIRECTORY
+  ${PROJECT_SOURCE_DIR}/sounds
+  DESTINATION $ENV{HOME}
+  #COMPONENT runtime
+  )
+  endif (UNIX)
 
 #
 # Mac installer files
