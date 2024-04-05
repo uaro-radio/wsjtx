@@ -13979,6 +13979,16 @@ void MainWindow::check_button_color()
         ui->pb2->setVisible(false);
         ui->pb70->setVisible(false);
     }
+    if (SpecOp::FOX==m_specOp && m_config.superFox() && !ui->cbSendMsg->isChecked()) m_Nslots=5;  // start SuperFox mode with 5 slots
+    if (m_config.superFox()) {
+      ui->sbNslots->setVisible(false);
+      ui->pbFreeText->setVisible(true);
+      ui->cbSendMsg->setVisible(true);
+    } else {
+      ui->sbNslots->setVisible(true);
+      ui->pbFreeText->setVisible(false);
+      ui->cbSendMsg->setVisible(false);
+    }
 }
 
 void MainWindow::on_pb160_clicked()

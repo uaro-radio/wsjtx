@@ -3423,8 +3423,22 @@ Double-click to reset to the standard 73 message</string>
                    <property name="spacing">
                     <number>3</number>
                    </property>
-                   <item row="1" column="2">
-                    <widget class="QComboBox" name="comboBoxHoundSort">
+                   <item row="8" column="2">
+                    <widget class="QPushButton" name="pbFreeText">
+                     <property name="text">
+                      <string>Free Text</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="9" column="2">
+                    <widget class="QCheckBox" name="cbSendMsg">
+                     <property name="text">
+                      <string>Send msg</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="2">
+                    <widget class="QSpinBox" name="sbNslots">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -3437,62 +3451,23 @@ Double-click to reset to the standard 73 message</string>
                        <height>16777215</height>
                       </size>
                      </property>
-                     <property name="currentText">
-                      <string>Random</string>
+                     <property name="suffix">
+                      <string/>
                      </property>
-                     <property name="maxVisibleItems">
+                     <property name="prefix">
+                      <string>N Slots    </string>
+                     </property>
+                     <property name="minimum">
+                      <number>1</number>
+                     </property>
+                     <property name="maximum">
                       <number>5</number>
                      </property>
-                     <item>
-                      <property name="text">
-                       <string>Random</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Call</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Grid</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>S/N (dB)</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Distance</string>
-                      </property>
-                     </item>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLabel" name="label_inProcess">
-                     <property name="text">
-                      <string>In Progress</string>
+                     <property name="value">
+                      <number>1</number>
                      </property>
-                     <property name="alignment">
-                      <set>Qt::AlignCenter</set>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1" rowspan="10">
-                    <widget class="DisplayText" name="foxTxListTextBrowser">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>60</width>
-                       <height>0</height>
-                      </size>
+                     <property name="displayIntegerBase">
+                      <number>10</number>
                      </property>
                     </widget>
                    </item>
@@ -3524,13 +3499,26 @@ Double-click to reset to the standard 73 message</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_queue">
+                   <item row="6" column="2">
+                    <widget class="QCheckBox" name="cbMoreCQs">
                      <property name="text">
-                      <string>Queue</string>
+                      <string>More CQs</string>
                      </property>
-                     <property name="alignment">
-                      <set>Qt::AlignCenter</set>
+                    </widget>
+                   </item>
+                   <item row="1" column="1" rowspan="11">
+                    <widget class="DisplayText" name="foxTxListTextBrowser">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>60</width>
+                       <height>0</height>
+                      </size>
                      </property>
                     </widget>
                    </item>
@@ -3631,15 +3619,8 @@ Double-click to reset to the standard 73 message</string>
                      </item>
                     </widget>
                    </item>
-                   <item row="9" column="2">
-                    <widget class="QCheckBox" name="cbSendMsg">
-                     <property name="text">
-                      <string>Send msg</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="2">
-                    <widget class="QSpinBox" name="sbNslots">
+                   <item row="1" column="2">
+                    <widget class="QComboBox" name="comboBoxHoundSort">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -3652,38 +3633,37 @@ Double-click to reset to the standard 73 message</string>
                        <height>16777215</height>
                       </size>
                      </property>
-                     <property name="suffix">
-                      <string/>
+                     <property name="currentText">
+                      <string>Random</string>
                      </property>
-                     <property name="prefix">
-                      <string>N Slots    </string>
-                     </property>
-                     <property name="minimum">
-                      <number>1</number>
-                     </property>
-                     <property name="maximum">
+                     <property name="maxVisibleItems">
                       <number>5</number>
                      </property>
-                     <property name="value">
-                      <number>1</number>
-                     </property>
-                     <property name="displayIntegerBase">
-                      <number>10</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="7" column="2">
-                    <widget class="QPushButton" name="pbFoxReset">
-                     <property name="text">
-                      <string>Reset</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="2">
-                    <widget class="QCheckBox" name="cbMoreCQs">
-                     <property name="text">
-                      <string>More CQs</string>
-                     </property>
+                     <item>
+                      <property name="text">
+                       <string>Random</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Call</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Grid</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>S/N (dB)</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Distance</string>
+                      </property>
+                     </item>
                     </widget>
                    </item>
                    <item row="3" column="2">
@@ -3714,7 +3694,7 @@ Double-click to reset to the standard 73 message</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0" rowspan="10">
+                   <item row="1" column="0" rowspan="11">
                     <widget class="DisplayText" name="houndQueueTextBrowser">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -3736,12 +3716,45 @@ Double-click to reset to the standard 73 message</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="8" column="2">
-                    <widget class="QPushButton" name="pbFreeText">
+                   <item row="7" column="2">
+                    <widget class="QPushButton" name="pbFoxReset">
                      <property name="text">
-                      <string>Free Text</string>
+                      <string>Reset</string>
                      </property>
                     </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_queue">
+                     <property name="text">
+                      <string>Queue</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLabel" name="label_inProcess">
+                     <property name="text">
+                      <string>In Progress</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="10" column="2">
+                    <spacer name="verticalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                    </spacer>
                    </item>
                   </layout>
                  </item>

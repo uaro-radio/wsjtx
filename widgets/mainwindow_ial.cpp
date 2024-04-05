@@ -1715,9 +1715,9 @@ void MainWindow::set_application_font (QFont const& font)
       ui->outAttenuation->setMinimumWidth (2.8*pointSize + 8);
   }
   if (pointSize < 11) {
-      ui->tabWidget->setMaximumHeight(230);                           // UR for AL
+      ui->tabWidget->setMaximumHeight(218);                           // UR for AL
 //      if (ui->actionUse_Dark_Style->isChecked()) {
-//          ui->tabWidget->setMaximumHeight(230);                       // UR for normal + widescreen
+//          ui->tabWidget->setMaximumHeight(225);                       // UR for normal + widescreen
 //          ui->houndButton->setMinimumWidth(50);                       // UR for normal + widescreen
 //          ui->ft8Button->setMinimumWidth(50);                         // UR for normal + widescreen
 //          ui->ft4Button->setMinimumWidth(50);                         // UR for normal + widescreen
@@ -1725,7 +1725,7 @@ void MainWindow::set_application_font (QFont const& font)
 //          ui->q65Button->setMinimumWidth(50);                         // UR for normal + widescreen
 //          ui->jt65Button->setMinimumWidth(50);                        // UR for normal + widescreen
 //      } else {
-//          ui->tabWidget->setMaximumHeight(230);                       // UR for normal + widescreen
+//          ui->tabWidget->setMaximumHeight(225);                       // UR for normal + widescreen
 //          ui->houndButton->setMaximumWidth(40);                       // UR for normal + widescreen
 //          ui->ft8Button->setMaximumWidth(40);                         // UR for normal + widescreen
 //          ui->ft4Button->setMaximumWidth(40);                         // UR for normal + widescreen
@@ -14005,6 +14005,16 @@ void MainWindow::check_button_color()
         ui->pb6->setVisible(false);
         ui->pb2->setVisible(false);
         ui->pb70->setVisible(false);
+    }
+    if (SpecOp::FOX==m_specOp && m_config.superFox() && !ui->cbSendMsg->isChecked()) m_Nslots=5;  // start SuperFox mode with 5 slots
+    if (m_config.superFox()) {
+      ui->sbNslots->setVisible(false);
+      ui->pbFreeText->setVisible(true);
+      ui->cbSendMsg->setVisible(true);
+    } else {
+      ui->sbNslots->setVisible(true);
+      ui->pbFreeText->setVisible(false);
+      ui->cbSendMsg->setVisible(false);
     }
 }
 
