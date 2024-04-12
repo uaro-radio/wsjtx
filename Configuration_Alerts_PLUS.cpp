@@ -833,11 +833,12 @@ private:
   bool force_call_1st_;
   bool alternate_bindings_;
   int watchdog_;
+  int tune_watchdog_time_;
+  bool tune_watchdog_;
   bool TX_messages_;
   bool enable_VHF_features_;
   bool decode_at_52s_;
   bool kHz_without_k_;
-  bool Tune_watchdog_disabled_;
   bool button_coloring_disabled_;
   bool Wait_features_enabled_;
   bool showDistance_;
@@ -984,11 +985,12 @@ bool Configuration::disable_TX_on_73 () const {return m_->disable_TX_on_73_;}
 bool Configuration::force_call_1st() const {return m_->force_call_1st_;}
 bool Configuration::alternate_bindings() const {return m_->alternate_bindings_;}
 int Configuration::watchdog () const {return m_->watchdog_;}
+int Configuration::tune_watchdog_time () const {return m_->tune_watchdog_time_;}
+bool Configuration::tune_watchdog () const {return m_->tune_watchdog_;}
 bool Configuration::TX_messages () const {return m_->TX_messages_;}
 bool Configuration::enable_VHF_features () const {return m_->enable_VHF_features_;}
 bool Configuration::decode_at_52s () const {return m_->decode_at_52s_;}
 bool Configuration::kHz_without_k () const {return m_->kHz_without_k_;}
-bool Configuration::Tune_watchdog_disabled () const {return m_->Tune_watchdog_disabled_;}
 bool Configuration::button_coloring_disabled () const {return m_->button_coloring_disabled_;}
 bool Configuration::Wait_features_enabled () const {return m_->Wait_features_enabled_;}
 bool Configuration::showDistance() const {return m_->showDistance_;}
@@ -1902,11 +1904,12 @@ void Configuration::impl::initialize_models ()
   ui_->force_call_1st_check_box->setChecked (force_call_1st_);
   ui_->alternate_bindings_check_box->setChecked (alternate_bindings_);
   ui_->tx_watchdog_spin_box->setValue (watchdog_);
+  ui_->tune_watchdog_check_box->setChecked(tune_watchdog_);
+  ui_->tune_watchdog_spin_box->setValue (tune_watchdog_time_);
   ui_->TX_messages_check_box->setChecked (TX_messages_);
   ui_->enable_VHF_features_check_box->setChecked(enable_VHF_features_);
   ui_->decode_at_52s_check_box->setChecked(decode_at_52s_);
   ui_->kHz_without_k_check_box->setChecked(kHz_without_k_);
-  ui_->disable_Tune_watchdog_check_box->setChecked(Tune_watchdog_disabled_);
   ui_->disable_button_coloring_check_box->setChecked(button_coloring_disabled_);
   ui_->enable_Wait_features_check_box->setChecked(Wait_features_enabled_);
   ui_->cb_showDistance->setChecked(showDistance_);
@@ -2307,11 +2310,12 @@ void Configuration::impl::read_settings ()
   force_call_1st_ = settings_->value ("ForceCallFirst", false).toBool ();
   alternate_bindings_ = settings_->value ("AlternateBindings", false).toBool ();
   watchdog_ = settings_->value ("TxWatchdog", 6).toInt ();
+  tune_watchdog_ = settings_->value("TuneWatchdog",true).toBool ();
+  tune_watchdog_time_ = settings_->value ("TuneWatchdogTime", 90).toInt ();
   TX_messages_ = settings_->value ("Tx2QSO", true).toBool ();
   enable_VHF_features_ = settings_->value("VHFUHF",false).toBool ();
   decode_at_52s_ = settings_->value("Decode52",false).toBool ();
   kHz_without_k_ = settings_->value("kHzWithoutK",false).toBool ();
-  Tune_watchdog_disabled_ = settings_->value("TuneWatchdogDisabled",false).toBool ();
   button_coloring_disabled_ = settings_->value("TxWarningDisabled",false).toBool ();
   Wait_features_enabled_ = settings_->value("WaitFeaturesEnabled",true).toBool ();
   showDistance_ = settings_->value("showDistance", false).toBool();
@@ -2541,6 +2545,8 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("ForceCallFirst", force_call_1st_);
   settings_->setValue ("AlternateBindings", alternate_bindings_);
   settings_->setValue ("TxWatchdog", watchdog_);
+  settings_->setValue ("TuneWatchdog", tune_watchdog_);
+  settings_->setValue ("TuneWatchdogTime", tune_watchdog_time_);
   settings_->setValue ("Tx2QSO", TX_messages_);
   settings_->setValue ("CATForceDTR", rig_params_.force_dtr);
   settings_->setValue ("DTR", rig_params_.dtr_high);
@@ -2552,7 +2558,6 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("VHFUHF", enable_VHF_features_);
   settings_->setValue ("Decode52", decode_at_52s_);
   settings_->setValue ("kHzWithoutK", kHz_without_k_);
-  settings_->setValue ("TuneWatchdogDisabled", Tune_watchdog_disabled_);
   settings_->setValue ("TxWarningDisabled", button_coloring_disabled_);
   settings_->setValue ("WaitFeaturesEnabled", Wait_features_enabled_);
   settings_->setValue ("showDistance", showDistance_);
@@ -3073,6 +3078,8 @@ void Configuration::impl::accept ()
   force_call_1st_ = ui_->force_call_1st_check_box->isChecked ();
   alternate_bindings_ = ui_->alternate_bindings_check_box->isChecked ();
   watchdog_ = ui_->tx_watchdog_spin_box->value ();
+  tune_watchdog_ = ui_->tune_watchdog_check_box->isChecked ();
+  tune_watchdog_time_ = ui_->tune_watchdog_spin_box->value ();
   TX_messages_ = ui_->TX_messages_check_box->isChecked ();
   data_mode_ = static_cast<DataMode> (ui_->TX_mode_button_group->checkedId ());
   bLowSidelobes_ = ui_->rbLowSidelobes->isChecked();
@@ -3081,7 +3088,6 @@ void Configuration::impl::accept ()
   enable_VHF_features_ = ui_->enable_VHF_features_check_box->isChecked ();
   decode_at_52s_ = ui_->decode_at_52s_check_box->isChecked ();
   kHz_without_k_ = ui_->kHz_without_k_check_box->isChecked ();
-  Tune_watchdog_disabled_ = ui_->disable_Tune_watchdog_check_box->isChecked ();
   button_coloring_disabled_ = ui_->disable_button_coloring_check_box->isChecked ();
   Wait_features_enabled_ = ui_->enable_Wait_features_check_box->isChecked ();
   showDistance_ = ui_->cb_showDistance->isChecked();
