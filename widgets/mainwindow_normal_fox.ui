@@ -730,7 +730,7 @@
            </property>
            <property name="styleSheet">
             <string notr="true">QPushButton:checked {
-	color: rgb(0, 0, 0);
+	color: white;
 	background-color: red;
 	border-style: outset;
 	border-width: 1px;
@@ -780,7 +780,7 @@
            </property>
            <property name="styleSheet">
             <string notr="true">QPushButton:checked {
-	color: rgb(0, 0, 0);
+	color: white;
 	background-color: red;
 	border-style: outset;
 	border-width: 1px;

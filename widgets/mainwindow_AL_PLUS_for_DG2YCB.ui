@@ -2838,7 +2838,7 @@ When not checked you can view the calibration results.</string>
                </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton:checked {
-	color: rgb(0, 0, 0);
+	color: white;
 	background-color: red;
 	border-style: outset;
 	border-width: 1px;
@@ -2888,7 +2888,7 @@ When not checked you can view the calibration results.</string>
                </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton:checked {
-	color: rgb(0, 0, 0);
+	color: white;
 	background-color: red;
 	border-style: outset;
 	border-width: 1px;
