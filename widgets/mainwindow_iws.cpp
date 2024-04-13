@@ -10103,11 +10103,11 @@ void MainWindow::on_tuneButton_clicked (bool checked)
   stopWRTimer.stop();           // stop any Wait & Reply timeout
   stopWCTimer.stop();           // stop any Wait & Call timeout
   if (checked && m_config.tune_watchdog() && !(m_mode=="WSPR" || m_mode=="FST4W")) {
-      tuneATU_Timer.start (m_config.tune_watchdog_time()*1000); // tune watchdog
+    tuneATU_Timer.start (m_config.tune_watchdog_time()*1000); // tune watchdog
   }
   if (!checked) {
-      tuneATU_Timer.stop ();    // stop tune watchdog when stopping Tune manually
-      ui->tuneButton->setText("Tune");
+    ui->tuneButton->setText("Tune");
+    tuneATU_Timer.stop ();    // stop tune watchdog when stopping Tune manually
   }
   static bool lastChecked = false;
   if (lastChecked == checked) return;
@@ -13674,12 +13674,12 @@ void MainWindow::check_button_color()
           }
       }
       if (ui->houndButton->isChecked()) {
-          ui->houndButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+          ui->houndButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
           if (m_useDarkStyle) {
-             ui->houndButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+             ui->houndButton->setStyleSheet("QPushButton {background-color: #505F69; color: #ffffff; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
           } else {
-             ui->houndButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+             ui->houndButton->setStyleSheet("QPushButton {background-color: #e1e1e1; color: #000000; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
           }
       }
       if (m_mode=="FT8") {
