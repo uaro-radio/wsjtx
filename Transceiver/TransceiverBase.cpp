@@ -79,6 +79,12 @@ void TransceiverBase::set (TransceiverState const& s,
                                      // commands while switching from
                                      // Tx to Rx
             }
+            if (s.tune())
+            {
+                do_tune();
+                QThread::msleep(1000); // let it have some time to tune -- not sure this needed
+                requested_.tune(false); // we just turn it off since it should behave like that in the rig
+            }
           if (s.frequency ()    // ignore bogus zero frequencies
               && ((s.frequency () != requested_.frequency () // and QSY
                    || (s.mode () != UNK && s.mode () != requested_.mode ())))) // or mode change

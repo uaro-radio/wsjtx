@@ -341,6 +341,7 @@ public:
   // the "Emulate Split" mode requires PTT information to coordinate
   // frequency changes.
   Q_SLOT void transceiver_ptt (bool = true);
+  Q_SLOT void transceiver_tune (bool = true);
 
   // Attempt to (re-)synchronise transceiver state.
   //

@@ -489,6 +489,7 @@ public:
   void transceiver_tx_frequency (Frequency);
   void transceiver_mode (MODE);
   void transceiver_ptt (bool);
+  void transceiver_tune (bool);
   void sync_transceiver (bool force_signal);
 
   Q_SLOT int exec () override;
@@ -1145,6 +1146,12 @@ void Configuration::transceiver_ptt (bool on)
 {
   LOG_TRACE (on << ' ' << m_->cached_rig_state_);
   m_->transceiver_ptt (on);
+}
+
+void Configuration::transceiver_tune (bool on)
+{
+  LOG_TRACE (on << ' ' << m_->cached_rig_state_);
+  m_->transceiver_tune (on);
 }
 
 void Configuration::sync_transceiver (bool force_signal, bool enforce_mode_and_split)
@@ -2311,7 +2318,7 @@ void Configuration::impl::read_settings ()
   alternate_bindings_ = settings_->value ("AlternateBindings", false).toBool ();
   watchdog_ = settings_->value ("TxWatchdog", 6).toInt ();
   tune_watchdog_ = settings_->value("TuneWatchdog",true).toBool ();
-  tune_watchdog_time_ = settings_->value ("TuneWatchdogTime", 60).toInt ();
+  tune_watchdog_time_ = settings_->value ("TuneWatchdogTime", 90).toInt ();
   TX_messages_ = settings_->value ("Tx2QSO", true).toBool ();
   enable_VHF_features_ = settings_->value("VHFUHF",false).toBool ();
   decode_at_52s_ = settings_->value("Decode52",false).toBool ();
@@ -4475,6 +4482,17 @@ void Configuration::impl::transceiver_ptt (bool on)
   cached_rig_state_.online (true); // we want the rig online
   set_cached_mode ();
   cached_rig_state_.ptt (on);
+  // qDebug () << "Configuration::impl::transceiver_ptt: n:" << transceiver_command_number_ + 1 << "on:" << on;
+  LOG_TRACE ("emitting set_transceiver: requested state:" << cached_rig_state_);
+  Q_EMIT set_transceiver (cached_rig_state_, ++transceiver_command_number_);
+}
+
+void Configuration::impl::transceiver_tune (bool on)
+{
+  cached_rig_state_.online (true); // we want the rig online
+  set_cached_mode ();
+  //cached_rig_state_.ptt (on);
+  cached_rig_state_.tune (on);
   // qDebug () << "Configuration::impl::transceiver_ptt: n:" << transceiver_command_number_ + 1 << "on:" << on;
   LOG_TRACE ("emitting set_transceiver: requested state:" << cached_rig_state_);
   Q_EMIT set_transceiver (cached_rig_state_, ++transceiver_command_number_);

@@ -1300,3 +1300,31 @@ void HamlibTransceiver::do_ptt (bool on)
 
   update_PTT (on);
 }
+
+// pass in false if any post_action is needed for a rig -- don't know of any as of 2024-04-14
+void HamlibTransceiver::do_tune (bool on)
+{
+  CAT_TRACE ("Tune: " << on << " " << state ());
+  if (on)
+    {
+       if (RIG_PTT_NONE != m_->rig_->state.pttport.type.ptt)
+        {
+          update_PTT (true); // we'll change the PTT button while we do this
+          CAT_TRACE ("rig_vfo_opt RIG_VFO_OP_TUNE=" << on);
+          // ptt button will stay lit if error message is displaye
+          m_->error_check(rig_vfo_op (m_->rig_.data (), RIG_VFO_CURR, RIG_OP_TUNE), "turning TUNE on");
+          update_PTT (false);
+        }
+    }
+#if 0
+  else // do we need to be able to turn PTT off on anybody?
+    {
+      if (RIG_PTT_NONE != m_->rig_->state.pttport.type.ptt)
+        {
+          ptt_on_ = false;
+          CAT_TRACE ("rig_set_ptt PTT=false");
+          m_->error_check (rig_set_ptt (m_->rig_.data (), RIG_VFO_CURR, RIG_PTT_OFF), tr ("setting PTT off"));
+        }
+    }
+#endif
+}

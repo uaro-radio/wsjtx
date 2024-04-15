@@ -2981,6 +2981,7 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
 
 void MainWindow::on_autoButton_clicked (bool checked)
 {
+  m_config.transceiver_tune (false);  // reset ATU tuning
   if (checked && ui->tuneButton->isChecked() && !(m_mode=="WSPR" || m_mode=="FST4W")) return; // not allowed while tuning
   stopWRTimer.stop();                                       // stop any Wait & Reply timeout
   if (!checked && ui->DX_Call_Button->isChecked()) {
@@ -8424,20 +8425,36 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
 
 void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
 {
+  if(ui->tuneButton->hasFocus() && (event->button() & Qt::RightButton)) {      // Tune button
+    blocked=true;
+    m_config.transceiver_tune (true);        // toggle rig tuning
+    blocked=false;
+    if(ui->tuneButton->text()=="Tuning") {   // reset Tune button by another right-click
+      ui->tuneButton->setChecked(false);
+      ui->tuneButton->setText("Tune");
+    } else {
+      ui->tuneButton->setChecked(true);
+      ui->tuneButton->setText("Tuning");
+      QTimer::singleShot (6000, [=] {        // reset Tune button after 6 seconds
+        ui->tuneButton->setChecked(false);
+        ui->tuneButton->setText("Tune");
+      });
+    }
+  }
   if(ui->DX_Call_Button->hasFocus() && (event->button() & Qt::RightButton)) {  // DX_Call_Button
-      clearDX();                                   // clear dxCallEntry
-      ui->dxGridEntry->clear ();                   // clear dxGridEntry
-      if (!keepTx5) ui->tx5->setCurrentText("");   // clear tx5
-      if (ui->respondComboBox->isVisible()) {
+    clearDX();                                   // clear dxCallEntry
+    ui->dxGridEntry->clear ();                   // clear dxGridEntry
+    if (!keepTx5) ui->tx5->setCurrentText("");   // clear tx5
+    if (ui->respondComboBox->isVisible()) {
       Dpoints=0;                          // reset points
       maxDPoints=0;                       // reset points
       dBpoints=-28;                       // reset points
       dBpoints2=99;                       // reset points
       maxdBPoints=-28;                    // reset points
       mindBPoints=99;                     // reset points
-      }
+    }
   }
-  if (m_config.alternate_erase_button() && ui->EraseButton->hasFocus() && (event->button() & Qt::RightButton)) {
+  if(m_config.alternate_erase_button() && ui->EraseButton->hasFocus() && (event->button() & Qt::RightButton)) {
      ui->decodedTextBrowser2->erase ();
   }
   if(ui->txFirstCheckBox->isVisible() && ui->txFirstCheckBox->hasFocus() && (event->button() & Qt::RightButton)) {
@@ -10100,6 +10117,8 @@ void MainWindow::on_rptSpinBox_valueChanged(int n)
 
 void MainWindow::on_tuneButton_clicked (bool checked)
 {
+  m_config.transceiver_tune (false);  // reset ATU tuning
+  if (blocked) return;
   if (m_auto && !(m_mode=="WSPR" || m_mode=="FST4W")) ui->autoButton->click();   // stop any other transmission
   stopWRTimer.stop();           // stop any Wait & Reply timeout
   stopWCTimer.stop();           // stop any Wait & Call timeout
@@ -10166,7 +10185,7 @@ void MainWindow::stopTuneATU()
   ui->tuneButton->setText("Tune");
 }
 
-void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
+void MainWindow::on_stopTxButton_clicked()                    // Stop Tx
 {
   if (m_tune) stop_tuning ();
   if (m_auto and !m_tuneup) auto_tx_mode (false);

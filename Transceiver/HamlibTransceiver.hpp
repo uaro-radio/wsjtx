@@ -31,6 +31,7 @@ private:
   void do_tx_frequency (Frequency, MODE, bool no_ignore) override;
   void do_mode (MODE) override;
   void do_ptt (bool) override;
+  void do_tune (bool) override;
 
   void do_poll () override;
 

@@ -113,6 +113,9 @@ protected:
   virtual void do_ptt (bool = true) = 0;
   virtual void do_post_ptt (bool = true) {}
 
+  // this is the rig tuning -- use false if need to turn off tune -- do we need that for anyone?
+  virtual void do_tune (bool = true) {};
+
   virtual bool do_pre_update () {return true;}
 
   // sub classes report rig state changes with these methods
