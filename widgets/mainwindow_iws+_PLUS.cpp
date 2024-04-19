@@ -2548,7 +2548,7 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // Wait & Reply for MSK144
-    if (text.contains(m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
+    if (text.contains(" " + m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
         !text.contains("73 ") && m_mode=="MSK144" && m_config.Wait_features_enabled()
         && !ui->autoButton->isChecked()
         && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
@@ -5168,7 +5168,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
         // FT4 NS (NCCC Sprints): Log QSO after receiving "mycall hiscall R hisgrid"
         if (m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint() && m_hisCall!="" && m_hisGrid!="" &&
-            text.contains(m_config.my_callsign() + " " + m_hisCall + " R " + m_hisGrid.left(4))) {
+            text.contains(" " + m_config.my_callsign() + " " + m_hisCall + " R " + m_hisGrid.left(4))) {
           if (m_config.prompt_to_log() || m_config.autoLog()) logQSOTimer.start(0);
           QTimer::singleShot (500, [=] {
             on_stopTxButton_clicked();
@@ -5176,7 +5176,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         // Stop Wait & Call timeout when in QSO with this station
-        if (ui->DX_Call_Button->isChecked() && m_hisCall!="" && text.contains(m_config.my_callsign() + " " + m_hisCall)) {
+        if (ui->DX_Call_Button->isChecked() && m_hisCall!="" && text.contains(" " + m_config.my_callsign() + " " + m_hisCall)) {
             stopWCTimer.stop();                                                   // stop any Wait & Call timeout
             if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();    // disable Wait & Call
             no_wait_and_call = false;                                             // reset Wait & Call
@@ -5184,7 +5184,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
         // Wait & Reply + FT4 NS (NCCC Sprints) reply to incoming RR73 messages
         if ((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="JT4") && m_hisCall!=""
-            && text.contains(m_config.my_callsign() + " " + m_hisCall) && ((!text.contains("73 ")
+            && text.contains(" " + m_config.my_callsign() + " " + m_hisCall) && ((!text.contains("73 ")
             && m_config.Wait_features_enabled() && (!ui->autoButton->isChecked() or m_specOp==SpecOp::HOUND))
             or (m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint()))) {
               tx_watchdog (false);
@@ -5204,7 +5204,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
              or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))
             && m_config.Wait_features_enabled()) {
-              if (!text.contains(m_config.my_callsign() + " " + m_hisCall))
+              if (!text.contains(" " + m_config.my_callsign() + " " + m_hisCall))
                   block_right_display = true;                // prevent display of first message twice
               if (m_specOp==SpecOp::HOUND) ui->TxFreqSpinBox->setValue(2300);
               m_bDoubleClicked = true;
@@ -5944,7 +5944,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       }
       if(m_mode=="Q65" and !bAvgMsg and !decodedtext.string().contains(m_baseCall)) bDisplayRight=false;
       if((m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") and decodedtext.string().contains(m_baseCall) && ui->actionInclude_averaging->isVisible() && !ui->actionInclude_averaging->isChecked()) bDisplayRight=true;
-      if(m_mode=="FT8" and SpecOp::HOUND==m_specOp && decodedtext0.string().replace("<","").replace(">","").contains(" " + m_baseCall + " ")) bDisplayRight=true;
+      if((m_mode=="FT8" or m_mode=="FT4") and SpecOp::FOX!=m_specOp && decodedtext0.string().replace("<","").replace(">","").contains(m_baseCall + " " + m_hisCall)) bDisplayRight=true;  // really all messages for us
 
       // AutoSeq for JT65/JT4 short messages
       if ((m_mode=="JT65" or m_mode=="JT4") and m_config.enable_VHF_features() and ui->cbShMsgs->isChecked() && ui->cbAutoSeq->isChecked () && (abs(audioFreq - m_wideGraph->rxFreq()) <= 15)) {
@@ -6028,7 +6028,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   m_nFoxFreq=decodedtext.string().mid(16,4).toInt();
                   hound_reply ();
                 } else {
-                  if (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))  processMessage(decodedtext0);   // needed for MSHV multistream messages
+                  if (text.contains(" " + m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))  processMessage(decodedtext0);   // needed for MSHV multistream messages
                 }
               }
             }
