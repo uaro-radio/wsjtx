@@ -5252,7 +5252,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                          ))) {
 
                   // Filtering out messages with keywords from Blacklist
-                  if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
+                  if ((SpecOp::NONE==m_specOp or SpecOp::HOUND==m_specOp) && m_config.Blacklisted ()
                       && (
                            (text2.startsWith(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
                            || (text2.startsWith(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
@@ -5282,7 +5282,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                     }
 
                   // Filtering out everything but messages with keywords from Whitelist
-                  } else if (SpecOp::NONE==m_specOp && m_config.Whitelisted ()
+                  } else if ((SpecOp::NONE==m_specOp or SpecOp::HOUND==m_specOp) && m_config.Whitelisted ()
                              && !(text2.startsWith(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
                              && !(text2.startsWith(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
                              && !(text2.startsWith(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
@@ -5401,7 +5401,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                          ))) {
 
                   // Filtering out messages with keywords from Blacklist
-                  if (SpecOp::NONE==m_specOp && m_config.Blacklisted ()
+                  if ((SpecOp::NONE==m_specOp or SpecOp::HOUND==m_specOp) && m_config.Blacklisted ()
                       && (
                            (text.contains(m_config.Blacklist1()) && (m_config.Blacklist1()!=""))
                            || (text.contains(m_config.Blacklist2()) && (m_config.Blacklist2()!=""))
@@ -5431,7 +5431,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                     }
 
                   // Filtering out everything but messages with keywords from Whitelist
-                  } else if (SpecOp::NONE==m_specOp && m_config.Whitelisted ()
+                  } else if ((SpecOp::NONE==m_specOp or SpecOp::HOUND==m_specOp) && m_config.Whitelisted ()
                              && !(text.contains(m_config.Whitelist1()) && (m_config.Whitelist1()!=""))
                              && !(text.contains(m_config.Whitelist2()) && (m_config.Whitelist2()!=""))
                              && !(text.contains(m_config.Whitelist3()) && (m_config.Whitelist3()!=""))
@@ -6941,7 +6941,7 @@ void MainWindow::guiUpdate()
         tx_status_label.setStyleSheet("QLabel{color: #000000; background-color: #00ff00}");
         auto t = tr ("Receiving");
         // switching tx_status_label text and color when filters are enabled
-        if ((SpecOp::NONE==m_specOp && !m_config.filters_for_Wait_and_Pounce_only() &&
+        if (((SpecOp::NONE==m_specOp or SpecOp::HOUND==m_specOp) && !m_config.filters_for_Wait_and_Pounce_only() &&
              (m_config.Blacklisted () or m_config.Whitelisted ())) or (ui->cbCQonly->isChecked() && ui->cbCQonly->isVisible())
               or ui->actionHideToday->isChecked() or ui->actionHideIgnored->isChecked()
               or ui->actionHideTerritory1->isChecked() or ui->actionHideTerritory2->isChecked()
