@@ -3039,7 +3039,7 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
 
 void MainWindow::on_autoButton_clicked (bool checked)
 {
-  m_config.transceiver_tune (false);  // reset ATU tuning
+  m_config.transceiver_tune (false);  // reset rig tuning
   if (checked && ui->tuneButton->isChecked() && !(m_mode=="WSPR" || m_mode=="FST4W")) return; // not allowed while tuning
   stopWRTimer.stop();                                       // stop any Wait & Reply timeout
   if (!checked && ui->DX_Call_Button->isChecked()) {
@@ -8537,6 +8537,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         ui->tuneButton->setText("Tune");
       });
     }
+    ui->tuneButton->clearFocus();
   }
   if(ui->DX_Call_Button->hasFocus() && (event->button() & Qt::RightButton)) {  // DX_Call_Button
     clearDX();                                   // clear dxCallEntry
@@ -8550,35 +8551,45 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       maxdBPoints=-28;                    // reset points
       mindBPoints=99;                     // reset points
     }
+    ui->DX_Call_Button->clearFocus();
   }
   if(m_config.alternate_erase_button() && ui->EraseButton->hasFocus() && (event->button() & Qt::RightButton)) {
      ui->decodedTextBrowser2->erase ();
+     ui->EraseButton->clearFocus();
   }
   if(ui->txFirstCheckBox->isVisible() && ui->txFirstCheckBox->hasFocus() && (event->button() & Qt::RightButton)) {
       ui->txFirstCheckBox->setEnabled(false);  // freeze txFirstCheckBox
+      ui->txFirstCheckBox->clearFocus();
   }
   if((ui->ft8Button->hasFocus() or ui->msk144Button->hasFocus()) && (event->button() & Qt::RightButton)) {
       ui->txFirstCheckBox->setEnabled(true);  // unfreeze txFirstCheckBox
+      ui->ft8Button->clearFocus();
+      ui->msk144Button->clearFocus();
   }
   if(ui->q65Button->hasFocus() && (event->button() & Qt::RightButton)) {     // switch to Q65_Pileup mode
       m_config.setSpecial_Q65_Pileup();
       m_specOp=m_config.special_op_id();
       on_actionQ65_triggered();
+      ui->q65Button->clearFocus();
   }
   if(ui->jt65Button->hasFocus() && (event->button() & Qt::RightButton)) {    // switch to JT9 mode
       on_actionJT9_triggered();
+      ui->jt65Button->clearFocus();
   }
   if(ui->lookupButton->hasFocus() && (event->button() & Qt::RightButton)) {  // search callsign on ...
     QString hisCall=ui->dxCallEntry->text();
     if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.qrz.com/db/" + hisCall});  // QRZ.com
+    ui->lookupButton->clearFocus();
   }
   if(ui->addButton->hasFocus() && (event->button() & Qt::RightButton)) {     // search callsign on ...
     QString hisCall=ui->dxCallEntry->text();
     if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.hamqth.com/" + hisCall});  // hamqth.com
+    ui->addButton->clearFocus();
   }
   if(ui->ignoreButton->hasFocus() && (event->button() & Qt::RightButton)) {     // search callsign on ...
     QString hisCall=ui->dxCallEntry->text();
     if (hisCall !="") QDesktopServices::openUrl (QUrl {"https://www.qrzcq.com/call/" + hisCall});  // qrzcq.com
+    ui->ignoreButton->clearFocus();
   }
 
   // Wait & Pounce
@@ -8592,6 +8603,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         pounce = false;
         check_button_color();
       }
+      ui->autoButton->clearFocus();
   }
   // Reset a hung decoder
   if(ui->DecodeButton->hasFocus() && (event->button() & Qt::RightButton)) {
@@ -8600,6 +8612,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         qDebug() << "Clearing hung decoder status";
         decodeDone();  // Clear a hung decoder status
       }
+      ui->DecodeButton->clearFocus();
   }
   // Switch contest mode on/off
   if(ui->houndButton->hasFocus() && (event->button() & Qt::RightButton)) {
@@ -8647,6 +8660,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       set_mode(m_mode);
       configActiveStations();
       check_button_color();
+      ui->houndButton->clearFocus();
   }
   // freeze the Tx5 text
   if(ui->txb5->hasFocus() && (event->button() & Qt::RightButton)) {
@@ -8657,27 +8671,32 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         keepTx5 = false;
         ui->tx5->setStyleSheet("");
       }
+      ui->txb5->clearFocus();
   }
   // Toggle FT8 DXp frequencies
   if(ui->pb80->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(3567000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    ui->pb80->clearFocus();
   }
   if(ui->pb40->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(7056000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    ui->pb40->clearFocus();
   }
   if(ui->pb30->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(10131000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    ui->pb30->clearFocus();
   }
   if(ui->pb20->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(14090000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    ui->pb20->clearFocus();
   }
   if(ui->pb17->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
@@ -8688,6 +8707,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
     keep_frequency = true;
     setRig(21091000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    ui->pb15->clearFocus();
   }
   if(ui->pb12->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
@@ -8698,11 +8718,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
     keep_frequency = true;
     setRig(28091000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    ui->pb10->clearFocus();
   }
   if(ui->pb6->hasFocus() && (event->button() & Qt::RightButton) && m_mode=="FT8") {
     keep_frequency = true;
     setRig(50323000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    ui->pb6->clearFocus();
   }
 // Testing the default audio device
 #ifdef WIN32
@@ -8728,6 +8750,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       QSound::play(QDir::homePath() + "/sounds/Testing_long.wav");  // for Linux and macOS
   }
 #endif
+  ui->pbBandHopping->clearFocus();
 }
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
@@ -9896,6 +9919,7 @@ void MainWindow::fast_config(bool b)
 
 void MainWindow::on_TxFreqSpinBox_valueChanged(int n)
 {
+  m_config.transceiver_tune (false);  // reset rig tuning
   m_wideGraph->setTxFreq(n);
 //  if (ui->cbHoldTxFreq->isChecked ()) ui->RxFreqSpinBox->setValue(n);
   if(m_mode!="MSK144") {
@@ -10220,7 +10244,7 @@ void MainWindow::on_rptSpinBox_valueChanged(int n)
 
 void MainWindow::on_tuneButton_clicked (bool checked)
 {
-  m_config.transceiver_tune (false);  // reset ATU tuning
+  m_config.transceiver_tune (false);  // reset rig tuning
   if (blocked) return;
   if (m_auto && !(m_mode=="WSPR" || m_mode=="FST4W")) ui->autoButton->click();   // stop any other transmission
   stopWRTimer.stop();           // stop any Wait & Reply timeout
