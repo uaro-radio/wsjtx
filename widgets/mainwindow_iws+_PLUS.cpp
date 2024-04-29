@@ -7439,6 +7439,10 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
   QString hisgrid;
   message.deCallAndGrid(/*out*/hiscall,hisgrid);
 
+  // don't call CQ when double-clicking on the final "73" message of your QSO
+  if (m_bDoubleClicked && message.clean_string().remove("<").remove(">").contains((" " + m_baseCall + " "))
+      && message.clean_string().remove("<").remove(">").contains(" " + hiscall + " ") && message.clean_string().contains(" 73")) return;
+
   if(message.clean_string ().contains(hiscall+"/R")) {
     hiscall+="/R";
     ui->dxCallEntry->setText(hiscall);
