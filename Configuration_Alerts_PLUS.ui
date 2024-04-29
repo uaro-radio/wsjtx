@@ -457,7 +457,7 @@ quiet period when decoding is done.</string>
             <item>
              <widget class="QCheckBox" name="tune_watchdog_check_box">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disable the Tune watchdog.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string/>
               </property>
               <property name="text">
                <string>Tune watchdog:</string>
@@ -476,7 +476,7 @@ quiet period when decoding is done.</string>
                <number>300</number>
               </property>
               <property name="value">
-               <number>90</number>
+               <number>60</number>
               </property>
              </widget>
             </item>
@@ -4501,12 +4501,12 @@ Right click for insert and delete options.</string>
  </connections>
  <buttongroups>
   <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
   <buttongroup name="TX_audio_source_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
  </buttongroups>
 </ui>
