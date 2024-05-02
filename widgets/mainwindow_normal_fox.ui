@@ -4370,6 +4370,7 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="separator"/>
     <addaction name="actionWSJT_X_improved_Home_Page"/>
     <addaction name="actionThe_additional_features_of_wsjt_x_improved"/>
+    <addaction name="actionRecommended_Audio_Settings"/>
     <addaction name="separator"/>
     <addaction name="actionKeyboard_shortcuts"/>
     <addaction name="actionSpecial_mouse_commands"/>
@@ -5037,6 +5038,14 @@ QPushButton[state=&quot;ok&quot;] {
    </property>
    <property name="whatsThis">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overview on the additional features of wsjt-x_improved.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionRecommended_Audio_Settings">
+   <property name="text">
+    <string>Recommended audio settings</string>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended Audio Settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
   <action name="actionErase_list_of_Q65_callers">
