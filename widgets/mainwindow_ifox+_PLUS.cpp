@@ -2547,7 +2547,7 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // Stop Wait & Call timeout when in QSO with this station for MSK144
-    if (ui->DX_Call_Button->isChecked() && m_hisCall!="" && text.contains(m_config.my_callsign() + " " + m_hisCall)) {
+    if (ui->DX_Call_Button->isChecked() && m_hisCall!="" && text.contains(" " + m_config.my_callsign() + " " + m_hisCall)) {
         stopWCTimer.stop();                                                   // stop any Wait & Call timeout
         if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();    // disable Wait & Call
         no_wait_and_call = false;                                             // reset Wait & Call
@@ -2579,7 +2579,7 @@ void MainWindow::fastSink(qint64 frames)
 
     // CQ: First for MSK144
     if(((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled())
-        or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign()))) && !ignored
+        or (m_auto && m_bCallingCQ && text.contains(" " + m_config.my_callsign() + " "))) && !ignored
         && !filtered && !selected && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First"
         && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
                   m_bDoubleClicked=true;
@@ -2600,7 +2600,7 @@ void MainWindow::fastSink(qint64 frames)
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
         if (!filtered && !ignored && (deGrid.contains(grid_regexp) or m_bCallingCQ) && (
              (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
-             (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+             (m_bCallingCQ && text.contains(" " + m_config.my_callsign() + " ") && !text.contains("73 "))
                                                                     )) {
             double utch=0.0;
             int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
@@ -2637,7 +2637,7 @@ void MainWindow::fastSink(qint64 frames)
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
         if (!filtered && !ignored && (
              (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
-             (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+             (m_bCallingCQ && text.contains(" " + m_config.my_callsign() + " ") && !text.contains("73 "))
                           )) {
             dBpoints=decodedtext.string().mid(7,3).toInt();
             if(dBpoints>maxdBPoints) {
@@ -2668,7 +2668,7 @@ void MainWindow::fastSink(qint64 frames)
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
         if (!filtered && !ignored && (
              (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
-             (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+             (m_bCallingCQ && text.contains(" " + m_config.my_callsign() + " ") && !text.contains("73 "))
                           )) {
             dBpoints2=decodedtext.string().mid(7,3).toInt();
             if(dBpoints2<mindBPoints) {
@@ -5696,7 +5696,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
        // CQ: First
        if(((pounce && text.contains(" CQ ") && m_config.Wait_features_enabled())
-             or (m_auto && m_bCallingCQ && text.contains(m_config.my_callsign()))) && !ignored
+             or (m_auto && m_bCallingCQ && text.contains(" " + m_config.my_callsign() + " "))) && !ignored
            && !filtered && !selected && ui->respondComboBox->isVisible() && ui->respondComboBox->currentText()=="CQ: First"
            && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
          m_bDoubleClicked=true;
@@ -5717,7 +5717,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
          if (!filtered && !ignored && (deGrid.contains(grid_regexp) or m_bCallingCQ) && (
              (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
-             (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+             (m_bCallingCQ && text.contains(" " + m_config.my_callsign() + " ") && !text.contains("73 "))
                                                            )) {
             double utch=0.0;
             int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
@@ -5754,7 +5754,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
          if (!filtered && !ignored && (
               (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
-              (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+              (m_bCallingCQ && text.contains(" " + m_config.my_callsign() + " ") && !text.contains("73 "))
                            )) {
                dBpoints=decodedtext.string().mid(7,3).toInt();
                if(dBpoints>maxdBPoints) {
@@ -5785,7 +5785,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
          decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
          if (!filtered && !ignored && (
               (pounce && text.contains(" CQ ") && !txLog.contains(deCall) && m_config.Wait_features_enabled()) or
-              (m_bCallingCQ && text.contains(m_config.my_callsign()) && !text.contains("73 "))
+              (m_bCallingCQ && text.contains(" " + m_config.my_callsign() + " ") && !text.contains("73 "))
                            )) {
                dBpoints2=decodedtext.string().mid(7,3).toInt();
                if(dBpoints2<mindBPoints) {
@@ -5958,7 +5958,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
       // AutoSeq for JT65/JT4 short messages
       if ((m_mode=="JT65" or m_mode=="JT4") and m_config.enable_VHF_features() and ui->cbShMsgs->isChecked() && ui->cbAutoSeq->isChecked () && (abs(audioFreq - m_wideGraph->rxFreq()) <= 15)) {
-        if (decodedtext.string().contains(m_config.my_callsign()) && decodedtext.string().contains(" OOO")) {
+        if (decodedtext.string().contains(" " + m_config.my_callsign() + " ") && decodedtext.string().contains(" OOO")) {
           setTxMsg(3);
         }
         if (decodedtext.string().contains(" RO")) {
@@ -7849,7 +7849,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
     }
     // his base call different or his call more qualified
     // i.e. compound version of same base call
-    if (!((s2.contains(m_config.my_callsign()) && s2.contains(" 73")) && (ui->respondComboBox->currentText()=="CQ: Max dB"
+    if (!((s2.contains(" " + m_config.my_callsign() + " ") && s2.contains(" 73")) && (ui->respondComboBox->currentText()=="CQ: Max dB"
            or ui->respondComboBox->currentText()=="CQ: Max dB"))) ui->dxCallEntry->setText (hiscall);
   }
   if (hisgrid.contains (grid_regexp)) {
