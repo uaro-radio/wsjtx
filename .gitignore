@@ -7,7 +7,7 @@ GTAGS
 *~
 junk*
 jnq*
-*.exe
+!*.exe
 *.o
 *.mod
 *.pro.user
