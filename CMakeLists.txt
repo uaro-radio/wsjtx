@@ -1671,13 +1671,11 @@ if (NOT UNIX)
   )
 endif (NOT UNIX)
 
-if (NOT UNIX)
-  install (DIRECTORY
+install (DIRECTORY
   ${PROJECT_SOURCE_DIR}/sounds
   DESTINATION ${CMAKE_INSTALL_BINDIR}
   #COMPONENT runtime
   )
-endif (NOT UNIX)
 	
 if (UNIX)
   install (DIRECTORY
