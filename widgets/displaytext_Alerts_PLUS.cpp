@@ -883,7 +883,7 @@ void DisplayText::AudioAlerts()
 #else
   if(m_config->alert_Enabled()) {
         QAudioOutput device(QAudioDeviceInfo::defaultOutputDevice());
-        QString homePath = QDir::homePath();
+        QString binPath = QCoreApplication::applicationDirPath();
 #endif
         QFile *effect2 = new QFile(this);
         QFile *effect3 = new QFile(this);
@@ -897,7 +897,6 @@ void DisplayText::AudioAlerts()
         QFile *effect11 = new QFile(this);
         QFile *effect12 = new QFile(this);
         QFile *effect13 = new QFile(this);
-#ifdef WIN32
         effect2->setFileName(QString("%1/%2").arg(binPath, "/sounds/MyCall.wav"));
         effect3->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXCC.wav"));
         effect4->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXCCOnBand.wav"));
@@ -910,20 +909,6 @@ void DisplayText::AudioAlerts()
         effect11->setFileName(QString("%1/%2").arg(binPath, "/sounds/Grid.wav"));
         effect12->setFileName(QString("%1/%2").arg(binPath, "/sounds/GridOnBand.wav"));
         effect13->setFileName(QString("%1/%2").arg(binPath, "/sounds/CQ.wav"));
-#else
-        effect2->setFileName(QString("%1/%2").arg(homePath, "/sounds/MyCall.wav"));           // for Linux and macOS
-        effect3->setFileName(QString("%1/%2").arg(homePath, "/sounds/DXCC.wav"));             // for Linux and macOS
-        effect4->setFileName(QString("%1/%2").arg(homePath, "/sounds/DXCCOnBand.wav"));       // for Linux and macOS
-        effect5->setFileName(QString("%1/%2").arg(homePath, "/sounds/Continent.wav"));        // for Linux and macOS
-        effect6->setFileName(QString("%1/%2").arg(homePath, "/sounds/ContinentOnBand.wav"));  // for Linux and macOS
-        effect7->setFileName(QString("%1/%2").arg(homePath, "/sounds/CQZone.wav"));           // for Linux and macOS
-        effect8->setFileName(QString("%1/%2").arg(homePath, "/sounds/CQZoneOnBand.wav"));     // for Linux and macOS
-        effect9->setFileName(QString("%1/%2").arg(homePath, "/sounds/ITUZone.wav"));          // for Linux and macOS
-        effect10->setFileName(QString("%1/%2").arg(homePath, "/sounds/ITUZoneOnBand.wav"));   // for Linux and macOS
-        effect11->setFileName(QString("%1/%2").arg(homePath, "/sounds/Grid.wav"));            // for Linux and macOS
-        effect12->setFileName(QString("%1/%2").arg(homePath, "/sounds/GridOnBand.wav"));      // for Linux and macOS
-        effect13->setFileName(QString("%1/%2").arg(homePath, "/sounds/CQ.wav"));              // for Linux and macOS
-#endif
         static int startIndex = 0;
         int nextStartIndex = startIndex +1;
         switch (startIndex) {
@@ -934,7 +919,7 @@ void DisplayText::AudioAlerts()
                 effect2->open(QIODevice::ReadOnly);
                 audio->start(effect2);
 #else
-                QSound::play(homePath + "/sounds/MyCall.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/MyCall.wav");  // for Linux and macOS
 #endif
 
                 play_MyCall = false;
@@ -952,7 +937,7 @@ void DisplayText::AudioAlerts()
                 effect3->open(QIODevice::ReadOnly);
                 audio->start(effect3);
 #else
-                QSound::play(homePath + "/sounds/DXCC.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/DXCC.wav");  // for Linux and macOS
 #endif
 
                 play_DXCC = false;
@@ -970,7 +955,7 @@ void DisplayText::AudioAlerts()
                 effect4->open(QIODevice::ReadOnly);
                 audio->start(effect4);
 #else
-                QSound::play(homePath + "/sounds/DXCCOnBand.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/DXCCOnBand.wav");  // for Linux and macOS
 #endif
 
                 play_DXCCOB = false;
@@ -988,7 +973,7 @@ void DisplayText::AudioAlerts()
                 effect5->open(QIODevice::ReadOnly);
                 audio->start(effect5);
 #else
-                QSound::play(homePath + "/sounds/Continent.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/Continent.wav");  // for Linux and macOS
 #endif
                 play_Continent = false;
                 play_ContinentOB = false;
@@ -1008,7 +993,7 @@ void DisplayText::AudioAlerts()
                 effect6->open(QIODevice::ReadOnly);
                 audio->start(effect6);
 #else
-                QSound::play(homePath + "/sounds/ContinentOnBand.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/ContinentOnBand.wav");  // for Linux and macOS
 #endif
                 play_ContinentOB = false;
                 play_GridOB = false;
@@ -1027,7 +1012,7 @@ void DisplayText::AudioAlerts()
                 effect7->open(QIODevice::ReadOnly);
                 audio->start(effect7);
 #else
-                QSound::play(homePath + "/sounds/CQZone.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/CQZone.wav");  // for Linux and macOS
 #endif
                 play_CQZ = false;
                 play_CQZOB = false;
@@ -1044,7 +1029,7 @@ void DisplayText::AudioAlerts()
                 effect8->open(QIODevice::ReadOnly);
                 audio->start(effect8);
 #else
-                QSound::play(homePath + "/sounds/CQZoneOnBand.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/CQZoneOnBand.wav");  // for Linux and macOS
 #endif
                 play_CQZOB = false;
                 alertsTimer.start (1800);
@@ -1060,7 +1045,7 @@ void DisplayText::AudioAlerts()
                 effect9->open(QIODevice::ReadOnly);
                 audio->start(effect9);
 #else
-                QSound::play(homePath + "/sounds/ITUZone.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/ITUZone.wav");  // for Linux and macOS
 #endif
                 play_ITUZ = false;
                 play_ITUZOB = false;
@@ -1078,7 +1063,7 @@ void DisplayText::AudioAlerts()
                 effect10->open(QIODevice::ReadOnly);
                 audio->start(effect10);
 #else
-                QSound::play(homePath + "/sounds/ITUZoneOnBand.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/ITUZoneOnBand.wav");  // for Linux and macOS
 #endif
                 play_ITUZOB = false;
                 play_GridOB = false;
@@ -1095,7 +1080,7 @@ void DisplayText::AudioAlerts()
                 effect11->open(QIODevice::ReadOnly);
                 audio->start(effect11);
 #else
-                QSound::play(homePath + "/sounds/Grid.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/Grid.wav");  // for Linux and macOS
 #endif
                 play_Grid = false;
                 play_GridOB = false;
@@ -1112,7 +1097,7 @@ void DisplayText::AudioAlerts()
                 effect12->open(QIODevice::ReadOnly);
                 audio->start(effect12);
 #else
-                QSound::play(homePath + "/sounds/GridOnBand.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/GridOnBand.wav");  // for Linux and macOS
 #endif
                 play_GridOB = false;
                 alertsTimer.start (1500);
@@ -1128,7 +1113,7 @@ void DisplayText::AudioAlerts()
                 effect13->open(QIODevice::ReadOnly);
                 audio->start(effect13);
 #else
-                QSound::play(homePath + "/sounds/CQ.wav");  // for Linux and macOS
+                QSound::play(binPath + "/sounds/CQ.wav");  // for Linux and macOS
 #endif
                 play_CQ = false;
                 alertsTimer.start (1000);

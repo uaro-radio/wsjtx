@@ -2808,8 +2808,8 @@ void MainWindow::fastSink(qint64 frames)
             effect1->open(QIODevice::ReadOnly);
             audio->start(effect1);
 #else
-                QString homePath = QDir::homePath();
-                QSound::play(QDir::homePath() + "/sounds/DXcall.wav");  // for Linux and macOS
+            QString binPath = QCoreApplication::applicationDirPath();
+            QSound::play(binPath + "/sounds/DXcall.wav");  // for Linux and macOS
 #endif
             play_DXcall = false;
         }
@@ -5872,8 +5872,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                effect1->open(QIODevice::ReadOnly);
                audio->start(effect1);
 #else
-               QString homePath = QDir::homePath();
-               QSound::play(QDir::homePath() + "/sounds/DXcall.wav");  // for Linux and macOS
+               QString binPath = QCoreApplication::applicationDirPath();
+               QSound::play(binPath + "/sounds/DXcall.wav");  // for Linux and macOS
 #endif
                play_DXcall = false;
            }
@@ -8815,8 +8815,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
   }
 #else
   if (ui->pbBandHopping->hasFocus() && event->button() & Qt::RightButton) {
-      QString homePath = QDir::homePath();
-      QSound::play(QDir::homePath() + "/sounds/Testing_long.wav");  // for Linux and macOS
+      QString binPath = QCoreApplication::applicationDirPath();
+      QSound::play(binPath + "/sounds/Testing_long.wav");  // for Linux and macOS
   }
 #endif
   ui->pbBandHopping->clearFocus();
