@@ -332,6 +332,7 @@ namespace
       {222065000, Modes::Echo, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
       {222065000, Modes::JT65, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
       {222065000, Modes::Q65, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
+      {222174000, Modes::FT8, IARURegions::R2, "","", QDateTime(), QDateTime(), true},
 	  
       {432065000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
       {432065000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
