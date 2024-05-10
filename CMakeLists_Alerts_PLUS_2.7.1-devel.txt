@@ -1657,7 +1657,7 @@ install (DIRECTORY
   #COMPONENT runtime
   )
 
-  install (DIRECTORY
+install (DIRECTORY
   ${PROJECT_SOURCE_DIR}/sounds
   DESTINATION ${CMAKE_INSTALL_BINDIR}
   #COMPONENT runtime
