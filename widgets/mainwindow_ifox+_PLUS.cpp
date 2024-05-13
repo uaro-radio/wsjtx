@@ -220,6 +220,7 @@ QVector<QColor> g_ColorTbl;
 
 using SpecOp = Configuration::SpecialOperatingActivity;
 
+bool verified = false;
 bool blocked = false;
 bool m_displayBand = false;
 bool wait_and_call = false;
@@ -1218,6 +1219,9 @@ void MainWindow::on_the_minute ()
     tx_watchdog (false);
   }
   update_foxLogWindow_rate(); // update the rate on the window
+  if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
+    ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
+  verified = false;
 }
 
 //--------------------------------------------------- MainWindow destructor
@@ -5632,6 +5636,16 @@ void MainWindow::readFromStdout()                             //readFromStdout
               }
         }
 
+        // SuperHound label
+        if (ui->labDXped->text()=="Super Hound" && decodedtext0.mid(4,12).contains(" verified")) {
+          verified = true;
+          ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
+        } else {
+          verified = false;
+        }
+        if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
+          ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
+
        // show distance and bearing
        if (!filtered or m_config.filters_for_Wait_and_Pounce_only()) {  // show decodes if not filtered
            QString distance;
@@ -8706,6 +8720,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
           "Fox-and-Hound operation is available only in FT8 mode.\nGo back and change your selection.");
       }
       ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
+      if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
+        ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
       set_mode(m_mode);
       configActiveStations();
       check_button_color();
@@ -9458,6 +9474,7 @@ void MainWindow::on_actionFT8_triggered()
        "the *Settings | Radio* tab.)", errorMsg);
     m_bWarnedSplit=true;
   }
+  if (ui->labDXped->isVisible()) ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   statusChanged();
   configActiveStations();
 }
