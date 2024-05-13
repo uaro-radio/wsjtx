@@ -5605,7 +5605,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         // insert blank line, but only if not filtered and no decodes
         int ntime=6;
         if (m_TRperiod>=60) ntime=4;
-        if (m_config.insert_blank () && (line_read.left(ntime) != m_tBlankLine)) {
+        if (m_config.insert_blank () && (line_read.left(ntime) != m_tBlankLine) && message0.left(4).contains(QRegularExpression {"\\d\\d\\d\\d"})) {
               ui->decodedTextBrowser->new_period ();
               if (SpecOp::FOX != m_specOp && (!filtered or m_config.filters_for_Wait_and_Pounce_only())) {
                   QString band;
