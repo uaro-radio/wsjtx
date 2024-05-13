@@ -90,6 +90,7 @@ LogQSO::LogQSO(QString const& programTitle, QSettings * settings
 {
   ui->setupUi(this);
   setWindowTitle(programTitle + " - Log QSO");
+  ui->comboBoxSatellite->addItem ("", "");
   QString sat_file_location;
   QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
   sat_file_location = dataPath.exists(sat_file_name) ? dataPath.absoluteFilePath(sat_file_name) : m_config->data_dir ().absoluteFilePath (sat_file_name);
@@ -491,8 +492,10 @@ void LogQSO::accept()
 void LogQSO::propModeChanged()
 {
   if (ui->comboBoxPropMode->currentData() != "SAT") {
+      ui->comboBoxSatellite->setCurrentIndex(0);
       ui->comboBoxSatellite->setDisabled(true);
       ui->cbSatellite->setDisabled(true);
+      ui->comboBoxSatMode->setCurrentIndex(0);
       ui->comboBoxSatMode->setDisabled(true);
       ui->cbSatMode->setDisabled(true);
   } else {
