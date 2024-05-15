@@ -10443,7 +10443,7 @@ void MainWindow::setXIT(int n, Frequency base)
     }
   if (!base) base = m_freqNominal;
   m_XIT = 0;
-  if (!m_bSimplex) {
+  if (!(m_bSimplex || (SpecOp::FOX==m_specOp && m_config.superFox()))) {
     // m_bSimplex is false, so we can use split mode if requested
     if (m_config.split_mode () && (!m_config.enable_VHF_features () ||
         m_mode=="FT4" || m_mode == "FT8" || m_mode=="FST4")) {
@@ -12641,7 +12641,7 @@ Transmit:
   bool bSuperFox=m_config.superFox();
   foxcom_.bMoreCQs=ui->cbMoreCQs->isChecked();
   foxcom_.bSendMsg=ui->cbSendMsg->isChecked();
-//  qDebug() << "bb" << foxcom_.bMoreCQs << foxcom_.bSendMsg << foxcom_.nslots
+//  qDebug() << "cc" << foxcom_.bMoreCQs << foxcom_.bSendMsg << foxcom_.nslots
 //           << m_Nslots << m_freeTextMsg0;
   ::memcpy(foxcom_.textMsg, m_freeTextMsg0.leftJustified(26,' ').toLatin1(),26);
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
@@ -12778,8 +12778,10 @@ void MainWindow::foxGenWaveform(int i,QString fm)
 
   QString txModeArg;
   txModeArg = txModeArg.asprintf("FT8fox %d",i+1);
+  int nfreq=ui->TxFreqSpinBox->value()+60*i;
+  if(m_config.superFox()) nfreq=750;
   ui->decodedTextBrowser2->displayTransmittedText(fm.trimmed(), txModeArg,
-        ui->TxFreqSpinBox->value()+60*i,m_bFastMode,m_TRperiod);
+        nfreq,m_bFastMode,m_TRperiod);
   foxcom_.i3bit[i]=0;
   if(fm.indexOf("<")>0) foxcom_.i3bit[i]=1;
   strncpy(&foxcom_.cmsg[i][0],fm.toLatin1(),40);   //Copy this message into cmsg[i]
@@ -12944,6 +12946,9 @@ void MainWindow::write_all(QString txRx, QString message)
     } else {
       mode_string=m_mode.leftJustified(6,' ');
     }
+
+    if(mode_string=="FT8   " and txRx=="Tx" and m_config.superFox() and
+       m_specOp==SpecOp::FOX) mode_string="FT8_SF";
 
    msg=msg.mid(0,15) + msg.mid(18,-1);
 
@@ -13235,7 +13240,8 @@ void MainWindow::sfox_tx()
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   QStringList args{fname};
   args.append(m_config.FoxKey());
-//  qDebug() << "aa" << args;
+//  qDebug() << "aa" << QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx";
+//  qDebug() << "bb" << args;
   p2.start(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx", args);
   p2.waitForFinished();
   auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};
