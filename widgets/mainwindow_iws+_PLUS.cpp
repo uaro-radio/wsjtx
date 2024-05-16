@@ -1279,7 +1279,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("RespondCQ",ui->respondComboBox->currentIndex());
   m_settings->setValue("HoundSort",ui->comboBoxHoundSort->currentIndex());
   m_settings->setValue("FoxNlist",ui->sbNlist->value());
-  m_settings->setValue("FoxNslots",ui->sbNslots->value());
+  if(!m_config.superFox()) m_settings->setValue("FoxNslots",ui->sbNslots->value());
   m_settings->setValue("FoxMaxDB_v2",ui->sbMax_dB->value()); // original key abandoned
   m_settings->setValue ("SerialNumber",ui->sbSerialNumber->value ());
   m_settings->setValue("FoxTextMsg", m_freeTextMsg0);
@@ -1455,8 +1455,8 @@ void MainWindow::readSettings()
   ui->respondComboBox->setCurrentIndex(m_settings->value("RespondCQ",0).toInt());
   ui->comboBoxHoundSort->setCurrentIndex(m_settings->value("HoundSort",3).toInt());
   ui->sbNlist->setValue(m_settings->value("FoxNlist",12).toInt());
-  m_Nslots=m_settings->value("FoxNslots",5).toInt();
-  ui->sbNslots->setValue(m_Nslots);
+  m_Nslots=m_settings->value("FoxNslots",3).toInt();
+  if(!m_config.superFox()) ui->sbNslots->setValue(m_Nslots);
   ui->sbMax_dB->setValue(m_settings->value("FoxMaxDB_v2",70).toInt());
   ui->sbSerialNumber->setValue (m_settings->value ("SerialNumber", 1).toInt ());
   m_freeTextMsg0=m_settings->value("FoxTextMsg","").toString();
@@ -3524,6 +3524,25 @@ void MainWindow::statusChanged()
   } else {
     ui->pb30B->setVisible(false);
     ui->pb60C->setVisible(false);
+  }
+  if (SpecOp::FOX==m_specOp && m_config.superFox()) {
+    ui->sbNslots->setVisible(false);
+    ui->pbFreeText->setVisible(true);
+    ui->cbSendMsg->setVisible(true);
+    if(ui->cbSendMsg->isChecked()) {
+      ui->sbNslots->setValue(2);
+    } else {
+      ui->sbNslots->setValue(5);
+    }
+  } else {
+    ui->sbNslots->setVisible(true);
+    ui->pbFreeText->setVisible(false);
+    ui->cbSendMsg->setVisible(false);
+    ui->sbNslots->setValue(m_Nslots);
+    if (SpecOp::FOX==m_specOp) QTimer::singleShot (100, [=] {
+      readSettings();
+      ui->sbNslots->setValue(m_Nslots);
+    });
   }
   check_button_color();
 }
@@ -11203,11 +11222,10 @@ void MainWindow::on_cbFast9_clicked(bool b)
 
 void MainWindow::on_cbSendMsg_toggled(bool b)
 {
-  if(m_Nslots0>0 and !b) {
-    ui->sbNslots->setValue(m_Nslots0);
+  if(b) {
+    ui->sbNslots->setValue(2);
   } else {
-    m_Nslots0=m_Nslots;
-    if(m_Nslots>2) ui->sbNslots->setValue(2);
+    ui->sbNslots->setValue(5);
   }
 }
 
@@ -14216,16 +14234,6 @@ void MainWindow::check_button_color()
         ui->pb6->setVisible(false);
         ui->pb2->setVisible(false);
         ui->pb70->setVisible(false);
-    }
-    if (SpecOp::FOX==m_specOp && m_config.superFox() && !ui->cbSendMsg->isChecked()) m_Nslots=5;  // start SuperFox mode with 5 slots
-    if (m_config.superFox()) {
-      ui->sbNslots->setVisible(false);
-      ui->pbFreeText->setVisible(true);
-      ui->cbSendMsg->setVisible(true);
-    } else {
-      ui->sbNslots->setVisible(true);
-      ui->pbFreeText->setVisible(false);
-      ui->cbSendMsg->setVisible(false);
     }
 }
 
