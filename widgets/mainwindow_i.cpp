@@ -9296,7 +9296,7 @@ void MainWindow::on_actionFT8_triggered()
     ui->txb5->setEnabled(false);
     ui->txb6->setEnabled(false);
   } else {
-    if (!(keep_frequency)) switch_mode (Modes::FT8);
+    switch_mode (Modes::FT8);
   }
   if(m_specOp != SpecOp::HOUND) {
       ui->houndButton->setChecked(false);
