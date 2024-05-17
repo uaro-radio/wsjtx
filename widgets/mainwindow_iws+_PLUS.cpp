@@ -14006,14 +14006,18 @@ void MainWindow::check_button_color()
              ui->pb60C->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
           }
       }
-      if (ui->houndButton->isChecked()) {
+      if (ui->houndButton->isChecked() && !m_config.button_coloring_disabled()) {
           ui->houndButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
+        if (SpecOp::FOX==m_specOp && !m_config.button_coloring_disabled()) {
+          ui->houndButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+        } else {
           if (m_useDarkStyle) {
              ui->houndButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
           } else {
              ui->houndButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
           }
+        }
       }
       if (m_mode=="FT8") {
           ui->ft8Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
