@@ -8652,8 +8652,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
   }
   if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {     // toggle SuperFox mode
       keep_frequency = true;
+      not_erase = true;         // prevent erasing the decodedTextBrowser
       m_config.toggle_SF();
-      QTimer::singleShot (250, [=] {keep_frequency = false;});
+      QTimer::singleShot (250, [=] {
+        keep_frequency = false;
+        not_erase = false;
+      });
       on_actionFT8_triggered();
       ui->ft8Button->clearFocus();
       ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
