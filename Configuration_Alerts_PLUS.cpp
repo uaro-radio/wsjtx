@@ -597,9 +597,20 @@ private:
   Q_SLOT void on_LotW_CSV_fetch_push_button_clicked (bool);
   Q_SLOT void on_hamlib_download_button_clicked (bool);
   Q_SLOT void on_revert_update_button_clicked (bool);
+  Q_SLOT void on_rbFox_clicked (bool);
+  Q_SLOT void on_rbHound_clicked (bool);
+  Q_SLOT void on_rbNA_VHF_Contest_clicked (bool);
+  Q_SLOT void on_rbEU_VHF_Contest_clicked (bool);
+  Q_SLOT void on_rbWW_DIGI_clicked (bool);
+  Q_SLOT void on_rbQ65pileup_clicked (bool);
+  Q_SLOT void on_rbField_Day_clicked (bool);
+  Q_SLOT void on_rbRTTY_Roundup_clicked (bool);
+  Q_SLOT void on_rbARRL_Digi_clicked (bool);
+  Q_SLOT void on_cbSuperFox_clicked (bool);
   void error_during_hamlib_download (QString const& reason);
   void after_hamlib_downloaded();
   void display_file_information();
+  void check_visibility();
 
   Q_SLOT void on_cbx2ToneSpacing_clicked(bool);
   Q_SLOT void on_cbx4ToneSpacing_clicked(bool);
@@ -2064,6 +2075,8 @@ void Configuration::impl::initialize_models ()
   ui_->pbAlerts->setChecked(alert_Enabled_);
 
   ui_->pbTestCloudlog->setStyleSheet ("QPushButton {background-color: none;}");
+
+  check_visibility ();
 
   set_rig_invariants ();
 }
@@ -4122,6 +4135,67 @@ void Configuration::impl::on_cbx2ToneSpacing_clicked(bool b)
 void Configuration::impl::on_cbx4ToneSpacing_clicked(bool b)
 {
   if(b) ui_->cbx2ToneSpacing->setChecked(false);
+}
+
+void Configuration::impl::on_rbFox_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbHound_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbNA_VHF_Contest_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbEU_VHF_Contest_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbWW_DIGI_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbQ65pileup_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbField_Day_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbRTTY_Roundup_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbARRL_Digi_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_cbSuperFox_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::check_visibility ()
+{
+  if (ui_->rbFox->isChecked() and ui_->cbSuperFox->isChecked()) {
+    ui_->sfkey_label->setEnabled (true);
+    ui_->FoxKey->setEnabled (true);
+  } else {
+    ui_->sfkey_label->setEnabled (false);
+    ui_->FoxKey->setEnabled (false);
+  }
 }
 
 void Configuration::impl::on_Field_Day_Exchange_editingFinished ()
