@@ -4070,12 +4070,25 @@ void Configuration::impl::check_visibility ()
     ui_->labRTTY->setEnabled (false);
     ui_->RTTY_Exchange->setEnabled (false);
   }
-  if (ui_->cbContestName->isChecked() and !ui_->rbFox->isChecked() and !ui_->rbHound->isChecked()) {
+  if (ui_->cbContestName->isChecked() and !ui_->rbFox->isChecked() and !ui_->rbHound->isChecked()
+      and  !ui_->rbQ65pileup->isChecked()) {
     ui_->labCN->setEnabled (true);
     ui_->Contest_Name->setEnabled (true);
   } else {
     ui_->labCN->setEnabled (false);
     ui_->Contest_Name->setEnabled (false);
+  }
+  if (ui_->rbFox->isChecked() or ui_->rbHound->isChecked()) {
+    ui_->cbSuperFox->setEnabled (true);
+    ui_->cbZZ00->setEnabled (false);
+  } else {
+    ui_->cbSuperFox->setEnabled (false);
+    ui_->cbZZ00->setEnabled (true);
+  }
+  if (ui_->rbFox->isChecked() or ui_->rbHound->isChecked() or ui_->rbQ65pileup->isChecked()) {
+    ui_->cbContestName->setEnabled (false);
+  } else {
+    ui_->cbContestName->setEnabled (true);
   }
   if (ui_->rbNA_VHF_Contest->isChecked()) {
     ui_->cb_NCCC_Sprint->setEnabled (true);
