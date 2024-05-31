@@ -2354,9 +2354,9 @@ Double-click to reset to the standard 73 message</string>
                           <height>16777215</height>
                          </size>
                         </property>
-                        <property name="toolTip">							
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of concurrent streams for Fox transmissions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>							
-                        </property>							
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of concurrent streams for Fox transmissions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
                         <property name="suffix">
                          <string/>
                         </property>
@@ -2394,9 +2394,9 @@ Double-click to reset to the standard 73 message</string>
                       </item>
                       <item row="6" column="2">
                        <widget class="QCheckBox" name="cbMoreCQs">
-                        <property name="toolTip">					
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Include a CQ message along with other messages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>					
-                        </property>					
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Include a CQ message along with other messages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
                         <property name="text">
                          <string>More CQs</string>
                         </property>
@@ -2404,9 +2404,9 @@ Double-click to reset to the standard 73 message</string>
                       </item>
                       <item row="5" column="2">
                        <widget class="QComboBox" name="comboBoxCQ">
-                        <property name="toolTip">					
-	                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a specific CQ message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>				
-                        </property>					
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a specific CQ message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
                         <property name="currentText">
                          <string>CQ</string>
                         </property>
@@ -2516,9 +2516,9 @@ Double-click to reset to the standard 73 message</string>
                           <height>16777215</height>
                          </size>
                         </property>
-                        <property name="toolTip">					 
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of callsigns to be displayed in the queue.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>					 
-                        </property>					 
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of callsigns to be displayed in the queue.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
                         <property name="prefix">
                          <string>N List     </string>
                         </property>
@@ -2547,9 +2547,9 @@ Double-click to reset to the standard 73 message</string>
                           <height>16777215</height>
                          </size>
                         </property>
-		                <property name="toolTip">				   
-	                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the maximum permitted SNR for callers to be included in the queue.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>					   
-                        </property>						   
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the maximum permitted SNR for callers to be included in the queue.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
                         <property name="prefix">
                          <string>Max dB  </string>
                         </property>
@@ -2618,7 +2618,7 @@ Double-click to reset to the standard 73 message</string>
                        <widget class="QPushButton" name="pbFreeText">
                         <property name="toolTip">
                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter a free text message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-						</property>
+                        </property>
                         <property name="text">
                          <string>Free Text</string>
                         </property>
@@ -2626,9 +2626,9 @@ Double-click to reset to the standard 73 message</string>
                       </item>
                       <item row="7" column="2">
                        <widget class="QPushButton" name="pbFoxReset">
-                        <property name="toolTip">					
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clear all queues.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>					
-                        </property>					
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clear all queues.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
                         <property name="text">
                          <string>Reset</string>
                         </property>
@@ -2647,7 +2647,7 @@ Double-click to reset to the standard 73 message</string>
                       <item row="9" column="2">
                        <widget class="QCheckBox" name="cbSendMsg">
                         <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Transmit free text message at the next opportunity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>						
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Transmit free text message at the next opportunity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                         </property>
                         <property name="text">
                          <string>Send msg</string>
@@ -2692,6 +2692,13 @@ Double-click to reset to the standard 73 message</string>
                         </property>
                         <property name="sizeAdjustPolicy">
                          <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="2">
+                       <widget class="QCheckBox" name="cbWorkDupes">
+                        <property name="text">
+                         <string>Allow Dupes</string>
                         </property>
                        </widget>
                       </item>
@@ -4266,7 +4273,7 @@ QPushButton[state=&quot;ok&quot;] {
      <x>0</x>
      <y>0</y>
      <width>880</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -4382,7 +4389,7 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionOnline_User_Guide"/>
     <addaction name="actionLocal_User_Guide"/>
     <addaction name="actionFT8_DXpedition_Mode_User_Guide"/>
-	<addaction name="actionSuperFox_User_Guide"/>
+    <addaction name="actionSuperFox_User_Guide"/>
     <addaction name="actionQSG_FST4"/>
     <addaction name="actionQSG_Q65"/>
     <addaction name="actionQSG_X250_M3"/>
@@ -5076,9 +5083,9 @@ QPushButton[state=&quot;ok&quot;] {
   </action>
   <action name="actionSuperFox_User_Guide">
    <property name="text">
-    <string>SuperFox User Guide</string>   
+    <string>SuperFox User Guide</string>
    </property>
-  </action>   
+  </action>
   <action name="actionHideB4">
    <property name="checkable">
     <bool>true</bool>

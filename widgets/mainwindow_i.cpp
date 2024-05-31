@@ -6636,7 +6636,7 @@ void MainWindow::guiUpdate()
       write_all("Tx",m_currentMessage);
       if (m_config.TX_messages () and m_mode!="Echo") {
         ui->decodedTextBrowser2->displayTransmittedText(m_currentMessage.trimmed(),m_mode,
-                     ui->TxFreqSpinBox->value(),m_bFastMode,m_TRperiod);
+                     ui->TxFreqSpinBox->value(),m_bFastMode,m_TRperiod,m_config.superFox());
         }
     }
 
@@ -6745,7 +6745,7 @@ void MainWindow::guiUpdate()
         if (m_config.TX_messages () && !m_tune && SpecOp::FOX!=m_specOp)
           {
             ui->decodedTextBrowser2->displayTransmittedText(current_message.trimmed(),
-                  m_mode,ui->TxFreqSpinBox->value(),m_bFastMode,m_TRperiod);
+                  m_mode,ui->TxFreqSpinBox->value(),m_bFastMode,m_TRperiod,m_config.superFox());
           }
       }
 
@@ -9355,8 +9355,10 @@ void MainWindow::on_actionFT8_triggered()
     displayWidgets(nWidgets("11101000010011000001000000000011000000"));
     if(m_config.superFox()) {
       ui->labDXped->setText(tr ("Super Hound"));
+      ui->cbRxAll->setEnabled(false);
     } else {
       ui->labDXped->setText(tr ("Hound"));
+      ui->cbRxAll->setEnabled(true);
     }
     ui->txrb1->setChecked(true);
     ui->txrb2->setEnabled(false);
@@ -12371,7 +12373,8 @@ void MainWindow::houndCallers()
       paddedHoundCall=houndCall + " ";
       //Don't list a hound already in the queue
       if(!ui->houndQueueTextBrowser->toPlainText().contains(paddedHoundCall)) {
-        if(m_loggedByFox[houndCall].contains(m_lastBand))   continue;   //already logged on this band
+        if(m_loggedByFox[houndCall].contains(m_lastBand) and
+           !ui->cbWorkDupes->isChecked())   continue;   //already logged on this band
         if(m_foxQSO.contains(houndCall)) continue;   //still in the QSO map
         auto const& entity = m_logBook.countries ()->lookup (houndCall);
         auto const& continent = AD1CCty::continent (entity.continent);
@@ -12774,10 +12777,10 @@ void MainWindow::foxGenWaveform(int i,QString fm)
   int nfreq=ui->TxFreqSpinBox->value()+60*i;
   if(m_config.superFox()) nfreq=750;
   ui->decodedTextBrowser2->displayTransmittedText(fm.trimmed(), txModeArg,
-        nfreq,m_bFastMode,m_TRperiod);
+        nfreq,m_bFastMode,m_TRperiod,m_config.superFox());
   if (SpecOp::FOX==m_specOp && m_config.superFox() && ui->cbSendMsg->isChecked())
     ui->decodedTextBrowser2->displayTransmittedText(m_freeTextMsg0, txModeArg,
-        nfreq,m_bFastMode,m_TRperiod);
+        nfreq,m_bFastMode,m_TRperiod,m_config.superFox());
   foxcom_.i3bit[i]=0;
   if(fm.indexOf("<")>0) foxcom_.i3bit[i]=1;
   strncpy(&foxcom_.cmsg[i][0],fm.toLatin1(),40);   //Copy this message into cmsg[i]
