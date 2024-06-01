@@ -585,7 +585,6 @@ private:
   Q_SLOT void on_calibration_slope_ppm_spin_box_valueChanged (double);
   Q_SLOT void handle_transceiver_update (TransceiverState const&, unsigned sequence_number);
   Q_SLOT void handle_transceiver_failure (QString const& reason);
-  Q_SLOT void on_special_op_activity_button_group_buttonClicked (int);
   Q_SLOT void on_DXCC_check_box_clicked(bool checked);
   Q_SLOT void on_PWR_and_SWR_check_box_clicked(bool checked);
   Q_SLOT void on_reset_highlighting_to_defaults_push_button_clicked (bool);
@@ -597,9 +596,22 @@ private:
   Q_SLOT void on_LotW_CSV_fetch_push_button_clicked (bool);
   Q_SLOT void on_hamlib_download_button_clicked (bool);
   Q_SLOT void on_revert_update_button_clicked (bool);
+  Q_SLOT void on_gbSpecialOpActivity_clicked (bool);
+  Q_SLOT void on_rbFox_clicked (bool);
+  Q_SLOT void on_rbHound_clicked (bool);
+  Q_SLOT void on_rbNA_VHF_Contest_clicked (bool);
+  Q_SLOT void on_rbEU_VHF_Contest_clicked (bool);
+  Q_SLOT void on_rbWW_DIGI_clicked (bool);
+  Q_SLOT void on_rbQ65pileup_clicked (bool);
+  Q_SLOT void on_rbField_Day_clicked (bool);
+  Q_SLOT void on_rbRTTY_Roundup_clicked (bool);
+  Q_SLOT void on_rbARRL_Digi_clicked (bool);
+  Q_SLOT void on_cbContestName_clicked (bool);
+  Q_SLOT void on_cb_NCCC_Sprint_clicked (bool);
   void error_during_hamlib_download (QString const& reason);
   void after_hamlib_downloaded();
   void display_file_information();
+  void check_visibility();
 
   Q_SLOT void on_cbx2ToneSpacing_clicked(bool);
   Q_SLOT void on_cbx4ToneSpacing_clicked(bool);
@@ -1928,7 +1940,6 @@ void Configuration::impl::initialize_models ()
   ui_->cbTwoPass->setChecked(twoPass_);
   ui_->cbContestName->setChecked(Individual_Contest_Name_);
   ui_->cb_NCCC_Sprint->setChecked(NCCC_Sprint_);
-//  if (!ui_->rbNA_VHF_Contest->isChecked()) ui_->cb_NCCC_Sprint->setEnabled (false);
   ui_->cbZZ00->setChecked(ZZ00_);
   ui_->cbBlacklist->setChecked(Blacklisted_);
   ui_->cbWhitelist->setChecked(Whitelisted_);
@@ -2043,6 +2054,8 @@ void Configuration::impl::initialize_models ()
   ui_->pbAlerts->setChecked(alert_Enabled_);
 
   ui_->pbTestCloudlog->setStyleSheet ("QPushButton {background-color: none;}");
+
+  check_visibility ();
 
   set_rig_invariants ();
 }
@@ -3552,15 +3565,6 @@ void Configuration::impl::display_file_information ()
 #endif
 }
 
-void Configuration::impl::on_special_op_activity_button_group_buttonClicked (int /* id */)
-{
-  if (ui_->rbNA_VHF_Contest->isChecked()) {
-    ui_->cb_NCCC_Sprint->setEnabled (true);
-  } else {
-//    ui_->cb_NCCC_Sprint->setEnabled (false);
-  }
-}
-
 void Configuration::impl::on_DXCC_check_box_clicked(bool checked)
 {
     if (checked) {
@@ -4094,6 +4098,108 @@ void Configuration::impl::on_cbx2ToneSpacing_clicked(bool b)
 void Configuration::impl::on_cbx4ToneSpacing_clicked(bool b)
 {
   if(b) ui_->cbx2ToneSpacing->setChecked(false);
+}
+
+void Configuration::impl::on_gbSpecialOpActivity_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbFox_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbHound_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbNA_VHF_Contest_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbEU_VHF_Contest_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbWW_DIGI_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbQ65pileup_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbField_Day_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbRTTY_Roundup_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbARRL_Digi_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_cbContestName_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_cb_NCCC_Sprint_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::check_visibility ()
+{
+  if (ui_->rbField_Day->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->labFD->setEnabled (true);
+    ui_->Field_Day_Exchange->setEnabled (true);
+  } else {
+    ui_->labFD->setEnabled (false);
+    ui_->Field_Day_Exchange->setEnabled (false);
+  }
+  if (ui_->rbRTTY_Roundup->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->labRTTY->setEnabled (true);
+    ui_->RTTY_Exchange->setEnabled (true);
+  } else {
+    ui_->labRTTY->setEnabled (false);
+    ui_->RTTY_Exchange->setEnabled (false);
+  }
+  if (ui_->cbContestName->isChecked() and !ui_->rbFox->isChecked() and !ui_->rbHound->isChecked()
+      and  !ui_->rbQ65pileup->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->labCN->setEnabled (true);
+    ui_->Contest_Name->setEnabled (true);
+  } else {
+    ui_->labCN->setEnabled (false);
+    ui_->Contest_Name->setEnabled (false);
+  }
+  if (!ui_->rbFox->isChecked() and !ui_->rbHound->isChecked() and !ui_->rbQ65pileup->isChecked()
+      and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->cbContestName->setEnabled (true);
+  } else {
+    ui_->cbContestName->setEnabled (false);
+  }
+  if (ui_->rbNA_VHF_Contest->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->cb_NCCC_Sprint->setEnabled (true);
+  } else {
+    ui_->cb_NCCC_Sprint->setEnabled (false);
+  }
+  if (!ui_->rbFox->isChecked() and !ui_->rbHound->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->cbZZ00->setEnabled (true);
+  } else {
+    ui_->cbZZ00->setEnabled (false);
+  }
 }
 
 void Configuration::impl::on_Field_Day_Exchange_editingFinished ()
