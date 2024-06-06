@@ -4517,7 +4517,8 @@ void MainWindow::decode()                                       //decode()
   if(dec_data.params.nfSplit==8) dec_data.params.nfSplit=1;
 
   dec_data.params.nfb=m_wideGraph->Fmax();
-  if(m_mode=="FT8" and SpecOp::HOUND == m_specOp and !ui->cbRxAll->isChecked()) dec_data.params.nfb=1000;
+  if(m_mode=="FT8" and SpecOp::HOUND==m_specOp and !ui->cbRxAll->isChecked() and
+     !m_config.superFox()) dec_data.params.nfb=1000;
   if(m_mode=="FT8" and SpecOp::FOX == m_specOp ) dec_data.params.nfqso=200;
   dec_data.params.b_even_seq=(dec_data.params.nutc%10)==0;
   dec_data.params.b_superfox=(m_config.superFox() and (SpecOp::FOX == m_specOp or SpecOp::HOUND == m_specOp));
