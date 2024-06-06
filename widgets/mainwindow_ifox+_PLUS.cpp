@@ -1349,7 +1349,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("Score",m_score);
   m_settings->setValue("labDXpedText",ui->labDXped->text());
   m_settings->setValue("EchoAvg",ui->sbEchoAvg->value());
-
+  m_settings->setValue("AllowDupes", ui->cbWorkDupes->isChecked());
   {
     QList<QVariant> coeffs;     // suitable for QSettings
     for (auto const& coeff : m_phaseEqCoefficients)
@@ -1646,6 +1646,7 @@ void MainWindow::readSettings()
   ui->decodes_splitter->restoreState(m_settings->value("SplitterState").toByteArray());
   ui->sbNB->setValue(m_settings->value("Blanker",0).toInt());
   ui->sbEchoAvg->setValue(m_settings->value("EchoAvg",10).toInt());
+  ui->cbWorkDupes->setChecked (m_settings->value ("AllowDupes", false).toBool ());
   {
     auto const& coeffs = m_settings->value ("PhaseEqualizationCoefficients"
                                             , QList<QVariant> {0., 0., 0., 0., 0.}).toList ();
