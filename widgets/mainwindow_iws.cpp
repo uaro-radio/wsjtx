@@ -11144,7 +11144,8 @@ void MainWindow::replyToCQ (QTime time, qint32 snr, float delta_time, quint32 de
           showNormal ();
           raise ();
         }
-      if ((text.contains (QRegularExpression {R"(^(CQ |CQDX |QRZ ))"})) || (ui->cbHoldTxFreq->isChecked ())) {
+      if ((text.contains (QRegularExpression {R"(^(CQ |CQDX |QRZ ))"}))
+          || text.contains("73 ") || (ui->cbHoldTxFreq->isChecked ())) {
         // a message we are willing to accept and auto reply to
         m_bDoubleClicked = true;
       }
