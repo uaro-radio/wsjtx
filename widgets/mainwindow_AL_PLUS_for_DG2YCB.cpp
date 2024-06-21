@@ -1789,6 +1789,7 @@ void MainWindow::set_application_font (QFont const& font)
 //      ui->q65Button->setMinimumWidth(50);                             // UR for normal + widescreen
 //      ui->jt65Button->setMinimumWidth(50);                            // UR for normal + widescreen
   }
+  if (m_config.largerTabWidget()) ui->tabWidget->setMaximumHeight(1000);
   for (auto& widget : qApp->topLevelWidgets ())
     {
       widget->updateGeometry ();

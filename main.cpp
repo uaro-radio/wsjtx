@@ -114,11 +114,13 @@ int main(int argc, char *argv[])
   // Multiple instances communicate with jt9 via this
   QSharedMemory mem_jt9;
 
-  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-  QApplication a(argc, argv);
+  // Read optional file to disable highDPI scaling
+  QFile f("DisableHighDpiScaling");
+  if (!f.exists()) QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
   auto const env = QProcessEnvironment::systemEnvironment ();
 
+  ExceptionCatchingApplication a(argc, argv);
   try
     {
       // LOG_INfO ("+++++++++++++++++++++++++++ Resources ++++++++++++++++++++++++++++");
