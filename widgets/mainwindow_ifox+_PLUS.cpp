@@ -1286,6 +1286,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("FoxMaxDB_v2",ui->sbMax_dB->value()); // original key abandoned
   m_settings->setValue ("SerialNumber",ui->sbSerialNumber->value ());
   m_settings->setValue("FoxTextMsg", m_freeTextMsg0);
+  m_settings->setValue("WorkDupes", ui->cbWorkDupes->isChecked());
   m_settings->endGroup();
 
   // do this in the General group because we save the parameters from various places
@@ -1349,7 +1350,6 @@ void MainWindow::writeSettings()
   m_settings->setValue("Score",m_score);
   m_settings->setValue("labDXpedText",ui->labDXped->text());
   m_settings->setValue("EchoAvg",ui->sbEchoAvg->value());
-  m_settings->setValue("AllowDupes", ui->cbWorkDupes->isChecked());
   {
     QList<QVariant> coeffs;     // suitable for QSettings
     for (auto const& coeff : m_phaseEqCoefficients)
@@ -1466,6 +1466,7 @@ void MainWindow::readSettings()
   ui->sbSerialNumber->setValue (m_settings->value ("SerialNumber", 1).toInt ());
   m_freeTextMsg0=m_settings->value("FoxTextMsg","").toString();
   m_freeTextMsg=m_freeTextMsg0;
+  ui->cbWorkDupes->setChecked(m_settings->value("WorkDupes",false).toBool());
   m_settings->endGroup();
 
   m_settings->beginGroup("Common");
@@ -1646,7 +1647,6 @@ void MainWindow::readSettings()
   ui->decodes_splitter->restoreState(m_settings->value("SplitterState").toByteArray());
   ui->sbNB->setValue(m_settings->value("Blanker",0).toInt());
   ui->sbEchoAvg->setValue(m_settings->value("EchoAvg",10).toInt());
-  ui->cbWorkDupes->setChecked (m_settings->value ("AllowDupes", false).toBool ());
   {
     auto const& coeffs = m_settings->value ("PhaseEqualizationCoefficients"
                                             , QList<QVariant> {0., 0., 0., 0., 0.}).toList ();
@@ -4758,7 +4758,10 @@ void MainWindow::decodeDone ()
   ui->DecodeButton->setChecked (false);
   decodeBusy(false);
   m_RxLog=0;
-  if(SpecOp::FOX == m_specOp) houndCallers();
+  if(SpecOp::FOX == m_specOp) {
+    houndCallers();
+    if(ui->cbWorkDupes->isChecked()) QTimer::singleShot (5000, [=] {band_activity_cleared();});
+  }
   to_jt9(m_ihsym,-1,1);                //Tell jt9 we know it has finished
 
   m_startAnother=m_loopall;
@@ -12446,6 +12449,18 @@ void MainWindow::houndCallers()
     return; // don't use these decodes
  }
 
+// Read decodes of the current period
+  QFile d(m_config.temp_dir().absoluteFilePath("decoded.txt"));
+  QTextStream ds(&d);
+  QString decoded="";
+  if(d.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    while (!ds.atEnd()) {
+      decoded = ds.readAll();
+    }
+    ds.flush();
+    d.close();
+  }
+
   QFile f(m_config.temp_dir().absoluteFilePath("houndcallers.txt"));
   if(f.open(QIODevice::ReadOnly | QIODevice::Text)) {
     QTextStream s(&f);
@@ -12463,9 +12478,13 @@ void MainWindow::houndCallers()
       paddedHoundCall=houndCall + " ";
       //Don't list a hound already in the queue
       if(!ui->houndQueueTextBrowser->toPlainText().contains(paddedHoundCall)) {
-        if(m_loggedByFox[houndCall].contains(m_lastBand) and
-           !ui->cbWorkDupes->isChecked())   continue;   //already logged on this band
-        if(m_foxQSO.contains(houndCall)) continue;   //still in the QSO map
+        if(ui->cbWorkDupes->isChecked()) {
+           if(m_loggedByFox[houndCall].contains(m_lastBand)
+              and !decoded.contains(paddedHoundCall)) continue;        // don't display old messages again of stations already logged
+        } else {
+          if(m_loggedByFox[houndCall].contains(m_lastBand)) continue;  // already logged on this band
+        }
+        if(m_foxQSO.contains(houndCall)) continue;                     // still in the QSO map
         auto const& entity = m_logBook.countries ()->lookup (houndCall);
         auto const& continent = AD1CCty::continent (entity.continent);
 
