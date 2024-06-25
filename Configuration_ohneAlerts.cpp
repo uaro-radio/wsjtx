@@ -2300,7 +2300,7 @@ void Configuration::impl::read_settings ()
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
   twoPass_ = settings_->value("TwoPass",true).toBool ();
   highDPI_ = settings_->value("HighDPI",true).toBool ();
-  largerTabWidget_ = settings_->value("LargerTabWidget",true).toBool ();
+  largerTabWidget_ = settings_->value("LargerTabWidget",false).toBool ();
   bSuperFox_ = settings_->value("SuperFox",true).toBool ();
   Individual_Contest_Name_ = settings_->value("Individual_Contest_Name",false).toBool ();
   NCCC_Sprint_ = settings_->value("NCCC_Sprint",false).toBool ();
