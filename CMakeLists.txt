@@ -1734,14 +1734,6 @@ install (DIRECTORY
   #COMPONENT runtime
   )
 	
-if (UNIX)
-  install (DIRECTORY
-  ${PROJECT_SOURCE_DIR}/sounds
-  DESTINATION $ENV{HOME}
-  #COMPONENT runtime
-  )
-endif (UNIX)
-
 #
 # Mac installer files
 #
