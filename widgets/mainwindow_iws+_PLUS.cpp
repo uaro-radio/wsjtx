@@ -1127,7 +1127,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   // Starting in FT8 Hound mode needs this initialization
   if (m_specOp==SpecOp::HOUND) {
       on_ft8Button_clicked();
-      ui->houndButton->click();
+      QTimer::singleShot (50, [=] {ui->houndButton->click();});
   }
 
   ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
@@ -13310,7 +13310,7 @@ void MainWindow::on_houndButton_clicked (bool checked)
     ui->txb1->setEnabled(true);
   } else {
     m_config.setSpecial_None();
-    ui->cbHoldTxFreq->setChecked (HoldTxFreqStatus);  // restore state of the Hold Tx Freq checkbox
+    QTimer::singleShot (50, [=] {ui->cbHoldTxFreq->setChecked (HoldTxFreqStatus);});   // restore state of the Hold Tx Freq checkbox
     keep_frequency = true;
     QTimer::singleShot (250, [=] {keep_frequency = false;});
   }
