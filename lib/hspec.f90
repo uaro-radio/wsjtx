@@ -21,7 +21,7 @@ subroutine hspec(id2,k,nutc0,ntrpdepth,nrxfreq,ntol,bmsk144,             &
   parameter (JZ=703)
   character*80 line1
   character*(*) datadir
-  character*12 mycall,hiscall
+  character*(*) mycall,hiscall
   integer*2 id2(0:120*12000-1)
   logical*1 bmsk144,bshmsg,btrain,bswl
   real green(0:JZ-1)
