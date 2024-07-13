@@ -5083,6 +5083,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
       line_read = line_read.left (p - line_read.constData ());
     }
     if(bDisplayPoints) line_read=line_read.replace("a7","  ");
+    // Ensure SuperFox messages can be sent to UDP
+    if(SpecOp::HOUND == m_specOp and m_config.superFox() &&
+       (line_read.mid(4,2).contains("00") or line_read.mid(4,2).contains("30")))
+         line_read=line_read.left(20)+line_read.mid(20,4).replace("    "," ~  ")+line_read.mid(24,30);
     bool haveFSpread {false};
     bool blockUDP {false};                   // allow udp spotting (JTAlert) for all non-filtered messages
     bool block_right_display {false};
@@ -5661,7 +5665,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
           verified = true;
           ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
         } else {
-          if (decodedtext0.mid(5,2).contains("00") or decodedtext0.mid(5,2).contains("30")) verified = false;
+          if (decodedtext0.mid(4,2).contains("00") or decodedtext0.mid(4,2).contains("30")) verified = false;
         }
         if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
           ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
@@ -6106,7 +6110,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       }
 
 //### I think this is where we are preventing Hounds from spotting Fox ###
-      if(m_mode!="FT8" or (SpecOp::HOUND != m_specOp)) {
+      if(m_mode!="FT8" or (SpecOp::HOUND != m_specOp) or (SpecOp::HOUND == m_specOp and m_config.superFox())) {
         if(m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65"
            or m_mode=="JT4" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="FST4") {
           auto_sequence (decodedtext, 25, 50);
@@ -13051,6 +13055,7 @@ void MainWindow::write_all(QString txRx, QString message)
   QString msg;
   QString mode_string;
   QString file_name="ALL.TXT";
+  QRegularExpression verified_call_regex {"[A-Z0-9/]+\\sverified\\s*"};
 
   if(m_mode!="Echo") {
     if (message.size () > 5 && message[4]==' ') {
@@ -13072,7 +13077,14 @@ void MainWindow::write_all(QString txRx, QString message)
     if(mode_string=="FT8   " and txRx=="Tx" and m_config.superFox() and
        m_specOp==SpecOp::FOX) mode_string="FT8_SF";
 
-   msg=msg.mid(0,15) + msg.mid(18,-1);
+    if(mode_string=="FT8   " and m_config.superFox() and
+       m_specOp==SpecOp::HOUND) mode_string="FT8_SH";
+
+    if (mode_string == "FT8_SH" && verified_call_regex.match(message).hasMatch()) {
+      msg = "               "+message;
+    } else {
+      msg = msg.mid(0, 15) + msg.mid(18, -1);
+    }
 
     t = t.asprintf("%5d",ui->TxFreqSpinBox->value());
     if (txRx=="Tx") msg="   0  0.0" + t + " " + message;
