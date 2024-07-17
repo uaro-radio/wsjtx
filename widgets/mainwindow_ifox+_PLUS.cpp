@@ -5079,10 +5079,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
       line_read = line_read.left (p - line_read.constData ());
     }
     if(bDisplayPoints) line_read=line_read.replace("a7","  ");
-    // Ensure SuperFox messages can be sent to UDP
-    if(SpecOp::HOUND == m_specOp and m_config.superFox() &&
-       (line_read.mid(4,2).contains("00") or line_read.mid(4,2).contains("30")))
-         line_read=line_read.left(20)+line_read.mid(20,4).replace("    "," ~  ")+line_read.mid(24,30);
     bool haveFSpread {false};
     bool blockUDP {false};                   // allow udp spotting (JTAlert) for all non-filtered messages
     bool block_right_display {false};
