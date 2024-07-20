@@ -434,6 +434,8 @@ int main(int argc, char *argv[])
                                                                   ).toBool () ? 1u : 4u;
           }
 
+          QDir::setCurrent(qApp->applicationDirPath()); //This helps to find the SF executables
+
           // run the application UI
           MainWindow w(temp_dir, multiple, &multi_settings, &mem_jt9, downSampleFactor, &splash, env);
           w.show();
