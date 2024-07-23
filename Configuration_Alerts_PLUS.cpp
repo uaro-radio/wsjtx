@@ -473,7 +473,7 @@ class Configuration::impl final
 public:
   using FrequencyDelta = Radio::FrequencyDelta;
   using port_type = Configuration::port_type;
-  using audio_info_type = QPair<QAudioDeviceInfo, QList<QVariant> >;
+  using audio_info_type = QPair<QAudioDeviceInfo , QList<QVariant> >;
 
   explicit impl (Configuration * self
                  , QNetworkAccessManager * network_manager
@@ -621,6 +621,8 @@ private:
   Q_SLOT void on_Field_Day_Exchange_editingFinished ();
   Q_SLOT void on_RTTY_Exchange_editingFinished ();
   Q_SLOT void on_FoxKey_textEdited (QString const&);
+  Q_SLOT void on_cbSortAlphabetically_clicked(bool);
+  Q_SLOT void on_cbHideCARD_clicked(bool);
   Q_SLOT void on_Contest_Name_editingFinished ();
   Q_SLOT void on_Blacklist1_editingFinished ();
   Q_SLOT void on_Blacklist2_editingFinished ();
@@ -896,6 +898,8 @@ private:
   bool udpWindowRestore_;
   DataMode data_mode_;
   bool bLowSidelobes_;
+  bool sortAlphabetically_;
+  bool hideCARD_;
   bool pwrBandTxMemory_;
   bool pwrBandTuneMemory_;
   bool highlight_DXcall_;
@@ -1990,6 +1994,8 @@ void Configuration::impl::initialize_models ()
   ui_->CAT_data_bits_button_group->button (rig_params_.data_bits)->setChecked (true);
   ui_->CAT_stop_bits_button_group->button (rig_params_.stop_bits)->setChecked (true);
   ui_->CAT_handshake_button_group->button (rig_params_.handshake)->setChecked (true);
+  ui_->cbSortAlphabetically->setChecked(sortAlphabetically_);
+  ui_->cbHideCARD->setChecked(hideCARD_);
   ui_->checkBoxPwrBandTxMemory->setChecked(pwrBandTxMemory_);
   ui_->checkBoxPwrBandTuneMemory->setChecked(pwrBandTuneMemory_);
   if (rig_params_.force_dtr)
@@ -2409,6 +2415,8 @@ void Configuration::impl::read_settings ()
   udpWindowRestore_ = settings_->value ("udpWindowRestore",false).toBool ();
   calibration_.intercept = settings_->value ("CalibrationIntercept", 0.).toDouble ();
   calibration_.slope_ppm = settings_->value ("CalibrationSlopePPM", 0.).toDouble ();
+  sortAlphabetically_ = settings_->value("SortAlphabetically",true).toBool ();
+  hideCARD_ = settings_->value("HideCARD",true).toBool ();
   pwrBandTxMemory_ = settings_->value("pwrBandTxMemory",false).toBool ();
   pwrBandTuneMemory_ = settings_->value("pwrBandTuneMemory",false).toBool ();
   highlight_DXcall_ = settings_->value("highlight_DXcall",true).toBool ();
@@ -2653,6 +2661,8 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("udpWindowRestore", udpWindowRestore_);
   settings_->setValue ("CalibrationIntercept", calibration_.intercept);
   settings_->setValue ("CalibrationSlopePPM", calibration_.slope_ppm);
+  settings_->setValue ("SortAlphabetically", sortAlphabetically_);
+  settings_->setValue ("HideCARD", hideCARD_);
   settings_->setValue ("pwrBandTxMemory", pwrBandTxMemory_);
   settings_->setValue ("pwrBandTuneMemory", pwrBandTuneMemory_);
   settings_->setValue ("Region", QVariant::fromValue (region_));
@@ -3176,6 +3186,8 @@ void Configuration::impl::accept ()
   x4ToneSpacing_ = ui_->cbx4ToneSpacing->isChecked ();
   calibration_.intercept = ui_->calibration_intercept_spin_box->value ();
   calibration_.slope_ppm = ui_->calibration_slope_ppm_spin_box->value ();
+  sortAlphabetically_ = ui_->cbSortAlphabetically->isChecked ();
+  hideCARD_ = ui_->cbHideCARD->isChecked ();
   pwrBandTxMemory_ = ui_->checkBoxPwrBandTxMemory->isChecked ();
   pwrBandTuneMemory_ = ui_->checkBoxPwrBandTuneMemory->isChecked ();
   opCall_=ui_->opCallEntry->text();
@@ -4291,6 +4303,16 @@ void Configuration::impl::on_Contest_Name_editingFinished ()
   ui_->Contest_Name->setText (ui_->Contest_Name->text ().toUpper ());
 }
 
+void Configuration::impl::on_cbSortAlphabetically_clicked (bool)
+{
+  sortAlphabetically_ = ui_->cbSortAlphabetically->isChecked();
+}
+
+void Configuration::impl::on_cbHideCARD_clicked (bool)
+{
+  hideCARD_ = ui_->cbHideCARD->isChecked();
+}
+
 void Configuration::impl::on_Blacklist1_editingFinished ()
 {
   ui_->Blacklist1->setText (ui_->Blacklist1->text ().toUpper ());
@@ -4798,34 +4820,91 @@ QAudioDeviceInfo Configuration::impl::find_audio_device (QAudio::Mode mode, QCom
 }
 
 // load the available audio devices into the selection combo box
-void Configuration::impl::load_audio_devices (QAudio::Mode mode, QComboBox * combo_box
-                                              , QAudioDeviceInfo * device)
+#include <algorithm>
+#include <vector>
+#include <utility>
+
+#include <algorithm>
+#include <vector>
+#include <utility>
+
+#include <algorithm>
+#include <vector>
+#include <utility>
+
+#include <algorithm>
+#include <vector>
+#include <utility>
+
+
+#include <algorithm>
+#include <vector>
+#include <utility>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <utility>
+#include <algorithm>
+#include <vector>
+#include <utility>
+
+void Configuration::impl::load_audio_devices(QAudio::Mode mode, QComboBox * combo_box, QAudioDeviceInfo * device)
 {
-  using std::copy;
-  using std::back_inserter;
+    using std::copy;
+    using std::back_inserter;
 
-  combo_box->clear ();
+    QString selected_device_name = combo_box->currentText(); // Get the currently selected item text
+    combo_box->clear();
 
-  Q_EMIT self_->enumerating_audio_devices ();
-  int current_index = -1;
-  auto const& devices = QAudioDeviceInfo::availableDevices (mode);
-  Q_FOREACH (auto const& p, devices)
+    Q_EMIT self_->enumerating_audio_devices();
+    auto const& devices = QAudioDeviceInfo::availableDevices(mode);
+
+    // Use a vector to store device names and associated audio_info_type
+    std::vector<std::pair<QString, audio_info_type>> device_items;
+
+    Q_FOREACH(auto const& p, devices)
     {
-      // qDebug () << "Configuration::impl::load_audio_devices: input:" << (QAudio::AudioInput == mode) << "name:" << p.deviceName () << "preferred format:" << p.preferredFormat () << "endians:" << p.supportedByteOrders () << "codecs:" << p.supportedCodecs () << "channels:" << p.supportedChannelCounts () << "rates:" << p.supportedSampleRates () << "sizes:" << p.supportedSampleSizes () << "types:" << p.supportedSampleTypes ();
+        // Check if the device supports the "audio/pcm" codec
+        if (!p.supportedCodecs().contains("audio/pcm")) {
+            continue; // Skip devices that do not support "audio/pcm"
+        }
+#ifndef WIN32
+        if (hideCARD_ && p.deviceName().contains("CARD=")) {
+            continue; // skip ALSA devices on Linux -- we never use them
+        }
+#endif
+        // Convert supported channel counts into something we can store in the item model
+        QList<QVariant> channel_counts;
+        auto scc = p.supportedChannelCounts();
+        copy(scc.cbegin(), scc.cend(), back_inserter(channel_counts));
 
-      // convert supported channel counts into something we can store in the item model
-      QList<QVariant> channel_counts;
-      auto scc = p.supportedChannelCounts ();
-      copy (scc.cbegin (), scc.cend (), back_inserter (channel_counts));
+        audio_info_type info = qMakePair(p, channel_counts);
+        device_items.emplace_back(p.deviceName(), info);
+    }
 
-      combo_box->addItem (p.deviceName (), QVariant::fromValue (audio_info_type {p, channel_counts}));
-      if (p == *device)
+    // Sort the device items by device name
+    if (sortAlphabetically_) {
+      std::sort(device_items.begin(), device_items.end(), [](const std::pair<QString, audio_info_type>& a, const std::pair<QString, audio_info_type>& b) {
+          return a.first.toLower() < b.first.toLower();
+      });
+    }
+
+    // Add the sorted items back to the combo box
+    int current_index = -1;
+    for (int i = 0; i < static_cast<int>(device_items.size()); ++i)
+    {
+        const auto& item = device_items[i];
+        combo_box->addItem(item.first, QVariant::fromValue(item.second));
+
+        // Match the device name with the currently selected combo box item
+        if (device->deviceName() == item.first)
         {
-          current_index = combo_box->count () - 1;
+            current_index = i;
+            combo_box->setCurrentIndex(current_index);
         }
     }
-  combo_box->setCurrentIndex (current_index);
 }
+
 
 // load the available network interfaces into the selection combo box
 void Configuration::impl::load_network_interfaces (CheckableItemComboBox * combo_box, QStringList current)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>902</width>
-    <height>711</height>
+    <width>989</width>
+    <height>750</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1774,24 +1774,17 @@ this setting allows you to select which audio input will be used
           <string>Soundcard</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
-          <item row="1" column="1">
-           <widget class="LazyFillComboBox" name="sound_output_combo_box">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <item row="1" column="0">
+           <widget class="QLabel" name="sound_output_label">
+            <property name="text">
+             <string>Ou&amp;tput:</string>
             </property>
-            <property name="toolTip">
-             <string>Select the audio CODEC to use for transmitting.
-If this is your default device for system sounds then
-ensure that all system sounds are disabled otherwise
-you will broadcast any systems sounds generated during
-transmitting periods.</string>
+            <property name="buddy">
+             <cstring>sound_output_combo_box</cstring>
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
+          <item row="0" column="3">
            <widget class="QComboBox" name="sound_input_channel_combo_box">
             <property name="toolTip">
              <string>Select the channel to use for receiving.</string>
@@ -1818,30 +1811,27 @@ transmitting periods.</string>
             </item>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="LazyFillComboBox" name="sound_input_combo_box">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="cbSortAlphabetically">
             <property name="toolTip">
-             <string>Select the audio CODEC to use for receiving.</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sort audio device names alphabetically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Sort alphabetically</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="sound_output_label">
+          <item row="0" column="0">
+           <widget class="QLabel" name="sound_input_label">
             <property name="text">
-             <string>Ou&amp;tput:</string>
+             <string>&amp;Input:</string>
             </property>
             <property name="buddy">
-             <cstring>sound_output_combo_box</cstring>
+             <cstring>sound_input_combo_box</cstring>
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
+          <item row="1" column="3">
            <widget class="QComboBox" name="sound_output_channel_combo_box">
             <property name="toolTip">
              <string>Select the audio channel used for transmission.
@@ -1871,13 +1861,43 @@ both here.</string>
             </item>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="sound_input_label">
-            <property name="text">
-             <string>&amp;Input:</string>
+          <item row="2" column="2">
+           <widget class="QCheckBox" name="cbHideCARD">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hide the usually unusable ALSA CARD subdevices on Linux.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
-            <property name="buddy">
-             <cstring>sound_input_combo_box</cstring>
+            <property name="text">
+             <string>Hide ALSA CARD subdevices (Linux only)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="2">
+           <widget class="LazyFillComboBox" name="sound_output_combo_box">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Select the audio CODEC to use for transmitting.
+If this is your default device for system sounds then
+ensure that all system sounds are disabled otherwise
+you will broadcast any systems sounds generated during
+transmitting periods.</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="2">
+           <widget class="LazyFillComboBox" name="sound_input_combo_box">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Select the audio CODEC to use for receiving.</string>
             </property>
            </widget>
           </item>
@@ -4591,10 +4611,19 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
+<<<<<<< HEAD
   <buttongroup name="TX_audio_source_button_group"/>
   <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="CAT_handshake_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
+=======
+  <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="CAT_stop_bits_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
+  <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
+>>>>>>> 7e7aeae44 (Add audio device features "Sort alphabetically" and "Hide ALSA CARD subdevices".)
   <buttongroup name="split_mode_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
   <buttongroup name="CAT_data_bits_button_group"/>
