@@ -161,7 +161,7 @@
 #include <QStandardPaths>
 #include <QFont>
 #include <QFontDialog>
-#include <QSerialPortInfo>
+#include <QComboBox>
 #include <QScopedPointer>
 #include <QNetworkInterface>
 #include <QHostInfo>
@@ -172,6 +172,10 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QSerialPortInfo>
+#include <vector>
+#include <utility>
+#include <iostream>
 
 #include "pimpl_impl.hpp"
 #include "Logger.hpp"
@@ -4820,34 +4824,6 @@ QAudioDeviceInfo Configuration::impl::find_audio_device (QAudio::Mode mode, QCom
 }
 
 // load the available audio devices into the selection combo box
-#include <algorithm>
-#include <vector>
-#include <utility>
-
-#include <algorithm>
-#include <vector>
-#include <utility>
-
-#include <algorithm>
-#include <vector>
-#include <utility>
-
-#include <algorithm>
-#include <vector>
-#include <utility>
-
-
-#include <algorithm>
-#include <vector>
-#include <utility>
-#include <iostream>
-#include <algorithm>
-#include <vector>
-#include <utility>
-#include <algorithm>
-#include <vector>
-#include <utility>
-
 void Configuration::impl::load_audio_devices(QAudio::Mode mode, QComboBox * combo_box, QAudioDeviceInfo * device)
 {
     using std::copy;
@@ -5060,27 +5036,59 @@ void Configuration::impl::enumerate_rigs ()
   ui_->rig_combo_box->setCurrentText (rig_params_.rig_name);
 }
 
-void Configuration::impl::fill_port_combo_box (QComboBox * cb)
+void Configuration::impl::fill_port_combo_box(QComboBox* cb)
 {
-  auto current_text = cb->currentText ();
-  cb->clear ();
-  Q_FOREACH (auto const& p, QSerialPortInfo::availablePorts ())
+    auto current_text = cb->currentText();
+    cb->clear();
+
+    // Retrieve available ports and filter out ones with "NULL"
+    QList<QSerialPortInfo> ports;
+    foreach (const QSerialPortInfo &p, QSerialPortInfo::availablePorts())
     {
-      if (!p.portName ().contains ( "NULL" )) // virtual serial port pairs
+        if (!p.portName().contains("NULL")) // virtual serial port pairs
         {
-          // remove possibly confusing Windows device path (OK because
-          // it gets added back by Hamlib)
-          cb->addItem (p.systemLocation ().remove (QRegularExpression {R"(^\\\\\.\\)"}));
-          auto tip = QString {"%1 %2 %3"}.arg (p.manufacturer ()).arg (p.serialNumber ()).arg (p.description ()).trimmed ();
-          if (tip.size ())
-            {
-              cb->setItemData (cb->count () - 1, tip, Qt::ToolTipRole);
-            }
+            ports.append(p);
         }
     }
-  cb->addItem ("USB");
-  cb->setItemData (cb->count () - 1, "Custom USB device", Qt::ToolTipRole);
-  cb->setEditText (current_text);
+
+    // Sort ports by the numeric value of the port name, if possible
+    std::sort(ports.begin(), ports.end(), [](const QSerialPortInfo& a, const QSerialPortInfo& b) {
+        bool isANumeric = a.portName().midRef(3).toInt();
+        bool isBNumeric = b.portName().midRef(3).toInt();
+        if (isANumeric && isBNumeric)
+        {
+            return a.portName().midRef(3).toInt() < b.portName().midRef(3).toInt();
+        }
+        else if (isANumeric)
+        {
+            return true; // a comes before b
+        }
+        else if (isBNumeric)
+        {
+            return false; // b comes before a
+        }
+        else
+        {
+            return a.portName() < b.portName(); // Alphabetical order for non-numeric ports
+        }
+    });
+
+    // Add sorted ports to the combo box
+    for (const auto& p : ports)
+    {
+        // Remove possibly confusing Windows device path (OK because it gets added back by Hamlib)
+        cb->addItem(p.systemLocation().remove(QRegularExpression{R"(^\\\\\.\\)"}));
+
+        auto tip = QString{"%1 %2 %3"}.arg(p.manufacturer()).arg(p.serialNumber()).arg(p.description()).trimmed();
+        if (tip.size())
+        {
+            cb->setItemData(cb->count() - 1, tip, Qt::ToolTipRole);
+        }
+    }
+
+    cb->addItem("USB");
+    cb->setItemData(cb->count() - 1, "Custom USB device", Qt::ToolTipRole);
+    cb->setEditText(current_text);
 }
 
 auto Configuration::impl::apply_calibration (Frequency f) const -> Frequency
