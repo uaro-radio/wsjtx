@@ -170,6 +170,7 @@ private slots:
   void bandHopping();
   void on_houndButton_clicked(bool checked);
   void on_foxButton_clicked(bool checked);
+  void on_cbHoldTxFreq_clicked (bool);
   void on_ft8Button_clicked();
   void on_ft4Button_clicked();
   void on_msk144Button_clicked();

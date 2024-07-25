@@ -1633,6 +1633,7 @@ void MainWindow::readSettings()
   ui->tabWidget->setCurrentIndex(n);
   outBufSize=m_settings->value("OutBufSize",4096).toInt();
   ui->cbHoldTxFreq->setChecked (m_settings->value ("HoldTxFreq", false).toBool ());
+  HoldTxFreqStatus = m_settings->value ("HoldTxFreq", false).toBool ();
   ui->cbBypass->setChecked (m_settings->value ("BypassFilters", false).toBool ());
   m_pwrBandTxMemory=m_settings->value("pwrBandTxMemory").toHash();
   m_pwrBandTuneMemory=m_settings->value("pwrBandTuneMemory").toHash();
@@ -9154,6 +9155,7 @@ void MainWindow::on_actionFST4_triggered()
     ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
     ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
     on_sbSubmode_valueChanged(ui->sbSubmode->value());
+    ui->cbHoldTxFreq->setChecked (HoldTxFreqStatus);
   });
   m_mode="FST4";
   if(m_specOp==SpecOp::HOUND) {
@@ -9239,6 +9241,7 @@ void MainWindow::on_actionFT4_triggered()
     ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
     ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
     on_sbSubmode_valueChanged(ui->sbSubmode->value());
+    ui->cbHoldTxFreq->setChecked (HoldTxFreqStatus);
   });
   m_mode="FT4";
   if(m_specOp==SpecOp::HOUND) {
@@ -9293,6 +9296,7 @@ void MainWindow::on_actionFT8_triggered()
     if(m_specOp==SpecOp::FOX && !m_config.superFox()) ui->TxFreqSpinBox->setValue(m_TxFreqFox);
     ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
     on_sbSubmode_valueChanged(ui->sbSubmode->value());
+    ui->cbHoldTxFreq->setChecked (HoldTxFreqStatus);
   });
   m_mode="FT8";
   bool bVHF=m_config.enable_VHF_features();
@@ -13234,13 +13238,17 @@ void MainWindow::on_houndButton_clicked (bool checked)
     ui->txb1->setEnabled(true);
   } else {
     m_config.setSpecial_None();
-    QTimer::singleShot (50, [=] {ui->cbHoldTxFreq->setChecked (HoldTxFreqStatus);});   // restore state of the Hold Tx Freq checkbox
     keep_frequency = true;
     QTimer::singleShot (250, [=] {keep_frequency = false;});
   }
   m_specOp=m_config.special_op_id();
   on_actionFT8_triggered();
   check_button_color();
+}
+
+void MainWindow::on_cbHoldTxFreq_clicked (bool)
+{
+    HoldTxFreqStatus = ui->cbHoldTxFreq->isChecked();  // save state of the Hold Tx Freq checkbox
 }
 
 void MainWindow::on_ft8Button_clicked()
