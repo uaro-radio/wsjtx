@@ -2260,7 +2260,7 @@ void Configuration::impl::read_settings ()
 
   log_as_RTTY_ = settings_->value ("toRTTY", false).toBool ();
   report_in_comments_ = settings_->value("dBtoComments", false).toBool ();
-  specOp_in_comments_ = settings_->value("specOptoComments", true).toBool ();
+  specOp_in_comments_ = settings_->value("specOptoComments", false).toBool ();
   rig_params_.rig_name = settings_->value ("Rig", TransceiverFactory::basic_transceiver_name_).toString ();
   rig_is_dummy_ = TransceiverFactory::basic_transceiver_name_ == rig_params_.rig_name;
   rig_params_.network_port = settings_->value ("CATNetworkPort").toString ();
