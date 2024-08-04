@@ -334,6 +334,10 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
     ui->comments->setCurrentIndex(0);
     ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
   }
+  if (SpOp::NONE == special_op && !m_config->report_in_comments()
+      && !ui->cbComments->isChecked() && m_config->specOp_in_comments()) {
+    m_comments = "";
+  }
 
   if (SpOp::FOX == special_op
       || (m_config->autoLog () && ((SpOp::NONE < special_op && special_op < SpOp::FOX)
