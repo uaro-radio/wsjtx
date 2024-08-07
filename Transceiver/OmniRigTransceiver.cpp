@@ -171,7 +171,7 @@ int OmniRigTransceiver::do_start ()
       for (int i = 0; i < 5; ++i)
         {
           // leave some time for Omni-Rig to do its first poll
-          QThread::msleep (250);
+          QThread::msleep (300);
           if (OmniRig::ST_ONLINE == rig_->Status ())
             {
               break;
@@ -234,6 +234,8 @@ int OmniRigTransceiver::do_start ()
           rig_->SetVfo (OmniRig::PM_VFOA);
         }
       auto f = state ().frequency ();
+
+ /*  Deactivate frequency resolution test for now as it does not work with OmniRig 1.20
       if (f % 10) return resolution; // 1Hz resolution
       auto test_frequency = f - f % 100 + 55;
       if (OmniRig::PM_FREQ & writable_params_)
@@ -280,7 +282,7 @@ int OmniRigTransceiver::do_start ()
               resolution = 2;   // 20Hz rounded
             }
         }
-
+*/
       // For OmniRig v1.19 or later we need a delay between GetRxFrequency () and SetFreq (f),
       // otherwise rig QRG stays at f+55 Hz. 200 ms should do job for all modern transceivers.
       // However, with very slow rigs, QRG may still stay at f+55 Hz. Such rigs should use v1.18.
@@ -289,25 +291,20 @@ int OmniRigTransceiver::do_start ()
 
       if (OmniRig::PM_FREQ & writable_params_)
         {
-          QTimer::singleShot (200, [=] {
-              rig_->SetFreq (f);
-              });
+          rig_->SetFreq (f);
         }
       else if (reversed_ && (OmniRig::PM_FREQB & writable_params_))
         {
-          QTimer::singleShot (200, [=] {
-              rig_->SetFreqB (f);
-              });
+          rig_->SetFreqB (f);
         }
       else if (!reversed_ && (OmniRig::PM_FREQA & writable_params_))
         {
-          QTimer::singleShot (200, [=] {
-              rig_->SetFreqA (f);
-              });
+          rig_->SetFreqA (f);
         }
       update_rx_frequency (f);
       CAT_TRACE ("started");
 
+      resolution = 1;  // instead set resolutiion manually
       return resolution;
     }
   catch (...)
