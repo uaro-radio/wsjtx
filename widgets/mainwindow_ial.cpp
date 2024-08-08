@@ -5219,7 +5219,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
             && m_config.Wait_features_enabled()) {
               if (!text.contains(" " + m_config.my_callsign() + " " + m_hisCall))
                   block_right_display = true;                // prevent display of first message twice
-              if (m_specOp==SpecOp::HOUND) ui->TxFreqSpinBox->setValue(2300);
               m_bDoubleClicked = true;
               processMessage(decodedtext0);
               auto_tx_mode(true);
