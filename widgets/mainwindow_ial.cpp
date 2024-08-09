@@ -6849,7 +6849,7 @@ void MainWindow::guiUpdate()
       qint32 tHound=QDateTime::currentMSecsSinceEpoch()/1000 - m_tAutoOn;
       //To keep calling Fox, Hound must reactivate Enable Tx at least once every 2 minutes
       if(m_ntx==1 and m_auto) {
-        if(tHound >= 180 and tHound < 240) {
+        if(tHound >= 180 and tHound < 240 and watchdog_label.text() != " WD:1m ") {
           watchdog_label.setText (" HWD:2m ");
         }
         if(tHound >= 240 and tHound < 300) {
