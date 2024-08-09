@@ -6926,9 +6926,20 @@ void MainWindow::guiUpdate()
     if( SpecOp::HOUND == m_specOp ) {
       qint32 tHound=QDateTime::currentMSecsSinceEpoch()/1000 - m_tAutoOn;
       //To keep calling Fox, Hound must reactivate Enable Tx at least once every 2 minutes
-      if(tHound >= 300 and m_ntx==1 and m_auto) {
+      if(m_ntx==1 and m_auto) {
+        if(tHound >= 180 and tHound < 240) {
+          watchdog_label.setText (" HWD:2m ");
+        }
+        if(tHound >= 240 and tHound < 300) {
+          watchdog_label.setStyleSheet ("QLabel{color: #000000; background-color: #ffff00}");
+          watchdog_label.setText (" HWD:1m ");
+        }
+        if(tHound >= 300) {
           auto_tx_mode(false);
           statusUpdate ();
+          watchdog_label.setStyleSheet ("QLabel{color: #ffffff; background-color: #ff0000}");
+          watchdog_label.setText (" HWD:0m ");
+        }
       }
     }
 
@@ -12023,6 +12034,7 @@ void MainWindow::tx_watchdog (bool triggered)
       tx_status_label.setStyleSheet ("QLabel{color: #ffffff; background-color: #ff0000}");
       tx_status_label.setText (tr (" Runaway Tx watchdog "));
       QApplication::alert (this);
+      if (SpecOp::HOUND == m_specOp) ui->txrb1->click ();   // Go back to Tx1
     }
   else
     {
