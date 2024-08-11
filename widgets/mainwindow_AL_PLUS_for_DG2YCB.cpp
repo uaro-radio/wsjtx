@@ -5253,6 +5253,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             && text.contains(" " + m_config.my_callsign() + " " + m_hisCall) && ((!text.contains("73 ")
             && m_config.Wait_features_enabled() && !ui->autoButton->isChecked())
             or (m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint()))) {
+              if (SpecOp::HOUND==m_specOp && (text.mid(4,2).contains("15") or text.mid(4,2).contains("45"))) return;  // ignore stations calling in the wrong time slot
               tx_watchdog (false);
               m_bDoubleClicked = true;
               processMessage(decodedtext0);
@@ -6140,6 +6141,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   m_nFoxFreq=decodedtext.string().mid(16,4).toInt();
                   hound_reply ();
                 } else {
+                  if (SpecOp::HOUND==m_specOp && (text.mid(4,2).contains("15") or text.mid(4,2).contains("45"))) return;  // ignore stations calling in the wrong time slot
                   if (text.contains(" " + m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))  processMessage(decodedtext0);   // needed for MSHV multistream messages
                 }
               }
