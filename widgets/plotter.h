@@ -80,6 +80,8 @@ public:
   void showFreq(bool b);
   void setFlatten(bool b1, bool b2);
   void setTol(int n);
+  void setSuperFox(bool b);
+  void setSuperHound(bool b);
   void setRxBand(QString band);
   void setReference(bool b) {m_bReference = b;}
   bool Reference() const {return m_bReference;}
@@ -129,6 +131,8 @@ private:
   bool    m_bSingleDecode;
   bool    m_bFirst=true;
   bool    m_bResized;
+  bool    m_bSuperFox=false;
+  bool    m_bSuperHound=false;
   bool	  m_bars;
   bool    m_freq;
   float   m_fSpan;

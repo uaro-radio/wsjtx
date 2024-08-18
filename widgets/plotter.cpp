@@ -610,7 +610,7 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
       painter0.drawLine(x2,25,x2-5,20);
     }
 
-    if(m_mode=="Q65" or (m_mode=="JT65" and m_bVHF)) {
+    if(m_mode=="Q65" or (m_mode=="JT65" and m_bVHF) or (m_mode=="FT8" and m_bSuperHound)) {
       painter0.setPen(penGreen);
       x1=XfromFreq(m_rxFreq-m_tol);
       x2=XfromFreq(m_rxFreq+m_tol);
@@ -629,10 +629,11 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
       }
       painter0.setPen(penGreen);
       x6=XfromFreq(m_rxFreq+bw);             //Highest tone
+      if(m_mode=="FT8" and m_bSuperHound) x6=XfromFreq(m_rxFreq+1500.0);
       painter0.drawLine(x6,20,x6,26);
 
     } else {
-      // Draw the green "goal post"
+      // Draw the green goal post
       painter0.setPen(penGreen);
       x1=XfromFreq(m_rxFreq);
       x2=XfromFreq(m_rxFreq+bw);
@@ -655,7 +656,12 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
   }
 
   if(m_mode.startsWith("FT") or m_mode.startsWith("JT") or m_mode=="Q65" or m_mode.startsWith("FST4")) {
-    x1=XfromFreq(m_rxFreq); x2=XfromFreq(m_rxFreq+bw);
+    x1=XfromFreq(m_rxFreq);
+    if(m_mode=="FT8" and m_bSuperHound) {
+      x2=XfromFreq(m_rxFreq+1500);
+    } else {
+      x2=XfromFreq(m_rxFreq+bw);
+    }
     if (m_bars) {
       overPainter.setPen(Qt::green);                   // Rx bars
       overPainter.drawLine(x1,0,x1,m_h); overPainter.drawLine(x2,0,x2,m_h);
@@ -675,31 +681,36 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
     }
   }
 
-  QPainter hoverPainter(&m_HoverOverlayPixmap);
-  if (m_bars) {
-    if (!hoverPainter.isActive()) hoverPainter.begin(this);
-    int fwidth=XfromFreq(m_rxFreq+bw)-XfromFreq(m_rxFreq);
-    hoverPainter.setCompositionMode(QPainter::CompositionMode_Source);
-    hoverPainter.fillRect(0, 0, m_Size.width(), m_h, Qt::transparent);
-    hoverPainter.setPen(QPen(Qt::white));
-    hoverPainter.drawLine(0, 30, 0, m_h);              // first slot, left line hover
-    hoverPainter.drawLine(fwidth, 30, fwidth, m_h);    // first slot, right line hover
-  }
-
   if(m_mode=="JT9" or m_mode=="JT65" or m_mode.mid(0,4)=="WSPR" or m_mode=="Q65"
      or m_mode=="FT8" or m_mode=="FT4" or m_mode.startsWith("FST4")) {
     painter0.setPen(penRed);
     x1=XfromFreq(m_txFreq);
-    x2=XfromFreq(m_txFreq+bw);
+    if(m_mode=="FT8" and m_bSuperFox) {
+      x2=XfromFreq(m_txFreq+1500.0);
+    } else {
+      x2=XfromFreq(m_txFreq+bw);
+    }
     if(m_mode=="WSPR") {
       bw=4*12000.0/8192.0;                  //WSPR
       x1=XfromFreq(m_txFreq-0.5*bw);
       x2=XfromFreq(m_txFreq+0.5*bw);
     }
-    // Draw the red "goal post"
+    // Draw the red goal post
     painter0.drawLine(x1,yTxTop,x1,yTxTop+yh);
     painter0.drawLine(x1,yTxTop,x2,yTxTop);
     painter0.drawLine(x2,yTxTop,x2,yTxTop+yh);
+  }
+
+  QPainter hoverPainter(&m_HoverOverlayPixmap);
+  if (m_bars) {
+    if (!hoverPainter.isActive()) hoverPainter.begin(this);
+//    if(m_mode=="FT8" and m_bSuperHound) bw=1500;  // not useful for the white bars
+    int fwidth=XfromFreq(m_rxFreq+bw)-XfromFreq(m_rxFreq);;
+    hoverPainter.setCompositionMode(QPainter::CompositionMode_Source);
+    hoverPainter.fillRect(0, 0, m_Size.width(), m_h, Qt::transparent);
+    hoverPainter.setPen(QPen(Qt::white));              // white bars
+    hoverPainter.drawLine(0, 30, 0, m_h);              // first slot, left line hover
+    hoverPainter.drawLine(fwidth, 30, fwidth, m_h);    // first slot, right line hover
   }
 
   if(m_dialFreq>10.13 and m_dialFreq< 10.15 and m_mode.mid(0,4)!="WSPR" and m_mode!="FST4W") {
@@ -980,6 +991,17 @@ void CPlotter::setFlatten(bool b1, bool b2)
   m_Flatten=0;
   if(b1) m_Flatten=1;
   if(b2) m_Flatten=2;
+}
+
+void CPlotter::setSuperFox(bool b)
+{
+  m_bSuperFox=b;
+  if(m_bSuperFox) m_bSuperHound=false;
+}
+void CPlotter::setSuperHound(bool b)
+{
+  m_bSuperHound=b;
+  if(m_bSuperHound) m_bSuperFox=false;
 }
 
 void CPlotter::setTol(int n)                                 //setTol()
