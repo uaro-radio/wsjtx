@@ -13959,13 +13959,9 @@ void MainWindow::on_actionDiagnostic_mode_triggered()
       return;
     }
     QString instance = "";
-    QString path = "";
-#if defined(Q_OS_WIN)
-    path = QStandardPaths::writableLocation (QStandardPaths::DataLocation);
-#else
-    path = QStandardPaths::writableLocation (QStandardPaths::ConfigLocation);
-#endif
-    QStringList tw=path.split("/WSJT-X");
+    QString path = QStandardPaths::writableLocation (QStandardPaths::DataLocation);
+    QStringList tw;
+    if (path.contains("/WSJT-X")) tw=path.split("/WSJT-X");
     if (tw.size () > 0 && tw[1].remove(" - ") != "") instance = tw[1].remove(" - ") + "/";
     QString EventConfig = (
             "\[Sinks.SYSLOG]\n"
