@@ -58,8 +58,8 @@ extern "C"  {
 #endif
 
   /* typedef for consistent gfortran ABI for charlen type hidden arguments */
-#if __GNUC__ > 7
-#ifdef __cplusplus
+#if __GNUC__ > 7         ||  defined(__clang__)
+#if defined(__cplusplus) && !defined(__clang__)
 #include <cstddef>
 #else
 #include <stddef.h>
