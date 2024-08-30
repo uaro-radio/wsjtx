@@ -2714,14 +2714,17 @@ void MainWindow::fastSink(qint64 frames)
     if (!filtered or m_config.filters_for_Wait_and_Pounce_only()) {
         QString distance;
         QString deCall;
-        QString grid;
-        decodedtext.deCallAndGrid(deCall,grid);
-        if ((m_config.showDistance() || m_config.showAzimuth()) && grid.contains(grid_regexp)) {
+        QString deGrid;
+        decodedtext.deCallAndGrid(deCall,deGrid);
+        if ((m_config.showDistance() || m_config.showAzimuth()) && deGrid.contains(grid_regexp)) {
             double utch=0.0;
             int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
-            azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1().constData()),
-              const_cast <char *> ((grid + "      ").left (6).toLatin1().constData()),&utch,
-              &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,6,6);
+            QString my_Grid = m_config.my_grid();
+            if (my_Grid.length() < 5) my_Grid = m_config.my_grid().left(4)+"mm";
+            QString de_Grid= deGrid.left(4)+"mm";
+            azdist_(const_cast <char *> (my_Grid.toLatin1().constData()),
+                    const_cast <char *> (de_Grid.toLatin1().constData()),&utch,
+                    &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,(FCL)6,(FCL)6);
             if (m_config.showDistance()) {
                 int nd=nDkm;
                 if(m_config.miles()) nd=nDmiles;
@@ -4862,8 +4865,11 @@ void MainWindow::ARRL_Digi_Update(DecodedText dt)
 
        double utch=0.0;
        int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
-       azdist_(const_cast <char *> (m_config.my_grid().left(4).toLatin1().constData()),
-               const_cast <char *> (deGrid.left(4).toLatin1().constData()),&utch,
+       QString my_Grid = m_config.my_grid();
+       if (my_Grid.length() < 5) my_Grid = m_config.my_grid().left(4)+"mm";
+       QString de_Grid= deGrid.left(4)+"mm";
+       azdist_(const_cast <char *> (my_Grid.toLatin1().constData()),
+               const_cast <char *> (de_Grid.toLatin1().constData()),&utch,
                &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,(FCL)6,(FCL)6);
        int points=nDkm/500;
        if(nDkm > 500*points) points += 1;
@@ -5750,14 +5756,17 @@ void MainWindow::readFromStdout()                             //readFromStdout
        if (!filtered or m_config.filters_for_Wait_and_Pounce_only()) {  // show decodes if not filtered
            QString distance;
            QString deCall;
-           QString grid;
-           decodedtext.deCallAndGrid(deCall,grid);
-           if ((m_config.showDistance() || m_config.showAzimuth()) && grid.contains(grid_regexp)) {
+           QString deGrid;
+           decodedtext.deCallAndGrid(deCall,deGrid);
+           if ((m_config.showDistance() || m_config.showAzimuth()) && deGrid.contains(grid_regexp)) {
               double utch=0.0;
               int nAz,nEl,nDmiles,nDkm,nHotAz,nHotABetter;
-              azdist_(const_cast <char *> ((m_config.my_grid () + "      ").left (6).toLatin1().constData()),
-                      const_cast <char *> ((grid + "      ").left (6).toLatin1().constData()),&utch,
-                      &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,6,6);
+              QString my_Grid = m_config.my_grid();
+              if (my_Grid.length() < 5) my_Grid = m_config.my_grid().left(4)+"mm";
+              QString de_Grid= deGrid.left(4)+"mm";
+              azdist_(const_cast <char *> (my_Grid.toLatin1().constData()),
+                      const_cast <char *> (de_Grid.toLatin1().constData()),&utch,
+                      &nAz,&nEl,&nDmiles,&nDkm,&nHotAz,&nHotABetter,(FCL)6,(FCL)6);
               if (m_config.showDistance()) {
                    int nd=nDkm;
                    if(m_config.miles()) nd=nDmiles;
