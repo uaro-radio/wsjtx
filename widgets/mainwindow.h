@@ -59,6 +59,7 @@
 #define MAX_NUM_SYMBOLS 250
 #define TX_SAMPLE_RATE 48000
 #define NRING 3456000
+#define MAX_HOUNDS_IN_QUEUE 10
 
 extern int volatile itone[MAX_NUM_SYMBOLS];   //Audio tones for all Tx symbols
 extern int volatile icw[NUM_CW_SYMBOLS];	    //Dits for CW ID
@@ -389,6 +390,8 @@ private slots:
                          , bool fast_mode, quint32 tr_period, quint32 rx_df, QString const& dx_call
                          , QString const& dx_grid, bool generate_messages);
   void callSandP2(int nline);
+  void refreshHoundQueueDisplay();
+  void queueActiveWindowHound2(QString text);
 
 private:
   Q_SIGNAL void initializeAudioOutputStream (QAudioDeviceInfo,
@@ -751,6 +754,7 @@ private:
 
   QMap<QString,FoxQSO> m_foxQSO;       //Key = HoundCall, value = parameters for QSO in progress
   QMap<QString,QString> m_loggedByFox; //Key = HoundCall, value = logged band
+  QMap<QString,qint32> m_annotated_callsigns;  //Key = HoundCall, value = provided by api call
 
   struct FixupQSO       //Info for fixing Fox's log from file "FoxQSO.txt"
   {
@@ -919,6 +923,7 @@ private:
   QChar current_submode () const; // returns QChar {0} if submode is not appropriate
   void write_transmit_entry (QString const& file_name);
   void selectHound(QString t, bool bTopQueue);
+  void removeHoundFromCallingList(QString callsign);
   void houndCallers();
   void updateFoxQSOsInProgressDisplay();
   void foxQueueTopCallCommand();
@@ -935,6 +940,7 @@ private:
   void activeWorked(QString call, QString band);
   void read_log();
   void refreshPileupList();
+  void writeFoxTxMsgs();
 };
 
 extern int killbyname(const char* progName);

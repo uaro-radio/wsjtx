@@ -59,9 +59,9 @@ contains
     integer*2 iwave(15*12000)
     integer apsym2(58),aph10(10)
     character datetime*13,msg37*37
-    character*37 allmessages(200)
+    character*37 allmessages(MAX_EARLY)
     character*12 ctime
-    integer allsnrs(200)
+    integer allsnrs(MAX_EARLY)
     integer itone(NN)
     integer itone_save(NN,MAX_EARLY)
     real f1_save(MAX_EARLY)
@@ -216,6 +216,9 @@ contains
               if(msg37.eq.allmessages(id)) ldupe=.true.
            enddo
            if(.not.ldupe) then
+              if(ndecodes.ge.MAX_EARLY) then
+                cycle
+              endif
               ndecodes=ndecodes+1
               allmessages(ndecodes)=msg37
               allsnrs(ndecodes)=nsnr
