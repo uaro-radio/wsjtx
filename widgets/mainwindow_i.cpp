@@ -12271,12 +12271,13 @@ void MainWindow::readWidebandDecodes()
 void MainWindow::hound_reply ()
 {
   if (!m_tune) {
-    //Select TX3, set TxFreq to FoxFreq, and Force Auto ON.
+    // Select Tx3, set TxFreq to FoxFreq, and Force Auto ON.
     ui->txrb3->setChecked (true);
     m_nSentFoxRrpt = 1;
     ui->rptSpinBox->setValue(m_rptSent.toInt());
     if (!m_auto) auto_tx_mode(true);
     if (!m_config.superFox()) ui->TxFreqSpinBox->setValue (m_nFoxFreq);
+    stopWRTimer.start(int(11000.0*m_TRperiod));     // Tx3 timeout when in Hound mode
   }
 }
 
