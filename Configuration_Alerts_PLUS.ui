@@ -3246,7 +3246,7 @@ Right click for insert and delete options.</string>
        <item row="2" column="0" colspan="2">
         <widget class="QGroupBox" name="gbSpecialOpActivity">
          <property name="title">
-          <string>Special operating activity:  Generation of FT4, FT8, and MSK144 messages</string>
+          <string>Special operating activity</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -4611,22 +4611,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-<<<<<<< HEAD
-  <buttongroup name="TX_audio_source_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
-  <buttongroup name="special_op_activity_button_group"/>
-=======
   <buttongroup name="special_op_activity_button_group"/>
   <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="TX_audio_source_button_group"/>
   <buttongroup name="CAT_handshake_button_group"/>
   <buttongroup name="CAT_data_bits_button_group"/>
->>>>>>> 7e7aeae44 (Add audio device features "Sort alphabetically" and "Hide ALSA CARD subdevices".)
   <buttongroup name="split_mode_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="CAT_stop_bits_button_group"/>
  </buttongroups>
 </ui>

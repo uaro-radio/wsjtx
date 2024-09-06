@@ -59,6 +59,7 @@
 #include "echograph.h"
 #include "fastplot.h"
 #include "fastgraph.h"
+#include "foxotpcode.h"
 #include "about.h"
 #include "messageaveraging.h"
 #include "activeStations.h"
@@ -73,6 +74,7 @@
 #include "models/StationList.hpp"
 #include "validators/LiveFrequencyValidator.hpp"
 #include "Network/MessageClient.hpp"
+#include "Network/FoxVerifier.hpp"
 #include "Network/wsprnet.h"
 #include "signalmeter.h"
 #include "HelpTextWindow.hpp"
@@ -195,7 +197,7 @@ extern "C" {
 
   void jpl_setup_(char* fname, FCL len);
 }
-
+QList<FoxVerifier *> m_verifications;
 int volatile itone[MAX_NUM_SYMBOLS];   //Audio tones for all Tx symbols
 int volatile itone0[MAX_NUM_SYMBOLS];  //Dummy array, data not actually used
 int volatile icw[NUM_CW_SYMBOLS];        //Dits for CW ID
@@ -1081,6 +1083,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->actionAuto_Clear_Avg->setChecked(m_ndepth&128);
 
   m_UTCdisk=-1;
+  m_UTCdiskDateTime=QDateTime{}; // UTCDateTime of file being read from disk.
   m_fCPUmskrtd=0.0;
   m_bFastDone=false;
   m_bAltV=false;
@@ -3322,14 +3325,38 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
     }
     break;
   case Qt::Key_X:
+
     if(e->modifiers() & Qt::AltModifier) {
-      foxTest();
+      //foxTest();
       return;
     }
   }
 
   QMainWindow::keyPressEvent (e);
 }
+
+void MainWindow::handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, unsigned int hz, QString const &response) {  (void)status;
+  (void)code;
+  if (response.length() > 0) {
+    QString msg = FoxVerifier::formatDecodeMessage(ts, callsign, hz, response);
+      if (msg.length() > 0) {
+        ui->decodedTextBrowser->displayDecodedText(DecodedText{msg}, m_config.my_callsign(), m_mode, m_config.DXCC(),
+                                                   m_logBook, m_currentBand, m_config.ppfx());
+        write_all("Ck",msg);
+	}
+    }
+  LOG_INFO(QString("FoxVerifier response for [%1]: - [%2]").arg(callsign).arg(response).toStdString());
+}
+
+QString MainWindow::userAgent() {
+  // see User-Agent format definition https://www.rfc-editor.org/rfc/rfc9110#name-user-agent
+  //
+  QString platform = "(" + QSysInfo::prettyProductName()+"; "+QSysInfo::productType() + " " + QSysInfo::productVersion() + "; " +
+                     QSysInfo::currentCpuArchitecture() + "; " +
+                     QString("rv:%1").arg(QSysInfo::kernelVersion()) + ")";
+  QString userAgent = QString{"WSJT-X/" + version() + "_" + m_revision}.simplified() + " " +platform;
+  return userAgent;
+  }
 
 void MainWindow::bumpFqso(int n)                                 //bumpFqso()
 {
@@ -4077,6 +4104,11 @@ void MainWindow::read_wav_file (QString const& fname)
   int i1=fname.indexOf(".wav");
   m_nutc0=m_UTCdisk;
   m_UTCdisk=fname.mid(i0+1,i1-i0-1).toInt();
+  if (i0 > 6) {
+    m_UTCdiskDateTime = QDateTime::fromString("20" + fname.mid(i0 - 6, 13) + "Z", "yyyyMMdd_hhmmsst").toUTC();
+  } else
+    m_UTCdiskDateTime = QDateTime{};
+
   m_wav_future_watcher.setFuture (QtConcurrent::run ([this, fname] {
         auto basename = fname.mid (fname.lastIndexOf ('/') + 1);
         auto pos = fname.indexOf (".wav", 0, Qt::CaseInsensitive);
@@ -4977,7 +5009,7 @@ void MainWindow::queueActiveWindowHound2(QString line) {
           }
         }
         // make sure caller is not in fox queue either
-        if(m_foxQSO.contains(caller)) {
+        if(m_foxQSOinProgress.contains(caller)) {
           //LOG_INFO(QString("ActiveStations Window click: %1 already in progress. Skipping").arg(caller));
           return;
         }
@@ -5218,7 +5250,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
         if(navg>=2) bAvgMsg=true;
       }
-      write_all("Rx",line_read.trimmed());
+      if (!line_read.trimmed().contains("$VERIFY$")) {
+        write_all("Rx", line_read.trimmed());
+      }
     }   // Filtering out some false decodes, and don't write all.txt for such
 
       if ("FST4W" == m_mode)
@@ -5253,10 +5287,66 @@ void MainWindow::readFromStdout()                             //readFromStdout
             m_bDisplayedOnce=true;
           }
         } else {
+
+#ifdef FOX_OTP
+          // remove verifications that are done
+          QMutableListIterator < FoxVerifier * > it(m_verifications);
+          while (it.hasNext()) {
+            if (it.next()->finished()) {
+              it.remove();
+            }
+          }
+#endif
           DecodedText decodedtext1=decodedtext0;
-          if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
+          if ((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
             ARRL_Digi_Update(decodedtext1);
         }
+
+#ifdef FOX_OTP
+          if ((SpecOp::HOUND == m_specOp) &&
+               ((m_config.superFox() && (decodedtext0.mid(24, 8) == "$VERIFY$")) || // $VERIFY$ K8R 920749
+               (decodedtext0.mid(24,-1).contains(QRegularExpression{"^[A-Z0-9]{2,6}\\.[0-9]{6}"})))) // K8R.920749
+          {
+            // two cases:
+            // QString test_return = QString{"203630 -12  0.1  775 ~  K8R.920749"};
+            // $VERIFY$ foxcall otp
+            // QString test_return = QString{"203630 -12  0.1  775 ~  $VERIFY$ K8R 920749"};
+            QStringList lineparts;
+            QString callsign, otp;
+            unsigned int hz;
+            lineparts = decodedtext0.string().split(' ', SkipEmptyParts);
+            if (lineparts.length() <= 6) {
+              QStringList otp_parts;
+              // split K8.V920749 into K8R and 920749
+              otp_parts = lineparts[5].split('.', SkipEmptyParts);
+              callsign = otp_parts[0];
+              otp = otp_parts[1];
+              hz = lineparts[3].toInt();
+            } else
+            {
+              // split $VERIFY$ K8R 920749 into K8R and 920749
+              callsign = lineparts[6];
+              otp = lineparts[7];
+              hz = 750; // SF is 750
+            }
+            QDateTime verifyDateTime;
+            if (m_diskData) {
+              verifyDateTime = m_UTCdiskDateTime; // get the date set from reading the wav file
+            } else {
+              verifyDateTime = QDateTime(QDateTime::currentDateTimeUtc().date(),
+                                         QTime::fromString(lineparts[0], "hhmmss"));
+            }
+            FoxVerifier *fv = new FoxVerifier(MainWindow::userAgent(),
+                                              &m_network_manager,
+                                              m_config.OTPUrl(),
+                                              callsign, // foxcall
+                                              verifyDateTime,
+                                              otp,
+                                              hz); // freq
+            connect(fv, &FoxVerifier::verifyComplete, this, &MainWindow::handleVerifyMsg);
+            m_verifications << fv;
+          }
+#endif
 
         QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait & Reply/Call and filtering
 
@@ -5692,13 +5782,14 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         // SuperHound label
-        if (ui->labDXped->text()=="Super Hound" && decodedtext0.mid(3,18).contains(" verified")) {
+        if (ui->labDXped->text()=="Super Hound" && decodedtext0.mid(3,18).contains(" verified")) { // URUR
           verified = true;
+          write_all("Vf",decodedtext0.string());
           ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
         } else {
           if (decodedtext0.mid(4,2).contains("00") or decodedtext0.mid(4,2).contains("30")) verified = false;
         }
-        if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
+        if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")  // URUR
           ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
 
         // show distance and bearing
@@ -5900,7 +5991,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             && text.contains(m_hisCall + " 73"))  cease_auto_Tx_after_QSO();
 
         // highlight orange and blue callsigns
-        if(m_config.highlight_orange() or (m_config.highlight_blue())) {
+        if (m_config.highlight_orange() or (m_config.highlight_blue())) {
           QString deCall;
           QString deGrid;
           decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -5915,8 +6006,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         // Highlight DX Call/Grid
-        if (!pounce && m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
-             || (decodedtext.string().contains("<...> " + m_hisCall))))  {
+        if (!pounce && m_config.highlight_DXcall() && (m_hisCall != "") &&
+            ((decodedtext.string().contains(QRegularExpression{"(\\w+) " + m_hisCall}))
+             || (decodedtext.string().contains(QRegularExpression{"(\\w+) <" + m_hisCall + ">"}))
+             || (decodedtext.string().contains(QRegularExpression{"<(\\w+)> " + m_hisCall}))
+             || (decodedtext.string().contains(QRegularExpression{"<...> " + m_hisCall})))) {
             ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
             QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
                 ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
@@ -5932,21 +6026,21 @@ void MainWindow::readFromStdout()                             //readFromStdout
             ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
         }
 
-          if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress && !ignored && !filtered) {
+          if (m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress && !ignored && !filtered) {
             QString messagePriority=ui->decodedTextBrowser->CQPriority();
-            if(messagePriority!="") {
-              if(messagePriority=="New Call on Band"
-                 and m_BestCQpriority!="New Call on Band"
-                 and m_BestCQpriority!="New Multiplier"
-                 and (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
+            if (messagePriority!="") {
+              if (messagePriority=="New Call on Band"
+                  and m_BestCQpriority!="New Call on Band"
+                  and m_BestCQpriority!="New Multiplier"
+                  and (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
                 m_BestCQpriority="New Call on Band";
                 m_bDoubleClicked = true;
                 processMessage(decodedtext0);
               }
-              if(messagePriority=="New DXCC"
-                 and m_BestCQpriority!="New DXCC"
-                 and m_BestCQpriority!="New Multiplier"
-                 and (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
+              if (messagePriority=="New DXCC"
+                  and m_BestCQpriority!="New DXCC"
+                  and m_BestCQpriority!="New Multiplier"
+                  and (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
                 m_BestCQpriority="New DXCC";
                 m_bDoubleClicked = true;
                 processMessage(decodedtext0);
@@ -8580,10 +8674,6 @@ void MainWindow::msgtype(QString t, QLineEdit* tx)               //msgtype()
 
 void MainWindow::on_tx1_editingFinished()                       //tx1 edited
 {
-  if (SpecOp::HOUND==m_specOp && m_config.superFox() && !m_bDoubleClicked) {
-    clearDX();
-    return;
-  }
   QString t=ui->tx1->text();
   msgtype(t, ui->tx1);
 }
@@ -8923,10 +9013,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {
-  if (SpecOp::HOUND==m_specOp && m_config.superFox() && !m_bDoubleClicked) {
-    clearDX();
-    return;
-  }
   set_dateTimeQSO (-1);  // reset the QSO start time when DXCall changes
   m_hisCall = call;
   if (!blocked) ui->dxGridEntry->clear();  // conditional because not always useful with highlightDXCall/DXGrid feature
@@ -9416,7 +9502,6 @@ void MainWindow::on_actionFT8_triggered()
   QTimer::singleShot (50, [=] {
     if(m_specOp!=SpecOp::FOX) ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
     if(m_specOp==SpecOp::FOX && !m_config.superFox()) ui->TxFreqSpinBox->setValue(m_TxFreqFox);
-    if(SpecOp::HOUND == m_specOp && m_config.superFox()) clearDX();
     if(SpecOp::HOUND == m_specOp && m_config.superFox() &&
        (ui->RxFreqSpinBox->value() < 700 or ui->RxFreqSpinBox->value() > 800)) {
       ui->RxFreqSpinBox->setValue(750);
@@ -12361,6 +12446,34 @@ void MainWindow::on_comboBoxHoundSort_activated(int index)
 {
   if(index!=-99) houndCallers();            //Silence compiler warning
 }
+#ifdef FOX_OTP
+QString MainWindow::foxOTPcode()
+{
+  QString code;
+  if (!m_config.OTPSeed().isEmpty())
+  {
+    char output[7];
+    QDateTime dateTime = dateTime.currentDateTime();
+    QByteArray ba = m_config.OTPSeed().toLocal8Bit();
+    char *c_str = ba.data();
+    int return_length;
+    if (6 == (return_length = create_totp(c_str, output, dateTime.toTime_t(), 30, 0)))
+    {
+      code = QString(output);
+    } else
+    {
+      code = "000000";
+      LOG_INFO(QString("foxOTPcode: Incorrect return length %1").arg(return_length));
+    }
+  } else
+  {
+    code = "000000";
+    showStatusMessage(tr("TOTP: No seed entered in fox configuration to generate verification code."));
+    LOG_INFO(QString("foxOTPcode: No seed entered in fox configuration to generate verification code."));
+  }
+  return code;
+}
+#endif
 
 //------------------------------------------------------------------------------
 QString MainWindow::sortHoundCalls(QString t, int isort, int max_dB)
@@ -12621,10 +12734,15 @@ void MainWindow::houndCallers()
         if(ui->cbWorkDupes->isChecked()) {
            if(m_loggedByFox[houndCall].contains(m_lastBand)
               and !decoded.contains(paddedHoundCall)) continue;        // don't display old messages again of stations already logged
-        } else {
-          if(m_loggedByFox[houndCall].contains(m_lastBand)) continue;  // already logged on this band
         }
-        if(m_foxQSO.contains(houndCall)) continue;                     // still in the QSO map
+        if(m_foxQSOinProgress.contains(houndCall) || m_foxQSO.contains(houndCall))
+        {
+          continue;
+        }                      // still in the QSO map, or was (very) recently worked
+
+        if(m_foxQSO.contains(houndCall) && !ui->cbRxAll->isChecked()) {
+          continue;
+        }                      // already worked
         auto const& entity = m_logBook.countries ()->lookup (houndCall);
         auto const& continent = AD1CCty::continent (entity.continent);
 
@@ -12713,8 +12831,12 @@ void MainWindow::foxTxSequencer()
   QString hc,hc1,hc2;                       //Hound calls
   QString t,rpt;
   qint32  islot=0;
+  qint32  ncalls_sent=0;
   qint32  n1,n2,n3;
   int nMaxRemainingSlots=0;
+  static unsigned int m_tFoxTxSinceOTP=99;
+
+  m_tFoxTxSinceOTP++;
   m_tFoxTx++;                               //Increment Fox Tx cycle counter
 
   //Is it time for a stand-alone CQ?
@@ -12730,15 +12852,29 @@ void MainWindow::foxTxSequencer()
     foxGenWaveform(islot-1,fm);
     goto Transmit;
   }
+
+#ifdef FOX_OTP
+  // Send OTP message maybe for regular fox mode
+  if (!m_config.superFox() && m_config.OTPEnabled() && (islot < m_Nslots) && (m_tFoxTxSinceOTP >= m_config.OTPinterval()))
+  {
+      // truncated callsign + OTP code (to be under 13 character limit of free text)
+      QString trunc_call=m_config.my_callsign().left(6).split("/").at(0); // truncate callsign to 6 characters
+      fm = trunc_call + "." + foxOTPcode(); // N5J-> N5J.123456, W1AW/7 -> W1AW.123456, 4U1IARU -> 4U1IAR.123456
+      m_tFoxTxSinceOTP = 0;                     //Remember when we sent a Tx5
+      islot++;
+      foxGenWaveform(islot - 1, fm);
+  }
+#endif
+
 //Compile list1: up to NSLots Hound calls to be sent RR73
   for(QString hc: m_foxQSO.keys()) {           //Check all Hound calls: First priority
     if(m_foxQSO[hc].tFoxRrpt<0) continue;
     if(m_foxQSO[hc].tFoxRrpt - m_foxQSO[hc].tFoxTxRR73 > 3) {
       //Has been a long time since we sent RR73
+      if(list1.size()>=(m_Nslots - islot)) goto list1Done;
       list1 << hc;                          //Add to list1
       m_foxQSO[hc].tFoxTxRR73 = m_tFoxTx;   //Time RR73 is sent
       m_foxQSO[hc].nRR73++;                 //Increment RR73 counter
-      if(list1.size()==m_Nslots) goto list1Done;
     }
   }
 
@@ -12746,10 +12882,10 @@ void MainWindow::foxTxSequencer()
     if(m_foxQSO[hc].tFoxRrpt<0) continue;
     if(m_foxQSO[hc].tFoxTxRR73 < 0) {
       //Have not yet sent RR73
+      if(list1.size()>=(m_Nslots - islot)) goto list1Done;
       list1 << hc;                          //Add to list1
       m_foxQSO[hc].tFoxTxRR73 = m_tFoxTx;   //Time RR73 is sent
       m_foxQSO[hc].nRR73++;                 //Increment RR73 counter
-      if(list1.size()==m_Nslots) goto list1Done;
     }
   }
 
@@ -12757,10 +12893,10 @@ void MainWindow::foxTxSequencer()
     if(m_foxQSO[hc].tFoxRrpt<0) continue;
     if(m_foxQSO[hc].tFoxTxRR73 <= m_foxQSO[hc].tFoxRrpt) {
       //We received R+rpt more recently than we sent RR73
+      if(list1.size()>=(m_Nslots - islot)) goto list1Done;
       list1 << hc;                          //Add to list1
       m_foxQSO[hc].tFoxTxRR73 = m_tFoxTx;   //Time RR73 is sent
       m_foxQSO[hc].nRR73++;                 //Increment RR73 counter
-      if(list1.size()==m_Nslots) goto list1Done;
     }
   }
 
@@ -12773,13 +12909,18 @@ list1Done:
     hc=m_foxQSOinProgress.at(i);
     if((m_foxQSO[hc].tFoxRrpt < 0) and (m_foxQSO[hc].ncall < m_maxStrikes)) {
       //Sent him a report and have not received R+rpt: call him again
+      if(list2.size()>=(nMaxRemainingSlots - islot)) goto list2Done;
       list2 << hc;                          //Add to list2
-      if(list2.size()==nMaxRemainingSlots) goto list2Done;
+      if(list2.size() == nMaxRemainingSlots) goto list2Done;
     }
   }
 
   while(!m_houndQueue.isEmpty()) {
     //Start QSO with a new Hound
+    if (list2.size() == (nMaxRemainingSlots - islot))
+    {
+      break;
+    }
     t=m_houndQueue.dequeue();             //Fetch new hound from queue
     int i0=t.indexOf(" ");
     hc=t.mid(0,i0);                       //hound call
@@ -12795,9 +12936,9 @@ list1Done:
     m_foxQSO[hc].tFoxTxRR73 = -1;         //Have not sent RR73
     refreshHoundQueueDisplay();
 
-    if(list2.size()==nMaxRemainingSlots) {
-      break;
-    }
+//    if(list2.size()==nMaxRemainingSlots) {  // URUR bei b2_otp gelöscht
+//      break;
+//    }
 
   }
 
@@ -12858,12 +12999,13 @@ list2Done:
       fm = Radio::base_callsign(hc2) + " " + m_baseCall + " " + m_foxQSO[hc2].sent; //Standard FT8 message
     }
     islot++;
+    ncalls_sent++;
     foxGenWaveform(islot-1,fm);                             //Generate tx waveform
   }
 
   if(islot < m_Nslots) {
     //At least one slot is still open
-    if(islot==0 or ((m_tFoxTx-m_tFoxTx0>=4) and ui->cbMoreCQs->isChecked())) {
+    if(ncalls_sent==0 or ((m_tFoxTx-m_tFoxTx0>=4) and ui->cbMoreCQs->isChecked())) {
       //Roughly every 4th Tx sequence, put a CQ message in an otherwise empty slot
       fm=ui->comboBoxCQ->currentText() + " " + m_config.my_callsign();
       if(!fm.contains("/")) {
@@ -13216,7 +13358,7 @@ void MainWindow::write_all(QString txRx, QString message)
     t = t.asprintf("%5d",ui->TxFreqSpinBox->value());
     if (txRx=="Tx") msg="   0  0.0" + t + " " + message;
     auto time = QDateTime::currentDateTimeUtc ();
-    if( txRx=="Rx" && !m_bFastMode ) time=m_dateTimeSeqStart;
+    if( (txRx=="Rx" || txRx=="Ck") && !m_bFastMode ) time=m_dateTimeSeqStart;
 
   if (txRx=="Rx") {
      t = t.asprintf("%10.3f ",m_freqNominalPeriod/1.e6);   // prevent writing of wrong frequencies
@@ -13515,14 +13657,39 @@ void MainWindow::on_wsprButton_clicked()
     on_actionWSPR_triggered();
 }
 
-void MainWindow::sfox_tx()
-{
-  auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
+void MainWindow::sfox_tx() {
+  auto fname{QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   QStringList args{fname};
   args.append(m_config.my_callsign());
+#ifdef FOX_OTP
+  qint32 otp_key = 0;
+  if (m_config.OTPEnabled())
+  {
+      LOG_INFO("TOTP: Generating OTP key");
+      if (m_config.OTPSeed().length() == 16) {
+        QString output=foxOTPcode();
+        if (6 == output.length())
+        {
+          otp_key = QString(output).toInt();
+          LOG_INFO(QString("TOTP SF: %1 [%2]").arg(output).arg(otp_key).toStdString());
+        } else
+        {
+          otp_key = 0;
+          LOG_INFO(QString("TOTP SF: Incorrect length"));
+        }
+        args.append(QString("OTP:%1").arg(otp_key));
+      } else
+      {
+        showStatusMessage (tr ("TOTP SF: seed not long enough."));
+        LOG_INFO(QString("TOTP SF: seed not long enough"));
+      }
+  }
+#else
   args.append(m_config.FoxKey());
+#endif
 //  qDebug() << "aa" << QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx";
 //  qDebug() << "bb" << args;
+LOG_INFO(QString("%1 %2").arg(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx").arg(args.join(" ")).toStdString());
   p2.start(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx", args);
   p2.waitForFinished();
   auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};

@@ -154,7 +154,7 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
         call get_executable_directory(executable_directory)
         write(crxfreq,'(i6)') params%nfqso
         write(cftol,'(i5)') params%ntol
-        cmnd=trim(exe_dir)//'/sfrx'//crxfreq//cftol// '"' // &
+        cmnd=trim(exe_dir)//'/sfrx'//crxfreq//cftol// 'OTP "' // &
              trim(temp_dir)//'/fort.47"'
         if (is_windows()) cmnd='.\sfrx'//crxfreq//cftol// '"' // &
              trim(temp_dir)//'/fort.47"'

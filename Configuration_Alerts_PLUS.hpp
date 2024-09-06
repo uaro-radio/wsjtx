@@ -9,6 +9,7 @@
 #include "models/IARURegions.hpp"
 #include "Audio/AudioDevice.hpp"
 #include "Transceiver/Transceiver.hpp"
+#include "foxotpcode.h"
 
 #include "pimpl_h.hpp"
 
@@ -294,7 +295,11 @@ public:
   bool alert_ITUZOB () const;
   bool alert_DXcall () const;
   bool alert_Enabled () const;
-
+  bool validate_otp_seed(QString);
+  QString OTPSeed() const;
+  QString OTPUrl() const;
+  bool OTPEnabled() const;
+  unsigned int OTPinterval() const;
 //                                      0       1      2         3       4       5      6     7        8           9
   enum class SpecialOperatingActivity {NONE, NA_VHF, EU_VHF, FIELD_DAY, RTTY, WW_DIGI, FOX, HOUND, ARRL_DIGI, Q65_PILEUP};
   SpecialOperatingActivity special_op_id () const;

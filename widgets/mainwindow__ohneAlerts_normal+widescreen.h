@@ -26,6 +26,8 @@
 #include <QQueue>
 #include <QFuture>
 #include <QFutureWatcher>
+#include <QDateTime>
+#include <QCalendar>
 
 #include "MultiGeometryWidget.hpp"
 #include "NonInheritingProcess.hpp"
@@ -535,6 +537,7 @@ private:
   FrequencyList_v2_101::const_iterator m_frequency_list_fcal_iter;
   qint32  m_nTx73;
   qint32  m_UTCdisk;
+  QDateTime    m_UTCdiskDateTime;
   qint32  m_wait;
   qint32  m_isort;
   qint32  m_max_dB;
@@ -935,7 +938,10 @@ private:
   void activeWorked(QString call, QString band);
   void read_log();
   void refreshPileupList();
+  QString userAgent();
+  void handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, unsigned int hz, QString const &response);
   void writeFoxTxMsgs();
+  QString foxOTPcode();
 };
 
 extern int killbyname(const char* progName);
