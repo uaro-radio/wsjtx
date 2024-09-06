@@ -9,6 +9,7 @@
 #include "models/IARURegions.hpp"
 #include "Audio/AudioDevice.hpp"
 #include "Transceiver/Transceiver.hpp"
+#include "foxotpcode.h"
 
 #include "pimpl_h.hpp"
 
@@ -100,6 +101,7 @@ public:
   QString my_grid () const;
   QString Field_Day_Exchange() const;
   QString RTTY_Exchange() const;
+  QString FoxKey() const;
   QString Contest_Name() const;
   void setEU_VHF_Contest();
   QFont text_font () const;
@@ -137,6 +139,7 @@ public:
   bool decode_at_52s () const;
   bool single_decode () const;
   bool twoPass() const;
+  bool superFox() const;
   bool bFox() const;
   bool bHound() const;
   bool bLowSidelobes() const;
@@ -187,10 +190,15 @@ public:
   void setSpecial_Hound();
   void setSpecial_Fox();
   void setSpecial_None();
+  void toggle_SF();
   bool highlight_DXcall () const;
   bool highlight_DXgrid () const;
   bool Individual_Contest_Name() const;
-
+  bool validate_otp_seed(QString);
+  QString OTPSeed() const;
+  QString OTPUrl() const;
+  bool OTPEnabled() const;
+  unsigned int OTPinterval() const;
 //                                      0       1      2         3       4       5      6     7        8           9
   enum class SpecialOperatingActivity {NONE, NA_VHF, EU_VHF, FIELD_DAY, RTTY, WW_DIGI, FOX, HOUND, ARRL_DIGI, Q65_PILEUP};
   SpecialOperatingActivity special_op_id () const;
@@ -243,6 +251,8 @@ public:
 
   // Close down connection to rig.
   void transceiver_offline ();
+
+  void set_CTY_DAT_version(QString const& version);
 
   // Set transceiver frequency in Hertz.
   Q_SLOT void transceiver_frequency (Frequency);

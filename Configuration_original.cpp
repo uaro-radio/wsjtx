@@ -173,7 +173,6 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
-
 #include "pimpl_impl.hpp"
 #include "Logger.hpp"
 #include "qt_helpers.hpp"
@@ -194,6 +193,7 @@
 #include "models/FrequencyList.hpp"
 #include "models/StationList.hpp"
 #include "Network/NetworkServerLookup.hpp"
+#include "Network/FoxVerifier.hpp"
 #include "widgets/MessageBox.hpp"
 #include "validators/MaidenheadLocatorValidator.hpp"
 #include "validators/CallsignValidator.hpp"
@@ -201,6 +201,7 @@
 #include "models/DecodeHighlightingModel.hpp"
 #include "logbook/logbook.h"
 #include "widgets/LazyFillComboBox.hpp"
+#include "Network/FileDownload.hpp"
 
 #include "ui_Configuration.h"
 #include "moc_Configuration.cpp"
@@ -244,6 +245,9 @@ namespace
           |X85|X86|X87|X88|X89|X90|X91
           |X92|X93|X94|X95|X96|X97|X98
           |X99
+          |[0][0][0][1-9]                  # 4-digit numbers
+          |[0][0-9][1-9][0-9]              # between 0001
+          |[1-7][0-9][0-9][0-9]            # and 7999
         )
       )", QRegularExpression::CaseInsensitiveOption | QRegularExpression::ExtendedPatternSyntaxOption};
 
@@ -329,9 +333,9 @@ public:
 
     connect (button_box, &QDialogButtonBox::accepted, this, &FrequencyDialog::accept);
     connect (button_box, &QDialogButtonBox::rejected, this, &FrequencyDialog::reject);
-    connect(start_date_time_edit_, &QDateTimeEdit::dateTimeChanged, this, &FrequencyDialog::checkSaneDates);
-    connect(end_date_time_edit_, &QDateTimeEdit::dateTimeChanged, this, &FrequencyDialog::checkSaneDates);
-    connect(enable_dates_checkbox_, &QCheckBox::stateChanged, this, &FrequencyDialog::toggleValidity);
+    connect (start_date_time_edit_, &QDateTimeEdit::dateTimeChanged, this, &FrequencyDialog::checkSaneDates);
+    connect (end_date_time_edit_, &QDateTimeEdit::dateTimeChanged, this, &FrequencyDialog::checkSaneDates);
+    connect (enable_dates_checkbox_, &QCheckBox::stateChanged, this, &FrequencyDialog::toggleValidity);
     toggleValidity();
   }
 
@@ -564,6 +568,9 @@ private:
   Q_SLOT void on_add_macro_line_edit_editingFinished ();
   Q_SLOT void delete_macro ();
   void delete_selected_macros (QModelIndexList);
+  void after_CTY_downloaded();
+  void set_CTY_DAT_version(QString const& version);
+  void error_during_CTY_download (QString const& reason);
   Q_SLOT void on_udp_server_line_edit_textChanged (QString const&);
   Q_SLOT void on_udp_server_line_edit_editingFinished ();
   Q_SLOT void on_save_path_select_push_button_clicked (bool);
@@ -574,13 +581,38 @@ private:
   Q_SLOT void handle_transceiver_failure (QString const& reason);
   Q_SLOT void on_reset_highlighting_to_defaults_push_button_clicked (bool);
   Q_SLOT void on_rescan_log_push_button_clicked (bool);
+  Q_SLOT void on_CTY_download_button_clicked (bool);
   Q_SLOT void on_LotW_CSV_fetch_push_button_clicked (bool);
+  Q_SLOT void on_hamlib_download_button_clicked (bool);
+  Q_SLOT void on_revert_update_button_clicked (bool);
+  Q_SLOT void on_gbSpecialOpActivity_clicked (bool);
+  Q_SLOT void on_rbFox_clicked (bool);
+  Q_SLOT void on_rbHound_clicked (bool);
+  Q_SLOT void on_rbNA_VHF_Contest_clicked (bool);
+  Q_SLOT void on_rbEU_VHF_Contest_clicked (bool);
+  Q_SLOT void on_rbWW_DIGI_clicked (bool);
+  Q_SLOT void on_rbQ65pileup_clicked (bool);
+  Q_SLOT void on_rbField_Day_clicked (bool);
+  Q_SLOT void on_rbRTTY_Roundup_clicked (bool);
+  Q_SLOT void on_rbARRL_Digi_clicked (bool);
+  Q_SLOT void on_cbSuperFox_clicked (bool);
+  Q_SLOT void on_cbContestName_clicked (bool);
+  Q_SLOT void on_cbOTP_clicked (bool);
+
+  void error_during_hamlib_download (QString const& reason);
+  void after_hamlib_downloaded();
+  void display_file_information();
+  void check_visibility();
+
   Q_SLOT void on_cbx2ToneSpacing_clicked(bool);
   Q_SLOT void on_cbx4ToneSpacing_clicked(bool);
   Q_SLOT void on_prompt_to_log_check_box_clicked(bool);
   Q_SLOT void on_cbAutoLog_clicked(bool);
   Q_SLOT void on_Field_Day_Exchange_textEdited (QString const&);
   Q_SLOT void on_RTTY_Exchange_textEdited (QString const&);
+  Q_SLOT void on_FoxKey_textEdited (QString const&);
+  Q_SLOT void on_OTPUrl_textEdited (QString const&);
+  Q_SLOT void on_OTPSeed_textEdited (QString const&);
   Q_SLOT void on_Contest_Name_textEdited (QString const&);
 
   // typenames used as arguments must match registered type names :(
@@ -678,6 +710,13 @@ private:
   QString FD_exchange_;
   QString RTTY_exchange_;
   QString Contest_Name_;
+  QString hamlib_backed_up_;
+  QString FoxKey_;
+
+  QString OTPUrl_;
+  QString OTPSeed_;
+  bool  OTPEnabled_;
+  qint32 OTPinterval_;
 
   qint32 id_interval_;
   qint32 ntrials_;
@@ -711,6 +750,7 @@ private:
   bool decode_at_52s_;
   bool single_decode_;
   bool twoPass_;
+  bool bSuperFox_;
   bool Individual_Contest_Name_;
   bool bSpecialOp_;
   int  SelectedActivity_;
@@ -746,7 +786,7 @@ private:
   QAudioDeviceInfo next_audio_output_device_;
   AudioDevice::Channel audio_output_channel_;
   AudioDevice::Channel next_audio_output_channel_;
-
+  FileDownload cty_download;
   friend class Configuration;
 };
 
@@ -819,6 +859,7 @@ bool Configuration::enable_VHF_features () const {return m_->enable_VHF_features
 bool Configuration::decode_at_52s () const {return m_->decode_at_52s_;}
 bool Configuration::single_decode () const {return m_->single_decode_;}
 bool Configuration::twoPass() const {return m_->twoPass_;}
+bool Configuration::superFox() const {return m_->bSuperFox_;}
 bool Configuration::Individual_Contest_Name() const {return m_->Individual_Contest_Name_;}
 bool Configuration::x2ToneSpacing() const {return m_->x2ToneSpacing_;}
 bool Configuration::x4ToneSpacing() const {return m_->x4ToneSpacing_;}
@@ -858,6 +899,11 @@ bool Configuration::include_WAE_entities () const {return m_->include_WAE_entiti
 bool Configuration::highlight_73 () const {return m_->highlight_73_;}
 bool Configuration::highlight_DXcall () const {return m_->highlight_DXcall_;}
 bool Configuration::highlight_DXgrid () const {return m_->highlight_DXgrid_;}
+
+void Configuration::set_CTY_DAT_version(QString const& version)
+{
+  m_->set_CTY_DAT_version(version);
+}
 
 void Configuration::set_calibration (CalibrationParams params)
 {
@@ -942,6 +988,26 @@ void Configuration::invalidate_audio_output_device (QString /* error */)
   m_->audio_output_device_ = QAudioDeviceInfo {};
 }
 
+// OTP seed can be empty, in which case it is not used, or a valid 16 character base32 string.
+bool Configuration::validate_otp_seed(QString seed)
+{
+  if (seed.isEmpty())
+    {
+      return true;
+    }
+  if (seed.size() != 16)
+    {
+      return false;
+    }
+  for (QChar c: seed)
+  {
+    if (!QString(BASE32_CHARSET).contains(c))
+    {
+      return false;
+    }
+  }
+  return true;
+}
 bool Configuration::valid_n1mm_info () const
 {
   // do very rudimentary checking on the n1mm server name and port number.
@@ -978,6 +1044,11 @@ void Configuration::setEU_VHF_Contest()
 QString Configuration::RTTY_Exchange() const
 {
   return m_->RTTY_exchange_;
+}
+
+QString Configuration::FoxKey() const
+{
+  return m_->FoxKey_;
 }
 
 QString Configuration::Contest_Name() const
@@ -1028,8 +1099,41 @@ void Configuration::setSpecial_None()
 {
   m_->bSpecialOp_=false;
   m_->ui_->gbSpecialOpActivity->setChecked(m_->bSpecialOp_);
+  m_->SelectedActivity_ = static_cast<int> (SpecialOperatingActivity::HOUND); // brings backward compatibility to versions without Q65_PILEUP
   m_->write_settings();
 }
+
+void Configuration::toggle_SF()
+{
+  if (m_->bSuperFox_) {
+    m_->ui_->cbSuperFox->setChecked(false);
+  } else {
+    m_->ui_->cbSuperFox->setChecked(true);
+  }
+  m_->bSuperFox_ = m_->ui_->cbSuperFox->isChecked ();
+  m_->write_settings();
+}
+
+QString Configuration::OTPSeed() const
+{
+  return m_->OTPSeed_;
+}
+
+QString Configuration::OTPUrl() const
+{
+  return m_->OTPUrl_;
+}
+
+unsigned int Configuration::OTPinterval() const
+{
+  return m_->OTPinterval_;
+}
+
+bool Configuration::OTPEnabled() const
+{
+  return m_->OTPSeed_.size() == 16 && m_->OTPEnabled_;
+}
+
 namespace
 {
 #if defined (Q_OS_MAC)
@@ -1183,8 +1287,13 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
 
   // set up LoTW users CSV file fetching
   connect (&lotw_users_, &LotWUsers::load_finished, [this] () {
-      ui_->LotW_CSV_fetch_push_button->setEnabled (true);
-    });
+    ui_->LotW_CSV_fetch_push_button->setEnabled (true);
+  });
+
+  connect(&lotw_users_, &LotWUsers::progress, [this] (QString const& msg) {
+      ui_->LotW_CSV_status_label->setText(msg);
+  });
+
   lotw_users_.set_local_file_path (writeable_data_dir_.absoluteFilePath ("lotw-user-activity.csv"));
 
   //
@@ -1195,6 +1304,8 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   ui_->add_macro_line_edit->setValidator (new QRegularExpressionValidator {message_alphabet, this});
   ui_->Field_Day_Exchange->setValidator (new QRegularExpressionValidator {field_day_exchange_re, this});
   ui_->RTTY_Exchange->setValidator (new QRegularExpressionValidator {RTTY_roundup_exchange_re, this});
+  QRegularExpression b32(QString("(^[") + QString(BASE32_CHARSET)+QString(BASE32_CHARSET).toLower() + QString("]{16}$)|(^$)"));
+  ui_->OTPSeed->setValidator(new QRegularExpressionValidator(b32, this));
 
   //
   // assign ids to radio buttons
@@ -1438,6 +1549,7 @@ void Configuration::impl::initialize_models ()
   ui_->decode_at_52s_check_box->setChecked(decode_at_52s_);
   ui_->single_decode_check_box->setChecked(single_decode_);
   ui_->cbTwoPass->setChecked(twoPass_);
+  ui_->cbSuperFox->setChecked(bSuperFox_);
   ui_->cbContestName->setChecked(Individual_Contest_Name_);
   ui_->gbSpecialOpActivity->setChecked(bSpecialOp_);
   ui_->special_op_activity_button_group->button (SelectedActivity_)->setChecked (true);
@@ -1521,6 +1633,8 @@ void Configuration::impl::initialize_models ()
   ui_->cbHighlightDXcall->setChecked(highlight_DXcall_);
   ui_->cbHighlightDXgrid->setChecked(highlight_DXgrid_);
 
+  check_visibility ();
+
   set_rig_invariants ();
 }
 
@@ -1549,10 +1663,23 @@ void Configuration::impl::read_settings ()
   my_grid_ = settings_->value ("MyGrid", QString {}).toString ();
   FD_exchange_ = settings_->value ("Field_Day_Exchange",QString {}).toString ();
   RTTY_exchange_ = settings_->value ("RTTY_Exchange",QString {}).toString ();
+  FoxKey_ = settings_->value ("FoxKey",QString {}).toString ();
   Contest_Name_ = settings_->value ("Contest_Name",QString {}).toString ();
   ui_->Field_Day_Exchange->setText(FD_exchange_);
   ui_->RTTY_Exchange->setText(RTTY_exchange_);
+  ui_->FoxKey->setText(FoxKey_);
   ui_->Contest_Name->setText(Contest_Name_);
+  hamlib_backed_up_ = settings_->value ("HamlibBackedUp",QString {}).toString ();
+
+  OTPinterval_ = settings_->value ("OTPinterval", 3).toUInt ();
+  OTPUrl_ = settings_->value ("OTPUrl", FoxVerifier::default_url()).toString ();
+  OTPSeed_ = settings_->value ("OTPSeed", QString {}).toString ();
+  OTPEnabled_ = settings_->value ("OTPEnabled", false).toBool ();
+
+  ui_->sbOTPinterval->setValue(OTPinterval_);
+  ui_->OTPUrl->setText(OTPUrl_);
+  ui_->OTPSeed->setText(OTPSeed_);
+  ui_->cbOTP->setChecked(OTPEnabled_);
 
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
       && next_font_ != font_)
@@ -1705,6 +1832,7 @@ void Configuration::impl::read_settings ()
   decode_at_52s_ = settings_->value("Decode52",false).toBool ();
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
   twoPass_ = settings_->value("TwoPass",true).toBool ();
+  bSuperFox_ = settings_->value("SuperFox",true).toBool ();
   Individual_Contest_Name_ = settings_->value("Individual_Contest_Name",true).toBool ();
   bSpecialOp_ = settings_->value("SpecialOpActivity",false).toBool ();
   SelectedActivity_ = settings_->value("SelectedActivity",1).toInt (); 
@@ -1729,6 +1857,18 @@ void Configuration::impl::read_settings ()
   pwrBandTuneMemory_ = settings_->value("pwrBandTuneMemory",false).toBool ();
   highlight_DXcall_ = settings_->value("highlight_DXcall",false).toBool ();
   highlight_DXgrid_ = settings_->value("highlight_DXgrid",false).toBool ();
+#ifdef WIN32
+  QTimer::singleShot (2500, [=] {display_file_information ();});
+#else
+  ui_->hamlib_groupBox->setTitle("Hamlib Version");
+  ui_->rbHamlib64->setVisible(false);
+  ui_->rbHamlib32->setVisible(false);
+  ui_->hamlib_download_button->setVisible(false);
+  ui_->revert_update_button->setVisible(false);
+  ui_->backed_up_text->setVisible(false);
+  ui_->backed_up->setVisible(false);
+  QTimer::singleShot (2500, [=] {display_file_information ();});
+#endif
 }
 
 void Configuration::impl::find_audio_devices ()
@@ -1766,6 +1906,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("MyGrid", my_grid_);
   settings_->setValue ("Field_Day_Exchange", FD_exchange_);
   settings_->setValue ("RTTY_Exchange", RTTY_exchange_);
+  settings_->setValue ("FoxKey", FoxKey_);
   settings_->setValue ("Contest_Name", Contest_Name_);
   settings_->setValue ("Font", font_.toString ());
   settings_->setValue ("DecodedTextFont", decoded_text_font_.toString ());
@@ -1841,6 +1982,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("Decode52", decode_at_52s_);
   settings_->setValue ("SingleDecode", single_decode_);
   settings_->setValue ("TwoPass", twoPass_);
+  settings_->setValue ("SuperFox", bSuperFox_);
   settings_->setValue ("Individual_Contest_Name", Individual_Contest_Name_);
   settings_->setValue ("SelectedActivity", SelectedActivity_);
   settings_->setValue ("SpecialOpActivity", bSpecialOp_);
@@ -1865,6 +2007,10 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("AutoGrid", use_dynamic_grid_);
   settings_->setValue ("highlight_DXcall", highlight_DXcall_);
   settings_->setValue ("highlight_DXgrid", highlight_DXgrid_);
+  settings_->setValue ("OTPinterval", OTPinterval_);
+  settings_->setValue ("OTPUrl", OTPUrl_);
+  settings_->setValue ("OTPSeed", OTPSeed_);
+  settings_->setValue ("OTPEnabled", OTPEnabled_);
   settings_->sync ();
 }
 
@@ -2232,6 +2378,7 @@ void Configuration::impl::accept ()
   my_grid_ = ui_->grid_line_edit->text ();
   FD_exchange_= ui_->Field_Day_Exchange->text ().toUpper ();
   RTTY_exchange_= ui_->RTTY_Exchange->text ().toUpper ();
+  FoxKey_= ui_->FoxKey->text().toUpper();
   Contest_Name_= ui_->Contest_Name->text ().toUpper ();
   spot_to_psk_reporter_ = ui_->psk_reporter_check_box->isChecked ();
   psk_reporter_tcpip_ = ui_->psk_reporter_tcpip_check_box->isChecked ();
@@ -2270,6 +2417,7 @@ void Configuration::impl::accept ()
   decode_at_52s_ = ui_->decode_at_52s_check_box->isChecked ();
   single_decode_ = ui_->single_decode_check_box->isChecked ();
   twoPass_ = ui_->cbTwoPass->isChecked ();
+  bSuperFox_ = ui_->cbSuperFox->isChecked ();
   Individual_Contest_Name_ = ui_->cbContestName->isChecked ();
   bSpecialOp_ = ui_->gbSpecialOpActivity->isChecked ();
   SelectedActivity_ = ui_->special_op_activity_button_group->checkedId();
@@ -2280,6 +2428,10 @@ void Configuration::impl::accept ()
   pwrBandTxMemory_ = ui_->checkBoxPwrBandTxMemory->isChecked ();
   pwrBandTuneMemory_ = ui_->checkBoxPwrBandTuneMemory->isChecked ();
   opCall_=ui_->opCallEntry->text();
+  OTPinterval_=ui_->sbOTPinterval->value();
+  OTPSeed_=ui_->OTPSeed->text();
+  OTPUrl_=ui_->OTPUrl->text();
+  OTPEnabled_=ui_->cbOTP->isChecked();
 
   auto new_server = ui_->udp_server_line_edit->text ().trimmed ();
   auto new_interfaces = get_selected_network_interfaces (ui_->udp_interfaces_combo_box);
@@ -2414,9 +2566,45 @@ void Configuration::impl::on_reset_highlighting_to_defaults_push_button_clicked 
 
 void Configuration::impl::on_rescan_log_push_button_clicked (bool /*clicked*/)
 {
-  if (logbook_) logbook_->rescan ();
+  if (logbook_) {
+    logbook_->rescan ();
+  }
 }
 
+void Configuration::impl::on_CTY_download_button_clicked (bool /*clicked*/)
+{
+  ui_->CTY_download_button->setEnabled (false); // disable button until download is complete
+  QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
+  cty_download.configure(network_manager_,
+                         "http://www.country-files.com/bigcty/cty.dat",
+                         dataPath.absoluteFilePath("cty.dat"),
+                         "WSJT-X CTY Downloader");
+
+  // set up LoTW users CSV file fetching
+  connect (&cty_download, &FileDownload::complete, this, &Configuration::impl::after_CTY_downloaded, Qt::UniqueConnection);
+  connect (&cty_download, &FileDownload::error, this, &Configuration::impl::error_during_CTY_download, Qt::UniqueConnection);
+
+  cty_download.start_download();
+}
+void Configuration::impl::set_CTY_DAT_version(QString const& version)
+{
+  ui_->CTY_file_label->setText(QString{"CTY File Version: %1"}.arg(version));
+}
+
+void Configuration::impl::error_during_CTY_download (QString const& reason)
+{
+  MessageBox::warning_message (this, tr ("Error Loading CTY.DAT"), reason);
+  after_CTY_downloaded();
+}
+
+void Configuration::impl::after_CTY_downloaded ()
+{
+  ui_->CTY_download_button->setEnabled (true);
+  if (logbook_) {
+    logbook_->rescan ();
+    ui_->CTY_file_label->setText(QString{"CTY File Version: %1"}.arg(logbook_->cty_version()));
+  }
+}
 void Configuration::impl::on_LotW_CSV_fetch_push_button_clicked (bool /*checked*/)
 {
   lotw_users_.load (ui_->LotW_CSV_URL_line_edit->text (), true, true);
@@ -2429,6 +2617,113 @@ void Configuration::impl::on_decoded_text_font_push_button_clicked ()
                                                   , tr ("WSJT-X Decoded Text Font Chooser")
                                                   , QFontDialog::MonospacedFonts
                                                   );
+}
+
+void Configuration::impl::on_hamlib_download_button_clicked (bool /*clicked*/)
+{
+#ifdef WIN32
+  extern char* hamlib_version2;
+  QString hamlib = QString(QLatin1String(hamlib_version2));
+  SettingsGroup g {settings_, "Configuration"};
+  settings_->setValue ("HamlibBackedUp", hamlib);
+  settings_->sync ();
+  QDir dataPath = QCoreApplication::applicationDirPath();
+  QFile f1 {dataPath.absolutePath() + "/" + "libhamlib-4_old.dll"};
+  QFile f2 {dataPath.absolutePath() + "/" + "libhamlib-4_new.dll"};
+  if (f1.exists()) f1.remove();
+  if (f2.exists()) f2.remove();
+  ui_->hamlib_download_button->setEnabled (false);
+  ui_->revert_update_button->setEnabled (false);
+  if (ui_->rbHamlib32->isChecked()) {
+    cty_download.configure(network_manager_,
+                           "https://n0nb.users.sourceforge.net/dll32/libhamlib-4.dll",
+                           dataPath.absoluteFilePath("libhamlib-4_new.dll"),
+                           "Downloading latest libhamlib-4.dll");
+  } else {
+    cty_download.configure(network_manager_,
+                           "https://n0nb.users.sourceforge.net/dll64/libhamlib-4.dll",
+                           dataPath.absoluteFilePath("libhamlib-4_new.dll"),
+                           "Downloading latest libhamlib-4.dll");
+  }
+  connect (&cty_download, &FileDownload::complete, this, &Configuration::impl::after_hamlib_downloaded, Qt::UniqueConnection);
+  connect (&cty_download, &FileDownload::error, this, &Configuration::impl::error_during_hamlib_download, Qt::UniqueConnection);
+  cty_download.start_download();
+#else
+  MessageBox::warning_message (this, tr ("Hamlib update only available on Windows."));
+#endif
+}
+
+void Configuration::impl::error_during_hamlib_download (QString const& reason)
+{
+  QDir dataPath = QCoreApplication::applicationDirPath();
+  MessageBox::warning_message (this, tr ("Error Loading libhamlib-4.dll"), reason);
+  ui_->hamlib_download_button->setEnabled (true);
+  ui_->revert_update_button->setEnabled (true);
+}
+
+void Configuration::impl::after_hamlib_downloaded ()
+{
+  QDir dataPath = QCoreApplication::applicationDirPath();
+  QFile::rename(dataPath.absolutePath() + "/" + "libhamlib-4.dll", dataPath.absolutePath() + "/" + "libhamlib-4_old.dll");
+  QTimer::singleShot (1000, [=] {
+    QFile::rename(dataPath.absolutePath() + "/" + "libhamlib-4_new.dll", dataPath.absolutePath() + "/" + "libhamlib-4.dll");
+  });
+  QTimer::singleShot (2000, [=] {
+    MessageBox::information_message (this, tr ("Hamlib Update successful \n\nNew Hamlib will be used after restart"));
+    ui_->revert_update_button->setEnabled (true);
+    ui_->hamlib_download_button->setEnabled (true);
+  });
+}
+
+void Configuration::impl::on_revert_update_button_clicked (bool /*clicked*/)
+{
+#ifdef WIN32
+  QDir dataPath = QCoreApplication::applicationDirPath();
+  QFile f {dataPath.absolutePath() + "/" + "libhamlib-4_old.dll"};
+  if (f.exists()) {
+    ui_->revert_update_button->setEnabled (false);
+    ui_->hamlib_download_button->setEnabled (false);
+    QFile::rename(dataPath.absolutePath() + "/" + "libhamlib-4.dll", dataPath.absolutePath() + "/" + "libhamlib-4_new.dll");
+    QTimer::singleShot (1000, [=] {
+      QFile::copy(dataPath.absolutePath() + "/" + "libhamlib-4_old.dll", dataPath.absolutePath() + "/" + "libhamlib-4.dll");
+    });
+    QTimer::singleShot (2000, [=] {
+      MessageBox::information_message (this, tr ("Hamlib successfully reverted \n\nReverted Hamlib will be used after restart"));
+      ui_->revert_update_button->setEnabled (true);
+      ui_->hamlib_download_button->setEnabled (true);
+    });
+  } else {
+    MessageBox::warning_message (this, tr ("No Hamlib update found that could be reverted"));
+  }
+#else
+  MessageBox::warning_message (this, tr ("Hamlib update only available on Windows."));
+#endif
+}
+
+void Configuration::impl::display_file_information ()
+{
+#ifdef WIN32
+  QDir dataPath = QCoreApplication::applicationDirPath();
+  extern char* hamlib_version2;
+  QString hamlib = QString(QLatin1String(hamlib_version2));
+  ui_->in_use->setText(hamlib);
+  QFileInfo fi2(dataPath.absolutePath() + "/" + "libhamlib-4_old.dll");
+  QString birthTime2 = fi2.birthTime().toString("yyyy-MM-dd hh:mm");
+  QFile f {dataPath.absolutePath() + "/" + "libhamlib-4_old.dll"};
+  if (f.exists()) {
+    if (hamlib_backed_up_=="") {
+          ui_->backed_up->setText(QString{"no hamlib data available, file saved %1"}.arg(birthTime2));
+    } else {
+          ui_->backed_up->setText(hamlib_backed_up_);
+    }
+  } else {
+    ui_->backed_up->setText("");
+  }
+#else
+  extern char* hamlib_version2;
+  QString hamlib = QString(QLatin1String(hamlib_version2));
+  ui_->in_use->setText(hamlib);
+#endif
 }
 
 void Configuration::impl::on_PTT_port_combo_box_activated (int /* index */)
@@ -2926,6 +3221,162 @@ void Configuration::impl::on_cbx4ToneSpacing_clicked(bool b)
   if(b) ui_->cbx2ToneSpacing->setChecked(false);
 }
 
+void Configuration::impl::on_gbSpecialOpActivity_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbFox_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbHound_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbNA_VHF_Contest_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbEU_VHF_Contest_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbWW_DIGI_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbQ65pileup_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbField_Day_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbRTTY_Roundup_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_rbARRL_Digi_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_cbSuperFox_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_cbContestName_clicked (bool)
+{
+  check_visibility ();
+}
+
+void Configuration::impl::on_cbOTP_clicked(bool)
+{
+  check_visibility();
+}
+
+void Configuration::impl::check_visibility ()
+{
+  if (ui_->rbFox->isChecked() and ui_->cbSuperFox->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->sfkey_label->setEnabled (true);
+    ui_->FoxKey->setEnabled (true);
+  } else {
+    ui_->sfkey_label->setEnabled (false);
+    ui_->FoxKey->setEnabled (false);
+  }
+  if (ui_->rbField_Day->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->labFD->setEnabled (true);
+    ui_->Field_Day_Exchange->setEnabled (true);
+  } else {
+    ui_->labFD->setEnabled (false);
+    ui_->Field_Day_Exchange->setEnabled (false);
+  }
+  if (ui_->rbRTTY_Roundup->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->labRTTY->setEnabled (true);
+    ui_->RTTY_Exchange->setEnabled (true);
+  } else {
+    ui_->labRTTY->setEnabled (false);
+    ui_->RTTY_Exchange->setEnabled (false);
+  }
+  if (ui_->cbContestName->isChecked() and !ui_->rbFox->isChecked() and !ui_->rbHound->isChecked()
+      and !ui_->rbQ65pileup->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->labCN->setEnabled (true);
+    ui_->Contest_Name->setEnabled (true);
+  } else {
+    ui_->labCN->setEnabled (false);
+    ui_->Contest_Name->setEnabled (false);
+  }
+  if ((ui_->rbFox->isChecked() or ui_->rbHound->isChecked()) and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->cbSuperFox->setEnabled (true);
+  } else {
+    ui_->cbSuperFox->setEnabled (false);
+  }
+  if (!ui_->rbFox->isChecked() and !ui_->rbHound->isChecked() and !ui_->rbQ65pileup->isChecked()
+      and ui_->gbSpecialOpActivity->isChecked()) {
+    ui_->cbContestName->setEnabled (true);
+  } else {
+    ui_->cbContestName->setEnabled (false);
+  }
+  if (!ui_->cbOTP->isChecked() or !ui_->gbSpecialOpActivity->isChecked())
+  {
+    ui_->OTPSeed->setEnabled(false);
+    ui_->OTPUrl->setEnabled(false);
+    ui_->sbOTPinterval->setEnabled(false);
+    ui_->lblOTPSeed->setEnabled(false);
+    ui_->lblOTPUrl->setEnabled(false);
+    ui_->lblOTPEvery->setEnabled(false);
+  } else
+  {
+    if (ui_->rbHound->isChecked())
+    {
+      if (ui_->OTPUrl->text().isEmpty())
+      {
+        ui_->OTPUrl->setText(FoxVerifier::default_url());
+      }
+      ui_->OTPUrl->setEnabled(true);
+      ui_->lblOTPUrl->setEnabled(true);
+    } else
+    {
+      ui_->OTPUrl->setEnabled(false);
+      ui_->lblOTPUrl->setEnabled(false);
+    }
+    if (ui_->rbFox->isChecked())
+    {
+      ui_->sbOTPinterval->setEnabled(true);
+      ui_->OTPSeed->setEnabled(true);
+      ui_->lblOTPSeed->setEnabled(true);
+      ui_->lblOTPEvery->setEnabled(true);
+    } else
+    {
+      ui_->OTPSeed->setEnabled(false);
+      ui_->lblOTPSeed->setEnabled(false);
+      ui_->lblOTPEvery->setEnabled(false);
+      ui_->sbOTPinterval->setEnabled(false);
+    }
+  }
+}
+void Configuration::impl::on_OTPUrl_textEdited (QString const& url){
+    auto text = url;
+    if (text.size() == 0)
+    {
+      ui_->OTPUrl->setText(FoxVerifier::default_url());
+    }
+}
+void Configuration::impl::on_OTPSeed_textEdited (QString const& url){
+    ui_->OTPSeed->setText(url.toUpper());
+}
+
 void Configuration::impl::on_Field_Day_Exchange_textEdited (QString const& exchange)
 {
   auto text = exchange.simplified ().toUpper ();
@@ -2940,6 +3391,11 @@ void Configuration::impl::on_Field_Day_Exchange_textEdited (QString const& excha
 void Configuration::impl::on_RTTY_Exchange_textEdited (QString const& exchange)
 {
   ui_->RTTY_Exchange->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_FoxKey_textEdited (QString const& ckey)
+{
+  ui_->FoxKey->setText (ckey.toUpper ());
 }
 
 void Configuration::impl::on_Contest_Name_textEdited (QString const& exchange)
