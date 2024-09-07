@@ -197,6 +197,7 @@
 #include "models/FrequencyList.hpp"
 #include "models/StationList.hpp"
 #include "Network/NetworkServerLookup.hpp"
+#include "Network/FoxVerifier.hpp"
 #include "widgets/MessageBox.hpp"
 #include "validators/MaidenheadLocatorValidator.hpp"
 #include "validators/CallsignValidator.hpp"
@@ -610,6 +611,7 @@ private:
   Q_SLOT void on_rbARRL_Digi_clicked (bool);
   Q_SLOT void on_cbSuperFox_clicked (bool);
   Q_SLOT void on_cbContestName_clicked (bool);
+  Q_SLOT void on_cbOTP_clicked (bool);
   Q_SLOT void on_cb_NCCC_Sprint_clicked (bool);
   void error_during_hamlib_download (QString const& reason);
   void after_hamlib_downloaded();
@@ -623,6 +625,8 @@ private:
   Q_SLOT void on_Field_Day_Exchange_editingFinished ();
   Q_SLOT void on_RTTY_Exchange_editingFinished ();
   Q_SLOT void on_FoxKey_textEdited (QString const&);
+  Q_SLOT void on_OTPUrl_textEdited (QString const&);
+  Q_SLOT void on_OTPSeed_textEdited (QString const&);
   Q_SLOT void on_cbSortAlphabetically_clicked(bool);
   Q_SLOT void on_cbHideCARD_clicked(bool);
   Q_SLOT void on_Contest_Name_editingFinished ();
@@ -813,6 +817,11 @@ private:
   QString highlight_blue_callsigns_;
   QString hamlib_backed_up_;
   QString FoxKey_;
+
+  QString OTPUrl_;
+  QString OTPSeed_;
+  bool  OTPEnabled_;
+  qint32 OTPinterval_;
 
   qint32 id_interval_;
   qint32 align_steps_;
@@ -1163,6 +1172,26 @@ void Configuration::invalidate_audio_output_device (QString /* error */)
   m_->audio_output_device_ = QAudioDeviceInfo {};
 }
 
+// OTP seed can be empty, in which case it is not used, or a valid 16 character base32 string.
+bool Configuration::validate_otp_seed(QString seed)
+{
+  if (seed.isEmpty())
+    {
+      return true;
+    }
+  if (seed.size() != 16)
+    {
+      return false;
+    }
+  for (QChar c: seed)
+  {
+    if (!QString(BASE32_CHARSET).contains(c))
+    {
+      return false;
+    }
+  }
+  return true;
+}
 bool Configuration::valid_n1mm_info () const
 {
   // do very rudimentary checking on the n1mm server name and port number.
@@ -1475,6 +1504,26 @@ void Configuration::toggle_SF()
   m_->write_settings();
 }
 
+QString Configuration::OTPSeed() const
+{
+  return m_->OTPSeed_;
+}
+
+QString Configuration::OTPUrl() const
+{
+  return m_->OTPUrl_;
+}
+
+unsigned int Configuration::OTPinterval() const
+{
+  return m_->OTPinterval_;
+}
+
+bool Configuration::OTPEnabled() const
+{
+  return m_->OTPSeed_.size() == 16 && m_->OTPEnabled_;
+}
+
 namespace
 {
 #if defined (Q_OS_MAC)
@@ -1650,6 +1699,8 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   ui_->add_macro_line_edit->setValidator (new QRegularExpressionValidator {message_alphabet, this});
   ui_->Field_Day_Exchange->setValidator (new QRegularExpressionValidator {field_day_exchange_re, this});
   ui_->RTTY_Exchange->setValidator (new QRegularExpressionValidator {RTTY_roundup_exchange_re, this});
+  QRegularExpression b32(QString("(^[") + QString(BASE32_CHARSET)+QString(BASE32_CHARSET).toLower() + QString("]{16}$)|(^$)"));
+  ui_->OTPSeed->setValidator(new QRegularExpressionValidator(b32, this));
 
   //
   // assign ids to radio buttons
@@ -2139,6 +2190,16 @@ void Configuration::impl::read_settings ()
   PWR_and_SWR_ = settings_->value ("PWRandSWR", false).toBool ();
   check_SWR_ = settings_->value ("CheckSWR", false).toBool ();
 
+  OTPinterval_ = settings_->value ("OTPinterval", 3).toUInt ();
+  OTPUrl_ = settings_->value ("OTPUrl", FoxVerifier::default_url()).toString ();
+  OTPSeed_ = settings_->value ("OTPSeed", QString {}).toString ();
+  OTPEnabled_ = settings_->value ("OTPEnabled", false).toBool ();
+
+  ui_->sbOTPinterval->setValue(OTPinterval_);
+  ui_->OTPUrl->setText(OTPUrl_);
+  ui_->OTPSeed->setText(OTPSeed_);
+  ui_->cbOTP->setChecked(OTPEnabled_);
+
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
       && next_font_ != font_)
     {
@@ -2577,6 +2638,10 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("highlight_DXcall", highlight_DXcall_);
   settings_->setValue ("clear_DXcall", clear_DXcall_);
   settings_->setValue ("highlight_DXgrid", highlight_DXgrid_);
+  settings_->setValue ("OTPinterval", OTPinterval_);
+  settings_->setValue ("OTPUrl", OTPUrl_);
+  settings_->setValue ("OTPSeed", OTPSeed_);
+  settings_->setValue ("OTPEnabled", OTPEnabled_);
   settings_->setValue ("clear_DXgrid", clear_DXgrid_);
   settings_->setValue ("erase_BandActivity", erase_BandActivity_);
   settings_->setValue ("set_RXtoTX", set_RXtoTX_);
@@ -3080,6 +3145,10 @@ void Configuration::impl::accept ()
   pwrBandTxMemory_ = ui_->checkBoxPwrBandTxMemory->isChecked ();
   pwrBandTuneMemory_ = ui_->checkBoxPwrBandTuneMemory->isChecked ();
   opCall_=ui_->opCallEntry->text();
+  OTPinterval_=ui_->sbOTPinterval->value();
+  OTPSeed_=ui_->OTPSeed->text();
+  OTPUrl_=ui_->OTPUrl->text();
+  OTPEnabled_=ui_->cbOTP->isChecked();
 
   auto new_server = ui_->udp_server_line_edit->text ().trimmed ();
   auto new_interfaces = get_selected_network_interfaces (ui_->udp_interfaces_combo_box);
@@ -4096,6 +4165,11 @@ void Configuration::impl::on_cb_NCCC_Sprint_clicked (bool)
   check_visibility ();
 }
 
+void Configuration::impl::on_cbOTP_clicked(bool)
+{
+  check_visibility();
+}
+
 void Configuration::impl::check_visibility ()
 {
   if (ui_->rbFox->isChecked() and ui_->cbSuperFox->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
@@ -4148,6 +4222,53 @@ void Configuration::impl::check_visibility ()
   } else {
     ui_->cbZZ00->setEnabled (false);
   }
+  if (!ui_->cbOTP->isChecked() or !ui_->gbSpecialOpActivity->isChecked())
+  {
+    ui_->OTPSeed->setEnabled(false);
+    ui_->OTPUrl->setEnabled(false);
+    ui_->sbOTPinterval->setEnabled(false);
+    ui_->lblOTPSeed->setEnabled(false);
+    ui_->lblOTPUrl->setEnabled(false);
+    ui_->lblOTPEvery->setEnabled(false);
+  } else
+  {
+    if (ui_->rbHound->isChecked())
+    {
+      if (ui_->OTPUrl->text().isEmpty())
+      {
+        ui_->OTPUrl->setText(FoxVerifier::default_url());
+      }
+      ui_->OTPUrl->setEnabled(true);
+      ui_->lblOTPUrl->setEnabled(true);
+    } else
+    {
+      ui_->OTPUrl->setEnabled(false);
+      ui_->lblOTPUrl->setEnabled(false);
+    }
+    if (ui_->rbFox->isChecked())
+    {
+      ui_->sbOTPinterval->setEnabled(true);
+      ui_->OTPSeed->setEnabled(true);
+      ui_->lblOTPSeed->setEnabled(true);
+      ui_->lblOTPEvery->setEnabled(true);
+    } else
+    {
+      ui_->OTPSeed->setEnabled(false);
+      ui_->lblOTPSeed->setEnabled(false);
+      ui_->lblOTPEvery->setEnabled(false);
+      ui_->sbOTPinterval->setEnabled(false);
+    }
+  }
+}
+void Configuration::impl::on_OTPUrl_textEdited (QString const& url){
+    auto text = url;
+    if (text.size() == 0)
+    {
+      ui_->OTPUrl->setText(FoxVerifier::default_url());
+    }
+}
+void Configuration::impl::on_OTPSeed_textEdited (QString const& url){
+    ui_->OTPSeed->setText(url.toUpper());
 }
 
 void Configuration::impl::on_Field_Day_Exchange_editingFinished ()

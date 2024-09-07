@@ -1225,7 +1225,7 @@ void MainWindow::on_the_minute ()
     tx_watchdog (false);
   }
   update_foxLogWindow_rate(); // update the rate on the window
-  if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
+  if ((!verified && ui->labDXped->isVisible()) or !ui->labDXped->text().contains("Hound"))
     ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   verified = false;
 }
@@ -3393,9 +3393,16 @@ void MainWindow::handleVerifyMsg(int status, QDateTime ts, QString callsign, QSt
   if (response.length() > 0) {
     QString msg = FoxVerifier::formatDecodeMessage(ts, callsign, hz, response);
       if (msg.length() > 0) {
-        ui->decodedTextBrowser->displayDecodedText(DecodedText{msg}, m_config.my_callsign(), m_mode, m_config.DXCC(),
-                                                   m_logBook, m_currentBand, m_config.ppfx());
+        // Hound label
+        if ((ui->labDXped->text().contains("Hound") && msg.contains(" verified"))) {
+          verified = true;
+          ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
+        }
         write_all("Ck",msg);
+        if (!filtered) {
+          ui->decodedTextBrowser->displayDecodedText(DecodedText{msg}, m_config.my_callsign(), m_mode, m_config.DXCC(),
+                                                     m_logBook, m_currentBand, m_config.ppfx());
+        }
 	}
     }
   LOG_INFO(QString("FoxVerifier response for [%1]: - [%2]").arg(callsign).arg(response).toStdString());
@@ -5375,6 +5382,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
               callsign = otp_parts[0];
               otp = otp_parts[1];
               hz = lineparts[3].toInt();
+              if (m_config.HideOTP()) filtered = true;
             } else
             {
               // split $VERIFY$ K8R 920749 into K8R and 920749
@@ -5835,14 +5843,14 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         // SuperHound label
-        if (ui->labDXped->text()=="Super Hound" && decodedtext0.mid(3,18).contains(" verified")) { // URUR
+        if (ui->labDXped->text().contains("Hound") && decodedtext0.mid(3,18).contains(" verified")) {
           verified = true;
           write_all("Vf",decodedtext0.string());
           ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
         } else {
-          if (decodedtext0.mid(4,2).contains("00") or decodedtext0.mid(4,2).contains("30")) verified = false;
+          if (m_specOp==SpecOp::HOUND && m_config.superFox() && (decodedtext0.mid(4,2).contains("00") or decodedtext0.mid(4,2).contains("30"))) verified = false;
         }
-        if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")  // URUR
+        if ((!verified && ui->labDXped->isVisible()) or !ui->labDXped->text().contains("Hound"))
           ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
 
         // show distance and bearing
