@@ -27,7 +27,6 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QDateTime>
-#include <QCalendar>
 
 #include "MultiGeometryWidget.hpp"
 #include "NonInheritingProcess.hpp"
@@ -946,7 +945,9 @@ private:
   QString userAgent();
   void handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, unsigned int hz, QString const &response);
   void writeFoxTxMsgs();
+#ifdef FOX_OTP
   QString foxOTPcode();
+#endif
 };
 
 extern int killbyname(const char* progName);
