@@ -3385,7 +3385,9 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
   QMainWindow::keyPressEvent (e);
 }
 
-void MainWindow::handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, unsigned int hz, QString const &response) {  (void)status;
+void MainWindow::handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, unsigned int hz, QString const &response)
+{
+  (void)status;
   (void)code;
   if (response.length() > 0) {
     QString msg = FoxVerifier::formatDecodeMessage(ts, callsign, hz, response);
@@ -3395,12 +3397,10 @@ void MainWindow::handleVerifyMsg(int status, QDateTime ts, QString callsign, QSt
           verified = true;
           ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
         }
+        ui->decodedTextBrowser->displayDecodedText(DecodedText{msg}, m_config.my_callsign(), m_mode, m_config.DXCC(),
+                                                   m_logBook, m_currentBand, m_config.ppfx());
         write_all("Ck",msg);
-        if (!filtered) {
-          ui->decodedTextBrowser->displayDecodedText(DecodedText{msg}, m_config.my_callsign(), m_mode, m_config.DXCC(),
-                                                     m_logBook, m_currentBand, m_config.ppfx());
-        }
-	}
+      }
     }
   LOG_INFO(QString("FoxVerifier response for [%1]: - [%2]").arg(callsign).arg(response).toStdString());
 }
@@ -5386,6 +5386,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
               callsign = lineparts[6];
               otp = lineparts[7];
               hz = 750; // SF is 750
+              if (m_config.HideOTP()) filtered = true;
             }
             QDateTime verifyDateTime;
             if (m_diskData) {
@@ -13761,7 +13762,6 @@ void MainWindow::sfox_tx() {
         LOG_INFO(QString("TOTP SF: seed not long enough"));
       }
   }
-  else args.append(m_config.FoxKey());
 #else
   args.append(m_config.FoxKey());
 #endif

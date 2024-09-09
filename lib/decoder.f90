@@ -156,7 +156,7 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
         write(cftol,'(i5)') params%ntol
         cmnd=trim(exe_dir)//'/sfrx'//crxfreq//cftol// 'OTP "' // &
              trim(temp_dir)//'/fort.47"'
-        if (is_windows()) cmnd='.\sfrx'//crxfreq//cftol// '"' // &
+        if (is_windows()) cmnd='.\sfrx'//crxfreq//cftol// 'OTP "' // &
              trim(temp_dir)//'/fort.47"'
         call execute_command_line(trim(cmnd),exitstat=nexitstat,  &
              cmdstat=ncmdstat,cmdmsg=cmndmsg)
