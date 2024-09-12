@@ -5797,7 +5797,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
           write_all("Vf",decodedtext0.string());
           ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
         } else {
+#ifndef FOX_OTP
           if (m_specOp==SpecOp::HOUND && m_config.superFox() && (decodedtext0.mid(4,2).contains("00") or decodedtext0.mid(4,2).contains("30"))) verified = false;
+#endif
         }
         if ((!verified && ui->labDXped->isVisible()) or !ui->labDXped->text().contains("Hound"))
           ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
@@ -10721,7 +10723,8 @@ void MainWindow::setXIT(int n, Frequency base)
 void MainWindow::setFreq4(int rxFreq, int txFreq)
 {
   if (m_mode=="ECHO") return; // we do not adjust rx/tx for echo mode -- always 1500Hz
-  if (ui->RxFreqSpinBox->isEnabled ()) ui->RxFreqSpinBox->setValue(rxFreq);
+  if (ui->RxFreqSpinBox->isEnabled () && !(SpecOp::HOUND==m_specOp && m_config.superFox() &&
+      (rxFreq < 700 or rxFreq > 800))) ui->RxFreqSpinBox->setValue(rxFreq);
   if(m_mode=="WSPR" or m_mode=="FST4W") {
     ui->WSPRfreqSpinBox->setValue(txFreq);
   } else {
