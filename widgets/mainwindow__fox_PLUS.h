@@ -588,7 +588,6 @@ private:
   bool    m_bDecoded;
   bool    m_noSuffix;
   bool    m_decodedText2;
-  bool    m_freeText;
   bool    m_sentFirst73;
   int     m_currentMessageType;
   QString m_currentMessage;
