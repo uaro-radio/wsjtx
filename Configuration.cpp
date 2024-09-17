@@ -627,7 +627,6 @@ private:
   Q_SLOT void on_cbAutoLog_clicked(bool);
   Q_SLOT void on_Field_Day_Exchange_editingFinished ();
   Q_SLOT void on_RTTY_Exchange_editingFinished ();
-  Q_SLOT void on_FoxKey_textEdited (QString const&);
   Q_SLOT void on_OTPUrl_textEdited (QString const&);
   Q_SLOT void on_OTPSeed_textEdited (QString const&);
   Q_SLOT void on_cbSortAlphabetically_clicked(bool);
