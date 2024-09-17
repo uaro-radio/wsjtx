@@ -613,6 +613,7 @@ set (wsjt_FSRCS
   lib/superfox/sfox_unpack.f90
   lib/superfox/sfox_wave.f90
   lib/superfox/sfox_wave_gfsk.f90
+  lib/superfox/sfrx_sub.f90
   lib/superfox/twkfreq2.f90
   )
 
@@ -1250,8 +1251,8 @@ target_link_libraries (echosim wsjt_fort wsjt_cxx)
 add_executable (ft8sim lib/ft8/ft8sim.f90)
 target_link_libraries (ft8sim wsjt_fort wsjt_cxx)
 
-add_executable (sfrx lib/superfox/sfrx.f90)
-target_link_libraries (sfrx wsjt_fort wsjt_cxx)
+# add_executable (sfrx lib/superfox/sfrx.f90)
+# target_link_libraries (sfrx wsjt_fort wsjt_cxx)
 
 add_executable (msk144sim lib/msk144sim.f90)
 target_link_libraries (msk144sim wsjt_fort wsjt_cxx)
@@ -1641,7 +1642,7 @@ install (TARGETS udp_daemon message_aggregator wsjtx_app_version
   BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   )
 
-install (TARGETS jt9 wsprd fmtave fcal fmeasure sfrx
+install (TARGETS jt9 wsprd fmtave fcal fmeasure
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   )
