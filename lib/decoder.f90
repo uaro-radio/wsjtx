@@ -10,7 +10,6 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
   use ft4_decode
   use fst4_decode
   use q65_decode
-  use env_module
 
   include 'jt9com.f90'
   include 'timer_common.inc'
@@ -53,11 +52,7 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
   character(len=20) :: datetime
   character(len=12) :: mycall, hiscall
   character(len=6) :: mygrid, hisgrid
-  character(len=max_path_length) :: cmnd,cmndmsg
-  character(len=max_path_length) :: executable_directory
   character*60 line
-!  character*256 cmnd,cmndmsg
-  character*6 crxfreq,cftol
   data ndec8/0/,ntr0/-1/
   save
   type(counting_jt4_decoder) :: my_jt4
@@ -147,20 +142,7 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
      if(ncontest.eq.7 .and. params%b_superfox .and. params%b_even_seq) then
         if(params%nzhsym.lt.50) go to 800
 ! Call the superFox decoder
-        open(47,file=trim(temp_dir)//'/fort.47',status='unknown',  &
-             access='stream')
-        write(47) params%yymmdd,params%nutc,id2(1:20),id2(1:180000)
-        close(47)
-        call get_executable_directory(executable_directory)
-        write(crxfreq,'(i6)') params%nfqso
-        write(cftol,'(i5)') params%ntol
-        cmnd=trim(exe_dir)//'/sfrx'//crxfreq//cftol// 'OTP "' // &
-             trim(temp_dir)//'/fort.47"'
-        if (is_windows()) cmnd='.\sfrx'//crxfreq//cftol// 'OTP "' // &
-             trim(temp_dir)//'/fort.47"'
-        call execute_command_line(trim(cmnd),exitstat=nexitstat,  &
-             cmdstat=ncmdstat,cmdmsg=cmndmsg)
-!        call execute_command_line(cmnd,exitstat=ierr)
+        call sfrx_sub(params%yymmdd,params%nutc,params%nfqso,params%ntol,id2)
      else
         call timer('decft8  ',0)
         newdat=params%newdat
