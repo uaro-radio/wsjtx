@@ -10563,11 +10563,11 @@ void MainWindow::on_rptSpinBox_valueChanged(int n)
 void MainWindow::on_tuneButton_clicked (bool checked)
 {
   // prevent tuning on top of a SuperFox message
-  if (SpecOp::HOUND==m_specOp && m_config.superFox()) {
+  if (SpecOp::HOUND==m_specOp && m_config.superFox() && !m_tune) {
     QDateTime now = QDateTime::currentDateTimeUtc();
     int s = now.time().toString("ss").toInt();
     if ((s >= 0 && s < 15) || (s >= 30 && s < 45)) {
-      if (checked) ui->tuneButton->click ();
+      ui->tuneButton->setChecked (false);
       m_config.transceiver_tune (false);  // reset rig tuning
       return;
     }
