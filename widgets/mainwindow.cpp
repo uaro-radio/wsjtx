@@ -3598,6 +3598,7 @@ void MainWindow::statusChanged()
       }
     } else {
       ui->sbNslots->setVisible(true);
+      ui->sbNslots->setValue(m_Nslots0);
     }
   } else {
     ui->sbNslots->setVisible(true);
