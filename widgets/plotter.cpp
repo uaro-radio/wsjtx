@@ -668,9 +668,11 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
     }
   }
 
+  // red bars
   if(m_mode.startsWith("FT") or m_mode.startsWith("JT") or m_mode=="Q65" or m_mode.startsWith("FST4")
      or m_mode.mid(0,4)=="WSPR") {
     x1=XfromFreq(m_txFreq); x2=XfromFreq(m_txFreq+bw);
+    if(m_mode=="FT8" and m_bSuperFox) x2=XfromFreq(m_txFreq+1500.0);
     if(m_mode=="WSPR") {
       bw=4*12000.0/8192.0;                  //WSPR
       x1=XfromFreq(m_txFreq-0.5*bw); x2=XfromFreq(m_txFreq+0.5*bw);
@@ -681,6 +683,7 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
     }
   }
 
+  // red goal post
   if(m_mode=="JT9" or m_mode=="JT65" or m_mode.mid(0,4)=="WSPR" or m_mode=="Q65"
      or m_mode=="FT8" or m_mode=="FT4" or m_mode.startsWith("FST4")) {
     painter0.setPen(penRed);
