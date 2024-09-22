@@ -8928,52 +8928,63 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
     keep_frequency = true;
     setRig(3567000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    setXIT (ui->TxFreqSpinBox->value ());
     ui->pb80->clearFocus();
   }
   if(ui->pb40->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(7056000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    setXIT (ui->TxFreqSpinBox->value ());
     ui->pb40->clearFocus();
   }
   if(ui->pb30->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(10131000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    setXIT (ui->TxFreqSpinBox->value ());
     ui->pb30->clearFocus();
   }
   if(ui->pb20->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(14090000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    setXIT (ui->TxFreqSpinBox->value ());
     ui->pb20->clearFocus();
   }
   if(ui->pb17->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(18095000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    setXIT (ui->TxFreqSpinBox->value ());
+    ui->pb17->clearFocus();
   }
   if(ui->pb15->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(21091000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    setXIT (ui->TxFreqSpinBox->value ());
     ui->pb15->clearFocus();
   }
   if(ui->pb12->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(24911000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    setXIT (ui->TxFreqSpinBox->value ());
+    ui->pb12->clearFocus();
   }
   if(ui->pb10->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(28091000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    setXIT (ui->TxFreqSpinBox->value ());
     ui->pb10->clearFocus();
   }
   if(ui->pb6->hasFocus() && (event->button() & Qt::RightButton) && m_mode=="FT8") {
     keep_frequency = true;
     setRig(50323000);
     QTimer::singleShot (250, [=] {keep_frequency = false;});
+    setXIT (ui->TxFreqSpinBox->value ());
     ui->pb6->clearFocus();
   }
   if(ui->pb2->hasFocus() && (event->button() & Qt::RightButton)) {
@@ -10434,6 +10445,7 @@ void MainWindow::on_bandComboBox_currentIndexChanged (int index)
   // Lookup band
   auto const& band  = m_config.bands ()->find (frequency);
   ui->bandComboBox->setCurrentText (band.size () ? band : m_config.bands ()->oob ());
+  setXIT (ui->TxFreqSpinBox->value ());
   displayDialFrequency ();
 }
 
