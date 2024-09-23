@@ -3587,11 +3587,13 @@ void MainWindow::statusChanged()
     ui->pbFreeText->setVisible(true);
     ui->cbSendMsg->setVisible(true);
     if (m_config.superFox()) {
-      ui->sbNslots->setVisible(false);
+      ui->sbNslots->setVisible(true);
       if(ui->cbSendMsg->isChecked()) {
-        ui->sbNslots->setValue(4);
+        ui->sbNslots->setValue(2);
+        m_Nslots=2;
       } else {
         ui->sbNslots->setValue(5);
+        m_Nslots=5;
       }
     } else {
       ui->sbNslots->setVisible(true);
@@ -11530,9 +11532,11 @@ void MainWindow::on_cbSendMsg_toggled(bool b)
   if (!(m_config.superFox() && m_specOp==SpecOp::FOX))
     return; // don't do anything with slot values unless SuperFox mode
   if(b) {
-    ui->sbNslots->setValue(4);
+    ui->sbNslots->setValue(2);
+    m_Nslots=2;
   } else {
     ui->sbNslots->setValue(5);
+    m_Nslots=5;
   }
 }
 
@@ -12528,6 +12532,8 @@ void MainWindow::on_sbNlist_valueChanged(int n)
 
 void MainWindow::on_sbNslots_valueChanged(int n)
 {
+  if(m_specOp!=SpecOp::FOX) return;
+  if(m_config.superFox()) return;  // Don't allow setting m_Nslots manually in SF mode
   m_Nslots=n;
   if(m_specOp!=SpecOp::FOX) return;
   QString t;
