@@ -3606,6 +3606,10 @@ void MainWindow::statusChanged()
     ui->sbNslots->setValue(m_Nslots0);
   }
   if (SpecOp::HOUND==m_specOp) ui->cbRxAll->setVisible(!m_config.superFox());
+  if ((SpecOp::HOUND!=m_specOp && SpecOp::FOX!=m_specOp) or !m_config.superFox()) {
+    m_wideGraph->setSuperFox(false);
+    m_wideGraph->setSuperHound(false);
+  }
   check_button_color();
 }
 
