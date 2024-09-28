@@ -1647,7 +1647,7 @@ void MainWindow::readSettings()
     // We need this to initialize the height of tab 1 correctly
     ui->pbFreeText->setVisible(false);
     ui->cbSendMsg->setVisible(false);
-    ui->tabWidget->setCurrentIndex(2);
+    ui->tabWidget->setCurrentIndex(1);
     ui->tabWidget->setCurrentIndex(n);
   }
   outBufSize=m_settings->value("OutBufSize",4096).toInt();
