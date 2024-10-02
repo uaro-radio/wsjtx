@@ -91,7 +91,6 @@ void TransceiverBase::set (TransceiverState const& s,
             {
               do_frequency (s.frequency (), s.mode (), ptt_off);
               do_post_frequency (s.frequency (), s.mode ());
-              if (s.split()) do_tx_frequency (s.tx_frequency (), s.mode (), ptt_off);
               // record what actually changed
               requested_.frequency (actual_.frequency ());
               requested_.mode (actual_.mode ());
