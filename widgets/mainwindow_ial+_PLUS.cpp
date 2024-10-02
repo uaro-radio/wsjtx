@@ -14536,7 +14536,7 @@ void MainWindow::check_button_color()
           }
       }
       if (ui->houndButton->isChecked() && !m_config.button_coloring_disabled()) {
-          ui->houndButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          ui->houndButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
       } else {
           if (SpecOp::FOX==m_specOp && !m_config.button_coloring_disabled()) {
             ui->houndButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
