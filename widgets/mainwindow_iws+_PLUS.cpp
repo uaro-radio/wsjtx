@@ -3613,6 +3613,7 @@ void MainWindow::statusChanged()
     m_wideGraph->setSuperFox(false);
     m_wideGraph->setSuperHound(false);
   }
+  if (ui->tx1->text()=="" && m_mode!="FT8") ui->txb6->click();
   check_button_color();
 }
 
@@ -10378,6 +10379,16 @@ void MainWindow::on_TxFreqSpinBox_valueChanged(int n)
 
 void MainWindow::on_RxFreqSpinBox_valueChanged(int n)
 {
+  if (m_config.superFox() && m_specOp==SpecOp::HOUND) {
+    if (ui->RxFreqSpinBox->value() < 200) {
+      ui->RxFreqSpinBox->setValue(200);
+      return;
+    }
+    if (ui->RxFreqSpinBox->value() > 1400) {
+      ui->RxFreqSpinBox->setValue(1400);
+      return;
+    }
+  }
   m_wideGraph->setRxFreq(n);
   if (m_mode == "FreqCal") {
     setRig ();
@@ -11361,6 +11372,10 @@ void MainWindow::transmitDisplay (bool transmitting)
 
 void MainWindow::on_sbFtol_valueChanged(int value)
 {
+  if (m_config.superFox() && m_specOp==SpecOp::HOUND && ui->sbFtol->value() > 100) {
+    ui->sbFtol->setValue(100);
+    return;
+  }
   m_wideGraph->setTol (value);
   statusUpdate ();
   // save last used parameters
