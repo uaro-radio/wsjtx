@@ -331,6 +331,7 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
   if (SpOp::HOUND == special_op && !m_config->report_in_comments()
       && !ui->cbComments->isChecked() && m_config->specOp_in_comments()) {
     QString Contest_Name = ("F/H mode");
+    if (m_config->superFox()) Contest_Name = ("SF/H mode");
     ui->comments->setCurrentIndex(0);
     ui->comments->setItemText(ui->comments->currentIndex(), Contest_Name);
   }
