@@ -6,6 +6,7 @@
 #include <QString>
 #include <QAudioOutput>
 #include <QAudioDeviceInfo>
+#include <QOperatingSystemVersion>
 
 class QIODevice;
 class QAudioDeviceInfo;
