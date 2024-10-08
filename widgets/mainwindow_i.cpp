@@ -10784,6 +10784,17 @@ void MainWindow::setXIT(int n, Frequency base)
         m_config.transceiver_tx_frequency (m_freqTxNominal + m_astroCorrection.tx);
       }
   }
+  if (SpecOp::FOX==m_specOp && m_config.superFox()
+      && (m_monitoring || m_transmitting)
+      && m_config.is_transceiver_online ())
+      {
+        // the transceiver Tx dial frequency must be consistent with
+        // zero m_XIT for SuperFox
+        m_freqTxNominal = base;
+        if (m_astroWidget) m_astroWidget->nominal_frequency (m_freqNominal, m_freqTxNominal);
+        m_config.transceiver_tx_frequency (m_freqTxNominal + m_astroCorrection.tx);
+      }
+
   //Now set the audio Tx freq
   Q_EMIT transmitFrequency (ui->TxFreqSpinBox->value () - m_XIT);
 }
