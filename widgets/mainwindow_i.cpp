@@ -14431,10 +14431,26 @@ void MainWindow::check_button_color()
         ui->autoButton->setStyleSheet("QPushButton {background-color: #ff7a05; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
     }
-    if (m_config.Territory1()!="") ui->actionHideTerritory1->setText("Hide stations from " + m_config.Territory1());
-    if (m_config.Territory2()!="") ui->actionHideTerritory2->setText("Hide stations from " + m_config.Territory2());
-    if (m_config.Territory3()!="") ui->actionHideTerritory3->setText("Hide stations from " + m_config.Territory3());
-    if (m_config.Territory4()!="") ui->actionHideTerritory4->setText("Hide stations from " + m_config.Territory4());
+    if (m_config.Territory1()=="") {
+      ui->actionHideTerritory1->setText("Hide stations from Territory 1");
+    } else {
+      ui->actionHideTerritory1->setText("Hide stations from " + m_config.Territory1());
+    }
+    if (m_config.Territory2()=="") {
+      ui->actionHideTerritory2->setText("Hide stations from Territory 2");
+    } else {
+      ui->actionHideTerritory2->setText("Hide stations from " + m_config.Territory2());
+    }
+    if (m_config.Territory3()=="") {
+      ui->actionHideTerritory3->setText("Hide stations from Territory 3");
+    } else {
+      ui->actionHideTerritory3->setText("Hide stations from " + m_config.Territory3());
+    }
+    if (m_config.Territory4()=="") {
+      ui->actionHideTerritory4->setText("Hide stations from Territory 4");
+    } else {
+      ui->actionHideTerritory4->setText("Hide stations from " + m_config.Territory4());
+    }
 
     if (!m_config.button_coloring_disabled()) {
       if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==30 && m_nSubMode==1) {
