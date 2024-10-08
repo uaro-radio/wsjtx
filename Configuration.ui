@@ -4686,6 +4686,51 @@ Right click for insert and delete options.</string>
   <tabstop>rbRTTY_Roundup</tabstop>
   <tabstop>Field_Day_Exchange</tabstop>
   <tabstop>RTTY_Exchange</tabstop>
+  <tabstop>Territory1</tabstop>
+  <tabstop>Territory2</tabstop>
+  <tabstop>Territory3</tabstop>
+  <tabstop>Territory4</tabstop>
+  <tabstop>cbBlacklist</tabstop>
+  <tabstop>Blacklist1</tabstop>
+  <tabstop>Blacklist2</tabstop>
+  <tabstop>Blacklist3</tabstop>
+  <tabstop>Blacklist4</tabstop>
+  <tabstop>Blacklist5</tabstop>
+  <tabstop>Blacklist6</tabstop>
+  <tabstop>Blacklist7</tabstop>
+  <tabstop>Blacklist8</tabstop>
+  <tabstop>Blacklist9</tabstop>
+  <tabstop>Blacklist10</tabstop>
+  <tabstop>Blacklist11</tabstop>
+  <tabstop>Blacklist12</tabstop>  
+  <tabstop>cbWhitelist</tabstop>
+  <tabstop>Whitelist1</tabstop>
+  <tabstop>Whitelist2</tabstop>
+  <tabstop>Whitelist3</tabstop>
+  <tabstop>Whitelist4</tabstop>
+  <tabstop>Whitelist5</tabstop>
+  <tabstop>Whitelist6</tabstop>
+  <tabstop>Whitelist7</tabstop>
+  <tabstop>Whitelist8</tabstop>
+  <tabstop>Whitelist9</tabstop>
+  <tabstop>Whitelist10</tabstop>
+  <tabstop>Whitelist11</tabstop>
+  <tabstop>Whitelist12</tabstop>  
+  <tabstop>cbPass</tabstop>
+  <tabstop>Pass1</tabstop>
+  <tabstop>Pass2</tabstop>
+  <tabstop>Pass3</tabstop>
+  <tabstop>Pass4</tabstop>
+  <tabstop>Pass5</tabstop>
+  <tabstop>Pass6</tabstop>
+  <tabstop>Pass7</tabstop>
+  <tabstop>Pass8</tabstop>
+  <tabstop>Pass9</tabstop>
+  <tabstop>Pass10</tabstop>
+  <tabstop>Pass11</tabstop>
+  <tabstop>Pass12</tabstop>  
+  <tabstop>cb_filters_for_word2</tabstop>
+  <tabstop>cb_filters_for_Wait_and_Pounce_only</tabstop>
  </tabstops>
  <resources/>
  <connections>
