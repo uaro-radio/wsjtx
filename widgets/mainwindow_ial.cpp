@@ -6353,7 +6353,7 @@ void MainWindow::auto_sequence (DecodedText const& message, unsigned start_toler
     }
     if (m_auto
         && (m_QSOProgress==REPLYING  or (!ui->tx1->isEnabled () and m_QSOProgress==REPORT))
-        && !m_config.superFox() && (SpecOp::HOUND != m_specOp) && qAbs (ui->TxFreqSpinBox->value () - df) <= int (stop_tolerance) //
+        && SpecOp::HOUND != m_specOp && qAbs (ui->TxFreqSpinBox->value () - df) <= int (stop_tolerance) //
         && message_words.at (2) != "DE"
         && !message_words.at (2).contains (QRegularExpression {"(^(CQ|QRZ))|" + m_baseCall})
         && message_words.at (3).contains (Radio::base_callsign (ui->dxCallEntry->text ()))) {
