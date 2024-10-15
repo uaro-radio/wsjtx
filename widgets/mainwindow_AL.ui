@@ -4736,6 +4736,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionWSJT_X_improved_Home_Page"/>
     <addaction name="actionThe_additional_features_of_wsjt_x_improved"/>
     <addaction name="actionRecommended_Audio_Settings"/>
+    <addaction name="actionRig_Control_Errors"/>
     <addaction name="separator"/>
     <addaction name="actionKeyboard_shortcuts"/>
     <addaction name="actionSpecial_mouse_commands"/>
@@ -5439,6 +5440,14 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="whatsThis">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Recommended Audio Settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionRig_Control_Errors">
+   <property name="text">
+    <string>How to deal with rig control errors</string>
+   </property>
+   <property name="whatsThis">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How to deal with rig control errors.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
   <action name="actionErase_list_of_Q65_callers">

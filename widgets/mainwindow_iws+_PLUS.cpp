@@ -3898,6 +3898,11 @@ void MainWindow::on_actionRecommended_Audio_Settings_triggered()
     MessageBox::warning_message(this, tr ("<b>Recommended Audio Settings</b>"), message); });
 }
 
+void MainWindow::on_actionRig_Control_Errors_triggered()
+{
+  QDesktopServices::openUrl (QUrl {"https://wsjt-x-improved.sourceforge.io/How_to_deal_with_rig_control_errors.pdf"});
+}
+
 void MainWindow::on_actionOnline_User_Guide_triggered()      //Display manual
 {
 #if defined (CMAKE_BUILD)
