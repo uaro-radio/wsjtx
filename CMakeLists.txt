@@ -295,6 +295,8 @@ set (wsjtx_CXXSRCS
   Network/wsprnet.cpp
   WSPR/WSPRBandHopping.cpp
   widgets/ExportCabrillo.cpp
+  widgets/QSYMessage.cpp 
+  widgets/QSYMessageCreator.cpp
   )
 
 set (wsjt_CXXSRCS
@@ -715,6 +717,8 @@ set (wsjtx_UISRCS
   widgets/logqso.ui
   Configuration.ui
   widgets/ExportCabrillo.ui
+  widgets/QSYMessage.ui
+  widgets/QSYMessageCreator.ui
   )
 
 set (UDP_library_CXXSRCS

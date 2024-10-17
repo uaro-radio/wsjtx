@@ -12,7 +12,9 @@ SOURCES += \
   widgets/FrequencyLineEdit.cpp widgets/FrequencyDeltaLineEdit.cpp \
   widgets/FoxLogWindow.cpp widgets/CabrilloLogWindow.cpp \
   widgets/HelpTextWindow.cpp widgets/RestrictedSpinBox.cpp \
-  widgets/LazyFillComboBox.cpp widgets/CheckableItemComboBox.cpp
+  widgets/LazyFillComboBox.cpp widgets/CheckableItemComboBox.cpp \
+  widgets/QSYMessage.h \
+  widgets/QSYMessage.h
 
 HEADERS  += \
   widgets/mainwindow.h widgets/plotter.h \
@@ -27,7 +29,9 @@ HEADERS  += \
   widgets/FoxLogWindow.hpp widgets/CabrilloLogWindow.hpp \
   widgets/DateTimeEdit.hpp widgets/HelpTextWindow.hpp \
   widgets/RestrictedSpinBox.hpp \
-  widgets/LazyFillComboBox.hpp widgets/CheckableItemComboBox.hpp
+  widgets/LazyFillComboBox.hpp widgets/CheckableItemComboBox.hpp \
+  widgets/QSYMessage.h \
+  widgets/QSYMessage.h
 
 FORMS    += \
   widgets/mainwindow.ui widgets/about.ui \
@@ -36,4 +40,6 @@ FORMS    += \
   widgets/activeStations.ui \
   widgets/echograph.ui widgets/fastgraph.ui \
   widgets/colorhighlighting.ui widgets/ExportCabrillo.ui \
-  widgets/FoxLogWindow.ui widgets/CabrilloLogWindow.ui
+  widgets/FoxLogWindow.ui widgets/CabrilloLogWindow.ui \
+  widgets/QSYMessage.ui \
+  widgets/QSYMessageCreator.ui

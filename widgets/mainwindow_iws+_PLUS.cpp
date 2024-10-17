@@ -98,6 +98,8 @@
 #include "ui_mainwindow.h"
 #include "moc_mainwindow.cpp"
 #include "Logger.hpp"
+#include "widgets/QSYMessage.h"
+#include "widgets/QSYMessageCreator.h"
 
 #define FCL fortran_charlen_t
 
@@ -1236,6 +1238,8 @@ void MainWindow::on_the_minute ()
 MainWindow::~MainWindow()
 {
   if(m_astroWidget) m_astroWidget.reset ();
+  if(m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget.reset ();
+  if(m_QSYMessageWidget) m_QSYMessageWidget.reset ();
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir ().absoluteFilePath ("wsjtx_wisdom.dat"))};
   fftwf_export_wisdom_to_filename (fname.toLocal8Bit ());
   m_audioThread.quit ();
@@ -1432,6 +1436,44 @@ void MainWindow::writeSettings()
   m_settings->setValue ("HideOC", ui->actionHideOC->isChecked() );
   m_settings->setValue ("HideAN", ui->actionHideAN->isChecked() );
   m_settings->endGroup();
+}
+
+void MainWindow::update_tx5(const QString &qsy_text)
+{
+  if((ui->tx5->findText(qsy_text)) == -1)
+  {
+    ui->tx5->addItem(qsy_text);
+    ui->tx5->setCurrentIndex(ui->tx5->count() - 1);
+  }
+  else
+  {
+    ui->tx5->setCurrentIndex(ui->tx5->findText(qsy_text));
+  }
+  ui->txb5->click();
+}
+
+void MainWindow::reply_tx5(const QString &qsy_reply)
+{
+  if((ui->tx5->findText(qsy_reply)) == -1)
+  {
+    ui->tx5->addItem(qsy_reply);
+    ui->tx5->setCurrentIndex(ui->tx5->count() - 1);
+  }
+  else
+  {
+    ui->tx5->setCurrentIndex(ui->tx5->findText(qsy_reply));
+  }
+  ui->txb5->click();
+}
+
+void MainWindow::update_QSYMessageCreatorCheckBoxStatus(const bool &chkBoxValue)
+{
+  m_QSYMessageCheckBoxValue = chkBoxValue;
+}
+
+void MainWindow::setQSYMessageCreatorStatus(const bool &QSYMessageCreatorValue)
+{
+  m_QSYMessageCreatorValue = QSYMessageCreatorValue;
 }
 
 //---------------------------------------------------------- readSettings()
@@ -2862,6 +2904,7 @@ void MainWindow::fastSink(qint64 frames)
     bool stdMsg = decodedtext.report(m_baseCall,
                   Radio::base_callsign(ui->dxCallEntry->text()),m_rptRcvd);
     if (stdMsg) pskPost (decodedtext);
+    if(m_QSYMessageCreatorWidget && m_QSYMessageCheckBoxValue && m_QSYMessageCreatorValue) showQSYMessage(message);
   }
 
   float fracTR=float(k)/(12000.0*m_TRperiod);
@@ -2929,6 +2972,100 @@ void MainWindow::showSoundOutError(const QString& errorMsg)
 void MainWindow::showStatusMessage(const QString& statusMsg)
 {
   statusBar()->showMessage(statusMsg, 5000);
+}
+
+void MainWindow::showQSYMessage(QString message)
+{
+  QString the_line = message;
+  QString qCall = QString(m_config.my_callsign ());
+  QString qDXCall = ui->dxCallEntry->text();
+  if(the_line.contains(qCall + QString(" ")))
+  {
+    QStringList bhList = the_line.split(" ",SkipEmptyParts);
+    qsizetype index = (bhList.indexOf(qCall));
+    if(index != (-1))
+    {
+      QString finalMatch = "";
+      QRegularExpression re1("[A-J][V48MW][0-9]{3}");
+      QRegularExpression re2("(92)[V48MW][0-9]{3}");
+      QRegularExpression re3("(93)[V48MW][0-9]{3}");
+
+      QRegularExpressionMatch match = re1.match(the_line,QRegularExpression::NormalMatch);
+      if(match.hasMatch())
+      {
+           int startOffset = match.capturedStart();
+           int endOffset = match.capturedEnd();
+           finalMatch = the_line.mid(startOffset,(1+endOffset-startOffset));
+      }
+      else
+      {
+        match = re2.match(the_line,QRegularExpression::NormalMatch);
+        if(match.hasMatch())
+        {
+          int startOffset = match.capturedStart();
+          int endOffset = match.capturedEnd();
+          finalMatch = the_line.mid(startOffset,(1+endOffset-startOffset));
+        }
+        else
+        {
+          match = re3.match(the_line,QRegularExpression::NormalMatch);
+          if(match.hasMatch())
+          {
+            int startOffset = match.capturedStart();
+            int endOffset = match.capturedEnd();
+            finalMatch = the_line.mid(startOffset,(1+endOffset-startOffset));
+          }
+        }
+
+      }
+      if(finalMatch.size()>=5)
+      {
+        m_QSYMessageWidget.reset (new QSYMessage(finalMatch, qCall));
+
+        //connect to signal finish
+        connect (this, &MainWindow::finished, &QSYMessage::close);
+
+        //connect to signal from QSYMessage
+        connect (m_QSYMessageWidget.data (), &QSYMessage::sendReply, this, &MainWindow::reply_tx5,Qt::UniqueConnection);
+        QPoint mainPos = this->mapToGlobal(QPoint(0,0));
+        m_QSYMessageWidget->show();
+        m_QSYMessageWidget->move(mainPos.x() + this->width()/2 - (m_QSYMessageWidget->width())/2, mainPos.y() + this->height()/2 - (m_QSYMessageWidget->height())/2);
+        m_QSYMessageWidget->raise();
+        m_QSYMessageWidget->activateWindow();
+      }
+    }
+  }
+  else if(the_line.contains(qDXCall + QString(" ")))
+  {
+    if ((the_line.contains("OKQSY") || the_line.contains("NOQSY")) )
+    {
+      QStringList bhList = the_line.split(" ",SkipEmptyParts);
+      qsizetype index = (bhList.indexOf(qDXCall));
+      if(index != (-1))
+      {
+          QString yesOrNo = " ";
+        if (the_line.contains("OKQSY"))
+        {
+        yesOrNo = QString(" OKQSY");
+        }
+        else
+        {
+        yesOrNo = QString(" NOQSY");
+        }
+
+        QString qNewMessage = QString("$ ") + qDXCall + yesOrNo;
+        m_QSYMessageWidget.reset (new QSYMessage(qNewMessage, qDXCall));
+
+        //connect to signal finish
+        connect (this, &MainWindow::finished, &QSYMessage::close);
+        QPoint mainPos = this->mapToGlobal(QPoint(0,0));
+        m_QSYMessageWidget->show();
+        m_QSYMessageWidget->move(mainPos.x() + this->width()/2 - (m_QSYMessageWidget->width())/2, mainPos.y() + this->height()/2 - (m_QSYMessageWidget->height())/2);
+        m_QSYMessageWidget->raise();
+        m_QSYMessageWidget->activateWindow();
+      }
+    }
+  }
 }
 
 void MainWindow::on_actionSettings_triggered()           // Setup Dialog (Settings)
@@ -3783,6 +3920,8 @@ void MainWindow::closeEvent(QCloseEvent * e)
   m_config.transceiver_offline ();
   writeSettings ();
   if(m_astroWidget) m_astroWidget.reset ();
+  if(m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget.reset ();
+  if(m_QSYMessageWidget) m_QSYMessageWidget.reset ();
   m_guiTimer.stop ();
   m_prefixes.reset ();
   m_shortcuts.reset ();
@@ -4081,6 +4220,27 @@ void MainWindow::on_actionAstronomical_data_toggled (bool checked)
     {
       m_astroWidget.reset ();
     }
+}
+
+void MainWindow::on_actionQSYMessage_Creator_triggered()
+{
+    if (!m_QSYMessageCreatorWidget)
+    {
+    m_QSYMessageCreatorWidget.reset (new QSYMessageCreator);
+      // hook up termination signal
+      connect (this, &MainWindow::finished, &QSYMessageCreator::close);
+    //connect to signal from QSYMessageCreator
+      connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendMessage, this, &MainWindow::update_tx5);
+      connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendChkBoxChange, this, &MainWindow::update_QSYMessageCreatorCheckBoxStatus);
+      connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendQSYMessageCreatorStatus, this, &MainWindow::setQSYMessageCreatorStatus);
+  }
+    m_QSYMessageCreatorValue = true;
+    QPoint mainPos = this->mapToGlobal(QPoint(0,0));
+      m_QSYMessageCreatorWidget->showNormal();
+    m_QSYMessageCreatorWidget->move(mainPos.x() + this->width() - (m_QSYMessageCreatorWidget->width()), mainPos.y()) ;
+    m_QSYMessageCreatorWidget->raise();
+    m_QSYMessageCreatorWidget->activateWindow();
+
 }
 
 void MainWindow::on_fox_log_action_triggered()
@@ -5223,8 +5383,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
   }
   while(proc_jt9.canReadLine()) {
     auto line_read = proc_jt9.readLine ();
+
+    QString the_line = QString(line_read);
+    if(m_QSYMessageCreatorWidget && m_QSYMessageCheckBoxValue && m_QSYMessageCreatorValue) showQSYMessage(the_line);
+
     if (m_mode == "FT8" and m_specOp == SpecOp::FOX and m_ActiveStationsWidget != NULL) { // see if we should add this to ActiveStations window
-      QString the_line = QString(line_read);
       if (!m_ActiveStationsWidget->wantedOnly() ||
           (the_line.contains(" " + m_config.my_callsign() + " ") ||
            the_line.contains(" <" + m_config.my_callsign() + "> ")))
