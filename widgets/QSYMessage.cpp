@@ -25,7 +25,7 @@ void QSYMessage::on_yesButton_clicked()
 {
 	QString message = QString(receivedCall) + QString(" OKQSY");
 	Q_EMIT sendReply(message);
-	ui->yesButton->setStyleSheet("background-color:red");
+	ui->yesButton->setStyleSheet("background-color:red; color:white");
 	ui->noButton->setStyleSheet("background-color:palette(button).color()");
 }
 
