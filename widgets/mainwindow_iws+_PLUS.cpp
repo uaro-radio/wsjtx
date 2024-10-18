@@ -1462,6 +1462,8 @@ void MainWindow::reply_tx5(const QString &qsy_reply)
   else
   {
     ui->tx5->setCurrentIndex(ui->tx5->findText(qsy_reply));
+    if(!m_auto) ui->autoButton->click();
+    QTimer::singleShot (1000*m_TRperiod, [=] {if(m_auto)ui->autoButton->click();});
   }
   ui->txb5->click();
 }
@@ -3047,6 +3049,7 @@ void MainWindow::showQSYMessage(QString message)
         if (the_line.contains("OKQSY"))
         {
         yesOrNo = QString(" OKQSY");
+        on_stopTxButton_clicked();
         }
         else
         {
