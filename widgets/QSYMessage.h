@@ -9,18 +9,18 @@ namespace Ui {
 }
 
 class QSYMessage
-  : public QWidget
+    : public QWidget
 {
   Q_OBJECT
 
 
 public:
-  explicit QSYMessage(const QString& message, const QString& theCall, QWidget * parent = 0);  
+  explicit QSYMessage(const QString& message, const QString& theCall, QWidget * parent = 0);
   ~QSYMessage();
   void getBandModeFreq();
 
 signals:
-  void sendReply(const QString &value);  
+  void sendReply(const QString &value);
 
 private:
   Ui::QSYMessage *ui;
@@ -30,7 +30,7 @@ private:
 private slots:
   void on_yesButton_clicked();
   void on_noButton_clicked();
-  
+
 };
 
 #endif //QSYMESSAGE_H

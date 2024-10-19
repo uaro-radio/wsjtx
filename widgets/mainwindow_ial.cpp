@@ -1234,8 +1234,8 @@ void MainWindow::on_the_minute ()
 MainWindow::~MainWindow()
 {
   if(m_astroWidget) m_astroWidget.reset ();
-  if(m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget.reset ();
-  if(m_QSYMessageWidget) m_QSYMessageWidget.reset ();
+  if(m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget.reset ();  //w3sz
+  if(m_QSYMessageWidget) m_QSYMessageWidget.reset ();  //w3sz
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir ().absoluteFilePath ("wsjtx_wisdom.dat"))};
   fftwf_export_wisdom_to_filename (fname.toLocal8Bit ());
   m_audioThread.quit ();
@@ -1285,6 +1285,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("FoxLogDisplayed", m_foxLogWindow && m_foxLogWindow->isVisible ());
   m_settings->setValue ("ContestLogDisplayed", m_contestLogWindow && m_contestLogWindow->isVisible ());
   m_settings->setValue ("ActiveStationsDisplayed", m_ActiveStationsWidget && m_ActiveStationsWidget->isVisible ());
+  m_settings->setValue ("QSYMessageUpDateCreatorDisplayed", m_QSYMessageCreatorWidget && m_QSYMessageCreatorWidget->isVisible ()); //w3sz
   m_settings->setValue("RespondCQ",ui->respondComboBox->currentIndex());
   m_settings->setValue("HoundSort",ui->comboBoxHoundSort->currentIndex());
   m_settings->setValue("FoxNlist",ui->sbNlist->value());
@@ -1434,34 +1435,33 @@ void MainWindow::writeSettings()
   m_settings->endGroup();
 }
 
+
+//w3sz  Enable timer durations set to 29 seconds to assure at least one complete Tx cycle
 void MainWindow::update_tx5(const QString &qsy_text)
 {
-  if((ui->tx5->findText(qsy_text)) == -1)
-  {
+  if((ui->tx5->findText(qsy_text)) == -1) {
     ui->tx5->addItem(qsy_text);
     ui->tx5->setCurrentIndex(ui->tx5->count() - 1);
-  }
-  else
-  {
+  } else {
     ui->tx5->setCurrentIndex(ui->tx5->findText(qsy_text));
   }
   ui->txb5->click();
+  if(!m_auto) ui->autoButton->click();
+  QTimer::singleShot (1900*m_TRperiod, [=] {if(m_auto)ui->autoButton->click();});
 }
 
+//w3sz  Enable timer durations set to 29 seconds to assure at least one complete Tx cycle
 void MainWindow::reply_tx5(const QString &qsy_reply)
 {
-  if((ui->tx5->findText(qsy_reply)) == -1)
-  {
+  if((ui->tx5->findText(qsy_reply)) == -1) {
     ui->tx5->addItem(qsy_reply);
     ui->tx5->setCurrentIndex(ui->tx5->count() - 1);
-  }
-  else
-  {
+  } else {
     ui->tx5->setCurrentIndex(ui->tx5->findText(qsy_reply));
-    if(!m_auto) ui->autoButton->click();
-    QTimer::singleShot (1000*m_TRperiod, [=] {if(m_auto)ui->autoButton->click();});
   }
   ui->txb5->click();
+  if(!m_auto) ui->autoButton->click();
+  QTimer::singleShot (1900*m_TRperiod, [=] {if(m_auto)ui->autoButton->click();});
 }
 
 void MainWindow::update_QSYMessageCreatorCheckBoxStatus(const bool &chkBoxValue)
@@ -1473,6 +1473,7 @@ void MainWindow::setQSYMessageCreatorStatus(const bool &QSYMessageCreatorValue)
 {
   m_QSYMessageCreatorValue = QSYMessageCreatorValue;
 }
+//end w3sz
 
 //---------------------------------------------------------- readSettings()
 void MainWindow::readSettings()
@@ -1502,6 +1503,7 @@ void MainWindow::readSettings()
   auto displayFoxLog = m_settings->value ("FoxLogDisplayed", false).toBool ();
   auto displayContestLog = m_settings->value ("ContestLogDisplayed", false).toBool ();
   bool displayActiveStations = m_settings->value ("ActiveStationsDisplayed", false).toBool ();
+//  bool displayQSYMessageCreator = m_settings->value ("QSYMessageCreatorDisplayed", false).toBool (); //w3sz
   ui->respondComboBox->setCurrentIndex(m_settings->value("RespondCQ",0).toInt());
   ui->comboBoxHoundSort->setCurrentIndex(m_settings->value("HoundSort",3).toInt());
   ui->sbNlist->setValue(m_settings->value("FoxNlist",12).toInt());
@@ -2856,7 +2858,7 @@ void MainWindow::fastSink(qint64 frames)
     bool stdMsg = decodedtext.report(m_baseCall,
                   Radio::base_callsign(ui->dxCallEntry->text()),m_rptRcvd);
     if (stdMsg) pskPost (decodedtext);
-    if(m_QSYMessageCreatorWidget && m_QSYMessageCheckBoxValue && m_QSYMessageCreatorValue) showQSYMessage(message);
+    if(m_QSYMessageCreatorWidget && m_QSYMessageCheckBoxValue && m_QSYMessageCreatorValue) showQSYMessage(message);  //w3sz
   }
 
   float fracTR=float(k)/(12000.0*m_TRperiod);
@@ -2926,52 +2928,42 @@ void MainWindow::showStatusMessage(const QString& statusMsg)
   statusBar()->showMessage(statusMsg, 5000);
 }
 
+//w3sz
 void MainWindow::showQSYMessage(QString message)
 {
   QString the_line = message;
   QString qCall = QString(m_config.my_callsign ());
   QString qDXCall = ui->dxCallEntry->text();
-  if(the_line.contains(qCall + QString(" ")))
-  {
+  if(the_line.contains(qCall + QString(" "))) {
     QStringList bhList = the_line.split(" ",SkipEmptyParts);
     qsizetype index = (bhList.indexOf(qCall));
-    if(index != (-1))
-    {
+    if(index != (-1)) {
       QString finalMatch = "";
       QRegularExpression re1("[A-J][V48MW][0-9]{3}");
       QRegularExpression re2("(92)[V48MW][0-9]{3}");
       QRegularExpression re3("(93)[V48MW][0-9]{3}");
 
       QRegularExpressionMatch match = re1.match(the_line,QRegularExpression::NormalMatch);
-      if(match.hasMatch())
-      {
+      if(match.hasMatch()) {
            int startOffset = match.capturedStart();
            int endOffset = match.capturedEnd();
            finalMatch = the_line.mid(startOffset,(1+endOffset-startOffset));
-      }
-      else
-      {
+      } else {
         match = re2.match(the_line,QRegularExpression::NormalMatch);
-        if(match.hasMatch())
-        {
+        if(match.hasMatch()) {
           int startOffset = match.capturedStart();
           int endOffset = match.capturedEnd();
           finalMatch = the_line.mid(startOffset,(1+endOffset-startOffset));
-        }
-        else
-        {
+        } else {
           match = re3.match(the_line,QRegularExpression::NormalMatch);
-          if(match.hasMatch())
-          {
+          if(match.hasMatch()) {
             int startOffset = match.capturedStart();
             int endOffset = match.capturedEnd();
             finalMatch = the_line.mid(startOffset,(1+endOffset-startOffset));
           }
         }
-
       }
-      if(finalMatch.size()>=5)
-      {
+      if(finalMatch.size()>=5) {
         m_QSYMessageWidget.reset (new QSYMessage(finalMatch, qCall));
 
         //connect to signal finish
@@ -2987,24 +2979,18 @@ void MainWindow::showQSYMessage(QString message)
       }
     }
   }
-  else if(the_line.contains(qDXCall + QString(" ")))
-  {
-    if ((the_line.contains("OKQSY") || the_line.contains("NOQSY")) )
-    {
+  else if(the_line.contains(qDXCall + QString(" "))) {
+    if ((the_line.contains("OKQSY") || the_line.contains("NOQSY"))) {
       QStringList bhList = the_line.split(" ",SkipEmptyParts);
       qsizetype index = (bhList.indexOf(qDXCall));
-      if(index != (-1))
-      {
-          QString yesOrNo = " ";
-        if (the_line.contains("OKQSY"))
-        {
-        yesOrNo = QString(" OKQSY");
+      if(index != (-1)) {
+        QString yesOrNo = " ";
+        if (the_line.contains("OKQSY")) {
+          yesOrNo = QString(" OKQSY");
+        } else {
+          yesOrNo = QString(" NOQSY");
+        }
         on_stopTxButton_clicked();
-        }
-        else
-        {
-        yesOrNo = QString(" NOQSY");
-        }
 
         QString qNewMessage = QString("$ ") + qDXCall + yesOrNo;
         m_QSYMessageWidget.reset (new QSYMessage(qNewMessage, qDXCall));
@@ -3020,6 +3006,7 @@ void MainWindow::showQSYMessage(QString message)
     }
   }
 }
+//end w3sz
 
 void MainWindow::on_actionSettings_triggered()           // Setup Dialog (Settings)
 {
@@ -3068,6 +3055,18 @@ void MainWindow::on_actionSettings_triggered()           // Setup Dialog (Settin
     if (rigFailed or ui->bandComboBox->currentText()=="oob") displayDialFrequency ();   // reset frequency only when needed
     bool vhf {m_config.enable_VHF_features()};
     m_wideGraph->setVHF(vhf);
+
+//start w3sz
+    if (!vhf) {
+	    ui->sbSubmode->setValue (0);
+	    ui->actionQSYMessage_Creator->setVisible(false); //w3sz	
+      if(m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget.reset();
+    } else {
+      ui->actionQSYMessage_Creator->setVisible(true); //w3sz
+      on_actionQSYMessage_Creator_triggered();
+    }
+//end w3sz
+	
     if (!vhf) ui->sbSubmode->setValue (0);
 
     setup_status_bar (vhf);
@@ -3124,6 +3123,7 @@ void MainWindow::on_actionSettings_triggered()           // Setup Dialog (Settin
     }
 
     configActiveStations();
+	//configQSYMessageCreator(); //w3sz
     check_button_color();
     rigFailed = false;
     keep_frequency = false;
@@ -3593,16 +3593,16 @@ void MainWindow::displayDialFrequency ()
 
 void MainWindow::stopWRTimeout()
 {
-    auto_tx_mode(false);
+  auto_tx_mode(false);
 }
 
 void MainWindow::stopWCTimeout()
 {
-    if (ui->DX_Call_Button->isChecked()) {
-      ui->DX_Call_Button->click ();
-      auto_tx_mode(false);
-    }
-    no_wait_and_call = false;
+  if (ui->DX_Call_Button->isChecked()) {
+    ui->DX_Call_Button->click ();
+    auto_tx_mode(false);
+  }
+  no_wait_and_call = false;
 }
 
 void MainWindow::statusChanged()
@@ -3707,6 +3707,22 @@ void MainWindow::statusChanged()
   }
   if (ui->tx1->text()=="" && !(m_mode=="FT8" && (SpecOp::HOUND==m_specOp or SpecOp::FOX==m_specOp))
       && !m_bDoubleClicked) ui->txb6->click();
+
+//w3sz
+// dg2ycb: for now, auto-start of QSYMessageCreator window only when Auto-open/close Astronomical Data window is checked
+// and f > 50 MHz. Seems to be not optimal to always start the QSYMessageCreator, after all.
+  if (m_config.enable_VHF_features()) {
+    Frequency dial_frequency {m_rigState.ptt () && m_rigState.split () ?
+        m_rigState.tx_frequency () : m_rigState.frequency ()};
+    ui->actionQSYMessage_Creator->setVisible(true);
+    if (m_config.auto_astro() && dial_frequency > 49999999 && !m_QSYMessageCreatorWidget) on_actionQSYMessage_Creator_triggered();  // URUR
+    if (m_config.auto_astro() && dial_frequency < 50000000) m_QSYMessageCreatorWidget.reset();
+  } else {
+    ui->actionQSYMessage_Creator->setVisible(false);
+    if(m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget.reset();
+  }
+//end w3sz
+
   check_button_color();
 }
 
@@ -4175,26 +4191,26 @@ void MainWindow::on_actionAstronomical_data_toggled (bool checked)
     }
 }
 
+//start w3sz
 void MainWindow::on_actionQSYMessage_Creator_triggered()
 {
-    if (!m_QSYMessageCreatorWidget)
-    {
+  if (!m_QSYMessageCreatorWidget) {
     m_QSYMessageCreatorWidget.reset (new QSYMessageCreator);
-      // hook up termination signal
-      connect (this, &MainWindow::finished, &QSYMessageCreator::close);
+    // hook up termination signal
+    connect (this, &MainWindow::finished, &QSYMessageCreator::close);
     //connect to signal from QSYMessageCreator
-      connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendMessage, this, &MainWindow::update_tx5);
-      connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendChkBoxChange, this, &MainWindow::update_QSYMessageCreatorCheckBoxStatus);
-      connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendQSYMessageCreatorStatus, this, &MainWindow::setQSYMessageCreatorStatus);
+    connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendMessage, this, &MainWindow::update_tx5);
+    connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendChkBoxChange, this, &MainWindow::update_QSYMessageCreatorCheckBoxStatus);
+    connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendQSYMessageCreatorStatus, this, &MainWindow::setQSYMessageCreatorStatus);
   }
-    m_QSYMessageCreatorValue = true;
-    QPoint mainPos = this->mapToGlobal(QPoint(0,0));
-      m_QSYMessageCreatorWidget->showNormal();
-    m_QSYMessageCreatorWidget->move(mainPos.x() + this->width() - (m_QSYMessageCreatorWidget->width()), mainPos.y()) ;
-    m_QSYMessageCreatorWidget->raise();
-    m_QSYMessageCreatorWidget->activateWindow();
-
+  m_QSYMessageCreatorValue = true;
+  QPoint mainPos = this->mapToGlobal(QPoint(0,0));
+  m_QSYMessageCreatorWidget->showNormal();
+  m_QSYMessageCreatorWidget->move(mainPos.x() + this->width() - (m_QSYMessageCreatorWidget->width()), mainPos.y()) ;
+  m_QSYMessageCreatorWidget->raise();
+  m_QSYMessageCreatorWidget->activateWindow();
 }
+//end w3sz
 
 void MainWindow::on_fox_log_action_triggered()
 {
@@ -5338,7 +5354,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
     auto line_read = proc_jt9.readLine ();
 
     QString the_line = QString(line_read);
-    if(m_QSYMessageCreatorWidget && m_QSYMessageCheckBoxValue && m_QSYMessageCreatorValue) showQSYMessage(the_line);
+    if(m_QSYMessageCreatorWidget && m_QSYMessageCheckBoxValue && m_QSYMessageCreatorValue) showQSYMessage(the_line);  //w3sz
 
     if (m_mode == "FT8" and m_specOp == SpecOp::FOX and m_ActiveStationsWidget != NULL) { // see if we should add this to ActiveStations window
       if (!m_ActiveStationsWidget->wantedOnly() ||
@@ -13208,11 +13224,6 @@ list1Done:
     m_foxQSO[hc].tFoxRrpt = -1;           //Have not received R+rpt
     m_foxQSO[hc].tFoxTxRR73 = -1;         //Have not sent RR73
     refreshHoundQueueDisplay();
-
-//    if(list2.size()==nMaxRemainingSlots) {  // URUR bei b2_otp gelöscht
-//      break;
-//    }
-
   }
 
 list2Done:
