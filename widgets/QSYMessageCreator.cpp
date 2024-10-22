@@ -1,17 +1,26 @@
+#include "QSYMessageCreator.h"
 #include <QApplication>
+#include <QSettings>
 #include <QButtonGroup>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QCloseEvent>
 #include <QTimer>
-#include "QSYMessageCreator.h"
+#include "commons.h"
+#include "SettingsGroup.hpp"
+#include "Configuration.hpp"
+#include "qt_helpers.hpp"
 #include "ui_QSYMessageCreator.h"
 
 
-QSYMessageCreator::QSYMessageCreator(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::QSYMessageCreator)
+QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const * configuration, QWidget *parent) :
+  QWidget {parent},
+  settings_ {settings},
+  configuration_ {configuration},
+  ui {new Ui::QSYMessageCreator}
 {
   ui->setupUi(this);
+  read_settings ();
   setWindowTitle ("QSYMessageCreator");
 }
 
@@ -45,16 +54,31 @@ void QSYMessageCreator::on_button1_clicked()
   Q_EMIT sendMessage(message);
 }
 
-void QSYMessageCreator::on_showMessagesChkBox_stateChanged()
-{
-  bool chkBoxValue = ui->showMessagesChkBox->isChecked();
-  Q_EMIT sendChkBoxChange(chkBoxValue);
-}
-
 void QSYMessageCreator::setQSYMessageCreatorStatusFalse()
 {
   Q_EMIT sendQSYMessageCreatorStatus(false);
 }
+
+void QSYMessageCreator::closeEvent (QCloseEvent * e)
+{
+  write_settings ();
+  setQSYMessageCreatorStatusFalse();
+  e->accept();                 // was ignore
+}
+
+
+void QSYMessageCreator::read_settings ()
+{
+  SettingsGroup g (settings_, "QSYMessageCreator");
+  move (settings_->value ("window/pos", pos ()).toPoint ());
+}
+
+void QSYMessageCreator::write_settings ()
+{
+  SettingsGroup g (settings_, "QSYMessageCreator");
+  settings_->setValue ("window/pos", pos ());
+}
+
 
 QString QSYMessageCreator::getBand()
 {

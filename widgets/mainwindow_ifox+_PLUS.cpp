@@ -1456,6 +1456,9 @@ void MainWindow::update_tx5(const QString &qsy_text)
     ui->autoButton->click();
     stopWRTimer.start(int(1750.0*m_TRperiod));
   }
+  else if (m_hisCall=="") {
+    QMessageBox::warning(this, "WSJT-X","There must be a callsign in the\n DX Call Box to send QSY Request");
+  }
 }
 
 //w3sz  Enable timer durations set to 29 seconds to assure at least one complete Tx cycle
@@ -2873,7 +2876,7 @@ void MainWindow::fastSink(qint64 frames)
         QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
             ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
         });
-        QTimer::singleShot (1000, [=] {                      // repeated highlighting to override JTAlert
+        QTimer::singleShot (1000, [=, this] {                      // repeated highlighting to override JTAlert
             ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
         });
         QTimer::singleShot (2500, [=] {                      // repeated highlighting to override JTAlert
@@ -2918,7 +2921,7 @@ void MainWindow::fastSink(qint64 frames)
     bool stdMsg = decodedtext.report(m_baseCall,
                   Radio::base_callsign(ui->dxCallEntry->text()),m_rptRcvd);
     if (stdMsg) pskPost (decodedtext);
-    if(m_QSYMessageCreatorWidget && m_QSYMessageCheckBoxValue && m_QSYMessageCreatorValue) showQSYMessage(message);  //w3sz
+    if(m_config.enable_qsy_popup ()) showQSYMessage(message);  //w3sz
   }
 
   float fracTR=float(k)/(12000.0*m_TRperiod);
@@ -3024,16 +3027,14 @@ void MainWindow::showQSYMessage(QString message)
         }
       }
       if(finalMatch.size()>=5) {
-        m_QSYMessageWidget.reset (new QSYMessage(finalMatch, qCall));
+        m_QSYMessageWidget.reset (new QSYMessage(finalMatch, qCall, m_settings, &m_config));
 
         //connect to signal finish
         connect (this, &MainWindow::finished, &QSYMessage::close);
 
         //connect to signal from QSYMessage
         connect (m_QSYMessageWidget.data (), &QSYMessage::sendReply, this, &MainWindow::reply_tx5,Qt::UniqueConnection);
-        QPoint mainPos = this->mapToGlobal(QPoint(0,0));
         m_QSYMessageWidget->show();
-        m_QSYMessageWidget->move(mainPos.x() + this->width()/2 - (m_QSYMessageWidget->width())/2, mainPos.y() + this->height()/2 - (m_QSYMessageWidget->height())/2);
         m_QSYMessageWidget->raise();
         m_QSYMessageWidget->activateWindow();
       }
@@ -3053,13 +3054,11 @@ void MainWindow::showQSYMessage(QString message)
         on_stopTxButton_clicked();
 
         QString qNewMessage = QString("$ ") + qDXCall + yesOrNo;
-        m_QSYMessageWidget.reset (new QSYMessage(qNewMessage, qDXCall));
+        m_QSYMessageWidget.reset (new QSYMessage(qNewMessage, qDXCall, m_settings, &m_config));
 
         //connect to signal finish
         connect (this, &MainWindow::finished, &QSYMessage::close);
-        QPoint mainPos = this->mapToGlobal(QPoint(0,0));
         m_QSYMessageWidget->show();
-        m_QSYMessageWidget->move(mainPos.x() + this->width()/2 - (m_QSYMessageWidget->width())/2, mainPos.y() + this->height()/2 - (m_QSYMessageWidget->height())/2);
         m_QSYMessageWidget->raise();
         m_QSYMessageWidget->activateWindow();
       }
@@ -3655,6 +3654,7 @@ void MainWindow::stopWCTimeout()
 
 void MainWindow::statusChanged()
 {
+  m_specOp=m_config.special_op_id();  // update m_specOp
   if (m_specOp==SpecOp::Q65_PILEUP && m_mode != "Q65") on_actionQ65_triggered();
   QTimer::singleShot (50, [=] {       // only allow Wait & Call where it is appropriate
       if((m_mode.startsWith("JT") or m_mode=="WSPR" or m_mode=="Echo" or m_mode=="FST4W"
@@ -3765,15 +3765,22 @@ void MainWindow::statusChanged()
   if (m_config.enable_VHF_features()) {
     ui->actionQSYMessage_Creator->setVisible(true);
     if (m_config.auto_astro()) {
+      m_specOp=m_config.special_op_id();  // update m_specOp
       if (SpecOp::NA_VHF==m_specOp && !(m_mode=="FT4" && m_config.NCCC_Sprint()) && m_freqNominal >= 50000000) {
         if (!m_QSYMessageCreatorWidget) on_actionQSYMessage_Creator_triggered();
-      } else {
-        if (m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget.reset();
+      } else if (m_QSYMessageCreatorWidget) {
+        QCloseEvent closeEvent;
+        QApplication::sendEvent(m_QSYMessageCreatorWidget.data(), &closeEvent);
+        m_QSYMessageCreatorWidget.reset ();
       }
     }
   } else {
-    ui->actionQSYMessage_Creator->setVisible(false);
-    if (m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget.reset();
+    ui->actionQSYMessage_Creator->setVisible(false);    
+    if(m_QSYMessageCreatorWidget) {
+      QCloseEvent closeEvent;
+      QApplication::sendEvent(m_QSYMessageCreatorWidget.data(), &closeEvent);
+      m_QSYMessageCreatorWidget.reset ();
+    }
   }
 //end w3sz
 
@@ -3943,8 +3950,16 @@ void MainWindow::closeEvent(QCloseEvent * e)
   m_config.transceiver_offline ();
   writeSettings ();
   if(m_astroWidget) m_astroWidget.reset ();
-  if(m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget.reset ();
-  if(m_QSYMessageWidget) m_QSYMessageWidget.reset ();
+  if(m_QSYMessageCreatorWidget) {
+    QCloseEvent closeEvent;
+    QApplication::sendEvent(m_QSYMessageCreatorWidget.data(), &closeEvent);
+    m_QSYMessageCreatorWidget.reset ();
+  }
+  if(m_QSYMessageWidget) {
+    QCloseEvent closeEvent;
+    QApplication::sendEvent(m_QSYMessageWidget.data(), &closeEvent);
+    m_QSYMessageWidget.reset ();
+  }
   m_guiTimer.stop ();
   m_prefixes.reset ();
   m_shortcuts.reset ();
@@ -4249,7 +4264,7 @@ void MainWindow::on_actionAstronomical_data_toggled (bool checked)
 void MainWindow::on_actionQSYMessage_Creator_triggered()
 {
   if (!m_QSYMessageCreatorWidget) {
-    m_QSYMessageCreatorWidget.reset (new QSYMessageCreator);
+    m_QSYMessageCreatorWidget.reset (new QSYMessageCreator {m_settings, &m_config});
     // hook up termination signal
     connect (this, &MainWindow::finished, &QSYMessageCreator::close);
     //connect to signal from QSYMessageCreator
@@ -4258,9 +4273,8 @@ void MainWindow::on_actionQSYMessage_Creator_triggered()
     connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendQSYMessageCreatorStatus, this, &MainWindow::setQSYMessageCreatorStatus);
   }
   m_QSYMessageCreatorValue = true;
-  QPoint mainPos = this->mapToGlobal(QPoint(0,0));
+  m_QSYMessageCreatorWidget->setWindowFlags(m_QSYMessageCreatorWidget->windowFlags() | Qt::WindowStaysOnTopHint);
   m_QSYMessageCreatorWidget->showNormal();
-  m_QSYMessageCreatorWidget->move(mainPos.x() + this->width() - (m_QSYMessageCreatorWidget->width()), mainPos.y()) ;
   m_QSYMessageCreatorWidget->raise();
   m_QSYMessageCreatorWidget->activateWindow();
 }
@@ -5408,7 +5422,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
     auto line_read = proc_jt9.readLine ();
 
     QString the_line = QString(line_read);
-    if(m_QSYMessageCreatorWidget && m_QSYMessageCheckBoxValue && m_QSYMessageCreatorValue) showQSYMessage(the_line);  //w3sz
+    if(m_config.enable_qsy_popup ()) showQSYMessage(the_line);  //w3sz
 
     if (m_mode == "FT8" and m_specOp == SpecOp::FOX and m_ActiveStationsWidget != NULL) { // see if we should add this to ActiveStations window
       if (!m_ActiveStationsWidget->wantedOnly() ||

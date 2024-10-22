@@ -1,14 +1,23 @@
 #include <QApplication>
+#include <QSettings>
+#include <QCloseEvent>
 #include <QDateTime>
+#include "commons.h"
+#include "SettingsGroup.hpp"
+#include "Configuration.hpp"
+#include "qt_helpers.hpp"
 #include "QSYMessage.h"
 #include "ui_QSYMessage.h"
 
-QSYMessage::QSYMessage(const QString& message,const QString& theCall, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::QSYMessage),
-    receivedMessage(message),receivedCall(theCall)
+QSYMessage::QSYMessage(const QString& message,const QString& theCall, QSettings * settings, Configuration const * configuration, QWidget *parent) :
+  QWidget {parent},
+  settings_ {settings},
+  configuration_ {configuration},
+  ui(new Ui::QSYMessage),
+  receivedMessage(message),receivedCall(theCall)
 {
   ui->setupUi(this);
+  read_settings();
   setWindowTitle ("BAND CHANGE NOW" + QTime::currentTime().toString("[hh:mm:ss]"));
   ui->label->setStyleSheet("font: bold; font-size: 36pt");
   ui->label_2->setStyleSheet("font: bold; font-size: 36pt");
@@ -19,6 +28,21 @@ QSYMessage::QSYMessage(const QString& message,const QString& theCall, QWidget *p
 QSYMessage::~QSYMessage()
 {
   delete ui;
+}
+
+void QSYMessage::closeEvent (QCloseEvent * e) {
+  write_settings();
+  e->accept();
+}
+
+void QSYMessage::read_settings () {
+  SettingsGroup g (settings_, "QSYMessage");
+  move (settings_->value ("window/pos", pos()).toPoint());
+}
+
+void QSYMessage::write_settings () {
+  SettingsGroup g (settings_, "QSYMessage");
+  settings_->setValue ("window/pos", pos());
 }
 
 void QSYMessage::on_yesButton_clicked()

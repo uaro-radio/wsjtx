@@ -369,10 +369,10 @@ text message.</string>
           <item row="2" column="2">
            <widget class="QCheckBox" name="auto_astro_check_box">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open the Astronomical Data window automatically when switching to Q65 or JT65 mode and Decode after EME delay is enabled, and close it when no longer needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open the Astronomical Data window automatically when switching to Q65 or JT65 mode and Decode after EME delay is enabled, and close it when no longer needed.&lt;/p&gt;&lt;p&gt;Open the QSYMessage Creator automatically if the VHF Features are enabled and such QSY messages are applicable.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Auto-open/close Astronomical Data window</string>
+             <string>Auto-open/close Astro/QSY windows</string>
             </property>
            </widget>
           </item>
@@ -4660,7 +4660,7 @@ Right click for insert and delete options.</string>
   <tabstop>Blacklist9</tabstop>
   <tabstop>Blacklist10</tabstop>
   <tabstop>Blacklist11</tabstop>
-  <tabstop>Blacklist12</tabstop>  
+  <tabstop>Blacklist12</tabstop>
   <tabstop>cbWhitelist</tabstop>
   <tabstop>Whitelist1</tabstop>
   <tabstop>Whitelist2</tabstop>
@@ -4673,7 +4673,7 @@ Right click for insert and delete options.</string>
   <tabstop>Whitelist9</tabstop>
   <tabstop>Whitelist10</tabstop>
   <tabstop>Whitelist11</tabstop>
-  <tabstop>Whitelist12</tabstop>  
+  <tabstop>Whitelist12</tabstop>
   <tabstop>cbPass</tabstop>
   <tabstop>Pass1</tabstop>
   <tabstop>Pass2</tabstop>
@@ -4686,7 +4686,7 @@ Right click for insert and delete options.</string>
   <tabstop>Pass9</tabstop>
   <tabstop>Pass10</tabstop>
   <tabstop>Pass11</tabstop>
-  <tabstop>Pass12</tabstop>  
+  <tabstop>Pass12</tabstop>
   <tabstop>cb_filters_for_word2</tabstop>
   <tabstop>cb_filters_for_Wait_and_Pounce_only</tabstop>
  </tabstops>
@@ -4758,13 +4758,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
+  <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
   <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
-  <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="CAT_stop_bits_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
-  <buttongroup name="special_op_activity_button_group"/>
  </buttongroups>
 </ui>

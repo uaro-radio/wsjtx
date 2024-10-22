@@ -198,6 +198,7 @@ public:
   bool repeat_Tx () const;
   bool auto_astro () const;
   bool single_decode () const;
+  bool enable_qsy_popup () const; //w3sz
   bool twoPass() const;
   bool highDPI() const;
   bool largerTabWidget() const;
