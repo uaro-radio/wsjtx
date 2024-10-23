@@ -5260,6 +5260,7 @@ void MainWindow::queueActiveWindowHound2(QString line) {
 
 void MainWindow::callSandP2(int n)
 {
+  m_specOp=m_config.special_op_id();
   bool bCtrl = (n<0);
   n=qAbs(n)-1;
   if(m_mode!="Q65" and m_ready2call[n]=="") return;
@@ -5328,10 +5329,18 @@ void MainWindow::callSandP2(int n)
   ui->txFirstCheckBox->setChecked(m_txFirst);
   static qint64 ms0=0;
   qint64 ms=QDateTime::currentMSecsSinceEpoch();
-  if(ui->autoButton->isChecked()) {
-    if((ms-ms0)>500) ui->autoButton->click(); // Disable Tx on single click
-  } else if((ms-ms0)<=500) {
-    ui->autoButton->click(); // Enable Tx again, on double click
+  if(SpecOp::NONE==m_specOp) {
+    if(ui->autoButton->isChecked()) {
+      if((ms-ms0)>500) ui->autoButton->click(); // Disable Tx on single click
+    } else if((ms-ms0)<=500) {
+      ui->autoButton->click(); // Enable Tx again, on double click
+    }
+  } else {
+    if(ui->autoButton->isChecked()) {
+      if((ms-ms0)<=500) ui->autoButton->click(); // Disable Tx on double click
+    } else if((ms-ms0)>500) {
+      ui->autoButton->click(); // Enable Tx on single click
+    }
   }
   ms0=ms;
   if(m_transmitting) m_restart=true;
