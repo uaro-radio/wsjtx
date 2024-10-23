@@ -4311,7 +4311,8 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionColors"/>
     <addaction name="actionActiveStations"/>
     <addaction name="actionSWL_Mode"/>
-	<addaction name="actionQSYMessage_Creator"/>
+    <addaction name="actionQSYMessage_Creator"/>
+    <addaction name="actionEnable_QSY_Popups"/>
     <addaction name="actionBand_Buttons"/>
     <addaction name="actionUse_Dark_Style"/>
    </widget>
@@ -5100,7 +5101,7 @@ QPushButton[state=&quot;ok&quot;] {
    <property name="text">
     <string>QSYMessage Creator</string>
    </property>
-  </action>  
+  </action>
   <action name="actionHideB4">
    <property name="checkable">
     <bool>true</bool>
@@ -5259,6 +5260,17 @@ QPushButton[state=&quot;ok&quot;] {
    </property>
    <property name="text">
     <string>Highlight callsigns from Ignore List</string>
+   </property>
+  </action>
+  <action name="actionEnable_QSY_Popups">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Enable QSY Popups</string>
    </property>
   </action>
  </widget>

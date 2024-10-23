@@ -22,8 +22,7 @@ public:
 
 protected:
   void showEvent(QShowEvent *event) override {
-    QWidget::showEvent(event); // Call the base class implementation
-    setup();
+    QWidget::showEvent(event); // Call the base class implementation    
   }
   void closeEvent(QCloseEvent *event) override;
 
@@ -38,11 +37,13 @@ private:
 
   Ui::QSYMessageCreator *ui;
   QString getBand();
+  void setBand(QString band);
+  void setMode(QString band, QString mode);
   QString getMode(QString band);
+  QString WriteMessage(QString band, QString mode);
 
 private slots:
   void on_button1_clicked();
-  void setup();
   void setQSYMessageCreatorStatusFalse();
   void read_settings ();
   void write_settings ();

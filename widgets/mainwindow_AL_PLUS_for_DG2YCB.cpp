@@ -1285,17 +1285,18 @@ void MainWindow::writeSettings()
   m_settings->setValue("TxFirst",m_txFirst);
   m_settings->setValue("DXcall",ui->dxCallEntry->text());
   m_settings->setValue("DXgrid",ui->dxGridEntry->text());
-  m_settings->setValue ("AstroDisplayed", m_astroWidget && m_astroWidget->isVisible());
-  m_settings->setValue ("MsgAvgDisplayed", m_msgAvgWidget && m_msgAvgWidget->isVisible ());
-  m_settings->setValue ("FoxLogDisplayed", m_foxLogWindow && m_foxLogWindow->isVisible ());
-  m_settings->setValue ("ContestLogDisplayed", m_contestLogWindow && m_contestLogWindow->isVisible ());
-  m_settings->setValue ("ActiveStationsDisplayed", m_ActiveStationsWidget && m_ActiveStationsWidget->isVisible ());
-  m_settings->setValue ("QSYMessageCreatorDisplayed", m_QSYMessageCreatorWidget && m_QSYMessageCreatorWidget->isVisible ()); //w3sz
+  m_settings->setValue("AstroDisplayed", m_astroWidget && m_astroWidget->isVisible());
+  m_settings->setValue("MsgAvgDisplayed", m_msgAvgWidget && m_msgAvgWidget->isVisible ());
+  m_settings->setValue("FoxLogDisplayed", m_foxLogWindow && m_foxLogWindow->isVisible ());
+  m_settings->setValue("ContestLogDisplayed", m_contestLogWindow && m_contestLogWindow->isVisible ());
+  m_settings->setValue("ActiveStationsDisplayed", m_ActiveStationsWidget && m_ActiveStationsWidget->isVisible ());
+  m_settings->setValue("QSYMessageCreatorDisplayed", m_QSYMessageCreatorWidget && m_QSYMessageCreatorWidget->isVisible ()); //w3sz
+  m_settings->setValue("ShowQSYMessages", ui->actionEnable_QSY_Popups->isChecked()); //w3sz
   m_settings->setValue("RespondCQ",ui->respondComboBox->currentIndex());
   m_settings->setValue("HoundSort",ui->comboBoxHoundSort->currentIndex());
   m_settings->setValue("FoxNlist",ui->sbNlist->value());
   m_settings->setValue("FoxNslots",m_Nslots0);
-  m_settings->setValue ("SerialNumber",ui->sbSerialNumber->value ());
+  m_settings->setValue("SerialNumber",ui->sbSerialNumber->value ());
   m_settings->setValue("FoxTextMsg", m_freeTextMsg0);
   m_settings->setValue("WorkDupes", ui->cbWorkDupes->isChecked());
   m_settings->endGroup();
@@ -1517,6 +1518,8 @@ void MainWindow::readSettings()
   auto displayContestLog = m_settings->value ("ContestLogDisplayed", false).toBool ();
   bool displayActiveStations = m_settings->value ("ActiveStationsDisplayed", false).toBool ();
   bool displayQSYMessageCreator = m_settings->value ("QSYMessageCreatorDisplayed", false).toBool (); //w3sz
+  if(m_config.enable_VHF_features()) ui->actionEnable_QSY_Popups->setVisible(true);// URUR
+  ui->actionEnable_QSY_Popups->setChecked(m_settings->value("ShowQSYMessages", true).toBool ()); //w3sz
   ui->respondComboBox->setCurrentIndex(m_settings->value("RespondCQ",0).toInt());
   ui->comboBoxHoundSort->setCurrentIndex(m_settings->value("HoundSort",3).toInt());
   ui->sbNlist->setValue(m_settings->value("FoxNlist",12).toInt());
@@ -2920,7 +2923,7 @@ void MainWindow::fastSink(qint64 frames)
     bool stdMsg = decodedtext.report(m_baseCall,
                   Radio::base_callsign(ui->dxCallEntry->text()),m_rptRcvd);
     if (stdMsg) pskPost (decodedtext);
-    if(m_config.enable_qsy_popup ()) showQSYMessage(message);  //w3sz
+    if(ui->actionEnable_QSY_Popups->isChecked()) showQSYMessage(message);  //w3sz
   }
 
   float fracTR=float(k)/(12000.0*m_TRperiod);
@@ -3760,6 +3763,7 @@ void MainWindow::statusChanged()
 // and f > 50 MHz. Seems to be not optimal to always start the QSYMessageCreator, after all.
   if (m_config.enable_VHF_features()) {
     ui->actionQSYMessage_Creator->setVisible(true);
+    ui->actionEnable_QSY_Popups->setVisible(true);
     if (m_config.auto_astro()) {
       m_specOp=m_config.special_op_id();  // update m_specOp
       if (SpecOp::NA_VHF==m_specOp && !(m_mode=="FT4" && m_config.NCCC_Sprint()) && m_freqNominal >= 50000000) {
@@ -3771,7 +3775,8 @@ void MainWindow::statusChanged()
       }
     }
   } else {
-    ui->actionQSYMessage_Creator->setVisible(false);    
+    ui->actionQSYMessage_Creator->setVisible(false);
+    ui->actionEnable_QSY_Popups->setVisible(false);
     if(m_QSYMessageCreatorWidget) {
       QCloseEvent closeEvent;
       QApplication::sendEvent(m_QSYMessageCreatorWidget.data(), &closeEvent);
@@ -5427,7 +5432,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
     auto line_read = proc_jt9.readLine ();
 
     QString the_line = QString(line_read);
-    if(m_config.enable_qsy_popup ()) showQSYMessage(the_line);  //w3sz
+    if(ui->actionEnable_QSY_Popups->isChecked()) showQSYMessage(the_line);  //w3sz
 
     if (m_mode == "FT8" and m_specOp == SpecOp::FOX and m_ActiveStationsWidget != NULL) { // see if we should add this to ActiveStations window
       if (!m_ActiveStationsWidget->wantedOnly() ||

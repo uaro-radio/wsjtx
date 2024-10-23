@@ -2,10 +2,8 @@
 #include <QSettings>
 #include <QCloseEvent>
 #include <QDateTime>
-#include "commons.h"
 #include "SettingsGroup.hpp"
 #include "Configuration.hpp"
-#include "qt_helpers.hpp"
 #include "QSYMessage.h"
 #include "ui_QSYMessage.h"
 

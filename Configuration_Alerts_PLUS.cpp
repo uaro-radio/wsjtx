@@ -617,7 +617,6 @@ private:
   Q_SLOT void on_cbOTP_clicked (bool);
   Q_SLOT void on_cbHideOTP_clicked (bool);
   Q_SLOT void on_cb_NCCC_Sprint_clicked (bool);
-  Q_SLOT void on_enable_VHF_features_check_box_clicked (bool);
   void error_during_hamlib_download (QString const& reason);
   void after_hamlib_downloaded();
   void display_file_information();
@@ -881,7 +880,6 @@ private:
   bool repeat_Tx_;
   bool auto_astro_;
   bool single_decode_;
-  bool enable_qsy_popup_; //w3sz
   bool twoPass_;
   bool highDPI_;
   bool largerTabWidget_;
@@ -1039,7 +1037,6 @@ bool Configuration::align() const {return m_->align_;}
 bool Configuration::repeat_Tx () const {return m_->repeat_Tx_;}
 bool Configuration::auto_astro () const {return m_->auto_astro_;}
 bool Configuration::single_decode () const {return m_->single_decode_;}
-bool Configuration::enable_qsy_popup () const {return m_->enable_qsy_popup_;}  //w3sz
 bool Configuration::twoPass() const {return m_->twoPass_;}
 bool Configuration::highDPI() const {return m_->highDPI_;}
 bool Configuration::largerTabWidget() const {return m_->largerTabWidget_;}
@@ -2026,19 +2023,6 @@ void Configuration::impl::initialize_models ()
   ui_->repeat_Tx_check_box->setChecked(repeat_Tx_);
   ui_->auto_astro_check_box->setChecked(auto_astro_);
   ui_->single_decode_check_box->setChecked(single_decode_);
-  //start w3sz
-  if(ui_->enable_VHF_features_check_box->isChecked()) {
-//    ui_->qsy_popup_check_box->setVisible(true);
-    ui_->qsy_popup_check_box->setEnabled(true);
-    ui_->qsy_popup_check_box->setChecked(enable_qsy_popup_);  //w3sz
-  }
-  else {
-//    ui_->qsy_popup_check_box->setVisible(false);
-    ui_->qsy_popup_check_box->setEnabled(false);
-    ui_->qsy_popup_check_box->setChecked(false);  //w3sz
-    enable_qsy_popup_ = false;
-  }
-  //end w3sz
   ui_->cbTwoPass->setChecked(twoPass_);
   ui_->cbHighDPI->setChecked(highDPI_);
   ui_->cbLargerTabWidget->setChecked(largerTabWidget_);
@@ -2464,7 +2448,6 @@ void Configuration::impl::read_settings ()
   repeat_Tx_ = settings_->value("RepeatTx",false).toBool ();
   auto_astro_ = settings_->value("AutoAstroWindow",true).toBool ();
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
-  enable_qsy_popup_ = settings_->value("QSYPopup",true).toBool ();  //w3sz
   twoPass_ = settings_->value("TwoPass",true).toBool ();
   highDPI_ = settings_->value("HighDPI",true).toBool ();
   largerTabWidget_ = settings_->value("LargerTabWidget",false).toBool ();
@@ -2712,7 +2695,6 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("RepeatTx", repeat_Tx_);
   settings_->setValue ("AutoAstroWindow", auto_astro_);
   settings_->setValue ("SingleDecode", single_decode_);
-  settings_->setValue ("QSYPopup", enable_qsy_popup_);  //w3sz
   settings_->setValue ("TwoPass", twoPass_);
   settings_->setValue ("HighDPI", highDPI_);
   settings_->setValue ("LargerTabWidget", largerTabWidget_);
@@ -3253,7 +3235,6 @@ void Configuration::impl::accept ()
   repeat_Tx_ = ui_->repeat_Tx_check_box->isChecked ();
   auto_astro_ = ui_->auto_astro_check_box->isChecked ();
   single_decode_ = ui_->single_decode_check_box->isChecked ();
-  enable_qsy_popup_ = ui_->qsy_popup_check_box->isChecked (); //w3sz
   twoPass_ = ui_->cbTwoPass->isChecked ();
   highDPI_ = ui_->cbHighDPI->isChecked ();
   largerTabWidget_ = ui_->cbLargerTabWidget->isChecked ();
@@ -4335,21 +4316,6 @@ void Configuration::impl::on_cbOTP_clicked(bool)
 void Configuration::impl::on_cbHideOTP_clicked(bool)
 {
   check_visibility();
-}
-
-void Configuration::impl::on_enable_VHF_features_check_box_clicked (bool checked) //w3sz
-{
-
-  if(checked) {
-//    ui_->qsy_popup_check_box->setVisible(true);
-    ui_->qsy_popup_check_box->setEnabled(true);
-    ui_->qsy_popup_check_box->setChecked(enable_qsy_popup_);  //w3sz
-  } else {
-//    ui_->qsy_popup_check_box->setVisible(false);
-    ui_->qsy_popup_check_box->setEnabled(false);
-    ui_->qsy_popup_check_box->setChecked(false);  //w3sz
-    enable_qsy_popup_ = false;
-  }
 }
 
 void Configuration::impl::check_visibility ()
