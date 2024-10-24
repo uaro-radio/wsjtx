@@ -19,6 +19,7 @@ class QSYMessageCreator
 public:
   explicit QSYMessageCreator(QSettings * settings, Configuration const *, QWidget * parent = 0);
   ~QSYMessageCreator();
+  QString WriteMessage(QString band, QString mode);
 
 protected:
   void showEvent(QShowEvent *event) override {
@@ -38,9 +39,9 @@ private:
   Ui::QSYMessageCreator *ui;
   QString getBand();
   void setBand(QString band);
-  void setMode(QString band, QString mode);
-  QString getMode(QString band);
-  QString WriteMessage(QString band, QString mode);
+  void setMode(QString band, QString mode, int region);
+  QString getMode(QString band, int region);
+  void setup(int region);
 
 private slots:
   void on_button1_clicked();

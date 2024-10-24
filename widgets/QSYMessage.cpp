@@ -96,77 +96,88 @@ void QSYMessage::getBandModeFreq()
     QString mode = "";
     QString freq = "";
 
-    if (bandParam ==  "A"){
-      if(modeParam != 'M') {
+    if (bandParam ==  "A") {
+      if (modeParam != 'M') {
         freq = "50.";
+      } else {
+        if (configuration_->region()==2) {
+          freq = "52.";
+        } else {
+          freq = "51.";
+        }
       }
-      else
-      {freq = "52.";}
     }
-    else if (bandParam ==  "B"){
-      if(modeParam != 'M') {
+    else if (bandParam ==  "B") {
+      if (modeParam != 'M') {
         freq = "144.";
+      } else {
+        if (configuration_->region()==2) {
+          freq = "146.";
+        } else {
+          freq = "145.";
+        }
       }
-      else
-      {freq = "146.";}
     }
-    else if (bandParam ==  "C"){
-      if(modeParam != 'M') {
+    else if (bandParam ==  "C") {
+      if (modeParam != 'M') {
         freq = "222.";
+      } else {
+        freq = "223.";
       }
-      else
-      {freq = "223.";}
     }
-    else if (bandParam ==  "D"){
-      if(modeParam != 'M') {
+    else if (bandParam ==  "D") {
+      if (modeParam != 'M') {
         freq = "432.";
+      } else {
+        if (configuration_->region()==2) {
+          freq = "446.";
+        } else {
+          freq = "433.";
+        }
       }
-      else
-      {freq = "446.";}
     }
-    else if (bandParam ==  "E"){
+    else if (bandParam ==  "E") {
       freq = "1296.";
     }
-    else if (bandParam ==  "F"){
+    else if (bandParam ==  "F") {
       freq = "2304.";
     }
-    else if (bandParam ==  "G"){
+    else if (bandParam ==  "G") {
       freq = "3400.";
     }
-    else if (bandParam ==  "H"){
+    else if (bandParam ==  "H") {
       freq = "5760.";
     }
-    else if (bandParam ==  "I"){
+    else if (bandParam ==  "I") {
       freq = "10368.";
     }
-    else if (bandParam ==  "J"){
+    else if (bandParam ==  "J") {
       freq = "24192.";
     }
-    else if (bandParam ==  "92"){
+    else if (bandParam ==  "92") {
       freq = "902.";
     }
-    else if (bandParam ==  "93"){
+    else if (bandParam ==  "93") {
       freq = "903.";
-    }
-    else {
+    } else {
       freq = "";
     }
 
     freq = freq + freqParam;
 
-    if (modeParam ==  'V'){
+    if (modeParam ==  'V') {
       mode = "SSB";
     }
-    else if (modeParam == '4'){
+    else if (modeParam == '4') {
       mode = "MSK";
     }
-    else if (modeParam ==  '8'){
+    else if (modeParam ==  '8') {
       mode = "FT8";
     }
-    else if (modeParam ==  'M'){
+    else if (modeParam ==  'M') {
       mode = "FM";
     }
-    else if (modeParam ==  'W'){
+    else if (modeParam ==  'W') {
       mode = "CW";
     }
     else {
