@@ -14,6 +14,7 @@
 #include <QLabel>
 #include <QWidget>
 #include <QLayout>
+#include <QSpinBox>
 #include "SettingsGroup.hpp"
 #include "Configuration.hpp"
 #include "ui_QSYMessageCreator.h"
@@ -79,6 +80,8 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   });
 #endif
 
+  connect(ui->kHzBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &QSYMessageCreator::onkHzBoxValueChanged);
+
   setup(configuration_->region());
 }
 
@@ -86,6 +89,14 @@ QSYMessageCreator::~QSYMessageCreator()
 {
   delete ui;
 }
+
+void QSYMessageCreator::onkHzBoxValueChanged()  {
+  QString theBand = getBand();
+  QString theMode = getMode(theBand, configuration_->region());
+  QString message = WriteMessage(theBand, theMode);
+  WriteMessage(theBand, theMode);
+}
+
 
 void QSYMessageCreator::setup(int region) {
   if (region == 0) {
@@ -141,7 +152,7 @@ void QSYMessageCreator::write_settings ()
 QString QSYMessageCreator::WriteMessage (QString band, QString mode)
 {
   qint16 kHzFreq = ui->kHzBox->value();
-  QString kHzStr = QString::number(kHzFreq);
+  QString kHzStr = QStringLiteral("%1").arg(kHzFreq,3,10,QLatin1Char('0'));
   QString message = "$DX " + band + mode + kHzStr;
   ui->messageLabel->setText(message);
   return message;
