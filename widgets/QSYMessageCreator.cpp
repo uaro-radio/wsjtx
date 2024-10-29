@@ -16,6 +16,7 @@
 #include <QWidget>
 #include <QLayout>
 #include <QSpinBox>
+#include <QMap>
 #include "commons.h"
 #include "SettingsGroup.hpp"
 #include "Configuration.hpp"
@@ -29,8 +30,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     configuration_ {configuration},
     ui(new Ui::QSYMessageCreator) {
   ui->setupUi(this);
-  read_settings();
-  setWindowTitle ("QSYMessageCreator");
+  setWindowTitle ("MessageCreator");
   QButtonGroup *modeButtonGroup = new QButtonGroup;
   modeButtonGroup-> setExclusive(true);
   modeButtonGroup->addButton(ui->radioButFM);
@@ -60,7 +60,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   modeButtonGroup2->addButton(ui->radioButSSB2);
   modeButtonGroup2->addButton(ui->radioButCW2);
   modeButtonGroup2->addButton(ui->radioButFT82);
-  modeButtonGroup2->addButton(ui->radioButRTTY);
+  modeButtonGroup2->addButton(ui->radioButFT4);
   modeButtonGroup2->addButton(ui->radioButJT9);
   modeButtonGroup2->addButton(ui->radioButJT65);
   modeButtonGroup2->addButton(ui->radioButFST4);
@@ -88,7 +88,6 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   modeButtonGroup3->addButton(ui->radioButQ6560D);
   modeButtonGroup3->addButton(ui->radioButQ6560E);
   modeButtonGroup3->addButton(ui->radioButQ65120D);
-  modeButtonGroup3->addButton(ui->radioButHB9Q);
 
   QButtonGroup *bandButtonGroup3 = new QButtonGroup;
   bandButtonGroup3-> setExclusive(true);
@@ -105,7 +104,299 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   bandButtonGroup3->addButton(ui->radioBut10368A);
   bandButtonGroup3->addButton(ui->radioBut24192A);
 
+  QPair<QString,QString> key("L","V"); //630m //SSB
+  key.first = "M";  //160
+  kHzFreqMap.insert(key, 910);
+  key.first = "N"; //80
+  kHzFreqMap.insert(key, 960);
+  key.first = "O"; //60
+  kHzFreqMap.insert(key, 354);
+  key.first = "P"; //40
+  kHzFreqMap.insert(key, 285);
+  key.first = "R"; //20
+  kHzFreqMap.insert(key, 285);
+  key.first = "S"; //17
+  kHzFreqMap.insert(key, 130);
+  key.first = "T"; //15
+  kHzFreqMap.insert(key, 385);
+  key.first = "U"; //12
+  kHzFreqMap.insert(key, 910);
+  key.first = "V"; //28M
+  kHzFreqMap.insert(key, 385);
+
+  key.first = "L"; //630M
+  key.second = "W"; //CW
+  kHzFreqMap.insert(key, 473);
+  key.first = "M";  //160
+  kHzFreqMap.insert(key, 810);
+  key.first = "N"; //80
+  kHzFreqMap.insert(key, 560);
+  key.first = "O"; //60
+  kHzFreqMap.insert(key, 353);
+  key.first = "P"; //40
+  kHzFreqMap.insert(key, 40);
+  key.first = "Q"; //30
+  kHzFreqMap.insert(key, 106);
+  key.first = "R"; //20
+  kHzFreqMap.insert(key, 60);
+  key.first = "S"; //17
+  kHzFreqMap.insert(key, 96);
+  key.first = "T"; //15
+  kHzFreqMap.insert(key, 60);
+  key.first = "U"; //12
+  kHzFreqMap.insert(key, 906);
+  key.first = "V"; //28M
+  kHzFreqMap.insert(key, 60);
+
+  key.first = "M"; //29 MHz
+  key.second = "M"; //FM
+  kHzFreqMap.insert(key, 600);
+
+  key.first = "L"; //630M
+  key.second = "C"; //FST4
+  kHzFreqMap.insert(key, 474);
+  key.first = "M";  //160
+  kHzFreqMap.insert(key, 839);
+  key.first = "N"; //80
+  kHzFreqMap.insert(key, 577);
+  key.first = "O"; //60
+  kHzFreqMap.insert(key, 357);
+  key.first = "P"; //40
+  kHzFreqMap.insert(key, 49);
+  key.first = "Q"; //30
+  kHzFreqMap.insert(key, 142);
+  key.first = "R"; //20
+  kHzFreqMap.insert(key, 82);
+  key.first = "S"; //17
+  kHzFreqMap.insert(key, 106);
+  key.first = "T"; //15
+  kHzFreqMap.insert(key, 142);
+  key.first = "U"; //12
+  kHzFreqMap.insert(key, 921);
+  key.first = "V"; //28M
+  kHzFreqMap.insert(key, 182);
+
+  key.second = "2"; //FT4
+  key.first = "N"; //80
+  kHzFreqMap.insert(key, 575);
+  key.first = "O"; //60
+  kHzFreqMap.insert(key, 357);
+  key.first = "P"; //40
+  kHzFreqMap.insert(key, 47);
+  key.first = "Q"; //30
+  kHzFreqMap.insert(key, 140);
+  key.first = "R"; //20
+  kHzFreqMap.insert(key, 80);
+  key.first = "S"; //17
+  kHzFreqMap.insert(key, 104);
+  key.first = "T"; //15
+  kHzFreqMap.insert(key, 140);
+  key.first = "U"; //12
+  kHzFreqMap.insert(key, 919);
+  key.first = "V"; //28M
+  kHzFreqMap.insert(key, 180);
+
+  key.second = "8"; //FT8;
+  key.first = "M";  //160
+  kHzFreqMap.insert(key, 840);
+  key.first = "N"; //80
+  kHzFreqMap.insert(key, 573);
+  key.first = "O"; //60
+  kHzFreqMap.insert(key, 357);
+  key.first = "P"; //40
+  kHzFreqMap.insert(key, 74);
+  key.first = "Q"; //30
+  kHzFreqMap.insert(key, 136);
+  key.first = "R"; //20
+  kHzFreqMap.insert(key, 74);
+  key.first = "S"; //17
+  kHzFreqMap.insert(key, 100);
+  key.first = "T"; //15
+  kHzFreqMap.insert(key, 74);
+  key.first = "U"; //12
+  kHzFreqMap.insert(key, 915);
+  key.first = "V"; //28M
+  kHzFreqMap.insert(key, 74);
+
+  key.second = "B"; //JT65
+  key.first = "M";  //160
+  kHzFreqMap.insert(key, 838);
+  key.first = "N"; //80
+  kHzFreqMap.insert(key, 576);
+  key.first = "O"; //60
+  kHzFreqMap.insert(key, 357);
+  key.first = "P"; //40
+  kHzFreqMap.insert(key, 76);
+  key.first = "Q"; //30
+  kHzFreqMap.insert(key, 138);
+  key.first = "R"; //20
+  kHzFreqMap.insert(key, 76);
+  key.first = "S"; //17
+  kHzFreqMap.insert(key, 102);
+  key.first = "T"; //15
+  kHzFreqMap.insert(key, 76);
+  key.first = "U"; //12
+  kHzFreqMap.insert(key, 917);
+  key.first = "V"; //28M
+  kHzFreqMap.insert(key, 76);
+
+  key.second = "A"; //JT9
+  key.first = "M";  //160
+  kHzFreqMap.insert(key, 839);
+  key.first = "N"; //80
+  kHzFreqMap.insert(key, 572);
+  key.first = "O"; //60
+  kHzFreqMap.insert(key, 357);
+  key.first = "P"; //40
+  kHzFreqMap.insert(key, 78);
+  key.first = "Q"; //30
+  kHzFreqMap.insert(key, 140);
+  key.first = "R"; //20
+  kHzFreqMap.insert(key, 78);
+  key.first = "S"; //17
+  kHzFreqMap.insert(key, 104);
+  key.first = "T"; //15
+  kHzFreqMap.insert(key, 78);
+  key.first = "U"; //12
+  kHzFreqMap.insert(key, 919);
+  key.first = "V"; //28M
+  kHzFreqMap.insert(key, 78);
+
+  //VHF and EME band/mode/freq
+
+  key.second = "V"; //SSB
+  key.first = "A";  // 6M
+  kHzFreqMap.insert(key, 125);
+  key.first = "B"; //2M
+  kHzFreqMap.insert(key, 200);
+  key.first = "C"; //222
+  kHzFreqMap.insert(key, 100);
+  key.first = "D"; //432
+  kHzFreqMap.insert(key, 100);
+  key.first = "92"; //902
+  kHzFreqMap.insert(key, 100);
+  key.first = "93"; //903
+  kHzFreqMap.insert(key, 100);
+  key.first = "E"; //1296
+  kHzFreqMap.insert(key, 100);
+  key.first = "F"; //2304
+  kHzFreqMap.insert(key, 100);
+  key.first = "G"; //3400
+  kHzFreqMap.insert(key, 100);
+  key.first = "H";  //5760
+  kHzFreqMap.insert(key, 100);
+  key.first = "I"; //10368
+  kHzFreqMap.insert(key, 100);
+  key.first = "J"; //24192
+  kHzFreqMap.insert(key, 100);
+
+  key.second = "W"; //CW
+  key.first = "A";  // 6M
+  kHzFreqMap.insert(key, 90);
+  key.first = "B"; //2M
+  kHzFreqMap.insert(key, 100);
+  key.first = "C"; //222
+  kHzFreqMap.insert(key, 100);
+  key.first = "D"; //432
+  kHzFreqMap.insert(key, 100);
+  key.first = "92"; //902
+  kHzFreqMap.insert(key, 100);
+  key.first = "93"; //903
+  kHzFreqMap.insert(key, 100);
+  key.first = "E"; //1296
+  kHzFreqMap.insert(key, 100);
+  key.first = "F"; //2304
+  kHzFreqMap.insert(key, 100);
+  key.first = "G"; //3400
+  kHzFreqMap.insert(key, 100);
+  key.first = "H";  //5760
+  kHzFreqMap.insert(key, 100);
+  key.first = "I"; //10368
+  kHzFreqMap.insert(key, 100);
+  key.first = "J"; //24192
+  kHzFreqMap.insert(key, 100);
+
+  key.second = "M"; // FM
+  key.first = "A";  // 6M
+  kHzFreqMap.insert(key, 525);
+  key.first = "B"; //2M
+  kHzFreqMap.insert(key, 520);
+  key.first = "C"; //222
+  kHzFreqMap.insert(key, 500);
+  key.first = "D"; //432
+  kHzFreqMap.insert(key, 000);
+
+  key.second = "8"; // FT8
+  key.first = "A";  // 6M
+  kHzFreqMap.insert(key, 313);
+  key.first = "B"; //2M
+  kHzFreqMap.insert(key, 174);
+  key.first = "C"; //222
+  kHzFreqMap.insert(key, 174);
+  key.first = "D"; //432
+  kHzFreqMap.insert(key, 174);
+  key.first = "92"; //902
+  kHzFreqMap.insert(key, 174);
+  key.first = "93"; //903
+  kHzFreqMap.insert(key, 174);
+  key.first = "E"; //1296
+  kHzFreqMap.insert(key, 174);
+  key.first = "F"; //2304
+  kHzFreqMap.insert(key, 174);
+  key.first = "G"; //3400
+  kHzFreqMap.insert(key, 174);
+  key.first = "H";  //5760
+  kHzFreqMap.insert(key, 174);
+  key.first = "I"; //10368
+  kHzFreqMap.insert(key, 174);
+  key.first = "J"; //24192
+  kHzFreqMap.insert(key, 174);
+
+  key.second = "4"; // MSK144
+  key.first = "A";  // 6M
+  kHzFreqMap.insert(key, 280);
+  key.first = "B"; //2M
+  kHzFreqMap.insert(key, 150);
+  key.first = "C"; //222
+  kHzFreqMap.insert(key, 150);
+  key.first = "D"; //432
+  kHzFreqMap.insert(key, 150);
+
+  QList<QString> Q65modes = {"D","E","F","G","H"};
+  QList<QString>::iterator it = Q65modes.begin();
+  while (it!=Q65modes.end()) {
+    key.second = *it; // Q65 submodes D,E,F,G,H
+    key.first = "A";  // 6M
+    kHzFreqMap.insert(key, 275);
+    key.first = "B"; //2M
+    kHzFreqMap.insert(key, 170);
+    key.first = "C"; //222
+    kHzFreqMap.insert(key, 170);
+    key.first = "D"; //432
+    kHzFreqMap.insert(key, 170);
+    key.first = "92"; //902
+    kHzFreqMap.insert(key, 170);
+    key.first = "93"; //903
+    kHzFreqMap.insert(key, 170);
+    key.first = "E"; //1296
+    kHzFreqMap.insert(key, 170);
+    key.first = "F"; //2304
+    kHzFreqMap.insert(key, 170);
+    key.first = "G"; //3400
+    kHzFreqMap.insert(key, 170);
+    key.first = "H";  //5760
+    kHzFreqMap.insert(key, 170);
+    key.first = "I"; //10368
+    kHzFreqMap.insert(key, 170);
+    key.first = "J"; //24192
+    kHzFreqMap.insert(key, 170);
+    ++it;
+  }
+
+  read_settings();
+
 #if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
+  //VHF
   connect(modeButtonGroup, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
@@ -119,7 +410,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     QString theMode = getMode(theBand, configuration_->region());
     WriteMessage(theBand, theMode);
   });
-
+  //HF
   connect(modeButtonGroup2, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
@@ -130,43 +421,10 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   connect(bandButtonGroup2, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
-    if(theBand.compare("L")==0) {
-      if((ui->kHzBox2->value() < 472) || ui->kHzBox2->value() > 479 ) {
-        ui->kHzBox2->setValue(472); }
-    } else if(theBand.compare("M")==0) {
-      if(ui->kHzBox2->value() < 800 ) {
-        ui->kHzBox2->setValue(800); }
-    } else if(theBand.compare("N")==0) {
-      if(ui->kHzBox2->value() < 500 ) {
-        ui->kHzBox2->setValue(500); }
-    } else if(theBand.compare("O")==0) {
-      if(ui->kHzBox2->value() < 330  || ui->kHzBox2->value() > 405) {
-        ui->kHzBox2->setValue(330); }
-    } else if(theBand.compare("P")==0) {
-      if(ui->kHzBox2->value() > 300) {
-        ui->kHzBox2->setValue(0); }
-    } else if(theBand.compare("Q")==0)  {
-      if(ui->kHzBox2->value() < 100  || ui->kHzBox2->value() > 150) {
-        ui->kHzBox2->setValue(100); }
-    } else if(theBand.compare("R")==0) {
-      if(ui->kHzBox2->value() > 350) {
-        ui->kHzBox2->setValue(0); }
-    } else if(theBand.compare("S")==0) {
-      if(ui->kHzBox2->value() < 68  || ui->kHzBox2->value() > 110) {
-        ui->kHzBox2->setValue(68); }
-    } else if(theBand.compare("T")==0) {
-      if(ui->kHzBox2->value() > 450) {
-        ui->kHzBox2->setValue(0); }
-    } else if(theBand.compare("U")==0) {
-      if(ui->kHzBox2->value() < 890  || ui->kHzBox2->value() > 930) {
-        ui->kHzBox2->setValue(890); }
-    } else if(theBand.compare("W")==0) {
-      if(ui->kHzBox2->value() > 700) {
-        ui->kHzBox2->setValue(0); }
-    }
     QString theMode = getMode(theBand, configuration_->region());
     WriteMessage(theBand, theMode);
   });
+  //EME
   connect(modeButtonGroup3, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
@@ -180,11 +438,12 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     QString theMode = getMode(theBand, configuration_->region());
     WriteMessage(theBand, theMode);
   });
-#else
+#else //VHF
   QObject::connect(modeButtonGroup, &QButtonGroup::idToggled, [&](int id, bool checked) {
     qDebug() << "Button" << id << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
+    setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
     QSYMessageCreator::WriteMessage(theBand, theMode);
   });
 
@@ -192,60 +451,31 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     qDebug() << "Button" << id << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
+    setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
     QSYMessageCreator::WriteMessage(theBand, theMode);
   });
+  //HF
   QObject::connect(modeButtonGroup2, &QButtonGroup::idToggled, [&](int id, bool checked) {
     qDebug() << "Button" << id << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
+    setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
     QSYMessageCreator::WriteMessage(theBand, theMode);
   });
 
   QObject::connect(bandButtonGroup2, &QButtonGroup::idToggled, [&](int id, bool checked) {
     qDebug() << "Button" << id << "toggled:" << checked;
     QString theBand = getBand();
-    if(theBand.compare("L")==0) {
-      if((ui->kHzBox2->value() < 472) || ui->kHzBox2->value() > 479 ) {
-        ui->kHzBox2->setValue(472); }
-    } else if(theBand.compare("M")==0) {
-      if(ui->kHzBox2->value() < 800 ) {
-        ui->kHzBox2->setValue(800); }
-    } else if(theBand.compare("N")==0) {
-      if(ui->kHzBox2->value() < 500 ) {
-        ui->kHzBox2->setValue(500); }
-    } else if(theBand.compare("O")==0) {
-      if(ui->kHzBox2->value() < 330  || ui->kHzBox2->value() > 405) {
-        ui->kHzBox2->setValue(330); }
-    } else if(theBand.compare("P")==0) {
-      if(ui->kHzBox2->value() > 300) {
-        ui->kHzBox2->setValue(0); }
-    } else if(theBand.compare("Q")==0)  {
-      if(ui->kHzBox2->value() < 100  || ui->kHzBox2->value() > 150) {
-        ui->kHzBox2->setValue(100); }
-    } else if(theBand.compare("R")==0) {
-      if(ui->kHzBox2->value() > 350) {
-        ui->kHzBox2->setValue(0); }
-    } else if(theBand.compare("S")==0) {
-      if(ui->kHzBox2->value() < 68  || ui->kHzBox2->value() > 110) {
-        ui->kHzBox2->setValue(68); }
-    } else if(theBand.compare("T")==0) {
-      if(ui->kHzBox2->value() > 450) {
-        ui->kHzBox2->setValue(0); }
-    } else if(theBand.compare("U")==0) {
-      if(ui->kHzBox2->value() < 890  || ui->kHzBox2->value() > 930) {
-        ui->kHzBox2->setValue(890); }
-    } else if(theBand.compare("W")==0) {
-      if(ui->kHzBox2->value() > 700) {
-        ui->kHzBox2->setValue(0); }
-    }
     QString theMode = getMode(theBand, configuration_->region());
+    setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
     QSYMessageCreator::WriteMessage(theBand, theMode);
   });
-
+  //EME
   QObject::connect(modeButtonGroup3, &QButtonGroup::idToggled, [&](int id, bool checked) {
     qDebug() << "Button" << id << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
+    setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
     QSYMessageCreator::WriteMessage(theBand, theMode);
   });
 
@@ -253,14 +483,15 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     qDebug() << "Button" << id << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
+    setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
     QSYMessageCreator::WriteMessage(theBand, theMode);
   });
 
 #endif
 
-  connect(ui->kHzBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &QSYMessageCreator::onkHzBoxValueChanged);
-  connect(ui->kHzBox2, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &QSYMessageCreator::onkHzBox2ValueChanged);
-  connect(ui->kHzBox3, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &QSYMessageCreator::onkHzBox3ValueChanged);
+  connect(ui->kHzBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &QSYMessageCreator::onkHzBoxValueChanged); //VHF
+  connect(ui->kHzBox2, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &QSYMessageCreator::onkHzBox2ValueChanged);  //HF
+  connect(ui->kHzBox3, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &QSYMessageCreator::onkHzBox3ValueChanged);  //EME
 
   setup(configuration_->region());
 
@@ -271,7 +502,113 @@ QSYMessageCreator::~QSYMessageCreator()
   delete ui;
 }
 
-void QSYMessageCreator::onkHzBoxValueChanged()  {
+void QSYMessageCreator::setkHzBox(QString theBand, QString theMode, int tabNum)
+{
+  QPair<QString,QString> key(theBand,theMode);
+  auto it =  kHzFreqMap.find(key);
+  int defaultValue = -1;
+  int value =  (it != kHzFreqMap.constEnd()) ? it.value() : defaultValue;
+
+  if (value >= 0) {
+    if(tabNum ==1) {
+      ui->kHzBox->setValue(value);
+      setkHzVHF(value);
+    } else if (tabNum ==0) {
+      ui->kHzBox2->setValue(value);
+      setkHzHF(value);
+    } else if (tabNum ==2) {
+      ui->kHzBox3->setValue(value);
+      setkHzEME(value);
+    }
+    kHzFreqMap.insert(key, value);
+  } else {
+    QMap<QPair<QString, QString>, int>::const_iterator it = kHzFreqMap.begin();
+    bool running = true;
+    while (running && (it !=kHzFreqMap.end())) {
+      QPair<QString,QString> key = it.key();
+      if (key.first.contains(theBand)) {
+        int value = it.value();
+        if (tabNum ==1) {
+          ui->kHzBox->setValue(value);
+          setkHzVHF(value);
+        } else if (tabNum ==0) {
+          ui->kHzBox2->setValue(value);
+          setkHzHF(value);
+        } else if (tabNum ==2) {
+          ui->kHzBox3->setValue(value);
+          setkHzEME(value);
+        };
+        running = false;
+      }
+      ++it;
+    }
+  }
+/*
+    QMessageBox *regionWarning = new QMessageBox(this);
+    regionWarning->setModal(false);
+    regionWarning->setIcon(QMessageBox::Warning);
+    regionWarning->setText("Before Loop line 293 " + theBand + theMode + " " + QString::number(tabNum) + " " + QString::number(value));
+    regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
+    regionWarning->show();
+*/
+
+  if (value<0 && tabNum == 0) {
+/*
+        QMessageBox *regionWarning = new QMessageBox(this);
+        regionWarning->setModal(false);
+        regionWarning->setIcon(QMessageBox::Warning);
+        regionWarning->setText("In Loop line 303 " + theBand + theMode + " " + QString::number(tabNum) + " " + QString::number(value));
+        regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
+        regionWarning->show();
+*/
+
+    if (theBand.compare("L")==0) {
+      if ((ui->kHzBox2->value() < 472) || ui->kHzBox2->value() > 479) ui->kHzBox2->setValue(472);
+    }
+    else if (theBand.compare("M")==0) {
+      if (ui->kHzBox2->value() < 800 ) ui->kHzBox2->setValue(800);
+    }
+    else if (theBand.compare("N")==0) {
+      if (ui->kHzBox2->value() < 500 ) ui->kHzBox2->setValue(500);
+    }
+    else if (theBand.compare("O")==0) {
+      if (ui->kHzBox2->value() < 330 || ui->kHzBox2->value() > 405) ui->kHzBox2->setValue(357);
+    }
+    else if (theBand.compare("P")==0) {
+      if (ui->kHzBox2->value() > 300) ui->kHzBox2->setValue(0);
+    }
+    else if (theBand.compare("Q")==0) {
+      if (ui->kHzBox2->value() < 100 || ui->kHzBox2->value() > 150) ui->kHzBox2->setValue(100);
+    }
+    else if (theBand.compare("R")==0) {
+      if (ui->kHzBox2->value() > 350) ui->kHzBox2->setValue(0);
+    }
+    else if (theBand.compare("S")==0) {
+      if (ui->kHzBox2->value() < 68 || ui->kHzBox2->value() > 110) ui->kHzBox2->setValue(68);
+    }
+    else if (theBand.compare("T")==0) {
+      if (ui->kHzBox2->value() > 450) ui->kHzBox2->setValue(0);
+    }
+    else if (theBand.compare("U")==0) {
+      if (ui->kHzBox2->value() < 890 || ui->kHzBox2->value() > 930) ui->kHzBox2->setValue(890);
+    }
+    else if (theBand.compare("W")==0) {
+      if (ui->kHzBox2->value() > 700) ui->kHzBox2->setValue(0);
+    }
+  }
+
+  setkHzHF(ui->kHzBox2->value());
+
+     /*   regionWarning->setModal(false);
+        regionWarning->setIcon(QMessageBox::Warning);
+        regionWarning->setText("After loop line 349 " + theBand +  theMode + " " + QString::number(tabNum) + " " + QString::number(value) + " " + ui->kHzBox2->value());
+        regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
+        regionWarning->show();
+*/
+}
+
+void QSYMessageCreator::onkHzBoxValueChanged()
+{
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
   QString message = WriteMessage(theBand, theMode);
@@ -279,7 +616,8 @@ void QSYMessageCreator::onkHzBoxValueChanged()  {
   WriteMessage(theBand, theMode);
 }
 
-void QSYMessageCreator::onkHzBox2ValueChanged()  {
+void QSYMessageCreator::onkHzBox2ValueChanged()
+{
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
   QString message = WriteMessage(theBand, theMode);
@@ -287,7 +625,8 @@ void QSYMessageCreator::onkHzBox2ValueChanged()  {
   WriteMessage(theBand, theMode);
 }
 
-void QSYMessageCreator::onkHzBox3ValueChanged()  {
+void QSYMessageCreator::onkHzBox3ValueChanged()
+{
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
   QString message = WriteMessage(theBand, theMode);
@@ -295,7 +634,8 @@ void QSYMessageCreator::onkHzBox3ValueChanged()  {
   WriteMessage(theBand, theMode);
 }
 
-void QSYMessageCreator::setup(int region) {
+void QSYMessageCreator::setup(int region)
+{
   if (region == 0) {
     QMessageBox *regionWarning = new QMessageBox(this);
     regionWarning->setModal(false);
@@ -306,11 +646,33 @@ void QSYMessageCreator::setup(int region) {
   }
 }
 
+void QSYMessageCreator::on_displayButton_clicked()
+{
+    /*
+    QMessageBox *regionWarning = new QMessageBox(this);
+    regionWarning->setModal(false);
+    regionWarning->setIcon(QMessageBox::Warning);
+    regionWarning->setText("Display Button clicked ");
+    regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
+    regionWarning->show();
+*/
+
+  QMap<QPair<QString, QString>, int>::const_iterator it = kHzFreqMap.begin();
+  while (it != kHzFreqMap.end()) {
+    QPair<QString, QString> key = it.key();
+    int value = it.value();
+    ui->textEdit->append("Size of QMAP is " +QString::number(kHzFreqMap.size()) + "   " + key.first + " " + key.second + " " + QString::number(value) + '\n');
+    ++it;
+  }
+}
+
 void QSYMessageCreator::on_button1_clicked()
 {
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
   QString message = WriteMessage(theBand, theMode);
+  QPair<QString,QString>key(theBand,theMode);
+  kHzFreqMap.insert(key, ui->kHzBox->value());
   Q_EMIT sendMessage(message);
 }
 
@@ -319,6 +681,8 @@ void QSYMessageCreator::on_button2_clicked()
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
   QString message = WriteMessage(theBand, theMode);
+  QPair<QString,QString>key(theBand,theMode);
+  kHzFreqMap.insert(key, ui->kHzBox2->value());
   Q_EMIT sendMessage(message);
 }
 
@@ -327,6 +691,31 @@ void QSYMessageCreator::on_button3_clicked()
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
   QString message = WriteMessage(theBand, theMode);
+  QPair<QString,QString>key(theBand,theMode);
+  kHzFreqMap.insert(key, ui->kHzBox3->value());
+  Q_EMIT sendMessage(message);
+}
+
+void QSYMessageCreator::on_genButton_clicked()
+{
+  QString message;
+  if (ui->message1->isChecked()) message = "001";
+  else if (ui->message2->isChecked()) message = "002";
+  else if (ui->message3->isChecked()) message = "003";
+  else if (ui->message4->isChecked()) message = "004";
+  else if (ui->message5->isChecked()) message = "005";
+  else if (ui->message6->isChecked()) message = "006";
+  else if (ui->message7->isChecked()) message = "007";
+  else if (ui->message8->isChecked()) message = "008";
+  else if (ui->message9->isChecked()) message = "009";
+  else if (ui->message10->isChecked()) message = "010";
+  else if (ui->message11->isChecked()) message = "011";
+  else if (ui->message12->isChecked()) message = "012";
+  else if (ui->message13->isChecked()) message = "013";
+  else if (ui->message14->isChecked()) message = "014";
+
+  message = "$DX ZA" + message;
+  ui->messageLabel4->setText(message);
   Q_EMIT sendMessage(message);
 }
 
@@ -358,73 +747,88 @@ void QSYMessageCreator::read_settings ()
   ui->tabWidget->setCurrentIndex(settings_->value("whichTab").toInt());
   setkHzVHF(ui->kHzBox->value());
   setkHzEME(ui->kHzBox3->value());
-  if((settings_->value("bandVHF").toString()).compare("")==0) {
+  setkHzHF(ui->kHzBox2->value());
+  bool testVHF = true;
+  bool testHF = true;
+  bool testEME = true;
+  if ((settings_->value("bandVHF").toString()).compare("")==0) {
     setbandVHF("A");
+    testVHF=false;
   }
   if ((settings_->value("modeVHF").toString()).compare("")==0) {
     setmodeVHF("V");
+    testVHF=false;
   }
-  if((settings_->value("bandHF").toString()).compare("")==0) {
+  if ((settings_->value("bandHF").toString()).compare("")==0) {
     setbandHF("M");
+    testHF = false;
   }
   if ((settings_->value("modeHF").toString()).compare("")==0) {
     setmodeHF("V");
+    testHF = false;
   }
-  if((settings_->value("bandEME").toString()).compare("")==0) {
+  if ((settings_->value("bandEME").toString()).compare("")==0) {
     setbandEME("A");
+    testEME = false;
   }
   if ((settings_->value("modeEME").toString()).compare("")==0) {
     setmodeEME("V");
+    testEME = false;
   }
-  ui->tabWidget->setCurrentIndex(0);
-  setBand(getbandVHF());
-  setMode(getbandVHF(), getmodeVHF(), configuration_->region());
-  WriteMessage(getbandVHF(), getmodeVHF());
+  if ((settings_->value("kHzVHF").toString()).compare("")==0) {
+    setkHzVHF(0);
+    testVHF = false;
+  }
+  if ((settings_->value("kHzHF").toString()).compare("")==0) {
+    setkHzHF(0);
+    testHF = false;
+  }
+  if ((settings_->value("kHzEME").toString()).compare("")==0) {
+    setkHzEME(0);
+    testEME = false;
+  }
+
+  if (testVHF) {
+    QPair<QString,QString> key(getbandVHF(),getmodeVHF());
+    kHzFreqMap.insert(key,getkHzVHF());
+    }
+
+  if (testEME) {
+    QPair<QString,QString> key(getbandEME(),getmodeEME());
+    kHzFreqMap.insert(key,getkHzEME());
+  }
+
+  if (testHF) {
+    QPair<QString,QString> key(getbandHF(),getmodeHF());
+    kHzFreqMap.insert(key,getkHzHF());
+  }
 
   ui->tabWidget->setCurrentIndex(1);
-  if((settings_->value("bandHF").toString()).compare("L")==0) {
-    if(settings_->value("kHzHF").toInt() < 472 || settings_->value("kHzHF").toInt() > 479  ) {
-      ui->kHzBox2->setValue(472); }
-  } else if((settings_->value("bandHF").toString()).compare("M")==0) {
-    if(settings_->value("kHzHF").toInt() < 800) {
-      ui->kHzBox2->setValue(800); }
-  } else if((settings_->value("bandHF").toString()).compare("N")==0) {
-    if(settings_->value("kHzHF").toInt() < 500) {
-      ui->kHzBox2->setValue(500); }
-  } else if((settings_->value("bandHF").toString()).compare("O")==0) {
-    if(settings_->value("kHzHF").toInt() < 330 || settings_->value("kHzHF").toInt() > 405 ) {
-      ui->kHzBox2->setValue(330); }
-  } else if((settings_->value("bandHF").toString()).compare("P")==0) {
-    if(ui->kHzBox2->value() > 300) {
-      ui->kHzBox2->setValue(0); }
-  } else if((settings_->value("bandHF").toString()).compare("Q")==0)  {
-    if(settings_->value("kHzHF").toInt() < 100 || settings_->value("kHzHF").toInt() > 150 ) {
-      ui->kHzBox2->setValue(100); }
-  } else if((settings_->value("bandHF").toString()).compare("R")==0) {
-    if(ui->kHzBox2->value() > 350) {
-      ui->kHzBox2->setValue(0); }
-  } else if((settings_->value("bandHF").toString()).compare("S")==0) {
-    if(settings_->value("kHzHF").toInt() < 68 || settings_->value("kHzHF").toInt() > 110 ) {
-      ui->kHzBox2->setValue(68); }
-  } else if((settings_->value("bandHF").toString()).compare("T")==0) {
-    if(settings_->value("kHzHF").toInt() > 450) {
-      ui->kHzBox2->setValue(0); }
-  } else if((settings_->value("bandHF").toString()).compare("U")==0) {
-    if(settings_->value("kHzHF").toInt() < 890 || settings_->value("kHzHF").toInt() > 930 ) {
-      ui->kHzBox2->setValue(890); }
-  } else if((settings_->value("bandHF").toString()).compare("W")==0) {
-    if(settings_->value("kHzHF").toInt() > 700 ) {
-      ui->kHzBox2->setValue(0); }
+  setBand(getbandVHF());
+  setMode(getbandVHF(), getmodeVHF(), configuration_->region());
+  if (!testVHF) {
+    setkHzBox(getbandVHF(),getmodeVHF(),1);
   }
-  setkHzHF(ui->kHzBox2->value());
-  setBand(getbandHF());
-  setMode(getbandHF(), getmodeHF(), configuration_->region());
-  WriteMessage(getbandHF(), getmodeHF());
+  setkHzVHF(ui->kHzBox->value());;
+  WriteMessage(getbandVHF(), getmodeVHF());
 
   ui->tabWidget->setCurrentIndex(2);
   setBand(getbandEME());
   setMode(getbandEME(), getmodeEME(), configuration_->region());
+  if (!testEME) {
+    setkHzBox(getbandEME(),getmodeEME(),2);
+  }
+  setkHzEME(ui->kHzBox3->value());;
   WriteMessage(getbandEME(), getmodeEME());
+
+  ui->tabWidget->setCurrentIndex(0);
+  setBand(getbandHF());
+  setMode(getbandHF(), getmodeHF(), configuration_->region());
+  if (!testHF) {
+    setkHzBox(getbandHF(),getmodeHF(),0);
+  }
+  setkHzHF(ui->kHzBox2->value());
+  WriteMessage(getbandHF(), getmodeHF());
 
   ui->tabWidget->setCurrentIndex(settings_->value("whichTab").toInt());
 }
@@ -627,8 +1031,8 @@ void QSYMessageCreator::setMode(QString band, QString mode, int region)
     else if (mode=="8") {
       ui->radioButFT82->setChecked(true);
     }
-    else if (mode=="R") {
-      ui->radioButRTTY->setChecked(true);
+    else if (mode=="2") {
+      ui->radioButFT4->setChecked(true);
     }
     else if (mode=="A") {
       ui->radioButJT9->setChecked(true);
@@ -657,9 +1061,6 @@ void QSYMessageCreator::setMode(QString band, QString mode, int region)
     }
     else if (mode=="H") {
       ui->radioButQ65120D->setChecked(true);
-    }
-    else if (mode=="I") {
-      ui->radioButHB9Q->setChecked(true);
     }
   }
 }
@@ -741,8 +1142,8 @@ QString QSYMessageCreator::getMode(QString band,int region)
     else if (ui->radioButFT82->isChecked()) {
       mode = "8";
     }
-    else if (ui->radioButRTTY->isChecked()) {
-      mode = "R";
+    else if (ui->radioButFT4->isChecked()) {
+      mode = "2";
     }
     else if (ui->radioButJT9->isChecked()) {
       mode = "A";
@@ -772,15 +1173,11 @@ QString QSYMessageCreator::getMode(QString band,int region)
     }
     else if (ui->radioButQ65120D->isChecked()) {
       mode = "H";
-    }
-    else if (ui->radioButHB9Q->isChecked()) {
-      mode = "I";
     } else mode = "V";
     setmodeEME(mode);
   }
   return mode;
 }
-
 
 void QSYMessageCreator::send_message(const QString message) {
   Q_EMIT sendMessage(message);

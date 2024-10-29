@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QCloseEvent>
 #include <QTabWidget>
+#include <QMap>
 
 class QSettings;
 class Configuration;
@@ -25,6 +26,7 @@ class QSYMessageCreator
   Q_PROPERTY(int kHzEME READ getkHzEME WRITE setkHzEME)
   Q_PROPERTY(QString bandEME READ getbandEME WRITE setbandEME)
   Q_PROPERTY(QString modeEME READ getmodeEME WRITE setmodeEME)
+
 
 public:
   explicit QSYMessageCreator(QSettings * settings, Configuration const *, QWidget * parent = 0);
@@ -59,6 +61,8 @@ public:
   void setbandEME (QString bandEME) {m_bandEME = bandEME;}
   void setmodeEME (QString modeEME) { m_modeEME = modeEME;}
   void setkHzEME  (int kHzEME) {m_kHzEME = kHzEME;}
+
+  QMap<QPair<QString, QString>, int> kHzFreqMap;
 
   QTabWidget tabWidget;
 
@@ -97,7 +101,11 @@ private:
   void write_settings();
   void send_message(const QString message);
 
+
 private slots:
+  void on_displayButton_clicked();
+  void on_genButton_clicked();
+  void setkHzBox(QString theBand, QString theMode, int tabNum);//, QMap<QPair<QString,QString>,int> kHzFreqMap);
   void on_button1_clicked();
   void on_button2_clicked();
   void on_button3_clicked();

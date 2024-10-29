@@ -5476,7 +5476,7 @@ Double-click to reset to the standard 73 message</string>
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>QSYMessage Creator</string>
+    <string>Message Creator</string>
    </property>
   </action>  
   <action name="actionHideB4">
@@ -5655,7 +5655,7 @@ Double-click to reset to the standard 73 message</string>
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Enable QSY Popups</string>
+    <string>Enable Message Popups</string>
    </property>
   </action>
  </widget>

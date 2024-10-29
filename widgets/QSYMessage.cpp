@@ -16,10 +16,8 @@ QSYMessage::QSYMessage(const QString& message,const QString& theCall, QSettings 
 {
   ui->setupUi(this);
   read_settings();
-  setWindowTitle ("BAND CHANGE NOW" + QTime::currentTime().toString("[hh:mm:ss]"));
-  ui->label->setStyleSheet("font: bold; font-size: 36pt");
-  ui->label_2->setStyleSheet("font: bold; font-size: 36pt");
-  ui->label_3->setStyleSheet("font: bold; font-size: 36pt");
+  setWindowTitle ("WSJT-X Popup" + QTime::currentTime().toString("[hh:mm:ss]"));
+  ui->label->setStyleSheet("font: bold; font-size: 30pt");
   getBandModeFreq();
 }
 
@@ -68,11 +66,46 @@ void QSYMessage::getBandModeFreq()
 #else
     QStringList bhList = receivedMessage.split(" ",QString::SkipEmptyParts);
 #endif
-    ui->label->setText(bhList[1]);
-    ui->label_2->setText("replied");
-    ui->label_3->setText(bhList[2].mid(0,2));
+    ui->label->setText(bhList[1] + " replied " +bhList[2].mid(0,2));
     ui->yesButton->hide();
     ui->noButton->hide();
+  }
+  else if(receivedMessage.at(0) =='Z' && receivedMessage.at(1) =='A' && receivedMessage.size() >= 5) {
+      QString messageContent = "";
+      QString text1 = "";
+      QString msgNum =receivedMessage.mid(2,3);
+      if(msgNum == "001") {
+          text1 = "You are in the log";
+      } else if(msgNum =="002") {
+          text1 = "Please call me by phone";
+      } else if(msgNum =="003") {
+          text1 = "Check your email";
+      } else if(msgNum =="004") {
+          text1 = "You are not in Contest Mode";
+      } else if(msgNum =="005") {
+          text1 = "Please check your PC Clock";
+      } else if(msgNum =="006") {
+          text1 = "You are transmitting in the wrong time slot";
+      } else if(msgNum =="007") {
+          text1 = "Please transmit above 1000 Hz";
+      } else if(msgNum =="008") {
+          text1 = "Your transmitter is overmodulated";
+      } else if(msgNum =="009") {
+          text1 = "Your audio is distorted";
+      } else if(msgNum =="010") {
+          text1 = "You are transmitting on top of a rare DX station";
+      } else if(msgNum =="011") {
+          text1 = "Please check HB9Q Logger";
+      } else if(msgNum =="012") {
+          text1 = "Please check Ping Jockey";
+      } else if(msgNum =="013") {
+          text1 = "Please check ON4KST";
+      } else if(msgNum =="014") {
+          text1 = "Please QSL via LoTW";
+      }
+      ui->noButton->setHidden(true);
+      ui->yesButton->setText("OK");
+      ui->label->setText(text1);
   }
   else if(receivedMessage.at(0).isLetter() || receivedMessage.at(0) == '9')
   {
@@ -161,46 +194,46 @@ void QSYMessage::getBandModeFreq()
       freq = "903.";
     }
     else if (bandParam ==  "J") {
-        freq = "24192.";
+      freq = "24192.";
     }
     else if (bandParam ==  "K") {
-        freq = "903.";
+      freq = "903.";
     }
     else if (bandParam ==  "L") {
-        freq = "0.";
+      freq = "0.";
     }
     else if (bandParam ==  "M") {
-        freq = "1.";
+      freq = "1.";
     }
     else if (bandParam ==  "N") {
-        freq = "3.";
+      freq = "3.";
     }
     else if (bandParam ==  "O") {
-        freq = "5.";
+      freq = "5.";
     }
     else if (bandParam ==  "P") {
-        freq = "7.";
+      freq = "7.";
     }
     else if (bandParam ==  "Q") {
-        freq = "10.";
+      freq = "10.";
     }
     else if (bandParam ==  "R") {
-        freq = "14.";
+      freq = "14.";
     }
     else if (bandParam ==  "S") {
-        freq = "18.";
+      freq = "18.";
     }
     else if (bandParam ==  "T") {
-        freq = "21.";
+      freq = "21.";
     }
     else if (bandParam ==  "U") {
-        freq = "24.";
+      freq = "24.";
     }
     else if (bandParam ==  "V") {
-        freq = "28.";
+      freq = "28.";
     }
     else if (bandParam ==  "W") {
-        freq = "29.";
+      freq = "29.";
     } else {
       freq = "";
     }
@@ -210,8 +243,8 @@ void QSYMessage::getBandModeFreq()
     if (modeParam ==  'V') {
       mode = "SSB";
     }
-    else if (modeParam == 'R') {
-      mode = "RTTY";
+    else if (modeParam == '2') {
+      mode = "FT4";
     }
     else if (modeParam ==  '8') {
       mode = "FT8";
@@ -226,40 +259,29 @@ void QSYMessage::getBandModeFreq()
       mode = "JT9";
     }
     else if (modeParam ==  'B') {
-        mode = "JT65";
+      mode = "JT65";
     }
     else if (modeParam ==  'C') {
-        mode = "FST4";
+      mode = "FST4";
     }
     else if (modeParam ==  'D') {
-        mode = "Q65-30B";
+      mode = "Q65-30B";
     }
     else if (modeParam ==  'E') {
-        mode = "Q65-60C";
+      mode = "Q65-60C";
     }
     else if (modeParam ==  'F') {
-        mode = "Q65-60D";
+      mode = "Q65-60D";
     }
     else if (modeParam ==  'G') {
-        mode = "Q65-60E";
+      mode = "Q65-60E";
     }
     else if (modeParam ==  'H') {
-        mode = "Q65-120D";
-    }
-    else if (modeParam ==  'I') {
-        mode = "HB9Q";
+      mode = "Q65-120D";
     }
     else {
       mode = "";
     }
-    if (mode.compare("HB9Q") != 0) {
-      ui->label->setText("QSY to");
-      ui->label_2->setText(freq + " MHz");
-      ui->label_3->setText(mode);
-    } else {
-      ui->label->setText("QSY to");
-      ui->label_2->setText(freq + "HB9Q");
-      ui->label_3->setText("Logger");
-    }
+    ui->label->setText("QSY to\n" + freq + " MHz\n" + "mode " + mode);
   }
 }

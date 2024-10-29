@@ -5112,7 +5112,7 @@ QPushButton[state=&quot;ok&quot;] {
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>QSYMessage Creator</string>
+    <string>Message Creator</string>
    </property>
   </action>  
   <action name="actionHideB4">
@@ -5283,7 +5283,7 @@ QPushButton[state=&quot;ok&quot;] {
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Enable QSY Popups</string>
+    <string>Enable Message Popups</string>
    </property>
   </action>
  </widget>
