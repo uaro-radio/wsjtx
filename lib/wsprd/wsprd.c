@@ -35,6 +35,7 @@
 #include <stdint.h>
 #include <time.h>
 #include <fftw3.h>
+#include <errno.h>
 
 #include "fano.h"
 #include "jelinek.h"
@@ -77,7 +78,7 @@ unsigned long readc2file(char *ptr_to_infile, float *idat, float *qdat,
     
     fp = fopen(ptr_to_infile,"rb");
     if (fp == NULL) {
-        fprintf(stderr, "Cannot open data file '%s'\n", ptr_to_infile);
+        fprintf(stderr, "Cannot open data file '%s': %s\n", ptr_to_infile, strerror(errno));
         return 1;
     }
     nr=fread(c2file,sizeof(char),14,fp);
