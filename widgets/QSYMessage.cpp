@@ -16,7 +16,7 @@ QSYMessage::QSYMessage(const QString& message,const QString& theCall, QSettings 
 {
   ui->setupUi(this);
   read_settings();
-  setWindowTitle ("WSJT-X Popup" + QTime::currentTime().toString("[hh:mm:ss]"));
+  setWindowTitle ("Message" + QTime::currentTime().toString(" [hh:mm:ss]"));
   ui->label->setStyleSheet("font: bold; font-size: 30pt");
   getBandModeFreq();
 }
