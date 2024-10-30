@@ -41,7 +41,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab_HF">
     <property name="sizePolicy">
@@ -1382,7 +1382,7 @@ Message</string>
        <string>144 MHz</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioBut24192A">
+     <widget class="QRadioButton" name="radioBut24048">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -1400,7 +1400,7 @@ Message</string>
        <string/>
       </property>
       <property name="text">
-       <string>24192 MHz</string>
+       <string>24048 MHz</string>
       </property>
      </widget>
      <widget class="QRadioButton" name="radioBut222A">

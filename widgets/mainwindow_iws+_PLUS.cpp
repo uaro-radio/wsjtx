@@ -1508,7 +1508,6 @@ void MainWindow::readSettings()
   auto displayContestLog = m_settings->value ("ContestLogDisplayed", false).toBool ();
   bool displayActiveStations = m_settings->value ("ActiveStationsDisplayed", false).toBool ();
   bool displayQSYMessageCreator = m_settings->value ("QSYMessageCreatorDisplayed", false).toBool (); //w3sz
-  if(m_config.enable_VHF_features()) ui->actionEnable_QSY_Popups->setVisible(true);// URUR
   ui->actionEnable_QSY_Popups->setChecked(m_settings->value("ShowQSYMessages", true).toBool ()); //w3sz
   ui->respondComboBox->setCurrentIndex(m_settings->value("RespondCQ",0).toInt());
   ui->comboBoxHoundSort->setCurrentIndex(m_settings->value("HoundSort",3).toInt());
@@ -1735,7 +1734,7 @@ void MainWindow::readSettings()
   if (displayFoxLog) on_fox_log_action_triggered ();
   if (displayContestLog) on_contest_log_action_triggered ();
   if (displayActiveStations) on_actionActiveStations_triggered();
-  if (!m_config.auto_astro() && displayQSYMessageCreator) on_actionQSYMessage_Creator_triggered();  //w3sz
+  if (displayQSYMessageCreator) on_actionQSYMessage_Creator_triggered();  //w3sz
 
 #ifdef WIN32
   if (m_config.alert_Enabled()) {  // testing and initializing the default audio device for playing audible alerts
@@ -3745,22 +3744,6 @@ void MainWindow::statusChanged()
   }
   if (ui->tx1->text()=="" && !(m_mode=="FT8" && (SpecOp::HOUND==m_specOp or SpecOp::FOX==m_specOp))
       && !m_bDoubleClicked) ui->txb6->click();
-
-//w3sz
-// dg2ycb: for now, auto-start of QSYMessageCreator window only when Auto-open/close Astronomical Data window is checked
-// and f > 50 MHz. Seems to be not optimal to always start the QSYMessageCreator, after all.
-  if (m_config.auto_astro()) {
-    m_specOp=m_config.special_op_id();  // update m_specOp
-    if (SpecOp::NA_VHF==m_specOp && !(m_mode=="FT4" && m_config.NCCC_Sprint()) && m_freqNominal >= 50000000) {
-      if (!m_QSYMessageCreatorWidget) on_actionQSYMessage_Creator_triggered();
-    } else if (m_QSYMessageCreatorWidget) {
-      QCloseEvent closeEvent;
-      QApplication::sendEvent(m_QSYMessageCreatorWidget.data(), &closeEvent);
-      m_QSYMessageCreatorWidget.reset ();
-    }
-  }
-//end w3sz
-
   check_button_color();
 }
 

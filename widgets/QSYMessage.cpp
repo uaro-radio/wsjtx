@@ -185,7 +185,11 @@ void QSYMessage::getBandModeFreq()
       freq = "10368.";
     }
     else if (bandParam ==  "J") {
-      freq = "24192.";
+        if (configuration_->region()==2) {
+            freq = "24192.";
+        } else {
+            freq = "24048.";
+        }
     }
     else if (bandParam ==  "92") {
       freq = "902.";
@@ -195,6 +199,9 @@ void QSYMessage::getBandModeFreq()
     }
     else if (bandParam ==  "J") {
       freq = "24192.";
+    }
+    else if (bandParam ==  "X") {
+        freq = "24048.";
     }
     else if (bandParam ==  "K") {
       freq = "903.";

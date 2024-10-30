@@ -102,7 +102,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   bandButtonGroup3->addButton(ui->radioBut3400A);
   bandButtonGroup3->addButton(ui->radioBut5760A);
   bandButtonGroup3->addButton(ui->radioBut10368A);
-  bandButtonGroup3->addButton(ui->radioBut24192A);
+  bandButtonGroup3->addButton(ui->radioBut24048);
 
   QPair<QString,QString> key("L","V"); //630m //SSB
   key.first = "M";  //160
@@ -289,6 +289,8 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   kHzFreqMap.insert(key, 100);
   key.first = "J"; //24192
   kHzFreqMap.insert(key, 100);
+  key.first = "X"; //24048
+  kHzFreqMap.insert(key, 100);
 
   key.second = "W"; //CW
   key.first = "A";  // 6M
@@ -314,6 +316,8 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   key.first = "I"; //10368
   kHzFreqMap.insert(key, 100);
   key.first = "J"; //24192
+  kHzFreqMap.insert(key, 100);
+  key.first = "X"; //24048
   kHzFreqMap.insert(key, 100);
 
   key.second = "M"; // FM
@@ -350,6 +354,8 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   key.first = "I"; //10368
   kHzFreqMap.insert(key, 174);
   key.first = "J"; //24192
+  kHzFreqMap.insert(key, 174);
+  key.first = "X"; //24048
   kHzFreqMap.insert(key, 174);
 
   key.second = "4"; // MSK144
@@ -389,6 +395,8 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     key.first = "I"; //10368
     kHzFreqMap.insert(key, 170);
     key.first = "J"; //24192
+    kHzFreqMap.insert(key, 170);
+    key.first = "X"; //24048
     kHzFreqMap.insert(key, 170);
     ++it;
   }
@@ -493,6 +501,8 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   connect(ui->kHzBox2, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &QSYMessageCreator::onkHzBox2ValueChanged);  //HF
   connect(ui->kHzBox3, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &QSYMessageCreator::onkHzBox3ValueChanged);  //EME
 
+  connect(ui->tabWidget, &QTabWidget::currentChanged, this, &QSYMessageCreator::onTabChanged);
+
   setup(configuration_->region());
 
 }
@@ -554,12 +564,12 @@ void QSYMessageCreator::setkHzBox(QString theBand, QString theMode, int tabNum)
 
   if (value<0 && tabNum == 0) {
 /*
-        QMessageBox *regionWarning = new QMessageBox(this);
-        regionWarning->setModal(false);
-        regionWarning->setIcon(QMessageBox::Warning);
-        regionWarning->setText("In Loop line 303 " + theBand + theMode + " " + QString::number(tabNum) + " " + QString::number(value));
-        regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
-        regionWarning->show();
+    QMessageBox *regionWarning = new QMessageBox(this);
+    regionWarning->setModal(false);
+    regionWarning->setIcon(QMessageBox::Warning);
+    regionWarning->setText("In Loop line 303 " + theBand + theMode + " " + QString::number(tabNum) + " " + QString::number(value));
+    regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
+    regionWarning->show();
 */
 
     if (theBand.compare("L")==0) {
@@ -599,11 +609,12 @@ void QSYMessageCreator::setkHzBox(QString theBand, QString theMode, int tabNum)
 
   setkHzHF(ui->kHzBox2->value());
 
-     /*   regionWarning->setModal(false);
-        regionWarning->setIcon(QMessageBox::Warning);
-        regionWarning->setText("After loop line 349 " + theBand +  theMode + " " + QString::number(tabNum) + " " + QString::number(value) + " " + ui->kHzBox2->value());
-        regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
-        regionWarning->show();
+/*
+  regionWarning->setModal(false);
+  regionWarning->setIcon(QMessageBox::Warning);
+  regionWarning->setText("After loop line 349 " + theBand +  theMode + " " + QString::number(tabNum) + " " + QString::number(value) + " " + ui->kHzBox2->value());
+  regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
+  regionWarning->show();
 */
 }
 
@@ -644,17 +655,30 @@ void QSYMessageCreator::setup(int region)
     regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
     regionWarning->show();
   }
+  if (region ==2) {
+    ui->radioBut24192->setText("24192 MHz");
+  } else {
+    ui->radioBut24192->setText("24048 MHz");
+  }
+}
+
+void QSYMessageCreator::onTabChanged() {
+  if (configuration_->region() ==2 ) {
+    ui->radioBut24192->setText("24192 MHz");
+  } else {
+    ui->radioBut24192->setText("24048 MHz");
+  }
 }
 
 void QSYMessageCreator::on_displayButton_clicked()
 {
-    /*
-    QMessageBox *regionWarning = new QMessageBox(this);
-    regionWarning->setModal(false);
-    regionWarning->setIcon(QMessageBox::Warning);
-    regionWarning->setText("Display Button clicked ");
-    regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
-    regionWarning->show();
+/*
+  QMessageBox *regionWarning = new QMessageBox(this);
+  regionWarning->setModal(false);
+  regionWarning->setIcon(QMessageBox::Warning);
+  regionWarning->setText("Display Button clicked ");
+  regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
+  regionWarning->show();
 */
 
   QMap<QPair<QString, QString>, int>::const_iterator it = kHzFreqMap.begin();
@@ -726,6 +750,11 @@ void QSYMessageCreator::setQSYMessageCreatorStatusFalse()
 
 void QSYMessageCreator::closeEvent (QCloseEvent * e)
 {
+  if ((configuration_->region()) ==2) {
+    ui->radioBut24192->setText("24192 MHz");
+  } else {
+    ui->radioBut24192->setText("24048 MHz");
+  }
   write_settings();
   setQSYMessageCreatorStatusFalse();
   e->accept();                 // was ignore
@@ -900,7 +929,7 @@ QString QSYMessageCreator::getBand()
     else if (ui->radioBut3400A->isChecked()) band = "G";
     else if (ui->radioBut5760A->isChecked()) band = "H";
     else if (ui->radioBut10368A->isChecked()) band = "I";
-    else if (ui->radioBut24192A->isChecked()) band = "J";
+    else if (ui->radioBut24048->isChecked()) band = "X";
     setbandEME(band);
   }
   return band;
@@ -946,7 +975,7 @@ void QSYMessageCreator::setBand(QString band)
     else if (band == "G") ui->radioBut3400A->setChecked(true);
     else if (band == "H") ui->radioBut5760A->setChecked(true);
     else if (band == "I") ui->radioBut10368A->setChecked(true);
-    else if (band == "J") ui->radioBut24192A->setChecked(true);
+    else if (band == "X") ui->radioBut24048->setChecked(true);
   }
 }
 
