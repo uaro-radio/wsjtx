@@ -553,25 +553,8 @@ void QSYMessageCreator::setkHzBox(QString theBand, QString theMode, int tabNum)
       ++it;
     }
   }
-/*
-    QMessageBox *regionWarning = new QMessageBox(this);
-    regionWarning->setModal(false);
-    regionWarning->setIcon(QMessageBox::Warning);
-    regionWarning->setText("Before Loop line 293 " + theBand + theMode + " " + QString::number(tabNum) + " " + QString::number(value));
-    regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
-    regionWarning->show();
-*/
 
   if (value<0 && tabNum == 0) {
-/*
-    QMessageBox *regionWarning = new QMessageBox(this);
-    regionWarning->setModal(false);
-    regionWarning->setIcon(QMessageBox::Warning);
-    regionWarning->setText("In Loop line 303 " + theBand + theMode + " " + QString::number(tabNum) + " " + QString::number(value));
-    regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
-    regionWarning->show();
-*/
-
     if (theBand.compare("L")==0) {
       if ((ui->kHzBox2->value() < 472) || ui->kHzBox2->value() > 479) ui->kHzBox2->setValue(472);
     }
@@ -608,14 +591,6 @@ void QSYMessageCreator::setkHzBox(QString theBand, QString theMode, int tabNum)
   }
 
   setkHzHF(ui->kHzBox2->value());
-
-/*
-  regionWarning->setModal(false);
-  regionWarning->setIcon(QMessageBox::Warning);
-  regionWarning->setText("After loop line 349 " + theBand +  theMode + " " + QString::number(tabNum) + " " + QString::number(value) + " " + ui->kHzBox2->value());
-  regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
-  regionWarning->show();
-*/
 }
 
 void QSYMessageCreator::onkHzBoxValueChanged()
@@ -662,31 +637,12 @@ void QSYMessageCreator::setup(int region)
   }
 }
 
-void QSYMessageCreator::onTabChanged() {
+void QSYMessageCreator::onTabChanged()
+{
   if (configuration_->region() ==2 ) {
     ui->radioBut24192->setText("24192 MHz");
   } else {
     ui->radioBut24192->setText("24048 MHz");
-  }
-}
-
-void QSYMessageCreator::on_displayButton_clicked()
-{
-/*
-  QMessageBox *regionWarning = new QMessageBox(this);
-  regionWarning->setModal(false);
-  regionWarning->setIcon(QMessageBox::Warning);
-  regionWarning->setText("Display Button clicked ");
-  regionWarning->setWindowFlags(regionWarning->windowFlags() | Qt::WindowStaysOnTopHint);
-  regionWarning->show();
-*/
-
-  QMap<QPair<QString, QString>, int>::const_iterator it = kHzFreqMap.begin();
-  while (it != kHzFreqMap.end()) {
-    QPair<QString, QString> key = it.key();
-    int value = it.value();
-    ui->textEdit->append("Size of QMAP is " +QString::number(kHzFreqMap.size()) + "   " + key.first + " " + key.second + " " + QString::number(value) + '\n');
-    ++it;
   }
 }
 
@@ -750,7 +706,7 @@ void QSYMessageCreator::setQSYMessageCreatorStatusFalse()
 
 void QSYMessageCreator::closeEvent (QCloseEvent * e)
 {
-  if ((configuration_->region()) ==2) {
+  if ((configuration_->region()) ==2 ) {
     ui->radioBut24192->setText("24192 MHz");
   } else {
     ui->radioBut24192->setText("24048 MHz");

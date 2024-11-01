@@ -104,7 +104,6 @@ private:
 
 private slots:
   void onTabChanged();
-  void on_displayButton_clicked();
   void on_genButton_clicked();
   void setkHzBox(QString theBand, QString theMode, int tabNum);//, QMap<QPair<QString,QString>,int> kHzFreqMap);
   void on_button1_clicked();
