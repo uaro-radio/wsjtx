@@ -3027,7 +3027,7 @@ void MainWindow::showQSYMessage(QString message)
         connect (this, &MainWindow::finished, &QSYMessage::close);
 
         //connect to signal from QSYMessage
-        connect (m_QSYMessageWidget.data (), &QSYMessage::sendReply, this, &MainWindow::reply_tx5,Qt::UniqueConnection);
+        connect (m_QSYMessageWidget.data (), &QSYMessage::sendReply, this, &MainWindow::reply_tx5,static_cast<Qt::ConnectionType>(Qt::UniqueConnection));
         m_QSYMessageWidget->show();
         m_QSYMessageWidget->raise();
         m_QSYMessageWidget->activateWindow();
@@ -4997,7 +4997,6 @@ void MainWindow::decodeDone ()
   dec_data.params.nagain=0;
   dec_data.params.ndiskdat=0;
   m_nclearave=0;
-//  pause_jt9 ();
   ui->DecodeButton->setChecked (false);
   decodeBusy(false);
   m_RxLog=0;
@@ -9125,12 +9124,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       ui->autoButton->clearFocus();
   }
   if(ui->DecodeButton->hasFocus() && (event->button() & Qt::RightButton)) {   // Reset a hung decoder
-      to_jt9(m_ihsym,-1,-1);     // Allow jt9 to bail out early, if necessary
-      if(m_ihsym==40 and m_decoderBusy) {
-        qDebug() << "Clearing hung decoder status";
-        decodeDone();  // Clear a hung decoder status
-      }
-      ui->DecodeButton->clearFocus();
+    decodeDone();  // Clear a hung decoder status
+    ui->DecodeButton->clearFocus();
   }
   if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {     // Switch contest mode on/off
       not_erase = true;  // prevent erasing the decodedTextBrowser
