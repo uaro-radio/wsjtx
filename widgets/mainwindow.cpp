@@ -6151,12 +6151,14 @@ void MainWindow::readFromStdout()                             //readFromStdout
             QString continent = AD1CCty::continent (looked_up.continent);
             m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
               continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
-            if (ui->actionHighlightCallsigns->isChecked() && deCall!="" && (m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm") && (!callB4onBand and
-                (!(countryName.contains("Germany") or countryName.contains("Netherlands") or countryName.contains("Belgium"))))) {
-               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,255,0), QColor(0,0,0), true);
-            }
-            if (ui->actionHighlightCallsigns->isChecked() && deCall!="" && (m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm" or m_currentBandPeriod == "6m" or m_currentBandPeriod == "160m") && continent != "EU") {
-               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,130,255), QColor(0,0,0), true);
+            if (m_currentBandPeriod == m_currentBand) {
+              if (ui->actionHighlightCallsigns->isChecked() && deCall!="" && (m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm") && (!callB4onBand and
+                  (!(countryName.contains("Germany") or countryName.contains("Netherlands") or countryName.contains("Belgium"))))) {
+                ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,255,0), QColor(0,0,0), true);
+              }
+              if (ui->actionHighlightCallsigns->isChecked() && deCall!="" && (m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm" or m_currentBandPeriod == "6m" or m_currentBandPeriod == "160m") && continent != "EU") {
+                ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,130,255), QColor(0,0,0), true);
+              }
             }
 //            if (ui->actionHighlightCallsigns->isChecked() && (deCall=="K1JT" or deCall=="K9AN" or deCall=="W2PU" or deCall=="N9ADG" or deCall=="IV3NWV"))
 //               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(170,0,225), QColor(255,255,255), true);
