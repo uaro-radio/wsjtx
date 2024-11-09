@@ -16,7 +16,7 @@ QSYMessage::QSYMessage(const QString& message,const QString& theCall, QSettings 
 {
   ui->setupUi(this);
   read_settings();
-  setWindowTitle ("Message" + QTime::currentTime().toString(" [hh:mm:ss]"));
+  setWindowTitle ("Message" + QDateTime::currentDateTimeUtc().toString(" [hh:mm:ss]"));
   ui->label->setStyleSheet("font: bold; font-size: 30pt");
   getBandModeFreq();
 }
@@ -107,13 +107,13 @@ void QSYMessage::getBandModeFreq()
       ui->yesButton->setText("OK");
       ui->label->setText(text1);
   }
-  else if(receivedMessage.at(0).isLetter() || receivedMessage.at(0) == '9')
+  else if(receivedMessage.at(0).isLetter() || receivedMessage.at(0) == '9' || receivedMessage.at(0) == '4' || receivedMessage.at(0) == '7'  )
   {
     QString bandParam = "";
     QChar modeParam = '\0';
     QString freqParam = "";
 
-    if (receivedMessage.at(0).isLetter())
+    if (receivedMessage.at(0).isLetter() || receivedMessage.at(0) == '4' || receivedMessage.at(0) == '7' )
     {
       bandParam = receivedMessage.mid(0,1);
       modeParam = receivedMessage.at(1);
@@ -206,6 +206,12 @@ void QSYMessage::getBandModeFreq()
     else if (bandParam ==  "K") {
       freq = "903.";
     }
+    else if (bandParam ==  "4") {
+        freq = "40.";
+    }
+    else if (bandParam ==  "7") {
+        freq = "70.";
+    }
     else if (bandParam ==  "L") {
       freq = "0.";
     }
@@ -255,6 +261,9 @@ void QSYMessage::getBandModeFreq()
     }
     else if (modeParam ==  '8') {
       mode = "FT8";
+    }
+    else if (modeParam ==  '4') {
+        mode = "MSK144";
     }
     else if (modeParam ==  'M') {
       mode = "FM";

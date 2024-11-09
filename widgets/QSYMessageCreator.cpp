@@ -53,6 +53,8 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   bandButtonGroup->addButton(ui->radioBut5760);
   bandButtonGroup->addButton(ui->radioBut10368);
   bandButtonGroup->addButton(ui->radioBut24192);
+  bandButtonGroup->addButton(ui->radioBut40);
+  bandButtonGroup->addButton(ui->radioBut70);
 
   QButtonGroup *modeButtonGroup2 = new QButtonGroup;
   modeButtonGroup2-> setExclusive(true);
@@ -291,6 +293,10 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   kHzFreqMap.insert(key, 100);
   key.first = "X"; //24048
   kHzFreqMap.insert(key, 100);
+  key.first = "4"; //8M
+  kHzFreqMap.insert(key, 680);
+  key.first = "7"; //4M
+  kHzFreqMap.insert(key, 200);
 
   key.second = "W"; //CW
   key.first = "A";  // 6M
@@ -357,6 +363,10 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   kHzFreqMap.insert(key, 174);
   key.first = "X"; //24048
   kHzFreqMap.insert(key, 174);
+  key.first = "4"; //8M
+  kHzFreqMap.insert(key, 680);
+  key.first = "7"; //4M
+  kHzFreqMap.insert(key, 154);
 
   key.second = "4"; // MSK144
   key.first = "A";  // 6M
@@ -587,6 +597,12 @@ void QSYMessageCreator::setkHzBox(QString theBand, QString theMode, int tabNum)
     }
     else if (theBand.compare("W")==0) {
       if (ui->kHzBox2->value() > 700) ui->kHzBox2->setValue(0);
+    }
+    else if (theBand.compare("4")==0) {
+        if (ui->kHzBox2->value() > 680) ui->kHzBox2->setValue(0);
+    }
+    else if (theBand.compare("7")==0) {
+        if (ui->kHzBox2->value() > 200) ui->kHzBox2->setValue(0);
     }
   }
 
@@ -858,6 +874,8 @@ QString QSYMessageCreator::getBand()
     else if (ui->radioBut5760->isChecked()) band = "H";
     else if (ui->radioBut10368->isChecked()) band = "I";
     else if (ui->radioBut24192->isChecked()) band = "J";
+    else if (ui->radioBut40->isChecked()) band = "4";
+    else if (ui->radioBut70->isChecked()) band = "7";
     setbandVHF(band);
   } else if(ui->tabWidget->currentIndex() == 0) {
     if (ui->radioBut630M->isChecked()) band = "L";
@@ -906,6 +924,8 @@ void QSYMessageCreator::setBand(QString band)
     else if (band == "H") ui->radioBut5760->setChecked(true);
     else if (band == "I") ui->radioBut10368->setChecked(true);
     else if (band == "J") ui->radioBut24192->setChecked(true);
+    else if (band == "4") ui->radioBut40->setChecked(true);
+    else if (band == "7") ui->radioBut70->setChecked(true);
   } else if(ui->tabWidget->currentIndex() == 0) {
     if (band == "L") ui->radioBut630M->setChecked(true);
     else if (band == "M") ui->radioBut160M->setChecked(true);
@@ -1018,6 +1038,9 @@ void QSYMessageCreator::setMode(QString band, QString mode, int region)
     }
     else if (mode=="2") {
       ui->radioButFT4->setChecked(true);
+    }
+    else if (mode=="4") {
+        ui->radioButMSK->setChecked(true);
     }
     else if (mode=="A") {
       ui->radioButJT9->setChecked(true);

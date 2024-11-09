@@ -2991,7 +2991,7 @@ void MainWindow::showQSYMessage(QString message)
     qsizetype index = (bhList.indexOf(qCall));
     if(index != (-1)) {
       QString finalMatch = "";
-      QRegularExpression re1("[A-Z][V48ABCDEFGHIMRW][0-9]{3}");
+      QRegularExpression re1("[A-Z47][V248ABCDEFGHIMRW][0-9]{3}");
       QRegularExpression re2("(92)[V48MW][0-9]{3}");
       QRegularExpression re3("(93)[V48MW][0-9]{3}");
 
