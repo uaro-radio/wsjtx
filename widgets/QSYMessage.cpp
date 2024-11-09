@@ -107,7 +107,8 @@ void QSYMessage::getBandModeFreq()
       ui->yesButton->setText("OK");
       ui->label->setText(text1);
   }
-  else if(receivedMessage.at(0).isLetter() || receivedMessage.at(0) == '9' || receivedMessage.at(0) == '4' || receivedMessage.at(0) == '7'  )
+  else if((receivedMessage.at(0).isLetter() || receivedMessage.at(0) == '9' || receivedMessage.at(0) == '4' || receivedMessage.at(0) == '7')
+          && !receivedMessage.contains("73 "))
   {
     QString bandParam = "";
     QChar modeParam = '\0';
