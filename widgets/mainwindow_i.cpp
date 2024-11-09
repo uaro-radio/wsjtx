@@ -6165,7 +6165,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
                       setTxMsg(m_ntx);
                       m_currentMessageType=m_ntx;
                       auto now = QDateTime::currentDateTimeUtc();
-                      m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));        QTimer::singleShot (6000, [=] {selected = false;});
+                      m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
+                      QTimer::singleShot (6000, [=] {selected = false;});
                   }
           }
         }
@@ -6196,14 +6197,17 @@ void MainWindow::readFromStdout()                             //readFromStdout
                       setTxMsg(m_ntx);
                       m_currentMessageType=m_ntx;
                       auto now = QDateTime::currentDateTimeUtc();
-                      m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));        QTimer::singleShot (6000, [=] {selected = false;});
+                      m_dateTimeQSOOn = now.addSecs (-(m_ntx - 1) * int(m_TRperiod) - int(fmod(double(now.time().second()),m_TRperiod)));
+                      QTimer::singleShot (6000, [=] {selected = false;});
                   }
           }
         }
 
-        // Ensure that Tx stops when "RR73" or "73" is received and repeat_Tx is enabled
-        if (m_config.repeat_Tx() && m_mode=="Q65" && m_hisCall!="" && text.contains(m_baseCall)
-            && text.contains(m_hisCall + " 73"))  cease_auto_Tx_after_QSO();
+        // Ensure that Tx stops and QSO is logged when repeat_Tx is enabled and "73" is received
+        if(m_config.repeat_Tx() && m_mode=="Q65" && m_hisCall!="" && text.contains(m_baseCall) && text.contains(m_hisCall + " 73 ")) {
+          if((m_config.prompt_to_log() or m_config.autoLog()) && !m_tune && CALLING != m_QSOProgress) logQSOTimer.start(0);
+          cease_auto_Tx_after_QSO();
+        }
 
         // highlight orange and blue callsigns
         if (m_config.highlight_orange() or (m_config.highlight_blue())) {
@@ -7079,7 +7083,7 @@ void MainWindow::guiUpdate()
       if((m_config.prompt_to_log() or m_config.autoLog()) && !m_tune && CALLING != m_QSOProgress)
         {
         // always stop Tx after sending 73
-        if(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65") && m_ntx != 4) cease_auto_Tx_after_QSO ();
+        if (m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65") && m_ntx != 4) cease_auto_Tx_after_QSO ();
         if (!(m_mode=="FT4" && SpecOp::NA_VHF==m_specOp && m_config.NCCC_Sprint())) logQSOTimer.start(0);
         }
       else
