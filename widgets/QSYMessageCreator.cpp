@@ -659,6 +659,10 @@ void QSYMessageCreator::onTabChanged()
   } else {
     ui->radioBut24192->setText("24048 MHz");
   }
+  QString theBand = getBand();
+  QString theMode = getMode(theBand, configuration_->region());
+  setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
+  WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
 }
 
 void QSYMessageCreator::on_button1_clicked()
@@ -709,7 +713,7 @@ void QSYMessageCreator::on_genButton_clicked()
   else if (ui->message13->isChecked()) message = "013";
   else if (ui->message14->isChecked()) message = "014";
 
-  message = "$DX ZA" + message;
+  message = ui->DxBaseLabel->text() + " ZA" + message;
   ui->messageLabel4->setText(message);
   Q_EMIT sendMessage(message);
 }
