@@ -2939,7 +2939,7 @@ void MainWindow::showQSYMessage(QString message)
   if(the_line.contains(qCall + QString(" "))) {
     QStringList bhList = the_line.split(" ",SkipEmptyParts);
     qsizetype index = (bhList.indexOf(qCall));
-    if(index != (-1) && bhList[index].indexOf(qCall == 0)) {
+    if((index != (-1)) && (bhList[index].indexOf(qCall) == 0)) {
             QString the_message = bhList[index + 1];
             QString finalMatch = "";
             QRegularExpression re1("[A-Z479][V248ABCDEFGHIMRW][0-9]{3}");
@@ -9245,7 +9245,7 @@ void MainWindow::on_dxCallEntry_editingFinished()
 {
   auto const& dxBase = Radio::base_callsign (m_hisCall);
   save_dxbase_(const_cast <char *> ((dxBase + "   ").left (6).toLatin1().constData()), (FCL)6);
-  m_QSYMessageCreatorWidget->getDxBase(QString(dxBase)); //w3sz
+  if(m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget->getDxBase(QString(dxBase)); //w3sz
 }
 
 void MainWindow::on_dxCallEntry_returnPressed ()
