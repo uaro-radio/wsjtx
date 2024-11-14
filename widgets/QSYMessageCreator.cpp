@@ -275,9 +275,9 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   kHzFreqMap.insert(key, 100);
   key.first = "D"; //432
   kHzFreqMap.insert(key, 100);
-  key.first = "92"; //902
+  key.first = "9"; //902
   kHzFreqMap.insert(key, 100);
-  key.first = "93"; //903
+  key.first = "K"; //903
   kHzFreqMap.insert(key, 100);
   key.first = "E"; //1296
   kHzFreqMap.insert(key, 100);
@@ -307,9 +307,9 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   kHzFreqMap.insert(key, 100);
   key.first = "D"; //432
   kHzFreqMap.insert(key, 100);
-  key.first = "92"; //902
+  key.first = "9"; //902
   kHzFreqMap.insert(key, 100);
-  key.first = "93"; //903
+  key.first = "K"; //903
   kHzFreqMap.insert(key, 100);
   key.first = "E"; //1296
   kHzFreqMap.insert(key, 100);
@@ -345,9 +345,9 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   kHzFreqMap.insert(key, 174);
   key.first = "D"; //432
   kHzFreqMap.insert(key, 174);
-  key.first = "92"; //902
+  key.first = "9"; //902
   kHzFreqMap.insert(key, 174);
-  key.first = "93"; //903
+  key.first = "K"; //903
   kHzFreqMap.insert(key, 174);
   key.first = "E"; //1296
   kHzFreqMap.insert(key, 174);
@@ -390,9 +390,9 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     kHzFreqMap.insert(key, 170);
     key.first = "D"; //432
     kHzFreqMap.insert(key, 170);
-    key.first = "92"; //902
+    key.first = "9"; //902
     kHzFreqMap.insert(key, 170);
-    key.first = "93"; //903
+    key.first = "K"; //903
     kHzFreqMap.insert(key, 170);
     key.first = "E"; //1296
     kHzFreqMap.insert(key, 170);
@@ -419,42 +419,42 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
-    WriteMessage(theBand, theMode);
+    WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
 
   connect(bandButtonGroup, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
-    WriteMessage(theBand, theMode);
+    WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
   //HF
   connect(modeButtonGroup2, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
-    WriteMessage(theBand, theMode);
+    WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
 
   connect(bandButtonGroup2, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
-    WriteMessage(theBand, theMode);
+    WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
   //EME
   connect(modeButtonGroup3, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
-    WriteMessage(theBand, theMode);
+    WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
 
   connect(bandButtonGroup3, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
-    WriteMessage(theBand, theMode);
+    WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
 #else //VHF
   QObject::connect(modeButtonGroup, &QButtonGroup::idToggled, [&](int id, bool checked) {
@@ -462,7 +462,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
     setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
-    QSYMessageCreator::WriteMessage(theBand, theMode);
+    QSYMessageCreator::WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
 
   QObject::connect(bandButtonGroup, &QButtonGroup::idToggled, [&](int id, bool checked) {
@@ -470,7 +470,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
     setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
-    QSYMessageCreator::WriteMessage(theBand, theMode);
+    QSYMessageCreator::WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
   //HF
   QObject::connect(modeButtonGroup2, &QButtonGroup::idToggled, [&](int id, bool checked) {
@@ -478,7 +478,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
     setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
-    QSYMessageCreator::WriteMessage(theBand, theMode);
+    QSYMessageCreator::WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
 
   QObject::connect(bandButtonGroup2, &QButtonGroup::idToggled, [&](int id, bool checked) {
@@ -486,7 +486,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
     setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
-    QSYMessageCreator::WriteMessage(theBand, theMode);
+    QSYMessageCreator::WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
   //EME
   QObject::connect(modeButtonGroup3, &QButtonGroup::idToggled, [&](int id, bool checked) {
@@ -494,7 +494,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
     setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
-    QSYMessageCreator::WriteMessage(theBand, theMode);
+    QSYMessageCreator::WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
 
   QObject::connect(bandButtonGroup3, &QButtonGroup::idToggled, [&](int id, bool checked) {
@@ -502,7 +502,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     QString theBand = getBand();
     QString theMode = getMode(theBand, configuration_->region());
     setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
-    QSYMessageCreator::WriteMessage(theBand, theMode);
+    QSYMessageCreator::WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
 
 #endif
@@ -514,7 +514,6 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   connect(ui->tabWidget, &QTabWidget::currentChanged, this, &QSYMessageCreator::onTabChanged);
 
   setup(configuration_->region());
-
 }
 
 QSYMessageCreator::~QSYMessageCreator()
@@ -613,27 +612,27 @@ void QSYMessageCreator::onkHzBoxValueChanged()
 {
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
-  QString message = WriteMessage(theBand, theMode);
+  QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   setkHzVHF(ui->kHzBox->value());
-  WriteMessage(theBand, theMode);
+  WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
 }
 
 void QSYMessageCreator::onkHzBox2ValueChanged()
 {
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
-  QString message = WriteMessage(theBand, theMode);
+  QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   setkHzHF(ui->kHzBox2->value());
-  WriteMessage(theBand, theMode);
+  WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
 }
 
 void QSYMessageCreator::onkHzBox3ValueChanged()
 {
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
-  QString message = WriteMessage(theBand, theMode);
+  QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   setkHzEME(ui->kHzBox3->value());
-  WriteMessage(theBand, theMode);
+  WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
 }
 
 void QSYMessageCreator::setup(int region)
@@ -666,7 +665,7 @@ void QSYMessageCreator::on_button1_clicked()
 {
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
-  QString message = WriteMessage(theBand, theMode);
+  QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   QPair<QString,QString>key(theBand,theMode);
   kHzFreqMap.insert(key, ui->kHzBox->value());
   Q_EMIT sendMessage(message);
@@ -676,7 +675,7 @@ void QSYMessageCreator::on_button2_clicked()
 {
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
-  QString message = WriteMessage(theBand, theMode);
+  QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   QPair<QString,QString>key(theBand,theMode);
   kHzFreqMap.insert(key, ui->kHzBox2->value());
   Q_EMIT sendMessage(message);
@@ -686,7 +685,7 @@ void QSYMessageCreator::on_button3_clicked()
 {
   QString theBand = getBand();
   QString theMode = getMode(theBand, configuration_->region());
-  QString message = WriteMessage(theBand, theMode);
+  QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   QPair<QString,QString>key(theBand,theMode);
   kHzFreqMap.insert(key, ui->kHzBox3->value());
   Q_EMIT sendMessage(message);
@@ -718,6 +717,14 @@ void QSYMessageCreator::on_genButton_clicked()
 void QSYMessageCreator::setQSYMessageCreatorStatusFalse()
 {
   Q_EMIT sendQSYMessageCreatorStatus(false);
+}
+
+void QSYMessageCreator::getDxBase(QString value)  {
+    ui->DxBaseLabel->setText(value);
+    QString theBand = getBand();
+    QString theMode = getMode(theBand, configuration_->region());
+    setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
+    WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
 }
 
 void QSYMessageCreator::closeEvent (QCloseEvent * e)
@@ -811,7 +818,7 @@ void QSYMessageCreator::read_settings ()
     setkHzBox(getbandVHF(),getmodeVHF(),1);
   }
   setkHzVHF(ui->kHzBox->value());;
-  WriteMessage(getbandVHF(), getmodeVHF());
+  WriteMessage(ui->DxBaseLabel->text(), getbandVHF(), getmodeVHF());
 
   ui->tabWidget->setCurrentIndex(2);
   setBand(getbandEME());
@@ -820,7 +827,7 @@ void QSYMessageCreator::read_settings ()
     setkHzBox(getbandEME(),getmodeEME(),2);
   }
   setkHzEME(ui->kHzBox3->value());;
-  WriteMessage(getbandEME(), getmodeEME());
+  WriteMessage(ui->DxBaseLabel->text(), getbandEME(), getmodeEME());
 
   ui->tabWidget->setCurrentIndex(0);
   setBand(getbandHF());
@@ -829,30 +836,30 @@ void QSYMessageCreator::read_settings ()
     setkHzBox(getbandHF(),getmodeHF(),0);
   }
   setkHzHF(ui->kHzBox2->value());
-  WriteMessage(getbandHF(), getmodeHF());
+  WriteMessage(ui->DxBaseLabel->text(), getbandHF(), getmodeHF());
 
   ui->tabWidget->setCurrentIndex(settings_->value("whichTab").toInt());
 }
 
-QString QSYMessageCreator::WriteMessage (QString band, QString mode)
+QString QSYMessageCreator::WriteMessage (QString hisCall, QString band, QString mode)
 {
   QString message = "";
   if(ui->tabWidget->currentIndex() == 1) {
     qint16 kHzFreq = ui->kHzBox->value();
     QString kHzStr = QStringLiteral("%1").arg(kHzFreq,3,10,QLatin1Char('0'));
-    message = "$DX " + band + mode + kHzStr;
+    message = hisCall + " " + band + mode + kHzStr;
     ui->messageLabel->setText(message);
   }
   else if(ui->tabWidget->currentIndex() == 0) {
     qint16 kHzFreq = ui->kHzBox2->value();
     QString kHzStr = QStringLiteral("%1").arg(kHzFreq,3,10,QLatin1Char('0'));
-    message = "$DX " + band + mode + kHzStr;
+    message = hisCall + " " + band + mode + kHzStr;
     ui->messageLabel2->setText(message);
   }
   else if(ui->tabWidget->currentIndex() == 2) {
     qint16 kHzFreq = ui->kHzBox3->value();
     QString kHzStr = QStringLiteral("%1").arg(kHzFreq,3,10,QLatin1Char('0'));
-    message = "$DX " + band + mode + kHzStr;
+        message = hisCall + " " + band + mode + kHzStr;
     ui->messageLabel3->setText(message);
   }
   return message;
@@ -866,8 +873,8 @@ QString QSYMessageCreator::getBand()
     else if (ui->radioBut144->isChecked()) band = "B";
     else if (ui->radioBut222->isChecked()) band = "C";
     else if (ui->radioBut432->isChecked()) band = "D";
-    else if (ui->radioBut902->isChecked()) band = "92";
-    else if (ui->radioBut903->isChecked()) band = "93";
+    else if (ui->radioBut902->isChecked()) band = "9";
+    else if (ui->radioBut903->isChecked()) band = "K";
     else if (ui->radioBut1296->isChecked()) band = "E";
     else if (ui->radioBut2304->isChecked()) band = "F";
     else if (ui->radioBut3400->isChecked()) band = "G";
@@ -896,8 +903,8 @@ QString QSYMessageCreator::getBand()
     else if (ui->radioBut144A->isChecked()) band = "B";
     else if (ui->radioBut222A->isChecked()) band = "C";
     else if (ui->radioBut432A->isChecked()) band = "D";
-    else if (ui->radioBut902A->isChecked()) band = "92";
-    else if (ui->radioBut903A->isChecked()) band = "93";
+    else if (ui->radioBut902A->isChecked()) band = "9";
+    else if (ui->radioBut903A->isChecked()) band = "K";
     else if (ui->radioBut1296A->isChecked()) band = "E";
     else if (ui->radioBut2304A->isChecked()) band = "F";
     else if (ui->radioBut3400A->isChecked()) band = "G";
@@ -916,8 +923,8 @@ void QSYMessageCreator::setBand(QString band)
     else if (band == "B") ui->radioBut144->setChecked(true);
     else if (band == "C") ui->radioBut222->setChecked(true);
     else if (band == "D") ui->radioBut432->setChecked(true);
-    else if (band == "92") ui->radioBut902->setChecked(true);
-    else if (band == "93") ui->radioBut903->setChecked(true);
+    else if (band == "9") ui->radioBut902->setChecked(true);
+    else if (band == "K") ui->radioBut903->setChecked(true);
     else if (band == "E") ui->radioBut1296->setChecked(true);
     else if (band == "F") ui->radioBut2304->setChecked(true);
     else if (band == "G") ui->radioBut3400->setChecked(true);
@@ -944,8 +951,8 @@ void QSYMessageCreator::setBand(QString band)
     else if (band == "B") ui->radioBut144A->setChecked(true);
     else if (band == "C") ui->radioBut222A->setChecked(true);
     else if (band == "D") ui->radioBut432A->setChecked(true);
-    else if (band == "92") ui->radioBut902A->setChecked(true);
-    else if (band == "93") ui->radioBut903A->setChecked(true);
+    else if (band == "9") ui->radioBut902A->setChecked(true);
+    else if (band == "K") ui->radioBut903A->setChecked(true);
     else if (band == "E") ui->radioBut1296A->setChecked(true);
     else if (band == "F") ui->radioBut2304A->setChecked(true);
     else if (band == "G") ui->radioBut3400A->setChecked(true);

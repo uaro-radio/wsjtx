@@ -2934,75 +2934,48 @@ void MainWindow::showStatusMessage(const QString& statusMsg)
 void MainWindow::showQSYMessage(QString message)
 {
   QString the_line = message;
-  QString qCall = QString(m_config.my_callsign ());
-  QString qDXCall = ui->dxCallEntry->text();
+  QString qCall = QString(Radio::base_callsign(m_config.my_callsign ()));
+  QString qDXCall = QString(Radio::base_callsign(ui->dxCallEntry->text()));
   if(the_line.contains(qCall + QString(" "))) {
-    the_line = the_line.mid(the_line.indexOf((qCall)),13);
     QStringList bhList = the_line.split(" ",SkipEmptyParts);
     qsizetype index = (bhList.indexOf(qCall));
-    if(index != (-1)) {
-      QString finalMatch = "";
-      QRegularExpression re1("[A-Z47][V248ABCDEFGHIMRW][0-9]{3}");
-      QRegularExpression re2("(92)[V48MW][0-9]{3}");
-      QRegularExpression re3("(93)[V48MW][0-9]{3}");
+    if(index != (-1) && bhList[index].indexOf(qCall == 0)) {
+            QString the_message = bhList[index + 1];
+            QString finalMatch = "";
+            QRegularExpression re1("[A-Z479][V248ABCDEFGHIMRW][0-9]{3}");
+            QRegularExpressionMatch match = re1.match(the_message);
+            if(match.hasMatch()) {
+              finalMatch = match.captured();
+              m_QSYMessageWidget.reset (new QSYMessage(finalMatch, qCall, m_settings, &m_config));
 
-      QRegularExpressionMatch match = re1.match(the_line,QRegularExpression::NormalMatch);
-      if(match.hasMatch()) {
-           int startOffset = match.capturedStart();
-           int endOffset = match.capturedEnd();
-           finalMatch = the_line.mid(startOffset,(1+endOffset-startOffset));
-      } else {
-        match = re2.match(the_line,QRegularExpression::NormalMatch);
-        if(match.hasMatch()) {
-          int startOffset = match.capturedStart();
-          int endOffset = match.capturedEnd();
-          finalMatch = the_line.mid(startOffset,(1+endOffset-startOffset));
-        } else {
-          match = re3.match(the_line,QRegularExpression::NormalMatch);
-          if(match.hasMatch()) {
-            int startOffset = match.capturedStart();
-            int endOffset = match.capturedEnd();
-            finalMatch = the_line.mid(startOffset,(1+endOffset-startOffset));
-          }
+              //connect to signal finish
+              connect (this, &MainWindow::finished, &QSYMessage::close);
+
+              //connect to signal from QSYMessage
+              connect (m_QSYMessageWidget.data (), &QSYMessage::sendReply, this, &MainWindow::reply_tx5,static_cast<Qt::ConnectionType>(Qt::UniqueConnection));
+              m_QSYMessageWidget->show();
+              m_QSYMessageWidget->raise();
+              m_QSYMessageWidget->activateWindow();
+            }
         }
-      }
-      if(finalMatch.size()>=5) {
-        m_QSYMessageWidget.reset (new QSYMessage(finalMatch, qCall, m_settings, &m_config));
-
-        //connect to signal finish
-        connect (this, &MainWindow::finished, &QSYMessage::close);
-
-        //connect to signal from QSYMessage
-        connect (m_QSYMessageWidget.data (), &QSYMessage::sendReply, this, &MainWindow::reply_tx5,static_cast<Qt::ConnectionType>(Qt::UniqueConnection));
-        m_QSYMessageWidget->show();
-        m_QSYMessageWidget->raise();
-        m_QSYMessageWidget->activateWindow();
-      }
-    }
   }
-  else if(the_line.contains(qDXCall + QString(" "))) {
-    if ((the_line.contains("OKQSY") || the_line.contains("NOQSY"))) {
-      QStringList bhList = the_line.split(" ",SkipEmptyParts);
-      qsizetype index = (bhList.indexOf(qDXCall));
-      if(index != (-1)) {
-        QString yesOrNo = " ";
-        if (the_line.contains("OKQSY")) {
-          yesOrNo = QString(" OKQSY");
-        } else {
-          yesOrNo = QString(" NOQSY");
-        }
-        on_stopTxButton_clicked();
-
-        QString qNewMessage = QString("$ ") + qDXCall + yesOrNo;
-        m_QSYMessageWidget.reset (new QSYMessage(qNewMessage, qDXCall, m_settings, &m_config));
-
-        //connect to signal finish
-        connect (this, &MainWindow::finished, &QSYMessage::close);
-        m_QSYMessageWidget->show();
-        m_QSYMessageWidget->raise();
-        m_QSYMessageWidget->activateWindow();
-      }
+  else if ((the_line.contains(qDXCall + QString(" ") + "OKQSY") || the_line.contains(qDXCall +QString(" ") +  "NOQSY"))) {
+    QString yesOrNo = " ";
+    if (the_line.contains("OKQSY")) {
+      yesOrNo = QString(" OKQSY");
+    } else {
+      yesOrNo = QString(" NOQSY");
     }
+    on_stopTxButton_clicked();
+
+    QString qNewMessage = QString("$ ") + qDXCall + yesOrNo;
+    m_QSYMessageWidget.reset (new QSYMessage(qNewMessage, qDXCall, m_settings, &m_config));
+
+    //connect to signal finish
+    connect (this, &MainWindow::finished, &QSYMessage::close);
+    m_QSYMessageWidget->show();
+    m_QSYMessageWidget->raise();
+    m_QSYMessageWidget->activateWindow();
   }
 }
 //end w3sz
@@ -4189,6 +4162,7 @@ void MainWindow::on_actionQSYMessage_Creator_triggered()
   m_QSYMessageCreatorWidget->showNormal();
   m_QSYMessageCreatorWidget->raise();
   m_QSYMessageCreatorWidget->activateWindow();
+  m_QSYMessageCreatorWidget->getDxBase(QString(Radio::base_callsign(ui->dxCallEntry->text())));
   ui->actionEnable_QSY_Popups->setChecked(true);
 }
 //end w3sz
@@ -9259,6 +9233,7 @@ void MainWindow::on_dxCallEntry_textChanged (QString const& call)
   }
   set_dateTimeQSO (-1);  // reset the QSO start time when DXCall changes
   m_hisCall = call;
+  if(m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget->getDxBase(QString(Radio::base_callsign(call))); //w3sz
   if (!blocked) ui->dxGridEntry->clear();  // conditional because not always useful with highlightDXCall/DXGrid feature
   if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
   statusChanged();
@@ -9270,6 +9245,7 @@ void MainWindow::on_dxCallEntry_editingFinished()
 {
   auto const& dxBase = Radio::base_callsign (m_hisCall);
   save_dxbase_(const_cast <char *> ((dxBase + "   ").left (6).toLatin1().constData()), (FCL)6);
+  m_QSYMessageCreatorWidget->getDxBase(QString(dxBase)); //w3sz
 }
 
 void MainWindow::on_dxCallEntry_returnPressed ()

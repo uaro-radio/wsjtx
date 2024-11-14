@@ -31,7 +31,7 @@ class QSYMessageCreator
 public:
   explicit QSYMessageCreator(QSettings * settings, Configuration const *, QWidget * parent = 0);
   ~QSYMessageCreator();
-  QString WriteMessage(QString band, QString mode);
+  QString WriteMessage(QString call, QString band, QString mode);
   QString bandVHF;
   QString modeVHF;
   int kHzVHF;
@@ -65,6 +65,8 @@ public:
   QMap<QPair<QString, QString>, int> kHzFreqMap;
 
   QTabWidget tabWidget;
+
+  Q_SLOT void getDxBase(QString value);
 
 protected:
   void showEvent(QShowEvent *event) override {

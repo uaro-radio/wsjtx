@@ -43,7 +43,7 @@ void QSYMessage::write_settings () {
 
 void QSYMessage::on_yesButton_clicked()
 {
-  QString message = QString(receivedCall) + QString(" OKQSY");
+  QString message = QString(Radio::base_callsign(receivedCall)) + QString(" OKQSY");
   Q_EMIT sendReply(message);
   ui->yesButton->setStyleSheet("background-color:#00ff00");
   ui->noButton->setStyleSheet("background-color:palette(button).color()");
@@ -51,7 +51,7 @@ void QSYMessage::on_yesButton_clicked()
 
 void QSYMessage::on_noButton_clicked()
 {
-  QString message = QString(receivedCall) + QString(" NOQSY");
+  QString message = QString(Radio::base_callsign(receivedCall)) + QString(" NOQSY");
   Q_EMIT sendReply(message);
   ui->noButton->setStyleSheet("background-color:red; color:white");
   ui->yesButton->setStyleSheet("background-color:palette(button).color()");
@@ -107,25 +107,14 @@ void QSYMessage::getBandModeFreq()
       ui->yesButton->setText("OK");
       ui->label->setText(text1);
   }
-  else if((receivedMessage.at(0).isLetter() || receivedMessage.at(0) == '9' || receivedMessage.at(0) == '4' || receivedMessage.at(0) == '7')
-          && !receivedMessage.contains("73 "))
+  else if(receivedMessage.at(0).isLetter() || receivedMessage.at(0) == '9' || receivedMessage.at(0) == '4' || receivedMessage.at(0) == '7')
   {
     QString bandParam = "";
     QChar modeParam = '\0';
     QString freqParam = "";
-
-    if (receivedMessage.at(0).isLetter() || receivedMessage.at(0) == '4' || receivedMessage.at(0) == '7' )
-    {
-      bandParam = receivedMessage.mid(0,1);
-      modeParam = receivedMessage.at(1);
-      freqParam = receivedMessage.mid(2, 3);
-    }
-    else if (receivedMessage.at(0) == '9')
-    {
-      bandParam = receivedMessage.mid(0,2);
-      modeParam = receivedMessage.at(2);
-      freqParam = receivedMessage.mid(3,3);
-    }
+    bandParam = receivedMessage.mid(0,1);
+    modeParam = receivedMessage.at(1);
+    freqParam = receivedMessage.mid(2, 3);
     QString band = "";
     QString mode = "";
     QString freq = "";
@@ -192,10 +181,10 @@ void QSYMessage::getBandModeFreq()
             freq = "24048.";
         }
     }
-    else if (bandParam ==  "92") {
+    else if (bandParam ==  "9") {
       freq = "902.";
     }
-    else if (bandParam ==  "93") {
+    else if (bandParam ==  "K") {
       freq = "903.";
     }
     else if (bandParam ==  "J") {
@@ -203,9 +192,6 @@ void QSYMessage::getBandModeFreq()
     }
     else if (bandParam ==  "X") {
         freq = "24048.";
-    }
-    else if (bandParam ==  "K") {
-      freq = "903.";
     }
     else if (bandParam ==  "4") {
         freq = "40.";
