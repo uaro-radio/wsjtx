@@ -476,7 +476,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
 
   //General Messages
   connect(messageButtonGroup, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
-    Debug() << "id" << id  << "toggled:" << checked;
+    qDebug() << "id" << id  << "toggled:" << checked;
     QString message = getGenMessage();
   });
 
