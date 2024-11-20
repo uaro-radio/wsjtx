@@ -7801,7 +7801,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
 
   // check for CQ with listening frequency
   if (parts.size () >= 7
-      && (m_bFastMode || m_mode=="FT8")
+      && m_bFastMode
       && "CQ" == parts[5]
       && m_config.is_transceiver_online ()) {
     bool ok;
