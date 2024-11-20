@@ -2986,31 +2986,35 @@ void MainWindow::showQSYMessage(QString message)
   QString the_line = message;
   QString qCall = QString(Radio::base_callsign(m_config.my_callsign ()));
   QString qDXCall = QString(Radio::base_callsign(ui->dxCallEntry->text()));
-  if(the_line.contains(qCall + QString(" "))) {
+  if(the_line.contains(qCall + QString("."))) {
     QStringList bhList = the_line.split(" ",SkipEmptyParts);
-    qsizetype index = (bhList.indexOf(qCall));
-    if((index != (-1)) && (bhList[index].indexOf(qCall) == 0)) {
-            QString the_message = bhList[index + 1];
-            QString finalMatch = "";
-            QRegularExpression re1("[A-Z479][V248ABCDEFGHIMRW][0-9]{3}");
-            QRegularExpressionMatch match = re1.match(the_message);
-            if(match.hasMatch()) {
-              finalMatch = match.captured();
-              if(m_QSYMessageWidget) m_QSYMessageWidget->write_settings();
-              m_QSYMessageWidget.reset (new QSYMessage(finalMatch, qCall, m_settings, &m_config));
+    QString the_message = "";
+    for (const QString &element : bhList) {
+      if(element.contains(qCall + QString("."))) {
+        the_message = element.mid(element.indexOf("." ) + 1);
+        if(the_message.length() > 0) {
+          QString finalMatch = "";
+          QRegularExpression re1("[A-Z479][V248ABCDEFGHIMRW][0-9]{3}");
+          QRegularExpressionMatch match = re1.match(the_message);
+          if(match.hasMatch()) {
+            finalMatch = match.captured();
+            if(m_QSYMessageWidget) m_QSYMessageWidget->write_settings();
+            m_QSYMessageWidget.reset (new QSYMessage(finalMatch, qCall, m_settings, &m_config));
 
-              //connect to signal finish
-              connect (this, &MainWindow::finished, &QSYMessage::close);
+            //connect to signal finish
+            connect (this, &MainWindow::finished, &QSYMessage::close);
 
-              //connect to signal from QSYMessage
-              connect (m_QSYMessageWidget.data (), &QSYMessage::sendReply, this, &MainWindow::reply_tx5,static_cast<Qt::ConnectionType>(Qt::UniqueConnection));
-              m_QSYMessageWidget->show();
-              m_QSYMessageWidget->raise();
-              m_QSYMessageWidget->activateWindow();
-            }
+            //connect to signal from QSYMessage
+            connect (m_QSYMessageWidget.data (), &QSYMessage::sendReply, this, &MainWindow::reply_tx5,static_cast<Qt::ConnectionType>(Qt::UniqueConnection));
+            m_QSYMessageWidget->show();
+            m_QSYMessageWidget->raise();
+            m_QSYMessageWidget->activateWindow();
+          }
         }
+      }
+    }
   }
-  else if ((the_line.contains(qDXCall + QString(" ") + "OKQSY") || the_line.contains(qDXCall +QString(" ") +  "NOQSY"))) {
+  else if ((the_line.contains(qDXCall + QString(".") + "OKQSY") || the_line.contains(qDXCall +QString(".") +  "NOQSY"))) {
     QString yesOrNo = " ";
     if (the_line.contains("OKQSY")) {
       yesOrNo = QString(" OKQSY");

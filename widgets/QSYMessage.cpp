@@ -43,7 +43,7 @@ void QSYMessage::write_settings () {
 
 void QSYMessage::on_yesButton_clicked()
 {
-  QString message = QString(Radio::base_callsign(receivedCall)) + QString(" OKQSY");
+  QString message = QString(Radio::base_callsign(receivedCall)) + QString(".OKQSY");
   Q_EMIT sendReply(message);
   ui->yesButton->setStyleSheet("background-color:#00ff00");
   ui->noButton->setStyleSheet("background-color:palette(button).color()");
@@ -51,7 +51,7 @@ void QSYMessage::on_yesButton_clicked()
 
 void QSYMessage::on_noButton_clicked()
 {
-  QString message = QString(Radio::base_callsign(receivedCall)) + QString(" NOQSY");
+  QString message = QString(Radio::base_callsign(receivedCall)) + QString(".NOQSY");
   Q_EMIT sendReply(message);
   ui->noButton->setStyleSheet("background-color:red; color:white");
   ui->yesButton->setStyleSheet("background-color:palette(button).color()");

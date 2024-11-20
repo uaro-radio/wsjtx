@@ -746,7 +746,7 @@ QString QSYMessageCreator::getGenMessage()  {
     else if (ui->message12->isChecked()) message = "012";
     else if (ui->message13->isChecked()) message = "013";
     else if (ui->message14->isChecked()) message = "014";
-    message = ui->DxBaseLabel->text() + " ZA" + message;
+    message = ui->DxBaseLabel->text() + ".ZA" + message;
     ui->messageLabel4->setText(message);
     return message;
 }
@@ -885,19 +885,19 @@ QString QSYMessageCreator::WriteMessage (QString hisCall, QString band, QString 
   if(ui->tabWidget->currentIndex() == 1) {
     qint16 kHzFreq = ui->kHzBox->value();
     QString kHzStr = QStringLiteral("%1").arg(kHzFreq,3,10,QLatin1Char('0'));
-    message = hisCall + " " + band + mode + kHzStr;
+    message = hisCall + "." + band + mode + kHzStr;
     ui->messageLabel->setText(message);
   }
   else if(ui->tabWidget->currentIndex() == 0) {
     qint16 kHzFreq = ui->kHzBox2->value();
     QString kHzStr = QStringLiteral("%1").arg(kHzFreq,3,10,QLatin1Char('0'));
-    message = hisCall + " " + band + mode + kHzStr;
+    message = hisCall + "." + band + mode + kHzStr;
     ui->messageLabel2->setText(message);
   }
   else if(ui->tabWidget->currentIndex() == 2) {
     qint16 kHzFreq = ui->kHzBox3->value();
     QString kHzStr = QStringLiteral("%1").arg(kHzFreq,3,10,QLatin1Char('0'));
-        message = hisCall + " " + band + mode + kHzStr;
+    message = hisCall + "." + band + mode + kHzStr;
     ui->messageLabel3->setText(message);
   }
   return message;
