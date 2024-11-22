@@ -47,12 +47,20 @@ subroutine sfox_remove_tone(c0,fsync)
 
       ia=nint((fsync-50.0)/df)
       ib=nint((fsync+1500.0+50.0)/df)
+	  
+      if (ia .lt. 1) ia=1;             ! Avoid a potential bounds error
+      if (ib .ge. 45000) ib=45000;     ! Avoid a potential bounds error
+	  
       ipk=maxloc(s(ia:ib))
       i0=ipk(1) + ia - 1
 
       nbaud=nint(baud/df)
       ia=i0-nbaud
       ib=i0+nbaud
+	  
+      if (ia .lt. 1) ia=1;             ! Avoid a potential bounds error
+      if (ib .ge. 45000) ib=45000;     ! Avoid a potential bounds error
+	  
       s0=0.0
       s1=0.0
       s2=0.0
@@ -66,6 +74,10 @@ subroutine sfox_remove_tone(c0,fsync)
 
       ia=i0-nbaud
       ib=i0+nbaud
+	  
+      if (ia .lt. 1) ia=1;             ! Avoid a potential bounds error
+      if (ib .ge. 45000) ib=45000;     ! Avoid a potential bounds error
+	  
       do i=ia,ib
          s2=s2 + s(i)*(i-i0)**2
       enddo
@@ -93,4 +105,5 @@ subroutine sfox_remove_tone(c0,fsync)
    enddo
 
    return
+
 end subroutine sfox_remove_tone

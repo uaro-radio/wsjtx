@@ -27,11 +27,19 @@ subroutine qpc_sync(crcvd0,fsample,isync,fsync,ftol,f2,t2,snrsync)
 
   ia=nint((fsync-ftol)/df2)
   ib=nint((fsync+ftol)/df2)
+  
+  if (ia .lt. 1) ia=1;             ! Avoid a potential bounds error
+  if (ib .ge. 27000) ib=27000;     ! Avoid a potential bounds error
+  
   ipk=maxloc(s(ia:ib))
   i0=ipk(1) + ia - 1
   f2=df2*i0-750.0                  ! f2 is the offset from nominal 750 Hz.
   ia=nint(i0-baud/df2)
   ib=nint(i0+baud/df2)
+  
+  if (ia .lt. 1) ia=1;             ! Avoid a potential bounds error
+  if (ib .ge. 27000) ib=27000;     ! Avoid a potential bounds error
+  
   s1=0.0
   s0=0.0
   do i=ia,ib
@@ -45,6 +53,10 @@ subroutine qpc_sync(crcvd0,fsample,isync,fsync,ftol,f2,t2,snrsync)
   c1=0.
   ia=nint(i0-baud/df2)
   ib=nint(i0+baud/df2)
+  
+  if (ia .lt. 0) ia=0;             ! Avoid a potential bounds error
+  if (ib .ge. N9SEC-1) ib=N9SEC-1; ! Avoid a potential bounds error
+  
   do i=ia,ib
      j=i-i0
      if(j.ge.0) c1(j)=c0(i)
