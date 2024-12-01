@@ -4684,6 +4684,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionActiveStations"/>
     <addaction name="actionSWL_Mode"/>
     <addaction name="actionQSYMessage_Creator"/>
+	<addaction name="actionQSY_Monitor"/>
     <addaction name="actionEnable_QSY_Popups"/>
     <addaction name="actionBand_Buttons"/>
     <addaction name="actionUse_Dark_Style"/>
@@ -5688,6 +5689,14 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>Enable QSY Popups</string>
+   </property>
+  </action>
+  <action name="actionQSY_Monitor">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>QSY Monitor</string>
    </property>
   </action>
  </widget>

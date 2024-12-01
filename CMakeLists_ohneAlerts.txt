@@ -296,6 +296,7 @@ set (wsjtx_CXXSRCS
   widgets/ExportCabrillo.cpp
   widgets/QSYMessage.cpp 
   widgets/QSYMessageCreator.cpp
+  widgets/qsymonitor.cpp
   )
 
 set (wsjt_CXXSRCS
@@ -718,6 +719,7 @@ set (wsjtx_UISRCS
   widgets/ExportCabrillo.ui
   widgets/QSYMessage.ui
   widgets/QSYMessageCreator.ui
+  widgets/qsymonitor.ui
   )
 
 set (UDP_library_CXXSRCS
