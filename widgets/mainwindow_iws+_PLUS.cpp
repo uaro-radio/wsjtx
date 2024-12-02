@@ -3179,6 +3179,7 @@ void MainWindow::on_monitorButton_clicked (bool checked)
   } else {
     ui->monitorButton->setChecked (false); // disallow
   }
+  check_button_color();
 }
 
 void MainWindow::monitor (bool state)
@@ -3191,6 +3192,7 @@ void MainWindow::monitor (bool state)
     Q_EMIT suspendAudioInputStream ();
   }
   m_monitoring = state;
+  check_button_color();
 }
 
 void MainWindow::on_actionAbout_triggered()                  //Display "About"
@@ -7394,25 +7396,8 @@ void MainWindow::guiUpdate()
 #endif
           }
       } else {
-        if(m_saveAll or m_saveDecoded) {
-          if (m_useDarkStyle) {
-            progressBar.setStyleSheet(QString("QProgressBar {color: #ffffff; text-align: center;} QProgressBar::chunk {background-color: #aa55ff;}"));
-          } else {
-#ifdef WIN32
-            if(m_TRperiod > 99) {
-              progressBar.setStyleSheet(QString("QProgressBar {color: #000000; text-align: right; margin-right: 4em;} QProgressBar::chunk {background-color: #aa55ff;}"));
-            } else {
-              progressBar.setStyleSheet(QString("QProgressBar {color: #000000; text-align: right; margin-right: 3em;} QProgressBar::chunk {background-color: #aa55ff;}"));
-            }
-#else
-            progressBar.setStyleSheet(QString("QProgressBar {color: #000000; text-align: center;} QProgressBar::chunk {background-color: #aa55ff;}"));
-#endif
-          }
-          progressBar.setFormat ("%v/%m");
-        } else {
           progressBar.setStyleSheet("");
           progressBar.setFormat ("%v/%m");			  
-        }
       }
     } else {
       progressBar.setStyleSheet("");
@@ -15047,6 +15032,15 @@ void MainWindow::check_button_color()
         ui->pb6->setVisible(false);
         ui->pb2->setVisible(false);
         ui->pb70->setVisible(false);
+    }
+    if (ui->monitorButton->isChecked()) {
+      if (m_saveAll or m_saveDecoded) {
+        ui->monitorButton->setStyleSheet("QPushButton {background-color: #00ffff; color: #000000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
+      } else {
+        ui->monitorButton->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
+      }
+    } else {
+      ui->monitorButton->setStyleSheet("");
     }
 }
 
