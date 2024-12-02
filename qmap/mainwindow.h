@@ -163,6 +163,7 @@ private:
   QString m_path;
   QString m_pbdecoding_style1;
   QString m_pbmonitor_style;
+  QString m_pbmonitor_style2;
   QString m_pbAutoOn_style;
   QString m_myCall;
   QString m_myGrid;

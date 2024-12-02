@@ -118,6 +118,9 @@ MainWindow::MainWindow(QWidget *parent) :
   m_pbmonitor_style="QPushButton{background-color: #00ff00; \
       border-style: outset; border-width: 1px; border-radius: 5px; \
       border-color: black; min-width: 5em; padding: 3px;}";
+  m_pbmonitor_style2="QPushButton{background-color: #00ffff; \
+      border-style: outset; border-width: 1px; border-radius: 5px; \
+      border-color: black; min-width: 5em; padding: 3px;}";
   m_pbAutoOn_style="QPushButton{background-color: red; \
       border-style: outset; border-width: 1px; border-radius: 5px; \
       border-color: black; min-width: 5em; padding: 3px;}";
@@ -991,7 +994,11 @@ void MainWindow::guiUpdate()
   int nsec=ms/1000;
 
   if(m_monitoring) {
-    ui->monitorButton->setStyleSheet(m_pbmonitor_style);
+    if(m_saveAll or m_saveDecoded) {
+      ui->monitorButton->setStyleSheet(m_pbmonitor_style2);
+    } else {
+      ui->monitorButton->setStyleSheet(m_pbmonitor_style);
+    }
   } else {
     ui->monitorButton->setStyleSheet("");
   }
