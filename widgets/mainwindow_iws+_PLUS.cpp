@@ -4231,7 +4231,7 @@ void MainWindow::on_actionQSYMessage_Creator_triggered()
     connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendQSYMessageCreatorStatus, this, &MainWindow::setQSYMessageCreatorStatus);
   }
   m_QSYMessageCreatorValue = true;
-  m_QSYMessageCreatorWidget->setWindowFlags(m_QSYMessageCreatorWidget->windowFlags() | Qt::WindowStaysOnTopHint);
+//  m_QSYMessageCreatorWidget->setWindowFlags(m_QSYMessageCreatorWidget->windowFlags() | Qt::WindowStaysOnTopHint);
   m_QSYMessageCreatorWidget->showNormal();
   m_QSYMessageCreatorWidget->raise();
   m_QSYMessageCreatorWidget->activateWindow();
@@ -4250,7 +4250,7 @@ void MainWindow::on_actionQSY_Monitor_triggered()
     // connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendQSYMessageCreatorStatus, this, &MainWindow::setQSYMessageCreatorStatus);
   }
   m_qsymonitorValue = true;
-  m_qsymonitorWidget->setWindowFlags(m_qsymonitorWidget->windowFlags() | Qt::WindowStaysOnTopHint);
+//  m_qsymonitorWidget->setWindowFlags(m_qsymonitorWidget->windowFlags() | Qt::WindowStaysOnTopHint);
   m_qsymonitorWidget->showNormal();
   m_qsymonitorWidget->raise();
   m_qsymonitorWidget->activateWindow();
