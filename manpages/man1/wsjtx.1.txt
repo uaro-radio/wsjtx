@@ -106,7 +106,7 @@ Joe Taylor, K1JT.
 
 == COPYING
 
-*wsjtx* is Copyright (C) 2001 - 2015 by Joseph H. Taylor, Jr., K1JT,
+*wsjtx* is Copyright (C) 2001 - 2025 by Joseph H. Taylor, Jr., K1JT,
 with contributions from additional authors.  WSJT-X is Open Source
 software, licensed under the GNU General Public License (GPLv3).
 
