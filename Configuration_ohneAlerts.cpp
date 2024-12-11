@@ -3358,7 +3358,7 @@ void Configuration::impl::on_CALL3_download_button_clicked (bool /*clicked*/)
   QFile f {dataPath.absolutePath() + "/" + "CALL3.TXT"};
   if (f.exists()) QFile::rename(dataPath.absolutePath() + "/" + "CALL3.TXT", dataPath.absolutePath() + "/" + "CALL3_backup.TXT");
   cty_download.configure(network_manager_,
-                         "http://dr-risse-consulting.de/hamlib/call3/CALL3.TXT",
+                         "https://wsjt-x-improved.sourceforge.io/CALL3.TXT",
                          dataPath.absoluteFilePath("CALL3.TXT"),
                          "Downloading latest CALL3.TXT file");
 
@@ -3377,7 +3377,7 @@ void Configuration::impl::on_CALL3_EME_download_button_clicked (bool /*clicked*/
   QFile f {dataPath.absolutePath() + "/" + "CALL3.TXT"};
   if (f.exists()) QFile::rename(dataPath.absolutePath() + "/" + "CALL3.TXT", dataPath.absolutePath() + "/" + "CALL3_backup.TXT");
   cty_download.configure(network_manager_,
-                         "http://dr-risse-consulting.de/hamlib/call3/CALL3_EME.TXT",
+                         "https://wsjt-x-improved.sourceforge.io/CALL3_EME.TXT",
                          dataPath.absoluteFilePath("CALL3.TXT"),
                          "Downloading latest CALL3.TXT file");
 
@@ -3472,14 +3472,14 @@ void Configuration::impl::on_hamlib_download_button_clicked (bool /*clicked*/)
   ui_->revert_update_button->setEnabled (false);
   if (ui_->rbHamlib32->isChecked()) {
     cty_download.configure(network_manager_,
-//                           "https://n0nb.users.sourceforge.net/dll32/libhamlib-4.dll",
-                           "http://dr-risse-consulting.de/hamlib/dll32/libhamlib-4.dll",  // hamlib mirror DG2YCB
+                           "https://n0nb.users.sourceforge.net/dll32/libhamlib-4.dll",
+//                           "http://dr-risse-consulting.de/hamlib/dll32/libhamlib-4.dll",  // hamlib mirror DG2YCB
                            dataPath.absoluteFilePath("libhamlib-4_new.dll"),
                            "Downloading latest libhamlib-4.dll");
   } else {
     cty_download.configure(network_manager_,
-//                           "https://n0nb.users.sourceforge.net/dll64/libhamlib-4.dll",
-                           "http://dr-risse-consulting.de/hamlib/dll64/libhamlib-4.dll",  // hamlib mirror DG2YCB
+                           "https://n0nb.users.sourceforge.net/dll64/libhamlib-4.dll",
+//                           "http://dr-risse-consulting.de/hamlib/dll64/libhamlib-4.dll",  // hamlib mirror DG2YCB
                            dataPath.absoluteFilePath("libhamlib-4_new.dll"),
                            "Downloading latest libhamlib-4.dll");
   }
