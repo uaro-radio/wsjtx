@@ -2862,7 +2862,7 @@ void MainWindow::fastSink(qint64 frames)
     if (!pounce && m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
         || (decodedtext.string().contains("<...> " + m_hisCall))))  {
         ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-        if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
+        if (m_config.alert_Enabled() && m_config.alert_DXcall()) play_DXcall = true;    // UR disable for versions without alerts
         QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
             ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
         });
@@ -2875,7 +2875,7 @@ void MainWindow::fastSink(qint64 frames)
     }
     if (!pounce && m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid.left(4))))  {
         ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
-        if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
+        if (m_config.alert_Enabled() && m_config.alert_DXcall()) play_DXcall = true;    // UR disable for versions without alerts
     }
     QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
         if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
@@ -2987,7 +2987,7 @@ void MainWindow::showQSYMessage(QString message)
   QString the_line = message;
   QString qCall = QString(Radio::base_callsign(m_config.my_callsign ()));
   QString qDXCall = QString(Radio::base_callsign(ui->dxCallEntry->text()));
-  if(the_line.contains(QString(".")))  {
+  if(the_line.contains(QString("."))) {
     if(!(the_line.contains("OKQSY") || the_line.contains("NOQSY"))) {
       QStringList bhList = the_line.split(" ",SkipEmptyParts);
       QString the_message = "";
@@ -3040,6 +3040,30 @@ void MainWindow::showQSYMessage(QString message)
       m_QSYMessageWidget->show();
       m_QSYMessageWidget->raise();
       m_QSYMessageWidget->activateWindow();
+    }
+
+    // UR disable for versions without alerts
+    if (m_config.alert_Enabled() && m_config.alert_QSYmessage()) {
+  #ifdef WIN32
+      QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
+      QString binPath = QCoreApplication::applicationDirPath();
+      QAudioFormat format;
+      format.setCodec("audio/pcm");
+      format.setSampleRate (48000);
+      format.setChannelCount (1);
+      format.setSampleSize (16);
+      format.setSampleType(QAudioFormat::SignedInt);
+      QAudioOutput* audio;
+      audio = new QAudioOutput(format, this);
+      connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
+      QFile *effect1 = new QFile(this);
+      effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/Message.wav"));
+      effect1->open(QIODevice::ReadOnly);
+      audio->start(effect1);
+  #else
+      QString binPath = QCoreApplication::applicationDirPath();
+      QSound::play(binPath + "/sounds/Message.wav");  // for Linux and macOS
+  #endif
     }
   }
 }
@@ -6297,7 +6321,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
              || (decodedtext.string().contains(QRegularExpression{"<(\\w+)> " + m_hisCall}))
              || (decodedtext.string().contains(QRegularExpression{"<...> " + m_hisCall})))) {
             ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-            if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
+            if (m_config.alert_Enabled() && m_config.alert_DXcall()) play_DXcall = true;    // UR disable for versions without alerts
             QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
                 ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
                 });
@@ -6310,7 +6334,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
         if (!pounce && m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid.left(4))))  {
             ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
-            if (m_config.alert_Enabled()) play_DXcall = true;    // UR disable for versions without alerts
+            if (m_config.alert_Enabled() && m_config.alert_DXcall()) play_DXcall = true;    // UR disable for versions without alerts
         }
         QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
           if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {

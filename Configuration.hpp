@@ -293,6 +293,7 @@ public:
   bool alert_ITUZ () const;
   bool alert_ITUZOB () const;
   bool alert_DXcall () const;
+  bool alert_QSYmessage () const;
   bool alert_Enabled () const;
   bool validate_otp_seed(QString);
   QString OTPSeed() const;
