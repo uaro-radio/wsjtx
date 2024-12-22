@@ -2860,7 +2860,7 @@ void MainWindow::fastSink(qint64 frames)
     bool stdMsg = decodedtext.report(m_baseCall,
                   Radio::base_callsign(ui->dxCallEntry->text()),m_rptRcvd);
     if (stdMsg) pskPost (decodedtext);
-    if(ui->actionEnable_QSY_Popups->isChecked()) showQSYMessage(message);  //w3sz
+    if(ui->actionEnable_QSY_Popups->isChecked() || m_qsymonitorWidget->isVisible()) showQSYMessage(message);  //w3sz
   }
 
   float fracTR=float(k)/(12000.0*m_TRperiod);
@@ -2933,7 +2933,7 @@ void MainWindow::showStatusMessage(const QString& statusMsg)
 //w3sz
 void MainWindow::showQSYMessage(QString message)
 {
-  QString the_line = message;
+  QString the_line = message.mid(22);
   QString qCall = QString(Radio::base_callsign(m_config.my_callsign ()));
   QString qDXCall = QString(Radio::base_callsign(ui->dxCallEntry->text()));
   if(the_line.contains(QString(".")))  {
@@ -2947,23 +2947,23 @@ void MainWindow::showQSYMessage(QString message)
           the_call = element.mid(0,element.indexOf("." ));
           if(the_message.length() > 0) {
             QString finalMatch = "";
-            QRegularExpression re1("[A-Z479][V248ABCDEFGHIMRW][0-9]{3}");
+            QRegularExpression re1("[A-Z479][V0123456789ABCDEFGHIJKLRW][0-9]{3}");
             QRegularExpressionMatch match = re1.match(the_message);
             if(match.hasMatch()) {
               finalMatch = match.captured();
-              if(the_call == qCall) {
+              if(the_call == qCall && ui->actionEnable_QSY_Popups->isChecked()) {
                 if(m_QSYMessageWidget) m_QSYMessageWidget->write_settings();
-                  m_QSYMessageWidget.reset (new QSYMessage(finalMatch, qCall, m_settings, &m_config));
+                m_QSYMessageWidget.reset (new QSYMessage(finalMatch, qCall, m_settings, &m_config));
 
-                  //connect to signal finish
-                  connect (this, &MainWindow::finished, &QSYMessage::close);
+                //connect to signal finish
+                connect (this, &MainWindow::finished, &QSYMessage::close);
 
-                  //connect to signal from QSYMessage
-                  connect (m_QSYMessageWidget.data (), &QSYMessage::sendReply, this, &MainWindow::reply_tx5,static_cast<Qt::ConnectionType>(Qt::UniqueConnection));
-                  m_QSYMessageWidget->setWindowFlags(m_QSYMessageWidget->windowFlags() | Qt::WindowStaysOnTopHint);
-                  m_QSYMessageWidget->show();
-                  m_QSYMessageWidget->raise();
-                  m_QSYMessageWidget->activateWindow();
+                //connect to signal from QSYMessage
+                connect (m_QSYMessageWidget.data (), &QSYMessage::sendReply, this, &MainWindow::reply_tx5,static_cast<Qt::ConnectionType>(Qt::UniqueConnection));
+                m_QSYMessageWidget->setWindowFlags(m_QSYMessageWidget->windowFlags() | Qt::WindowStaysOnTopHint);
+                m_QSYMessageWidget->show();
+                m_QSYMessageWidget->raise();
+                m_QSYMessageWidget->activateWindow();
               }
               if(m_qsymonitorWidget && finalMatch.mid(0,1) !='Z') m_qsymonitorWidget->getQSYData(QString(bhList[0]) + " " + the_call + " " + finalMatch); //w3sz
             }
@@ -2971,7 +2971,7 @@ void MainWindow::showQSYMessage(QString message)
         }
       }
     }
-    else if ((the_line.contains(qDXCall + QString(".") + "OKQSY") || the_line.contains(qDXCall +QString(".") +  "NOQSY"))) {
+    else if (((the_line.contains(qDXCall + QString(".") + "OKQSY") || the_line.contains(qDXCall +QString(".") + "NOQSY"))) && ui->actionEnable_QSY_Popups->isChecked()) {
       QString yesOrNo = " ";
       if (the_line.contains("OKQSY")) {
         yesOrNo = QString(" OKQSY");
@@ -2979,7 +2979,6 @@ void MainWindow::showQSYMessage(QString message)
         yesOrNo = QString(" NOQSY");
       }
       on_stopTxButton_clicked();
-
       QString qNewMessage = QString("$ ") + qDXCall + yesOrNo;
       if(m_QSYMessageWidget) m_QSYMessageWidget->write_settings();
       m_QSYMessageWidget.reset (new QSYMessage(qNewMessage, qDXCall, m_settings, &m_config));
@@ -5360,8 +5359,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
     auto line_read = proc_jt9.readLine ();
 
     QString the_line = QString(line_read);
-    if(ui->actionEnable_QSY_Popups->isChecked()) showQSYMessage(the_line);  //w3sz
 
+    if(ui->actionEnable_QSY_Popups->isChecked() || m_qsymonitorWidget->isVisible()) showQSYMessage(the_line);  //w3sz
+    //  if (true) showQSYMessage(the_line);
     if (m_mode == "FT8" and m_specOp == SpecOp::FOX and m_ActiveStationsWidget != NULL) { // see if we should add this to ActiveStations window
       if (!m_ActiveStationsWidget->wantedOnly() ||
           (the_line.contains(" " + m_config.my_callsign() + " ") ||
