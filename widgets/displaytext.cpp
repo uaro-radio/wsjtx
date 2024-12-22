@@ -915,7 +915,6 @@ void DisplayText::AudioAlerts()
         connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
 #else
   if(m_config->alert_Enabled()) {
-        QAudioOutput device(QAudioDeviceInfo::defaultOutputDevice());
         QString binPath = QCoreApplication::applicationDirPath();
 #endif
         QFile *effect2 = new QFile(this);
