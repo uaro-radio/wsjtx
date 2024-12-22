@@ -93,47 +93,124 @@ void QSYMonitor::getBandModeFreq(QString theTime, QString theCall, QString value
     QString freq = "";
 
     if (bandParam ==  "A") {
-      if (modeParam != 'M') {
+      if (modeParam.isLetter()) {
         freq = "50.";
       } else {
-        if (configuration_->region()==2) {
-          freq = "52.";
-        } else {
+        if (modeParam =="0") {
+          freq = "50.";
+        } else if (modeParam =="1") {
           freq = "51.";
+        } else if (modeParam =="2") {
+          freq = "52.";
+        } else if (modeParam =="3") {
+          freq = "53.";
         }
-      }
-    }
+			}
+		}
     else if (bandParam ==  "B") {
-      if (modeParam != 'M') {
+      if (modeParam.isLetter()) {
         freq = "144.";
       } else {
-        if (configuration_->region()==2) {
-          freq = "146.";
-        } else {
+        if (modeParam =="4") {
+          freq = "144.";
+        } else if (modeParam =="5") {
           freq = "145.";
+        } else if (modeParam =="6") {
+          freq = "146.";
+        } else if (modeParam =="7") {
+          freq = "147.";
         }
-      }
-    }
+			}
+		}
     else if (bandParam ==  "C") {
-      if (modeParam != 'M') {
+      if (modeParam.isLetter()) {
         freq = "222.";
       } else {
-        freq = "223.";
-      }
-    }
+					if (modeParam =="2") {
+						freq = "222.";
+					} else if (modeParam =="3") {
+						freq = "223.";
+				}
+			}
+		}
     else if (bandParam ==  "D") {
-      if (modeParam != 'M') {
+      if (modeParam.isLetter()) {
         freq = "432.";
       } else {
-        if (configuration_->region()==2) {
-          freq = "446.";
-        } else {
-          freq = "433.";
-        }
-      }
+				if (configuration_->region()==2) {
+					if (modeParam =="0") {
+						freq = "440.";
+					} else if (modeParam =="1") {
+						freq = "441.";
+					} else if (modeParam =="2") {
+						freq = "442.";
+					} else if (modeParam =="3") {
+						freq = "443.";
+					} else if (modeParam =="4") {
+						freq = "444.";
+					} else if (modeParam =="5") {
+						freq = "445.";
+					} else if (modeParam =="6") {
+						freq = "446.";
+					} else if (modeParam =="7") {
+						freq = "447.";
+					} else if (modeParam =="8") {
+						freq = "448.";
+					} else if (modeParam =="9") {
+						freq = "449.";
+					}							 
+				}
+				else {  //not region 2
+          if (modeParam =="0") {
+            freq = "430.";
+          } else if (modeParam =="1") {
+            freq = "431.";
+          } else if (modeParam =="2") {
+            freq = "432.";
+          } else if (modeParam =="3") {
+						freq = "433.";
+					} else if (modeParam =="4") {
+						freq = "434.";
+					} else if (modeParam =="5") {
+						freq = "435.";
+					} else if (modeParam =="6") {
+						freq = "436.";
+					} else if (modeParam =="7") {
+						freq = "437.";
+					} else if (modeParam =="8") {
+						freq = "438.";
+					} else if (modeParam =="9") {
+						freq = "439.";
+					}			 
+			  }
+			}
     }
     else if (bandParam ==  "E") {
-      freq = "1296.";
+      if (modeParam.isLetter()) {
+        freq = "1296.";
+      } else {
+        if (modeParam =="0") {
+          freq = "1290.";
+        } else if (modeParam =="1") {
+          freq = "1291.";
+        } else if (modeParam =="2") {
+          freq = "1292.";
+        } else if (modeParam =="3") {
+          freq = "1293.";
+        } else if (modeParam =="4") {
+          freq = "1294.";
+        } else if (modeParam =="5") {
+          freq = "1295.";
+        } else if (modeParam =="6") {
+          freq = "1296.";
+        } else if (modeParam =="7") {
+          freq = "1297.";
+        } else if (modeParam =="8") {
+          freq = "1298.";
+        } else if (modeParam =="9") {
+          freq = "1299.";
+        }
+      }
     }
     else if (bandParam ==  "F") {
       freq = "2304.";
@@ -148,11 +225,11 @@ void QSYMonitor::getBandModeFreq(QString theTime, QString theCall, QString value
       freq = "10368.";
     }
     else if (bandParam ==  "J") {
-      if (configuration_->region()==2) {
-        freq = "24192.";
-      } else {
-        freq = "24048.";
-      }
+        if (configuration_->region()==2) {
+            freq = "24192.";
+        } else {
+            freq = "24048.";
+        }
     }
     else if (bandParam ==  "9") {
       freq = "902.";
@@ -164,13 +241,13 @@ void QSYMonitor::getBandModeFreq(QString theTime, QString theCall, QString value
       freq = "24192.";
     }
     else if (bandParam ==  "X") {
-      freq = "24048.";
+        freq = "24048.";
     }
     else if (bandParam ==  "4") {
-      freq = "40.";
+        freq = "40.";
     }
     else if (bandParam ==  "7") {
-      freq = "70.";
+        freq = "70.";
     }
     else if (bandParam ==  "L") {
       freq = "0.";
@@ -212,21 +289,20 @@ void QSYMonitor::getBandModeFreq(QString theTime, QString theCall, QString value
     }
 
     freq = freq + freqParam;
-
-    if (modeParam ==  'V') {
+		if(!modeParam.isLetter()) {
+			mode = "FM";
+		}
+    else if (modeParam ==  'V') {
       mode = "SSB";
     }
-    else if (modeParam == '2') {
+    else if (modeParam == 'J') {
       mode = "FT4";
     }
-    else if (modeParam ==  '8') {
+    else if (modeParam ==  'L') {
       mode = "FT8";
     }
-    else if (modeParam ==  '4') {
-      mode = "MSK144";
-    }
-    else if (modeParam ==  'M') {
-      mode = "FM";
+    else if (modeParam ==  'K') {
+        mode = "MSK144";
     }
     else if (modeParam ==  'W') {
       mode = "CW";
@@ -254,7 +330,8 @@ void QSYMonitor::getBandModeFreq(QString theTime, QString theCall, QString value
     }
     else if (modeParam ==  'H') {
       mode = "Q65-120D";
-    } else {
+    }
+    else {
       mode = "";
     }
     int numSpaces1 = 2;

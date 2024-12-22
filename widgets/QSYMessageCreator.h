@@ -19,48 +19,52 @@ class QSYMessageCreator
   Q_OBJECT
   Q_PROPERTY(int kHzVHF READ getkHzVHF WRITE setkHzVHF)
   Q_PROPERTY(QString bandVHF READ getbandVHF WRITE setbandVHF)
-  Q_PROPERTY(QString modeVHF READ getmodeVHF WRITE setmodeVHF)
+  Q_PROPERTY(QChar modeVHF READ getmodeVHF WRITE setmodeVHF)
   Q_PROPERTY(int kHzHF READ getkHzHF WRITE setkHzHF)
   Q_PROPERTY(QString bandHF READ getbandHF WRITE setbandHF)
-  Q_PROPERTY(QString modeHF READ getmodeHF WRITE setmodeHF)
+  Q_PROPERTY(QChar modeHF READ getmodeHF WRITE setmodeHF)
   Q_PROPERTY(int kHzEME READ getkHzEME WRITE setkHzEME)
   Q_PROPERTY(QString bandEME READ getbandEME WRITE setbandEME)
-  Q_PROPERTY(QString modeEME READ getmodeEME WRITE setmodeEME)
-
+  Q_PROPERTY(QChar modeEME READ getmodeEME WRITE setmodeEME)
 
 public:
   explicit QSYMessageCreator(QSettings * settings, Configuration const *, QWidget * parent = 0);
   ~QSYMessageCreator();
-  QString WriteMessage(QString call, QString band, QString mode);
+  QString WriteMessage(QString call, QString band, QChar mode);
   QString bandVHF;
-  QString modeVHF;
+  QChar modeVHF;
   int kHzVHF;
   QString bandHF;
-  QString modeHF;
+  QChar modeHF;
   int kHzHF;
   QString bandEME;
-  QString modeEME;
+  QChar modeEME;
   int kHzEME;
+  int MHzVHFInt;
 
   QString getbandVHF () const {return m_bandVHF;}
-  QString getmodeVHF () const {return m_modeVHF;}
+  QChar getmodeVHF () const {return m_modeVHF;}
   int getkHzVHF () const {return m_kHzVHF;}
   QString getbandHF () const {return m_bandHF;}
-  QString getmodeHF () const {return m_modeHF;}
+  QChar getmodeHF () const {return m_modeHF;}
   int getkHzHF () const {return m_kHzHF;}
   QString getbandEME () const {return m_bandEME;}
-  QString getmodeEME () const {return m_modeEME;}
+  QChar getmodeEME () const {return m_modeEME;}
   int getkHzEME () const {return m_kHzEME;}
 
   void setbandVHF (QString bandVHF) {m_bandVHF = bandVHF;}
-  void setmodeVHF (QString modeVHF) { m_modeVHF = modeVHF;}
+  void setmodeVHF (QChar modeVHF) { m_modeVHF = modeVHF;}
   void setkHzVHF  (int kHzVHF) {m_kHzVHF = kHzVHF;}
   void setbandHF (QString bandHF) {m_bandHF = bandHF;}
-  void setmodeHF (QString modeHF) { m_modeHF = modeHF;}
+  void setmodeHF (QChar modeHF) { m_modeHF = modeHF;}
   void setkHzHF  (int kHzHF) {m_kHzHF = kHzHF;}
   void setbandEME (QString bandEME) {m_bandEME = bandEME;}
-  void setmodeEME (QString modeEME) { m_modeEME = modeEME;}
+  void setmodeEME (QChar modeEME) { m_modeEME = modeEME;}
   void setkHzEME  (int kHzEME) {m_kHzEME = kHzEME;}
+  QChar modeFromSpinBox (QString band, int MHzVHFInt);
+  void setupfmSpinBox(QString band);
+  void setMode(QString band, QChar mode, int region);
+  QChar getMode(QString band, int region);
 
   QMap<QPair<QString, QString>, int> kHzFreqMap;
 
@@ -85,19 +89,17 @@ private:
   Ui::QSYMessageCreator *ui;
   QString getBand();
   void setBand(QString band);
-  void setMode(QString band, QString mode, int region);
-  QString getMode(QString band, int region);
   void setup();
 
   int m_kHzVHF = 123;
   QString m_bandVHF = "D";
-  QString m_modeVHF = "M";
+  QChar m_modeVHF = 'V';
   int m_kHzHF = 123;
   QString m_bandHF = "D";
-  QString m_modeHF = "M";
+  QChar m_modeHF = 'V';
   int m_kHzEME = 123;
   QString m_bandEME = "D";
-  QString m_modeEME = "M";
+  QChar m_modeEME = 'V';
 
   void read_settings();
   void write_settings();
@@ -108,11 +110,12 @@ private:
 private slots:
   void onTabChanged();
   void on_genButton_clicked();
-  void setkHzBox(QString theBand, QString theMode, int tabNum);//, QMap<QPair<QString,QString>,int> kHzFreqMap);
+  void setkHzBox(QString theBand, QChar theMode, int tabNum);//, QMap<QPair<QString,QString>,int> kHzFreqMap);
   void on_button1_clicked();
   void on_button2_clicked();
   void on_button3_clicked();
   void setQSYMessageCreatorStatusFalse();
+  void onfmSpinBoxValueChanged();
   void onkHzBoxValueChanged();
   void onkHzBox2ValueChanged();
   void onkHzBox3ValueChanged();

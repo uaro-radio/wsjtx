@@ -1,4 +1,7 @@
 SOURCES += \
+  widgets/QSYMessage.cpp \
+  widgets/QSYMessageCreator.cpp \
+  widgets/qsymonitor.cpp \
   widgets/astro.cpp widgets/LettersSpinBox.cpp \
   widgets/logqso.cpp widgets/displaytext.cpp \
   widgets/meterwidget.cpp widgets/signalmeter.cpp \
@@ -17,6 +20,8 @@ SOURCES += \
   widgets/QSYMessage.h
 
 HEADERS  += \
+  widgets/QSYMessageCreator.h \
+  widgets/qsymonitor.h \
   widgets/mainwindow.h widgets/plotter.h \
   widgets/about.h widgets/widegraph.h  \
   widgets/displaytext.h widgets/logqso.h widgets/LettersSpinBox.hpp \
@@ -34,6 +39,7 @@ HEADERS  += \
   widgets/QSYMessage.h
 
 FORMS    += \
+  widgets/qsymonitor.ui \
   widgets/mainwindow.ui widgets/about.ui \
   widgets/widegraph.ui widgets/astro.ui \
   widgets/logqso.ui widgets/messageaveraging.ui \
