@@ -124,7 +124,23 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   messageButtonGroup->addButton(ui->message13);
   messageButtonGroup->addButton(ui->message14);
 
-  QPair<QString,QString> key("L","V"); //630m //SSB
+// need a MHZ map now that have selectable MHz values for FM mode
+  if(configuration->region() > 0) {
+      if(configuration->region() ==2) {
+          MHzFreqMap.insert("A",52); //6M, 52 MHz
+          MHzFreqMap.insert("B",146); //2M, 146 MHz
+          MHzFreqMap.insert("C",223); //1.25M, 223 MHz
+          MHzFreqMap.insert("D",446); //70cm, 446 MHz
+          MHzFreqMap.insert("E",1294); //23 cm, 52 MHz
+      } else {
+          MHzFreqMap.insert("A",51); //6M 51 MHz
+          MHzFreqMap.insert("B",145); //2M, 146 MHz
+          MHzFreqMap.insert("D",433); //70cm, 446 MHz
+          MHzFreqMap.insert("E",1297); //23 cm, 52 MHz
+      }
+  }
+
+  QPair<QString,QChar> key("L",'V'); //630m //SSB
   key.first = "M";  //160
   kHzFreqMap.insert(key, 910);
   key.first = "N"; //80
@@ -145,7 +161,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   kHzFreqMap.insert(key, 385);
 
   key.first = "L"; //630M
-  key.second = "W"; //CW
+  key.second = 'W'; //CW
   kHzFreqMap.insert(key, 473);
   key.first = "M";  //160
   kHzFreqMap.insert(key, 810);
@@ -169,11 +185,11 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   kHzFreqMap.insert(key, 60);
 
   key.first = "W"; //29 MHz
-  key.second = "9"; //FM
+  key.second = '9'; //FM
   kHzFreqMap.insert(key, 600);
 
   key.first = "L"; //630M
-  key.second = "C"; //FST4
+  key.second = 'C'; //FST4
   kHzFreqMap.insert(key, 474);
   key.first = "M";  //160
   kHzFreqMap.insert(key, 839);
@@ -196,7 +212,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   key.first = "V"; //28M
   kHzFreqMap.insert(key, 182);
 
-  key.second = "2"; //FT4
+  key.second = '2'; //FT4
   key.first = "N"; //80
   kHzFreqMap.insert(key, 575);
   key.first = "O"; //60
@@ -216,7 +232,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   key.first = "V"; //28M
   kHzFreqMap.insert(key, 180);
 
-  key.second = "8"; //FT8;
+  key.second = '8'; //FT8;
   key.first = "M";  //160
   kHzFreqMap.insert(key, 840);
   key.first = "N"; //80
@@ -238,7 +254,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   key.first = "V"; //28M
   kHzFreqMap.insert(key, 74);
 
-  key.second = "B"; //JT65
+  key.second = 'B'; //JT65
   key.first = "M";  //160
   kHzFreqMap.insert(key, 838);
   key.first = "N"; //80
@@ -260,7 +276,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   key.first = "V"; //28M
   kHzFreqMap.insert(key, 76);
 
-  key.second = "A"; //JT9
+  key.second = 'A'; //JT9
   key.first = "M";  //160
   kHzFreqMap.insert(key, 839);
   key.first = "N"; //80
@@ -284,7 +300,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
 
   //VHF and EME band/mode/freq
 
-  key.second = "V"; //SSB
+  key.second = 'V'; //SSB
   key.first = "A";  // 6M
   kHzFreqMap.insert(key, 125);
   key.first = "B"; //2M
@@ -316,7 +332,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   key.first = "7"; //4M
   kHzFreqMap.insert(key, 200);
 
-  key.second = "W"; //CW
+  key.second = 'W'; //CW
   key.first = "A";  // 6M
   kHzFreqMap.insert(key, 90);
   key.first = "B"; //2M
@@ -344,20 +360,20 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   key.first = "X"; //24048
   kHzFreqMap.insert(key, 100);
 
-  key.second = "2"; // FM
+  key.second = '2'; // FM
   key.first = "A";  // 6M
   kHzFreqMap.insert(key, 525);
-  key.second = "4"; // FM
+  key.second = '4'; // FM
   key.first = "B"; //2M
   kHzFreqMap.insert(key, 520);
-  key.second = "3"; // FM
+  key.second = '3'; // FM
   key.first = "C"; //222
   kHzFreqMap.insert(key, 500);
-  key.second = "6"; // FM
+  key.second = '6'; // FM
   key.first = "D"; //432
   kHzFreqMap.insert(key, 000);
 
-  key.second = "L"; // FT8
+  key.second = 'L'; // FT8
   key.first = "A";  // 6M
   kHzFreqMap.insert(key, 313);
   key.first = "B"; //2M
@@ -389,7 +405,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   key.first = "7"; //4M
   kHzFreqMap.insert(key, 154);
 
-  key.second = "K"; // MSK144
+  key.second = 'K'; // MSK144
   key.first = "A";  // 6M
   kHzFreqMap.insert(key, 280);
   key.first = "B"; //2M
@@ -399,8 +415,8 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   key.first = "D"; //432
   kHzFreqMap.insert(key, 150);
 
-  QList<QString> Q65modes = {"D","E","F","G","H"};
-  QList<QString>::iterator it = Q65modes.begin();
+  QList<QChar> Q65modes = {'D','E','F','G','H'};
+  QList<QChar>::iterator it = Q65modes.begin();
   while (it!=Q65modes.end()) {
     key.second = *it; // Q65 submodes D,E,F,G,H
     key.first = "A";  // 6M
@@ -446,6 +462,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   connect(bandButtonGroup, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), [=](int id, bool checked){
     qDebug() << "id" << id  << "toggled:" << checked;
     QString theBand = getBand();
+    if((theBand=="A" || theBand=="B" || theBand=="C" || theBand=="D" || theBand=="E")) setupfmSpinBox(theBand);
     QChar theMode = getMode(theBand, configuration_->region());
     WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
   });
@@ -496,6 +513,7 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   QObject::connect(bandButtonGroup, &QButtonGroup::idToggled, [&](int id, bool checked) {
     qDebug() << "Button" << id << "toggled:" << checked;
     QString theBand = getBand();
+    if((theBand=="A" || theBand=="B" || theBand=="C" || theBand=="D" || theBand=="E")) setupfmSpinBox(theBand);
     QChar theMode = getMode(theBand, configuration_->region());
     setkHzBox(theBand, theMode, ui->tabWidget->currentIndex());
     QSYMessageCreator::WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
@@ -565,9 +583,52 @@ void QSYMessageCreator::onfmSpinBoxValueChanged()
     WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
 }
 
+void QSYMessageCreator::setupfmSpinBox(QString band) {
+    if ((band =="A" || band == "B" || band == "C" || band == "D" || band == "E") && (configuration_->region () > 0)) {
+        ui->label_2_FM->setHidden(false);
+        ui->fmSpinBox->setHidden(false);
+        ui->saveMHzButton->setHidden(false);
+        ui->label_2_FM->setText("Region " + QString::number(configuration_->region()) + " MHz");
+        if (configuration_->region ()==2) {
+            if(band=="A") {
+                ui->fmSpinBox->setRange(50,53);
+            } else if(band=="B") {
+                ui->fmSpinBox->setRange(144,147);
+            } else if(band=="C") {
+                ui->fmSpinBox->setRange(222,223);
+            } else if(band=="D") {
+                ui->fmSpinBox->setRange(440,449);
+            } else if(band=="E") {
+                ui->fmSpinBox->setRange(1290,1299);
+            }
+        } else { //not region 2
+            if(band=="A") {
+                ui->fmSpinBox->setRange(50,53);
+            } else if(band=="B") {
+                ui->fmSpinBox->setRange(144,145);
+            } else if(band=="C") {
+                ui->label_2_FM->setHidden(true);
+            } else if(band=="D") {
+                ui->fmSpinBox->setRange(430,439);
+            } else if(band=="E") {
+                ui->fmSpinBox->setRange(1290,1299);
+            }
+        }
+        auto it = MHzFreqMap.find(band);
+        int defaultValue = -1;
+        int value =  (it != MHzFreqMap.constEnd()) ? it.value() : defaultValue;
+        if(value >=0) {
+            ui->fmSpinBox->setValue(value);
+        }
+        else {
+            ui->fmSpinBox->setValue(ui->fmSpinBox->minimum());
+        }
+    }
+}
+
 void QSYMessageCreator::setkHzBox(QString theBand, QChar theMode, int tabNum)
 {
-  QPair<QString,QString> key(theBand,theMode);
+  QPair<QString,QChar> key(theBand,theMode);
   auto it =  kHzFreqMap.find(key);
   int defaultValue = -1;
   int value =  (it != kHzFreqMap.constEnd()) ? it.value() : defaultValue;
@@ -585,10 +646,10 @@ void QSYMessageCreator::setkHzBox(QString theBand, QChar theMode, int tabNum)
     }
     kHzFreqMap.insert(key, value);
   } else {
-    QMap<QPair<QString, QString>, int>::const_iterator it = kHzFreqMap.begin();
+    QMap<QPair<QString, QChar>, int>::const_iterator it = kHzFreqMap.begin();
     bool running = true;
     while (running && (it !=kHzFreqMap.end())) {
-      QPair<QString,QString> key = it.key();
+      QPair<QString,QChar> key = it.key();
       if (key.first.contains(theBand)) {
         int value = it.value();
         if (tabNum ==1) {
@@ -713,9 +774,19 @@ void QSYMessageCreator::on_button1_clicked()
   QString theBand = getBand();
   QChar theMode = getMode(theBand, configuration_->region());
   QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
-  QPair<QString,QString>key(theBand,theMode);
+  QPair<QString,QChar>key(theBand,theMode);
   kHzFreqMap.insert(key, ui->kHzBox->value());
+  if(!theMode.isLetter() && (theBand=="A" || theBand=="B" || theBand=="C" || theBand=="D" || theBand=="E")) MHzFreqMap.insert(theBand, ui->fmSpinBox->value());
   Q_EMIT sendMessage(message);
+}
+
+void QSYMessageCreator::on_saveMHzButton_clicked()
+{
+    QString theBand = getBand();
+    QChar theMode = getMode(theBand, configuration_->region());
+    QPair<QString,QChar>key(theBand,theMode);
+    kHzFreqMap.insert(key, ui->kHzBox->value());
+    MHzFreqMap.insert(theBand, ui->fmSpinBox->value());
 }
 
 void QSYMessageCreator::on_button2_clicked()
@@ -723,7 +794,7 @@ void QSYMessageCreator::on_button2_clicked()
   QString theBand = getBand();
   QChar theMode = getMode(theBand, configuration_->region());
   QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
-  QPair<QString,QString>key(theBand,theMode);
+  QPair<QString,QChar>key(theBand,theMode);
   kHzFreqMap.insert(key, ui->kHzBox2->value());
   Q_EMIT sendMessage(message);
 }
@@ -733,7 +804,7 @@ void QSYMessageCreator::on_button3_clicked()
   QString theBand = getBand();
   QChar theMode = getMode(theBand, configuration_->region());
   QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
-  QPair<QString,QString>key(theBand,theMode);
+  QPair<QString,QChar>key(theBand,theMode);
   kHzFreqMap.insert(key, ui->kHzBox3->value());
   Q_EMIT sendMessage(message);
 }
@@ -849,17 +920,17 @@ void QSYMessageCreator::read_settings ()
   }
 
   if (testVHF) {
-    QPair<QString,QString> key(getbandVHF(),getmodeVHF());
+    QPair<QString,QChar> key(getbandVHF(),getmodeVHF());
     kHzFreqMap.insert(key,getkHzVHF());
     }
 
   if (testEME) {
-    QPair<QString,QString> key(getbandEME(),getmodeEME());
+    QPair<QString,QChar> key(getbandEME(),getmodeEME());
     kHzFreqMap.insert(key,getkHzEME());
   }
 
   if (testHF) {
-    QPair<QString,QString> key(getbandHF(),getmodeHF());
+    QPair<QString,QChar> key(getbandHF(),getmodeHF());
     kHzFreqMap.insert(key,getkHzHF());
   }
 
@@ -936,7 +1007,6 @@ QString QSYMessageCreator::getBand()
     else if (ui->radioBut40->isChecked()) band = "4";
     else if (ui->radioBut70->isChecked()) band = "7";
     setbandVHF(band);
-    setupfmSpinBox(band);
   } else if(ui->tabWidget->currentIndex() == 0) {
     if (ui->radioBut630M->isChecked()) band = "L";
     else if (ui->radioBut160M->isChecked()) band = "M";
@@ -968,40 +1038,6 @@ QString QSYMessageCreator::getBand()
   }
   return band;
 }
-
-void QSYMessageCreator::setupfmSpinBox(QString band) {
-  if ((band =="A" || band == "B" || band == "C" || band == "D" || band == "E") && (configuration_->region () > 0)) {
-    ui->label_2_FM->setHidden(false);
-    ui->fmSpinBox->setHidden(false);
-    ui->label_2_FM->setText("Region " + QString::number(configuration_->region()) + " MHz");
-    if (configuration_->region ()==2) {
-      if(band=="A") {
-        ui->fmSpinBox->setRange(50,53);
-      } else if(band=="B") {
-        ui->fmSpinBox->setRange(144,147);
-      } else if(band=="C") {
-        ui->fmSpinBox->setRange(222,223);
-      } else if(band=="D") {
-        ui->fmSpinBox->setRange(440,449);
-      } else if(band=="E") {
-        ui->fmSpinBox->setRange(1290,1299);
-      }
-    } else { //not region 2
-      if(band=="A") {
-        ui->fmSpinBox->setRange(50,53);
-      } else if(band=="B") {
-        ui->fmSpinBox->setRange(144,145);
-      } else if(band=="C") {
-        ui->label_2_FM->setHidden(true);
-      } else if(band=="D") {
-        ui->fmSpinBox->setRange(430,439);
-      } else if(band=="E") {
-        ui->fmSpinBox->setRange(1290,1299);
-      }
-    }
-  }
-}
-
 
 void QSYMessageCreator::setBand(QString band)
 {
@@ -1056,27 +1092,32 @@ void QSYMessageCreator::setMode(QString band, QChar mode, int region)
       ui->radioButSSB->setChecked(true);
       ui->label_2_FM->setHidden(true);
       ui->fmSpinBox->setHidden(true);
+      ui->saveMHzButton->setHidden(true);
     }
     else if (mode=='W') {  //CW
       ui->radioButCW->setChecked(true);
       ui->label_2_FM->setHidden(true);
       ui->fmSpinBox->setHidden(true);
+      ui->saveMHzButton->setHidden(true);
     }
     else if (mode=='K') {  //MSK144
       ui->radioButMSK->setChecked(true);
       ui->label_2_FM->setHidden(true);
       ui->fmSpinBox->setHidden(true);
+      ui->saveMHzButton->setHidden(true);
     }
     else if (mode=='L') { //FT8
       ui->radioButFT8->setChecked(true);
       ui->label_2_FM->setHidden(true);
       ui->fmSpinBox->setHidden(true);
+      ui->saveMHzButton->setHidden(true);
     }
     else if (!mode.isLetter()) {
       ui->radioButFM->setChecked(true);
       if ((band =="A" || band == "B" || band == "C" || band == "D" || band == "E") && (configuration_->region () > 0)) {
         ui->label_2_FM->setHidden(false);
         ui->fmSpinBox->setHidden(false);
+        ui->saveMHzButton->setHidden(false);
         ui->label_2_FM->setText("Region " + QString::number(configuration_->region()) + " MHz");
         if (region==2) {
           if(band=="A") {
@@ -1162,7 +1203,9 @@ void QSYMessageCreator::setMode(QString band, QChar mode, int region)
       } else {  // is not lower 4 bands FM Mode
         ui->label_2_FM->setHidden(true);
         ui->fmSpinBox->setHidden(true);
+        ui->saveMHzButton->setHidden(true);
       }
+      QSYMessageCreator::MHzFreqMap.insert(band,ui->fmSpinBox->value());
     } //end mode !isLetter ( is FM )
   } //end vhf tab
   else if(ui->tabWidget->currentIndex() == 0) {  //HF tab
@@ -1284,6 +1327,7 @@ QChar QSYMessageCreator::getMode(QString band,int region)
   if(ui->tabWidget->currentIndex() == 1) {    
     ui->label_2_FM->setHidden(true);
     ui->fmSpinBox->setHidden(true);
+    ui->saveMHzButton->setHidden(true);
     if (ui->radioButSSB->isChecked()) {
       mode = 'V';
     } else if (ui->radioButFM->isChecked()) {
@@ -1291,64 +1335,19 @@ QChar QSYMessageCreator::getMode(QString band,int region)
         if(configuration_->region () !=2 &&(band=="C"))  {
           ui->label_2_FM->setHidden(true);
           ui->fmSpinBox->setHidden(true);
+          ui->saveMHzButton->setHidden(true);
           mode = '0';
         } else {
           ui->label_2_FM->setText("Region " + QString::number(configuration_->region()) + " MHz");
           ui->label_2_FM->setHidden(false);
           ui->fmSpinBox->setHidden(false);
-
-          if (configuration_->region ()==2) {
-            if(band=="A") {
-              QStringList items = QStringList() << "50" << "51" << "52" << "53";
-              //    ui->fmComboBox->clear();
-              //    ui->fmComboBox->insertItems(0,items);
-            } else if(band=="B") {
-              QStringList items = QStringList() << "144" << "145" << "146" << "147";
-              //    ui->fmComboBox->clear();
-              //    ui->fmComboBox->insertItems(0,items);
-            } else if(band=="C") {
-              QStringList items = QStringList() << "222" << "223";
-              //    ui->fmComboBox->clear();
-              //    ui->fmComboBox->insertItems(0,items);
-            } else if(band=="D") {
-              QStringList items = QStringList() << "440" << "441" << "442" << "443" << "444" << "445" << "446" << "447" << "448" << "449";
-              //    ui->fmComboBox->clear();
-              //    ui->fmComboBox->insertItems(0,items);
-            } else if(band=="E") {
-              QStringList items = QStringList() << "1290" << "1291" << "1292" << "1293" << "1294" << "1295" << "1296" << "1297" << "1298" << "1299";
-              //    ui->fmComboBox->clear();
-              //    ui->fmComboBox->insertItems(0,items);
-            }
-          } else { //not region 2
-            if(band=="A") {
-              QStringList items = QStringList() << "50" << "51" << "52" << "53";
-              //    ui->fmComboBox->clear();
-              //    ui->fmComboBox->insertItems(0,items);
-            } else if(band=="B") {
-              QStringList items = QStringList() << "144" << "145";
-              //    ui->fmComboBox->clear();
-              //    ui->fmComboBox->insertItems(0,items);
-            } else if(band=="C") {
-              ui->label_2_FM->setHidden(true);
-              //    ui->fmComboBox->clear();
-              //    ui->fmComboBox->setHidden(true);
-            } else if(band=="D") {
-              QStringList items = QStringList() << "430" << "431" << "432" << "433" << "434" << "435" << "436" << "437" << "438" << "439";
-              //    ui->fmComboBox->clear();
-              //    ui->fmComboBox->insertItems(0,items);
-            } else if(band=="E") {
-              QStringList items = QStringList() << "1290" << "1291" << "1292" << "1293" << "1294" << "1295" << "1296" << "1297" << "1298" << "1299";
-              //    ui->fmComboBox->clear();
-              //    ui->fmComboBox->insertItems(0,items);
-            }
-          } //end not region 2
-          //mode = modeFromComboBox(band,ui->fmComboBox->currentText());
+          ui->saveMHzButton->setHidden(false);
           mode = modeFromSpinBox(band, ui->fmSpinBox->value());
-
         }
       } else {
         ui->label_2_FM->setHidden(true);
         ui->fmSpinBox->setHidden(true);
+        ui->saveMHzButton->setHidden(true);
         mode='0';
       }
     }

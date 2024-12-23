@@ -2933,10 +2933,10 @@ void MainWindow::showStatusMessage(const QString& statusMsg)
 //w3sz
 void MainWindow::showQSYMessage(QString message)
 {
-  QString the_line = message.mid(22);
+  QString the_line = message;
   QString qCall = QString(Radio::base_callsign(m_config.my_callsign ()));
   QString qDXCall = QString(Radio::base_callsign(ui->dxCallEntry->text()));
-  if(the_line.contains(QString(".")))  {
+  if(the_line.mid(22).contains(QString("."))) {
     if(!(the_line.contains("OKQSY") || the_line.contains("NOQSY"))) {
       QStringList bhList = the_line.split(" ",SkipEmptyParts);
       QString the_message = "";
@@ -2971,7 +2971,7 @@ void MainWindow::showQSYMessage(QString message)
         }
       }
     }
-    else if (((the_line.contains(qDXCall + QString(".") + "OKQSY") || the_line.contains(qDXCall +QString(".") + "NOQSY"))) && ui->actionEnable_QSY_Popups->isChecked()) {
+    else if (((the_line.mid(22).contains(qDXCall + QString(".") + "OKQSY") || the_line.mid(22).contains(qDXCall +QString(".") + "NOQSY"))) && ui->actionEnable_QSY_Popups->isChecked()) {
       QString yesOrNo = " ";
       if (the_line.contains("OKQSY")) {
         yesOrNo = QString(" OKQSY");
@@ -3096,7 +3096,6 @@ void MainWindow::on_actionSettings_triggered()           // Setup Dialog (Settin
     }
 
     configActiveStations();
-	//configQSYMessageCreator(); //w3sz
     check_button_color();
     rigFailed = false;
     keep_frequency = false;
@@ -4195,12 +4194,8 @@ void MainWindow::on_actionQSY_Monitor_triggered()
     m_qsymonitorWidget.reset (new QSYMonitor {m_settings, m_config.decoded_text_font (), &m_config});
     // hook up termination signal
     connect (this, &MainWindow::finished, &QSYMonitor::close);
-    // connect to signal from QSYMonitor
-    // connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendMessage, this, &MainWindow::update_tx5);
-    // connect (m_QSYMessageCreatorWidget.data (), &QSYMessageCreator::sendQSYMessageCreatorStatus, this, &MainWindow::setQSYMessageCreatorStatus);
   }
   m_qsymonitorValue = true;
-//  m_qsymonitorWidget->setWindowFlags(m_qsymonitorWidget->windowFlags() | Qt::WindowStaysOnTopHint);
   m_qsymonitorWidget->showNormal();
   m_qsymonitorWidget->raise();
   m_qsymonitorWidget->activateWindow();
@@ -5360,9 +5355,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
     auto line_read = proc_jt9.readLine ();
 
     QString the_line = QString(line_read);
-
     if(ui->actionEnable_QSY_Popups->isChecked() || m_qsymonitorWidget->isVisible()) showQSYMessage(the_line);  //w3sz
-    //  if (true) showQSYMessage(the_line);
+
     if (m_mode == "FT8" and m_specOp == SpecOp::FOX and m_ActiveStationsWidget != NULL) { // see if we should add this to ActiveStations window
       if (!m_ActiveStationsWidget->wantedOnly() ||
           (the_line.contains(" " + m_config.my_callsign() + " ") ||

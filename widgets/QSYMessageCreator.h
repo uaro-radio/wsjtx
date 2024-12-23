@@ -66,7 +66,8 @@ public:
   void setMode(QString band, QChar mode, int region);
   QChar getMode(QString band, int region);
 
-  QMap<QPair<QString, QString>, int> kHzFreqMap;
+  QMap<QPair<QString, QChar>, int> kHzFreqMap;
+  QMap<QString,int> MHzFreqMap;
 
   QTabWidget tabWidget;
 
@@ -114,6 +115,7 @@ private slots:
   void on_button1_clicked();
   void on_button2_clicked();
   void on_button3_clicked();
+  void on_saveMHzButton_clicked();
   void setQSYMessageCreatorStatusFalse();
   void onfmSpinBoxValueChanged();
   void onkHzBoxValueChanged();
