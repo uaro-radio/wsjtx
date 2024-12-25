@@ -65,6 +65,7 @@ public:
   void setupfmSpinBox(QString band);
   void setMode(QString band, QChar mode, int region);
   QChar getMode(QString band, int region);
+  int getBandEdge(QString band);
 
   QMap<QPair<QString, QChar>, int> kHzFreqMap;
   QMap<QString,int> MHzFreqMap;
@@ -116,6 +117,8 @@ private slots:
   void on_button2_clicked();
   void on_button3_clicked();
   void on_saveMHzButton_clicked();
+  void on_saveMHzButton_2_clicked();
+  void on_saveMHzButton_3_clicked();
   void setQSYMessageCreatorStatusFalse();
   void onfmSpinBoxValueChanged();
   void onkHzBoxValueChanged();
