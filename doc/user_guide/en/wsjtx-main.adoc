@@ -175,6 +175,11 @@ include::tutorial-example6.adoc[]
 == Making QSOs
 include::make-qso.adoc[]
 
+[[Message_System]]
+== Message System
+include::message-creator.adoc[]
+
+
 [[VHF_AND_UP]]
 == VHF+ Features
 include::vhf-features.adoc[]

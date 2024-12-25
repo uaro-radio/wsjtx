@@ -48,7 +48,25 @@ value computed for the middle of the Tx period.
 
 - On the *Radio* tab select *Split Operation* (use either *Rig* or
 *Fake It*; you may need to experiment with both options to find one
-that works best with your radio).
+that works best with your radio). *Fake it* is provided to allow the
+necessary changes in receive and transmit frequencies for rigs that have
+only one VFO accessible via CAT. It accomplishes this by sending the
+required tranmsit frequency shortly before the start of the transmit period. 
+Functionally there is no difference in operation of *Rig* or *Fake it*.
+If in any doubt *Fake it* is the safest option. 
+
+image::Split_settings.png[align="center",alt="Split Settings"]
+
+Successful setting of split operation can be verified by checking that 
+S is embedded in the indicator between the band combo box and the dial frequency
+indicator. In some circumstances the S may only appear after a frequency or 
+band change.  If the S is not present, Doppler correction will not function.
+
+image::letter-s.png[align="center",alt="Split Settings"]
+
+
+NOTE: If *Split Operation* is set to *None* Doppler tracking will not
+be enabled!
 
 - On the right side of the main window select *Tab 1* to present the
 traditional format for entering and choosing Tx messages.
@@ -85,7 +103,7 @@ and is set to the Sked frequency.  This mode can be used when announcing
 your CQ call on a specific frequency and listening on your own echo
 frequency.  It can also be used for echo testing with Echo mode.
 
-- Select *Constant frequency on Moon* to correct for your own one-way
+- Select *Constant frequency on Moon (CFOM)* to correct for your own one-way
 Doppler shift to or from the Moon.  If your QSO partner does the same
 thing, both stations will have the required Doppler compensation.
 Moreover, anyone else using this option will hear both of you
@@ -107,6 +125,9 @@ seen on an SDR display.  It is usually necessary to hold down the Ctrl key
 while tuning the radio. From the moment *Call DX* is pressed, your 
 transmit frequency is set so that your echo will fall on the same 
 frequency you (and the DX station) are listening. 
+
+NOTE: All the above Doppler methods assume that RIT in the receiver is
+set to zero.
 
 - See <<ASTRODATA,Astronomical Data>> for details on the quantities
 displayed in this window.
@@ -328,8 +349,10 @@ On higher microwave bands typical choices have been JT65C, one of the
 wider JT4 submodes, or QRA64, depending on the expected amount of
 Doppler spread.  We now recommend a suitable submode of Q65 (which has
 replaced QRA64) for EME on any VHF or higher band: for example,
-Q65-60A on 50 and 144 MHz, Q65-60B on 432 MHz, Q65-60C on 1296 MHz,
-and Q65-60D on 10 GHz.
+Q65-60A on 50 and 144 MHz, Q65-60B on 432 MHz, Q65-60C on 1296 MHz
+and 2.3 GHz, Q65-60D on 3.4 and 5.7 GHz, Q65-60D or E on 10 GHz, and
+Q65-60E on 24 GHz and higher bands. Depending on libration spreading 
+and SNR, other submodes may perform better.  
 
 JT4, JT65, and Q65 offer *Message Averaging* -- the summation of
 subsequent transmissions that convey the same message -- to enable

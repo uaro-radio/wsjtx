@@ -1,0 +1,76 @@
+[[MESSAGE_System]]
+
+The WSJT-X Message System can be used to invite your QSO partner to QSY
+to another QRG or mode (e.g. during contests), or to send some general 
+short messages. It consists of the Message Creator and the QSY Monitor.
+Received messages are displayed as popups.
+
+=== Message Creator
+
+Use the Message Creator to create and send such messages with just a few clicks. 
+When using it for the first time, make sure that your IARU Region has 
+been set. 
+
+image::mc1.png[align="center",alt="IARU Region"]
+
+Message Creator window is accessed from the WSJT-X view Menu
+
+image::mc2.png[align="center",alt="View Menu"]
+
+Four tabs are available: HF, VHF, EME and General.  The location of
+the window on-screen is remembered when the program is shut down. 
+
+image::mc3.png[align="center",alt="Creator Tabs"]
+
+Messages are sent after selecting the appropriate messages using
+the radio buttons for band and mode and if a QSY frequency is to
+be included, this is entered using the spinbox. The message to be sent
+is shown in the field indicated by the red arrow. The message is sent
+using the Send Message button.  TX Enable will be set autonatically,
+and the message sent in the next available timeslot to the station
+whose callsign is present in the DX Call field in WSJT-X's main 
+window.  The example below shows the creation of a messsage to W3SZ
+asking him to QSY to 145.550 using FM.
+
+image::mc4.png[align="center",alt="Creator window"]
+
+=== Receiving a message
+
+To be able to receive mesages, select Enable Message Popups in the 
+WSJT-X View menu:
+
+image::mc5.png[align="center",alt="Enable Pop Ups"]
+
+A screenshot of a received message is shown below. The recipient can reply
+Yes or No and the reply message will be sent in the next timeslot to
+the callsign present in the recipient's DX callsign box.
+
+TIP: The message is 'non-blocking' which means that normal program
+flow is not interrupted. 
+
+TIP: After use, the Message System text remains in the Tx 6 field.  Tx 6
+can be reset to the standard CQ message by clicking on the Create Std Msgs
+button.
+
+image::mc6.png[align="center",alt="Received message"]
+
+NOTE: QSY messages do *NOT* automatically implement a QSY or mode
+change.  This has to be done by the operator!
+
+=== QSY Monitor
+
+It is also possible to view messages sent to other stations, as well
+as to you.  This feature is  enabled from the View menu, and an example
+is shown below.
+
+image::mc7.png[align="center",alt="QSY Monitor"]
+
+
+
+
+
+
+
+
+
+

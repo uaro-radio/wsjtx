@@ -56,6 +56,7 @@ set (UG_SRCS
   tutorial-download-samples.adoc
   tutorial-wide-graph-settings.adoc
   utilities.adoc
+  message-creator.adoc
   vhf-features.adoc
   wsjtx-main.adoc
   wspr.adoc
@@ -113,6 +114,14 @@ set (UG_IMGS
   images/r3666-config-screen-80.png
   images/r3666-main-ui-80.png
   images/r4148-txmac-ui.png
+  images/mc1.png
+  images/mc2.png
+  images/mc3.png
+  images/mc4.png
+  images/mc5.png
+  images/mc6.png
+  images/mc7.png
+  images/Split_settings.png
   images/RadioTab.png
   images/reporting.png
   images/save-menu.png
