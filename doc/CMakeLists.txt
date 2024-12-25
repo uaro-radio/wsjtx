@@ -122,6 +122,7 @@ set (UG_IMGS
   images/mc6.png
   images/mc7.png
   images/Split_settings.png
+  images/letter-s.png
   images/RadioTab.png
   images/reporting.png
   images/save-menu.png
