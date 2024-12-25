@@ -12,7 +12,45 @@
 Copyright 2001 - 2025 by Joe Taylor, K1JT, and the WSJT Development Team
 
 
-                      Release: WSJT-X 2.7.0-rc7
+                      Release: WSJT-X 2.7.0-rc8
+                           January 6, 2024
+                      -------------------------
+
+WSJT-X 2.7.0 Release Candidate 8 introduces a new Message System,
+primarily intended for contests. Otherwise, RC8 is primarily a bug-fix
+release of the well-functioning RC7. 
+  
+ - The WSJT-X Message System can be used to invite your QSO partner 
+   to QSY to another QRG or mode (e.g. during contests), or to send 
+   some general short messages. It consists of the Message Creator 
+   and the QSY Monitor. Received messages are displayed as popups.
+
+ - Bug-fixes and improvements to SuperFox/Hound mode:
+   
+   - The GUI now prevents users from setting parameters that could
+     lead to a subprocess error in the SF decoder.
+
+   - OTP server is no longer called if OTP is 000000. 
+
+   - Better protection against bounds errors.
+
+   - Fixed an inconsistency with the Tx even/1st checkbox when 
+     switching from SuperHound mode to any other mode.
+
+   - For SuperFox, it is now ensured that the transceiver Tx dial 
+     frequency is consistent with zero m_XIT.
+
+ - Avoided a potential program crash when Astronomical data window 
+   is not open.
+
+ - More intuitive navigation in QMAP and WSJT-X: a single click in 
+   Active Stations window now selects a station, double-click to 
+   also Enable Tx.
+
+ - Fixed audio issues with some macOS versions.
+
+
+                       Release: WSJT-X 2.7.0-rc7
                          September 30, 2024
                       -------------------------
 
