@@ -47,7 +47,7 @@ release of the well-functioning RC7.
 
  - More intuitive navigation when WSJT-X is used together with QMAP.
    A single click in Active Stations window now selects a station to be
-   called; a double-click also activated Enable Tx.
+   called; a double-click also activates Enable Tx.
 
  - Corrected audio issues with some macOS versions.
 
