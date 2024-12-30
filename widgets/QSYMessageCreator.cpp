@@ -126,19 +126,21 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
 
 // need a MHZ map now that have selectable MHz values for FM mode
   if(configuration->region() > 0) {
-      if(configuration->region() ==2) {
-          MHzFreqMap.insert("A",52); //6M, 52 MHz
-          MHzFreqMap.insert("B",146); //2M, 146 MHz
-          MHzFreqMap.insert("C",223); //1.25M, 223 MHz
-          MHzFreqMap.insert("D",446); //70cm, 446 MHz
-          MHzFreqMap.insert("E",1294); //23 cm, 52 MHz
-      } else {
-          MHzFreqMap.insert("A",51); //6M 51 MHz
-          MHzFreqMap.insert("B",145); //2M, 146 MHz
-          MHzFreqMap.insert("D",433); //70cm, 446 MHz
-          MHzFreqMap.insert("E",1297); //23 cm, 52 MHz
-      }
+    if(configuration->region() ==2) {
+      MHzFreqMap.insert("A",52); //6M, 52 MHz
+      MHzFreqMap.insert("B",146); //2M, 146 MHz
+      MHzFreqMap.insert("C",223); //1.25M, 223 MHz
+      MHzFreqMap.insert("D",446); //70cm, 446 MHz
+      MHzFreqMap.insert("E",1294); //23 cm, 1294 MHz
+    } else {
+      MHzFreqMap.insert("A",51); //6M 51 MHz
+      MHzFreqMap.insert("B",145); //2M, 145 MHz
+      MHzFreqMap.insert("D",433); //70cm, 433 MHz
+      MHzFreqMap.insert("E",1297); //23 cm, 1297 MHz
+    }
   }
+
+  read_settings();
 
   QPair<QString,QChar> key("L",'V'); //630m //SSB
   key.first = "M";  //160
@@ -371,22 +373,22 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   kHzFreqMap.insert(key, 500); //region 2
   key.second = '6'; // FM
   key.first = "D"; //432
-  kHzFreqMap.insert(key, 000); //region 2
+  kHzFreqMap.insert(key, 500); //region 2
   key.second = '7'; // FM
   key.first = "E"; //1296
-  kHzFreqMap.insert(key, 000); //region 1
+  kHzFreqMap.insert(key, 500); //region 1
   key.second = '4'; // FM
   key.first = "E"; //1296
-  kHzFreqMap.insert(key, 000); //region 2
+  kHzFreqMap.insert(key, 500); //region 2
   key.second = '1'; // FM
   key.first = "A";  // 6M
-  kHzFreqMap.insert(key, 000); //region 1
+  kHzFreqMap.insert(key, 800); //region 1
   key.second = '5'; // FM
   key.first = "B"; //2M
-  kHzFreqMap.insert(key, 000); //region 1
-  key.second = '2'; // FM
+  kHzFreqMap.insert(key, 500); //region 1
+  key.second = '3'; // FM
   key.first = "D"; //432
-  kHzFreqMap.insert(key, 000); //region 1
+  kHzFreqMap.insert(key, 600); //region 1
 
   key.second = 'L'; // FT8
   key.first = "A";  // 6M
@@ -462,8 +464,6 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
     kHzFreqMap.insert(key, 170);
     ++it;
   }
-
-  read_settings();
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
   //VHF
@@ -902,6 +902,14 @@ void QSYMessageCreator::read_settings ()
 {
   SettingsGroup g (settings_, "QSYMessageCreator");
   move (settings_->value ("window/pos", pos ()).toPoint ());
+
+  QByteArray readKHzData = settings_->value("kHzFreqMap").toByteArray();
+  QDataStream readKHzStream(&readKHzData, QIODevice::ReadOnly);
+  readKHzStream >> kHzFreqMap;
+  QByteArray readMHzData = settings_->value("MHzFreqMap").toByteArray();
+  QDataStream readMHzStream(&readMHzData, QIODevice::ReadOnly);
+  readMHzStream >> MHzFreqMap;
+
   ui->kHzBox3->setValue(settings_->value("kHzEME").toInt());
   setbandEME(settings_->value("bandEME").toString());
   setmodeEME(settings_->value("modeEME").toChar());
@@ -1467,4 +1475,14 @@ void QSYMessageCreator::write_settings ()
   settings_->setValue ("bandEME", getbandEME());
   settings_->setValue ("modeEME", getmodeEME());
   settings_->setValue ("kHzEME", getkHzEME());
+  QByteArray data;
+  QDataStream *stream = new QDataStream(&data, QIODevice::WriteOnly);
+  *stream << kHzFreqMap;
+  settings_->setValue("kHzFreqMap", data);
+  QByteArray data2;
+  QDataStream *stream2 = new QDataStream(&data2, QIODevice::WriteOnly);
+  *stream2 << MHzFreqMap;
+  settings_->setValue("MHzFreqMap", data2);
+  delete stream;
+  delete stream2;
 }

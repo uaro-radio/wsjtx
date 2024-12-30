@@ -7945,7 +7945,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
 
   // don't call CQ when double-clicking on the final "73" message of your QSO
   if (m_bDoubleClicked && message.clean_string().remove("<").remove(">").contains((" " + m_baseCall + " "))
-      && message.clean_string().remove("<").remove(">").contains(" " + hiscall + " ") && message.clean_string().contains(" 73")) return;
+      && message.clean_string().remove("<").remove(">").contains(" " + hiscall + " ") && message.clean_string().mid(22).contains(" 73")) return;
 
   if(message.clean_string ().contains(hiscall+"/R")) {
     hiscall+="/R";
@@ -8360,7 +8360,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
     }
     // his base call different or his call more qualified
     // i.e. compound version of same base call
-    if (!((s2.contains(" " + m_config.my_callsign() + " ") && s2.contains(" 73")) && (ui->respondComboBox->currentText()=="CQ: Max dB"
+    if (!((s2.contains(" " + m_config.my_callsign() + " ") && s2.mid(22).contains(" 73")) && (ui->respondComboBox->currentText()=="CQ: Max dB"
            or ui->respondComboBox->currentText()=="CQ: Max dB"))) ui->dxCallEntry->setText (hiscall);
   }
   if (hisgrid.contains (grid_regexp)) {
