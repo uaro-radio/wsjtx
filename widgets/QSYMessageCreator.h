@@ -41,6 +41,8 @@ public:
   QChar modeEME;
   int kHzEME;
   int MHzVHFInt;
+  bool firstTime = true;
+  QChar initVHFMode;
 
   QString getbandVHF () const {return m_bandVHF;}
   QChar getmodeVHF () const {return m_modeVHF;}

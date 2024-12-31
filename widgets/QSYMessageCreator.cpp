@@ -124,345 +124,352 @@ QSYMessageCreator::QSYMessageCreator(QSettings * settings, Configuration const *
   messageButtonGroup->addButton(ui->message13);
   messageButtonGroup->addButton(ui->message14);
 
-// need a MHZ map now that have selectable MHz values for FM mode
-  if(configuration->region() > 0) {
-    if(configuration->region() ==2) {
-      MHzFreqMap.insert("A",52); //6M, 52 MHz
-      MHzFreqMap.insert("B",146); //2M, 146 MHz
-      MHzFreqMap.insert("C",223); //1.25M, 223 MHz
-      MHzFreqMap.insert("D",446); //70cm, 446 MHz
-      MHzFreqMap.insert("E",1294); //23 cm, 1294 MHz
-    } else {
-      MHzFreqMap.insert("A",51); //6M 51 MHz
-      MHzFreqMap.insert("B",145); //2M, 145 MHz
-      MHzFreqMap.insert("D",433); //70cm, 433 MHz
-      MHzFreqMap.insert("E",1297); //23 cm, 1297 MHz
+  read_settings();
+
+  if(MHzFreqMap.isEmpty()) {
+    // need a MHZ map now that have selectable MHz values for FM mode
+    if(configuration->region() > 0) {
+      if(configuration->region() ==2) {
+        MHzFreqMap.insert("A",52); //6M, 52 MHz
+        MHzFreqMap.insert("B",146); //2M, 146 MHz
+        MHzFreqMap.insert("C",223); //1.25M, 223 MHz
+        MHzFreqMap.insert("D",446); //70cm, 446 MHz
+        MHzFreqMap.insert("E",1294); //23 cm, 1294 MHz
+      } else {
+        MHzFreqMap.insert("A",50); //6M 50 MHz
+        MHzFreqMap.insert("B",145); //2M, 145 MHz
+        MHzFreqMap.insert("D",433); //70cm, 433 MHz
+        MHzFreqMap.insert("E",1297); //23 cm, 1297 MHz
+      }
     }
   }
 
-  read_settings();
+  if(kHzFreqMap.size() < 10) {
+    QPair<QString,QChar> key("L",'V'); //630m //SSB
+    key.first = "M";  //160
+    kHzFreqMap.insert(key, 910);
+    key.first = "N"; //80
+    kHzFreqMap.insert(key, 960);
+    key.first = "O"; //60
+    kHzFreqMap.insert(key, 354);
+    key.first = "P"; //40
+    kHzFreqMap.insert(key, 285);
+    key.first = "R"; //20
+    kHzFreqMap.insert(key, 285);
+    key.first = "S"; //17
+    kHzFreqMap.insert(key, 130);
+    key.first = "T"; //15
+    kHzFreqMap.insert(key, 385);
+    key.first = "U"; //12
+    kHzFreqMap.insert(key, 910);
+    key.first = "V"; //28M
+    kHzFreqMap.insert(key, 385);
 
-  QPair<QString,QChar> key("L",'V'); //630m //SSB
-  key.first = "M";  //160
-  kHzFreqMap.insert(key, 910);
-  key.first = "N"; //80
-  kHzFreqMap.insert(key, 960);
-  key.first = "O"; //60
-  kHzFreqMap.insert(key, 354);
-  key.first = "P"; //40
-  kHzFreqMap.insert(key, 285);
-  key.first = "R"; //20
-  kHzFreqMap.insert(key, 285);
-  key.first = "S"; //17
-  kHzFreqMap.insert(key, 130);
-  key.first = "T"; //15
-  kHzFreqMap.insert(key, 385);
-  key.first = "U"; //12
-  kHzFreqMap.insert(key, 910);
-  key.first = "V"; //28M
-  kHzFreqMap.insert(key, 385);
+    key.first = "L"; //630M
+    key.second = 'W'; //CW
+    kHzFreqMap.insert(key, 473);
+    key.first = "M";  //160
+    kHzFreqMap.insert(key, 810);
+    key.first = "N"; //80
+    kHzFreqMap.insert(key, 560);
+    key.first = "O"; //60
+    kHzFreqMap.insert(key, 353);
+    key.first = "P"; //40
+    kHzFreqMap.insert(key, 40);
+    key.first = "Q"; //30
+    kHzFreqMap.insert(key, 106);
+    key.first = "R"; //20
+    kHzFreqMap.insert(key, 60);
+    key.first = "S"; //17
+    kHzFreqMap.insert(key, 96);
+    key.first = "T"; //15
+    kHzFreqMap.insert(key, 60);
+    key.first = "U"; //12
+    kHzFreqMap.insert(key, 906);
+    key.first = "V"; //28M
+    kHzFreqMap.insert(key, 60);
 
-  key.first = "L"; //630M
-  key.second = 'W'; //CW
-  kHzFreqMap.insert(key, 473);
-  key.first = "M";  //160
-  kHzFreqMap.insert(key, 810);
-  key.first = "N"; //80
-  kHzFreqMap.insert(key, 560);
-  key.first = "O"; //60
-  kHzFreqMap.insert(key, 353);
-  key.first = "P"; //40
-  kHzFreqMap.insert(key, 40);
-  key.first = "Q"; //30
-  kHzFreqMap.insert(key, 106);
-  key.first = "R"; //20
-  kHzFreqMap.insert(key, 60);
-  key.first = "S"; //17
-  kHzFreqMap.insert(key, 96);
-  key.first = "T"; //15
-  kHzFreqMap.insert(key, 60);
-  key.first = "U"; //12
-  kHzFreqMap.insert(key, 906);
-  key.first = "V"; //28M
-  kHzFreqMap.insert(key, 60);
+    key.first = "V"; //28 MHz
+    key.second = '9'; //FM
+    kHzFreqMap.insert(key, 999);
+    key.first = "W"; //29 MHz
+    key.second = '9'; //FM
+    kHzFreqMap.insert(key, 600);
 
-  key.first = "W"; //29 MHz
-  key.second = '9'; //FM
-  kHzFreqMap.insert(key, 600);
+    key.first = "L"; //630M
+    key.second = 'C'; //FST4
+    kHzFreqMap.insert(key, 474);
+    key.first = "M";  //160
+    kHzFreqMap.insert(key, 839);
+    key.first = "N"; //80
+    kHzFreqMap.insert(key, 577);
+    key.first = "O"; //60
+    kHzFreqMap.insert(key, 357);
+    key.first = "P"; //40
+    kHzFreqMap.insert(key, 49);
+    key.first = "Q"; //30
+    kHzFreqMap.insert(key, 142);
+    key.first = "R"; //20
+    kHzFreqMap.insert(key, 82);
+    key.first = "S"; //17
+    kHzFreqMap.insert(key, 106);
+    key.first = "T"; //15
+    kHzFreqMap.insert(key, 142);
+    key.first = "U"; //12
+    kHzFreqMap.insert(key, 921);
+    key.first = "V"; //28M
+    kHzFreqMap.insert(key, 182);
 
-  key.first = "L"; //630M
-  key.second = 'C'; //FST4
-  kHzFreqMap.insert(key, 474);
-  key.first = "M";  //160
-  kHzFreqMap.insert(key, 839);
-  key.first = "N"; //80
-  kHzFreqMap.insert(key, 577);
-  key.first = "O"; //60
-  kHzFreqMap.insert(key, 357);
-  key.first = "P"; //40
-  kHzFreqMap.insert(key, 49);
-  key.first = "Q"; //30
-  kHzFreqMap.insert(key, 142);
-  key.first = "R"; //20
-  kHzFreqMap.insert(key, 82);
-  key.first = "S"; //17
-  kHzFreqMap.insert(key, 106);
-  key.first = "T"; //15
-  kHzFreqMap.insert(key, 142);
-  key.first = "U"; //12
-  kHzFreqMap.insert(key, 921);
-  key.first = "V"; //28M
-  kHzFreqMap.insert(key, 182);
+    key.second = 'J'; //FT4
+    key.first = "N"; //80
+    kHzFreqMap.insert(key, 575);
+    key.first = "O"; //60
+    kHzFreqMap.insert(key, 357);
+    key.first = "P"; //40
+    kHzFreqMap.insert(key, 47);
+    key.first = "Q"; //30
+    kHzFreqMap.insert(key, 140);
+    key.first = "R"; //20
+    kHzFreqMap.insert(key, 80);
+    key.first = "S"; //17
+    kHzFreqMap.insert(key, 104);
+    key.first = "T"; //15
+    kHzFreqMap.insert(key, 140);
+    key.first = "U"; //12
+    kHzFreqMap.insert(key, 919);
+    key.first = "V"; //28M
+    kHzFreqMap.insert(key, 180);
 
-  key.second = 'J'; //FT4
-  key.first = "N"; //80
-  kHzFreqMap.insert(key, 575);
-  key.first = "O"; //60
-  kHzFreqMap.insert(key, 357);
-  key.first = "P"; //40
-  kHzFreqMap.insert(key, 47);
-  key.first = "Q"; //30
-  kHzFreqMap.insert(key, 140);
-  key.first = "R"; //20
-  kHzFreqMap.insert(key, 80);
-  key.first = "S"; //17
-  kHzFreqMap.insert(key, 104);
-  key.first = "T"; //15
-  kHzFreqMap.insert(key, 140);
-  key.first = "U"; //12
-  kHzFreqMap.insert(key, 919);
-  key.first = "V"; //28M
-  kHzFreqMap.insert(key, 180);
+    key.second = 'L'; //FT8;
+    key.first = "M";  //160
+    kHzFreqMap.insert(key, 840);
+    key.first = "N"; //80
+    kHzFreqMap.insert(key, 573);
+    key.first = "O"; //60
+    kHzFreqMap.insert(key, 357);
+    key.first = "P"; //40
+    kHzFreqMap.insert(key, 74);
+    key.first = "Q"; //30
+    kHzFreqMap.insert(key, 136);
+    key.first = "R"; //20
+    kHzFreqMap.insert(key, 74);
+    key.first = "S"; //17
+    kHzFreqMap.insert(key, 100);
+    key.first = "T"; //15
+    kHzFreqMap.insert(key, 74);
+    key.first = "U"; //12
+    kHzFreqMap.insert(key, 915);
+    key.first = "V"; //28M
+    kHzFreqMap.insert(key, 74);
 
-  key.second = 'L'; //FT8;
-  key.first = "M";  //160
-  kHzFreqMap.insert(key, 840);
-  key.first = "N"; //80
-  kHzFreqMap.insert(key, 573);
-  key.first = "O"; //60
-  kHzFreqMap.insert(key, 357);
-  key.first = "P"; //40
-  kHzFreqMap.insert(key, 74);
-  key.first = "Q"; //30
-  kHzFreqMap.insert(key, 136);
-  key.first = "R"; //20
-  kHzFreqMap.insert(key, 74);
-  key.first = "S"; //17
-  kHzFreqMap.insert(key, 100);
-  key.first = "T"; //15
-  kHzFreqMap.insert(key, 74);
-  key.first = "U"; //12
-  kHzFreqMap.insert(key, 915);
-  key.first = "V"; //28M
-  kHzFreqMap.insert(key, 74);
+    key.second = 'B'; //JT65
+    key.first = "M";  //160
+    kHzFreqMap.insert(key, 838);
+    key.first = "N"; //80
+    kHzFreqMap.insert(key, 576);
+    key.first = "O"; //60
+    kHzFreqMap.insert(key, 357);
+    key.first = "P"; //40
+    kHzFreqMap.insert(key, 76);
+    key.first = "Q"; //30
+    kHzFreqMap.insert(key, 138);
+    key.first = "R"; //20
+    kHzFreqMap.insert(key, 76);
+    key.first = "S"; //17
+    kHzFreqMap.insert(key, 102);
+    key.first = "T"; //15
+    kHzFreqMap.insert(key, 76);
+    key.first = "U"; //12
+    kHzFreqMap.insert(key, 917);
+    key.first = "V"; //28M
+    kHzFreqMap.insert(key, 76);
 
-  key.second = 'B'; //JT65
-  key.first = "M";  //160
-  kHzFreqMap.insert(key, 838);
-  key.first = "N"; //80
-  kHzFreqMap.insert(key, 576);
-  key.first = "O"; //60
-  kHzFreqMap.insert(key, 357);
-  key.first = "P"; //40
-  kHzFreqMap.insert(key, 76);
-  key.first = "Q"; //30
-  kHzFreqMap.insert(key, 138);
-  key.first = "R"; //20
-  kHzFreqMap.insert(key, 76);
-  key.first = "S"; //17
-  kHzFreqMap.insert(key, 102);
-  key.first = "T"; //15
-  kHzFreqMap.insert(key, 76);
-  key.first = "U"; //12
-  kHzFreqMap.insert(key, 917);
-  key.first = "V"; //28M
-  kHzFreqMap.insert(key, 76);
+    key.second = 'A'; //JT9
+    key.first = "M";  //160
+    kHzFreqMap.insert(key, 839);
+    key.first = "N"; //80
+    kHzFreqMap.insert(key, 572);
+    key.first = "O"; //60
+    kHzFreqMap.insert(key, 357);
+    key.first = "P"; //40
+    kHzFreqMap.insert(key, 78);
+    key.first = "Q"; //30
+    kHzFreqMap.insert(key, 140);
+    key.first = "R"; //20
+    kHzFreqMap.insert(key, 78);
+    key.first = "S"; //17
+    kHzFreqMap.insert(key, 104);
+    key.first = "T"; //15
+    kHzFreqMap.insert(key, 78);
+    key.first = "U"; //12
+    kHzFreqMap.insert(key, 919);
+    key.first = "V"; //28M
+    kHzFreqMap.insert(key, 78);
 
-  key.second = 'A'; //JT9
-  key.first = "M";  //160
-  kHzFreqMap.insert(key, 839);
-  key.first = "N"; //80
-  kHzFreqMap.insert(key, 572);
-  key.first = "O"; //60
-  kHzFreqMap.insert(key, 357);
-  key.first = "P"; //40
-  kHzFreqMap.insert(key, 78);
-  key.first = "Q"; //30
-  kHzFreqMap.insert(key, 140);
-  key.first = "R"; //20
-  kHzFreqMap.insert(key, 78);
-  key.first = "S"; //17
-  kHzFreqMap.insert(key, 104);
-  key.first = "T"; //15
-  kHzFreqMap.insert(key, 78);
-  key.first = "U"; //12
-  kHzFreqMap.insert(key, 919);
-  key.first = "V"; //28M
-  kHzFreqMap.insert(key, 78);
+    //VHF and EME band/mode/freq
 
-  //VHF and EME band/mode/freq
-
-  key.second = 'V'; //SSB
-  key.first = "A";  // 6M
-  kHzFreqMap.insert(key, 125);
-  key.first = "B"; //2M
-  kHzFreqMap.insert(key, 200);
-  key.first = "C"; //222
-  kHzFreqMap.insert(key, 100);
-  key.first = "D"; //432
-  kHzFreqMap.insert(key, 100);
-  key.first = "9"; //902
-  kHzFreqMap.insert(key, 100);
-  key.first = "K"; //903
-  kHzFreqMap.insert(key, 100);
-  key.first = "E"; //1296
-  kHzFreqMap.insert(key, 100);
-  key.first = "F"; //2304
-  kHzFreqMap.insert(key, 100);
-  key.first = "G"; //3400
-  kHzFreqMap.insert(key, 100);
-  key.first = "H";  //5760
-  kHzFreqMap.insert(key, 100);
-  key.first = "I"; //10368
-  kHzFreqMap.insert(key, 100);
-  key.first = "J"; //24192
-  kHzFreqMap.insert(key, 100);
-  key.first = "X"; //24048
-  kHzFreqMap.insert(key, 100);
-  key.first = "4"; //8M
-  kHzFreqMap.insert(key, 680);
-  key.first = "7"; //4M
-  kHzFreqMap.insert(key, 200);
-
-  key.second = 'W'; //CW
-  key.first = "A";  // 6M
-  kHzFreqMap.insert(key, 90);
-  key.first = "B"; //2M
-  kHzFreqMap.insert(key, 100);
-  key.first = "C"; //222
-  kHzFreqMap.insert(key, 100);
-  key.first = "D"; //432
-  kHzFreqMap.insert(key, 100);
-  key.first = "9"; //902
-  kHzFreqMap.insert(key, 100);
-  key.first = "K"; //903
-  kHzFreqMap.insert(key, 100);
-  key.first = "E"; //1296
-  kHzFreqMap.insert(key, 100);
-  key.first = "F"; //2304
-  kHzFreqMap.insert(key, 100);
-  key.first = "G"; //3400
-  kHzFreqMap.insert(key, 100);
-  key.first = "H";  //5760
-  kHzFreqMap.insert(key, 100);
-  key.first = "I"; //10368
-  kHzFreqMap.insert(key, 100);
-  key.first = "J"; //24192
-  kHzFreqMap.insert(key, 100);
-  key.first = "X"; //24048
-  kHzFreqMap.insert(key, 100);
-
-  key.second = '2'; // FM
-  key.first = "A";  // 6M
-  kHzFreqMap.insert(key, 525); //region 2
-  key.second = '6'; // FM
-  key.first = "B"; //2M
-  kHzFreqMap.insert(key, 520); //region 2
-  key.second = '3'; // FM
-  key.first = "C"; //222
-  kHzFreqMap.insert(key, 500); //region 2
-  key.second = '6'; // FM
-  key.first = "D"; //432
-  kHzFreqMap.insert(key, 500); //region 2
-  key.second = '7'; // FM
-  key.first = "E"; //1296
-  kHzFreqMap.insert(key, 500); //region 1
-  key.second = '4'; // FM
-  key.first = "E"; //1296
-  kHzFreqMap.insert(key, 500); //region 2
-  key.second = '1'; // FM
-  key.first = "A";  // 6M
-  kHzFreqMap.insert(key, 800); //region 1
-  key.second = '5'; // FM
-  key.first = "B"; //2M
-  kHzFreqMap.insert(key, 500); //region 1
-  key.second = '3'; // FM
-  key.first = "D"; //432
-  kHzFreqMap.insert(key, 600); //region 1
-
-  key.second = 'L'; // FT8
-  key.first = "A";  // 6M
-  kHzFreqMap.insert(key, 313);
-  key.first = "B"; //2M
-  kHzFreqMap.insert(key, 174);
-  key.first = "C"; //222
-  kHzFreqMap.insert(key, 174);
-  key.first = "D"; //432
-  kHzFreqMap.insert(key, 174);
-  key.first = "9"; //902
-  kHzFreqMap.insert(key, 174);
-  key.first = "K"; //903
-  kHzFreqMap.insert(key, 174);
-  key.first = "E"; //1296
-  kHzFreqMap.insert(key, 174);
-  key.first = "F"; //2304
-  kHzFreqMap.insert(key, 174);
-  key.first = "G"; //3400
-  kHzFreqMap.insert(key, 174);
-  key.first = "H";  //5760
-  kHzFreqMap.insert(key, 174);
-  key.first = "I"; //10368
-  kHzFreqMap.insert(key, 174);
-  key.first = "J"; //24192
-  kHzFreqMap.insert(key, 174);
-  key.first = "X"; //24048
-  kHzFreqMap.insert(key, 174);
-  key.first = "4"; //8M
-  kHzFreqMap.insert(key, 680);
-  key.first = "7"; //4M
-  kHzFreqMap.insert(key, 154);
-
-  key.second = 'K'; // MSK144
-  key.first = "A";  // 6M
-  kHzFreqMap.insert(key, 280);
-  key.first = "B"; //2M
-  kHzFreqMap.insert(key, 150);
-  key.first = "C"; //222
-  kHzFreqMap.insert(key, 150);
-  key.first = "D"; //432
-  kHzFreqMap.insert(key, 150);
-
-  QList<QChar> Q65modes = {'D','E','F','G','H'};
-  QList<QChar>::iterator it = Q65modes.begin();
-  while (it!=Q65modes.end()) {
-    key.second = *it; // Q65 submodes D,E,F,G,H
+    key.second = 'V'; //SSB
     key.first = "A";  // 6M
-    kHzFreqMap.insert(key, 275);
+    kHzFreqMap.insert(key, 125);
     key.first = "B"; //2M
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 200);
     key.first = "C"; //222
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 100);
     key.first = "D"; //432
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 100);
     key.first = "9"; //902
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 100);
     key.first = "K"; //903
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 100);
     key.first = "E"; //1296
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 100);
     key.first = "F"; //2304
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 100);
     key.first = "G"; //3400
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 100);
     key.first = "H";  //5760
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 100);
     key.first = "I"; //10368
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 100);
     key.first = "J"; //24192
-    kHzFreqMap.insert(key, 170);
+    kHzFreqMap.insert(key, 100);
     key.first = "X"; //24048
-    kHzFreqMap.insert(key, 170);
-    ++it;
+    kHzFreqMap.insert(key, 100);
+    key.first = "4"; //8M
+    kHzFreqMap.insert(key, 680);
+    key.first = "7"; //4M
+    kHzFreqMap.insert(key, 200);
+
+    key.second = 'W'; //CW
+    key.first = "A";  // 6M
+    kHzFreqMap.insert(key, 90);
+    key.first = "B"; //2M
+    kHzFreqMap.insert(key, 100);
+    key.first = "C"; //222
+    kHzFreqMap.insert(key, 100);
+    key.first = "D"; //432
+    kHzFreqMap.insert(key, 100);
+    key.first = "9"; //902
+    kHzFreqMap.insert(key, 100);
+    key.first = "K"; //903
+    kHzFreqMap.insert(key, 100);
+    key.first = "E"; //1296
+    kHzFreqMap.insert(key, 100);
+    key.first = "F"; //2304
+    kHzFreqMap.insert(key, 100);
+    key.first = "G"; //3400
+    kHzFreqMap.insert(key, 100);
+    key.first = "H";  //5760
+    kHzFreqMap.insert(key, 100);
+    key.first = "I"; //10368
+    kHzFreqMap.insert(key, 100);
+    key.first = "J"; //24192
+    kHzFreqMap.insert(key, 100);
+    key.first = "X"; //24048
+    kHzFreqMap.insert(key, 100);
+
+    key.second = '2'; // FM
+    key.first = "A";  // 6M
+    kHzFreqMap.insert(key, 525); //region 2
+    key.second = '6'; // FM
+    key.first = "B"; //2M
+    kHzFreqMap.insert(key, 520); //region 2
+    key.second = '3'; // FM
+    key.first = "C"; //222
+    kHzFreqMap.insert(key, 500); //region 2
+    key.second = '6'; // FM
+    key.first = "D"; //432
+    kHzFreqMap.insert(key, 000); //region 2
+    key.second = '7'; // FM
+    key.first = "E"; //1296
+    kHzFreqMap.insert(key, 500); //region 1
+    key.second = '4'; // FM
+    key.first = "E"; //1296
+    kHzFreqMap.insert(key, 500); //region 2
+    key.second = '1'; // FM
+    key.first = "A";  // 6M
+    kHzFreqMap.insert(key, 800); //region 1
+    key.second = '5'; // FM
+    key.first = "B"; //2M
+    kHzFreqMap.insert(key, 500); //region 1
+    key.second = '3'; // FM
+    key.first = "D"; //432
+    kHzFreqMap.insert(key, 650); //region 1
+
+    key.second = 'L'; // FT8
+    key.first = "A";  // 6M
+    kHzFreqMap.insert(key, 313);
+    key.first = "B"; //2M
+    kHzFreqMap.insert(key, 174);
+    key.first = "C"; //222
+    kHzFreqMap.insert(key, 174);
+    key.first = "D"; //432
+    kHzFreqMap.insert(key, 174);
+    key.first = "9"; //902
+    kHzFreqMap.insert(key, 174);
+    key.first = "K"; //903
+    kHzFreqMap.insert(key, 174);
+    key.first = "E"; //1296
+    kHzFreqMap.insert(key, 174);
+    key.first = "F"; //2304
+    kHzFreqMap.insert(key, 174);
+    key.first = "G"; //3400
+    kHzFreqMap.insert(key, 174);
+    key.first = "H";  //5760
+    kHzFreqMap.insert(key, 174);
+    key.first = "I"; //10368
+    kHzFreqMap.insert(key, 174);
+    key.first = "J"; //24192
+    kHzFreqMap.insert(key, 174);
+    key.first = "X"; //24048
+    kHzFreqMap.insert(key, 174);
+    key.first = "4"; //8M
+    kHzFreqMap.insert(key, 680);
+    key.first = "7"; //4M
+    kHzFreqMap.insert(key, 154);
+
+    key.second = 'K'; // MSK144
+    key.first = "A";  // 6M
+    kHzFreqMap.insert(key, 280);
+    key.first = "B"; //2M
+    kHzFreqMap.insert(key, 150);
+    key.first = "C"; //222
+    kHzFreqMap.insert(key, 150);
+    key.first = "D"; //432
+    kHzFreqMap.insert(key, 150);
+
+    QList<QChar> Q65modes = {'D','E','F','G','H'};
+    QList<QChar>::iterator it = Q65modes.begin();
+    while (it!=Q65modes.end()) {
+      key.second = *it; // Q65 submodes D,E,F,G,H
+      key.first = "A";  // 6M
+      kHzFreqMap.insert(key, 275);
+      key.first = "B"; //2M
+      kHzFreqMap.insert(key, 170);
+      key.first = "C"; //222
+      kHzFreqMap.insert(key, 170);
+      key.first = "D"; //432
+      kHzFreqMap.insert(key, 170);
+      key.first = "9"; //902
+      kHzFreqMap.insert(key, 170);
+      key.first = "K"; //903
+      kHzFreqMap.insert(key, 170);
+      key.first = "E"; //1296
+      kHzFreqMap.insert(key, 170);
+      key.first = "F"; //2304
+      kHzFreqMap.insert(key, 170);
+      key.first = "G"; //3400
+      kHzFreqMap.insert(key, 170);
+      key.first = "H";  //5760
+      kHzFreqMap.insert(key, 170);
+      key.first = "I"; //10368
+      kHzFreqMap.insert(key, 170);
+      key.first = "J"; //24192
+      kHzFreqMap.insert(key, 170);
+      key.first = "X"; //24048
+      kHzFreqMap.insert(key, 170);
+      ++it;
+    }
   }
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
@@ -597,53 +604,53 @@ QSYMessageCreator::~QSYMessageCreator()
 
 void QSYMessageCreator::onfmSpinBoxValueChanged()
 {
-    QString theBand = getBand();
-    QChar theMode = getMode(theBand, configuration_->region());
-    QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
-    setkHzVHF(ui->kHzBox->value());
-    WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
+  QString theBand = getBand();
+  QChar theMode = getMode(theBand, configuration_->region());
+  QString message = WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
+  setkHzVHF(ui->kHzBox->value());
+  WriteMessage(ui->DxBaseLabel->text(), theBand, theMode);
 }
 
 void QSYMessageCreator::setupfmSpinBox(QString band) {
-    if ((band =="A" || band == "B" || band == "C" || band == "D" || band == "E") && (configuration_->region () > 0)) {
-        ui->label_2_FM->setHidden(false);
-        ui->fmSpinBox->setHidden(false);
-        ui->label_2_FM->setText("Region " + QString::number(configuration_->region()) + " MHz");
-        if (configuration_->region ()==2) {
-            if(band=="A") {
-                ui->fmSpinBox->setRange(50,53);
-            } else if(band=="B") {
-                ui->fmSpinBox->setRange(144,147);
-            } else if(band=="C") {
-                ui->fmSpinBox->setRange(222,223);
-            } else if(band=="D") {
-                ui->fmSpinBox->setRange(440,449);
-            } else if(band=="E") {
-                ui->fmSpinBox->setRange(1290,1299);
-            }
-        } else { //not region 2
-            if(band=="A") {
-                ui->fmSpinBox->setRange(50,53);
-            } else if(band=="B") {
-                ui->fmSpinBox->setRange(144,145);
-            } else if(band=="C") {
-                ui->label_2_FM->setHidden(true);
-            } else if(band=="D") {
-                ui->fmSpinBox->setRange(430,439);
-            } else if(band=="E") {
-                ui->fmSpinBox->setRange(1290,1299);
-            }
-        }
-        auto it = MHzFreqMap.find(band);
-        int defaultValue = -1;
-        int value =  (it != MHzFreqMap.constEnd()) ? it.value() : defaultValue;
-        if(value >=0) {
-            ui->fmSpinBox->setValue(value);
-        }
-        else {
-            ui->fmSpinBox->setValue(ui->fmSpinBox->minimum());
-        }
+  if ((band =="A" || band == "B" || band == "C" || band == "D" || band == "E") && (configuration_->region () > 0)) {
+    ui->label_2_FM->setHidden(false);
+    ui->fmSpinBox->setHidden(false);
+    ui->label_2_FM->setText("Region " + QString::number(configuration_->region()) + " MHz");
+    if (configuration_->region ()==2) {
+      if(band=="A") {
+        ui->fmSpinBox->setRange(50,53);
+      } else if(band=="B") {
+        ui->fmSpinBox->setRange(144,147);
+      } else if(band=="C") {
+        ui->fmSpinBox->setRange(222,223);
+      } else if(band=="D") {
+        ui->fmSpinBox->setRange(440,449);
+      } else if(band=="E") {
+        ui->fmSpinBox->setRange(1290,1299);
+      }
+    } else { //not region 2
+      if(band=="A") {
+        ui->fmSpinBox->setRange(50,53);
+      } else if(band=="B") {
+        ui->fmSpinBox->setRange(144,145);
+      } else if(band=="C") {
+        ui->label_2_FM->setHidden(true);
+      } else if(band=="D") {
+        ui->fmSpinBox->setRange(430,439);
+      } else if(band=="E") {
+        ui->fmSpinBox->setRange(1290,1299);
+      }
     }
+    auto it = MHzFreqMap.find(band);
+    int defaultValue = -1;
+    int value =  (it != MHzFreqMap.constEnd()) ? it.value() : defaultValue;
+    if(value >=0) {
+      ui->fmSpinBox->setValue(value);
+    }
+    else {
+      ui->fmSpinBox->setValue(ui->fmSpinBox->minimum());
+    }
+  }
 }
 
 void QSYMessageCreator::setkHzBox(QString theBand, QChar theMode, int tabNum)
@@ -802,27 +809,27 @@ void QSYMessageCreator::on_button1_clicked()
 
 void QSYMessageCreator::on_saveMHzButton_clicked()
 {
-    QString theBand = getBand();
-    QChar theMode = getMode(theBand, configuration_->region());
-    QPair<QString,QChar>key(theBand,theMode);
-    kHzFreqMap.insert(key, ui->kHzBox->value());
-    MHzFreqMap.insert(theBand, ui->fmSpinBox->value());
+  QString theBand = getBand();
+  QChar theMode = getMode(theBand, configuration_->region());
+  QPair<QString,QChar>key(theBand,theMode);
+  kHzFreqMap.insert(key, ui->kHzBox->value());
+  MHzFreqMap.insert(theBand, ui->fmSpinBox->value());
 }
 
 void QSYMessageCreator::on_saveMHzButton_2_clicked()
 {
-    QString theBand = getBand();
-    QChar theMode = getMode(theBand, configuration_->region());
-    QPair<QString,QChar>key(theBand,theMode);
-    kHzFreqMap.insert(key, ui->kHzBox2->value());
+  QString theBand = getBand();
+  QChar theMode = getMode(theBand, configuration_->region());
+  QPair<QString,QChar>key(theBand,theMode);
+  kHzFreqMap.insert(key, ui->kHzBox2->value());
 }
 
 void QSYMessageCreator::on_saveMHzButton_3_clicked()
 {
-    QString theBand = getBand();
-    QChar theMode = getMode(theBand, configuration_->region());
-    QPair<QString,QChar>key(theBand,theMode);
-    kHzFreqMap.insert(key, ui->kHzBox3->value());
+  QString theBand = getBand();
+  QChar theMode = getMode(theBand, configuration_->region());
+  QPair<QString,QChar>key(theBand,theMode);
+  kHzFreqMap.insert(key, ui->kHzBox3->value());
 }
 
 void QSYMessageCreator::on_button2_clicked()
@@ -916,6 +923,7 @@ void QSYMessageCreator::read_settings ()
   ui->kHzBox->setValue(settings_->value("kHzVHF").toInt());
   setbandVHF(settings_->value("bandVHF").toString());
   setmodeVHF(settings_->value("modeVHF").toChar());
+  initVHFMode = settings_->value("modeVHF").toChar();
   ui->kHzBox2->setValue(settings_->value("kHzHF").toInt());
   setbandHF(settings_->value("bandHF").toString());
   setmodeHF(settings_->value("modeHF").toChar());
@@ -1006,6 +1014,7 @@ void QSYMessageCreator::read_settings ()
   WriteMessage(ui->DxBaseLabel->text(), getbandHF(), getmodeHF());
 
   ui->tabWidget->setCurrentIndex(settings_->value("whichTab").toInt());
+
 }
 
 QString QSYMessageCreator::WriteMessage (QString hisCall, QString band, QChar mode)
@@ -1365,9 +1374,7 @@ QChar QSYMessageCreator::getMode(QString band,int region)
   if(ui->tabWidget->currentIndex() == 1) {    
     ui->label_2_FM->setHidden(true);
     ui->fmSpinBox->setHidden(true);
-    if (ui->radioButSSB->isChecked()) {
-      mode = 'V';
-    } else if (ui->radioButFM->isChecked()) {
+    if (ui->radioButFM->isChecked()) {
       if ((band =="A" || band == "B" || band == "C" || band == "D" || band == "E") && (configuration_->region () > 0)) {
         if(configuration_->region () !=2 &&(band=="C"))  {
           ui->label_2_FM->setHidden(true);
@@ -1377,8 +1384,53 @@ QChar QSYMessageCreator::getMode(QString band,int region)
           ui->label_2_FM->setText("Region " + QString::number(configuration_->region()) + " MHz");
           ui->label_2_FM->setHidden(false);
           ui->fmSpinBox->setHidden(false);
-          if(ui->fmSpinBox->text().toInt() < getBandEdge(band) ) {
-              setupfmSpinBox(band);
+          if((ui->fmSpinBox->text().toInt() < getBandEdge(band)) || ((band=="A" ) && (initVHFMode.isLetter()))) {
+            initVHFMode='0';
+            setupfmSpinBox(band);
+            if(firstTime) {
+              firstTime = false;
+              if(region ==2) {
+                if(band=="A") {
+                  ui->fmSpinBox->setRange(50,53);
+                  ui->fmSpinBox->setValue(52);
+                  ui->kHzBox->setValue(525);
+                } else if(band=="B") {
+                  ui->fmSpinBox->setRange(144,147);
+                  ui->fmSpinBox->setValue(146);
+                  ui->kHzBox->setValue(520);
+                } else if(band=="C") {
+                  ui->fmSpinBox->setRange(222,223);
+                  ui->fmSpinBox->setValue(223);
+                  ui->kHzBox->setValue(500);
+                } else if(band=="D") {
+                  ui->fmSpinBox->setRange(440,449);
+                  ui->fmSpinBox->setValue(446);
+                  ui->kHzBox->setValue(000);
+                } else if(band=="E") {
+                  ui->fmSpinBox->setRange(1290,1299);
+                  ui->fmSpinBox->setValue(1294);
+                  ui->kHzBox->setValue(000);
+                }
+              }  else {
+                if(band=="A") {
+                  ui->fmSpinBox->setRange(50,53);
+                  ui->fmSpinBox->setValue(50);
+                  ui->kHzBox->setValue(800);
+                } else if(band=="B") {
+                  ui->fmSpinBox->setRange(144,145);
+                  ui->fmSpinBox->setValue(145);
+                  ui->kHzBox->setValue(500);
+                } else if(band=="D") {
+                  ui->fmSpinBox->setRange(430,439);
+                  ui->fmSpinBox->setValue(433);
+                  ui->kHzBox->setValue(650);
+                } else if(band=="E") {
+                  ui->fmSpinBox->setRange(1290,1299);
+                  ui->fmSpinBox->setValue(1297);
+                  ui->kHzBox->setValue(500);
+                }
+              }
+            }
           }
           mode = modeFromSpinBox(band, ui->fmSpinBox->value());
         }
@@ -1387,6 +1439,9 @@ QChar QSYMessageCreator::getMode(QString band,int region)
         ui->fmSpinBox->setHidden(true);
         mode='0';
       }
+    }
+    else if (ui->radioButSSB->isChecked()) {
+        mode = 'V';
     }
     else if (ui->radioButCW->isChecked()) {
       mode = 'W';
@@ -1449,12 +1504,12 @@ QChar QSYMessageCreator::getMode(QString band,int region)
 }
 
 int QSYMessageCreator::getBandEdge(QString band) {
-    if(band=="A") return 50;
-    else if(band=="B") return 144;
-    else if(band=="C") return 222;
-    else if(band=="D") return 430;
-    else if(band=="E") return 1290;
-    else return 50;
+  if(band=="A") return 50;
+  else if(band=="B") return 144;
+  else if(band=="C") return 222;
+  else if(band=="D") return 430;
+  else if(band=="E") return 1290;
+  else return 50;
 }
 
 void QSYMessageCreator::send_message(const QString message) {
