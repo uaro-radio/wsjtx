@@ -846,6 +846,9 @@ private:
   bool specOp_in_comments_;
   bool prompt_to_log_;
   bool autoLog_;
+  bool contestingOnly_;
+  bool ZZ00_;
+  bool log4digitGrids_;
   bool decodes_from_top_;
   bool insert_blank_;
   bool detailed_blank_;
@@ -879,7 +882,6 @@ private:
   bool bSuperFox_;
   bool Individual_Contest_Name_;
   bool NCCC_Sprint_;
-  bool ZZ00_;
   bool Blacklisted_;
   bool Whitelisted_;
   bool AlwaysPass_;
@@ -984,6 +986,9 @@ bool Configuration::report_in_comments () const {return m_->report_in_comments_;
 bool Configuration::specOp_in_comments () const {return m_->specOp_in_comments_;}
 bool Configuration::prompt_to_log () const {return m_->prompt_to_log_;}
 bool Configuration::autoLog() const {return m_->autoLog_;}
+bool Configuration::contestingOnly() const {return m_->contestingOnly_;}
+bool Configuration::ZZ00() const {return m_->ZZ00_;}
+bool Configuration::log4digitGrids() const {return m_->log4digitGrids_;}
 bool Configuration::decodes_from_top () const {return m_->decodes_from_top_;}
 bool Configuration::insert_blank () const {return m_->insert_blank_;}
 bool Configuration::detailed_blank () const {return m_->detailed_blank_;}
@@ -1017,7 +1022,6 @@ bool Configuration::largerTabWidget() const {return m_->largerTabWidget_;}
 bool Configuration::superFox() const {return m_->bSuperFox_;}
 bool Configuration::Individual_Contest_Name() const {return m_->Individual_Contest_Name_;}
 bool Configuration::NCCC_Sprint() const {return m_->NCCC_Sprint_;}
-bool Configuration::ZZ00() const {return m_->ZZ00_;}
 bool Configuration::Blacklisted() const {return m_->Blacklisted_;}
 bool Configuration::Whitelisted() const {return m_->Whitelisted_;}
 bool Configuration::AlwaysPass() const {return m_->AlwaysPass_;}
@@ -1935,6 +1939,9 @@ void Configuration::impl::initialize_models ()
   ui_->specOp_in_comments_check_box->setChecked (specOp_in_comments_);
   ui_->prompt_to_log_check_box->setChecked (prompt_to_log_);
   ui_->cbAutoLog->setChecked(autoLog_);
+  ui_->cbContestingOnly->setChecked(contestingOnly_);
+  ui_->cbZZ00->setChecked(ZZ00_);
+  ui_->cbLog4digitGrids->setChecked(log4digitGrids_);
   ui_->decodes_from_top_check_box->setChecked (decodes_from_top_);
   ui_->insert_blank_check_box->setChecked (insert_blank_);
   ui_->cb_detailed_blank_line->setChecked (detailed_blank_);
@@ -1973,7 +1980,6 @@ void Configuration::impl::initialize_models ()
   ui_->cbSuperFox->setChecked(bSuperFox_);
   ui_->cbContestName->setChecked(Individual_Contest_Name_);
   ui_->cb_NCCC_Sprint->setChecked(NCCC_Sprint_);
-  ui_->cbZZ00->setChecked(ZZ00_);
   ui_->cbBlacklist->setChecked(Blacklisted_);
   ui_->cbWhitelist->setChecked(Whitelisted_);
   ui_->cbPass->setChecked(AlwaysPass_);
@@ -2345,6 +2351,9 @@ void Configuration::impl::read_settings ()
   bLowSidelobes_ = settings_->value("LowSidelobes",true).toBool();
   prompt_to_log_ = settings_->value ("PromptToLog", false).toBool ();
   autoLog_ = settings_->value ("AutoLog", true).toBool ();
+  contestingOnly_ = settings_->value ("ContestingOnly", true).toBool ();
+  ZZ00_ = settings_->value("ZZ00",false).toBool ();
+  log4digitGrids_ = settings_->value ("Log4digitGrids", false).toBool ();
   decodes_from_top_ = settings_->value ("DecodesFromTop", false).toBool ();
   insert_blank_ = settings_->value ("InsertBlank", true).toBool ();
   detailed_blank_ = settings_->value ("DetailedBlank", true).toBool ();
@@ -2378,7 +2387,6 @@ void Configuration::impl::read_settings ()
   bSuperFox_ = settings_->value("SuperFox",true).toBool ();
   Individual_Contest_Name_ = settings_->value("Individual_Contest_Name",false).toBool ();
   NCCC_Sprint_ = settings_->value("NCCC_Sprint",false).toBool ();
-  ZZ00_ = settings_->value("ZZ00",false).toBool ();
   Blacklisted_ = settings_->value("Blacklisted",false).toBool ();
   Whitelisted_ = settings_->value("Whitelisted",false).toBool ();
   AlwaysPass_ = settings_->value("AlwaysPass",false).toBool ();
@@ -2567,6 +2575,9 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("LowSidelobes",bLowSidelobes_);
   settings_->setValue ("PromptToLog", prompt_to_log_);
   settings_->setValue ("AutoLog", autoLog_);
+  settings_->setValue ("ContestingOnly", contestingOnly_);
+  settings_->setValue ("ZZ00", ZZ00_);
+  settings_->setValue ("Log4digitGrids", log4digitGrids_);
   settings_->setValue ("DecodesFromTop", decodes_from_top_);
   settings_->setValue ("InsertBlank", insert_blank_);
   settings_->setValue ("DetailedBlank", detailed_blank_);
@@ -2607,7 +2618,6 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("SuperFox", bSuperFox_);
   settings_->setValue ("Individual_Contest_Name", Individual_Contest_Name_);
   settings_->setValue ("NCCC_Sprint", NCCC_Sprint_);
-  settings_->setValue ("ZZ00", ZZ00_);
   settings_->setValue ("Blacklisted", Blacklisted_);
   settings_->setValue ("Whitelisted", Whitelisted_);
   settings_->setValue ("AlwaysPass", AlwaysPass_);
@@ -3092,6 +3102,9 @@ void Configuration::impl::accept ()
   specOp_in_comments_ = ui_->specOp_in_comments_check_box->isChecked ();
   prompt_to_log_ = ui_->prompt_to_log_check_box->isChecked ();
   autoLog_ = ui_->cbAutoLog->isChecked();
+  contestingOnly_ = ui_->cbContestingOnly->isChecked();
+  ZZ00_ = ui_->cbZZ00->isChecked ();
+  log4digitGrids_ = ui_->cbLog4digitGrids->isChecked();
   decodes_from_top_ = ui_->decodes_from_top_check_box->isChecked ();
   insert_blank_ = ui_->insert_blank_check_box->isChecked ();
   detailed_blank_ = ui_->cb_detailed_blank_line->isChecked ();
@@ -3129,7 +3142,6 @@ void Configuration::impl::accept ()
   bSuperFox_ = ui_->cbSuperFox->isChecked ();
   Individual_Contest_Name_ = ui_->cbContestName->isChecked ();
   NCCC_Sprint_ = ui_->cb_NCCC_Sprint->isChecked ();
-  ZZ00_ = ui_->cbZZ00->isChecked ();
   Blacklisted_ = ui_->cbBlacklist->isChecked ();
   Whitelisted_ = ui_->cbWhitelist->isChecked ();
   AlwaysPass_ = ui_->cbPass->isChecked ();
@@ -4096,10 +4108,12 @@ void Configuration::impl::on_calibration_slope_ppm_spin_box_valueChanged (double
 void Configuration::impl::on_prompt_to_log_check_box_clicked(bool checked)
 {
   if(checked) ui_->cbAutoLog->setChecked(false);
+  ui_->cbContestingOnly->setEnabled(false);
 }
 
 void Configuration::impl::on_cbAutoLog_clicked(bool checked)
 {
+  ui_->cbContestingOnly->setEnabled(true);
   if(checked) ui_->prompt_to_log_check_box->setChecked(false);
 }
 
@@ -4230,11 +4244,6 @@ void Configuration::impl::check_visibility ()
     ui_->cb_NCCC_Sprint->setEnabled (true);
   } else {
     ui_->cb_NCCC_Sprint->setEnabled (false);
-  }
-  if (!ui_->rbFox->isChecked() and !ui_->rbHound->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
-    ui_->cbZZ00->setEnabled (true);
-  } else {
-    ui_->cbZZ00->setEnabled (false);
   }
   if (!ui_->cbOTP->isChecked() or !ui_->gbSpecialOpActivity->isChecked()) {
     ui_->OTPSeed->setEnabled(false);

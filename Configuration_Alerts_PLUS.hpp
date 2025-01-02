@@ -175,6 +175,9 @@ public:
   qint32 cloudlog_api_station_id() const;
   bool prompt_to_log () const;
   bool autoLog() const;
+  bool contestingOnly() const;
+  bool ZZ00() const;
+  bool log4digitGrids() const;
   bool decodes_from_top () const;
   bool insert_blank () const;
   bool detailed_blank () const;
@@ -274,7 +277,6 @@ public:
   bool set_RXtoTX () const;
   bool Individual_Contest_Name() const;
   bool NCCC_Sprint() const;
-  bool ZZ00() const;
   bool Blacklisted() const;
   bool Whitelisted() const;
   bool AlwaysPass() const;

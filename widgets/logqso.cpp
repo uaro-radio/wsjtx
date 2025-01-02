@@ -223,7 +223,12 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
   caBtn->setDefault(false);
 
   ui->call->setText (hisCall);
-  ui->grid->setText (hisGrid);
+  if (m_config->log4digitGrids()) {
+    ui->grid->setText (hisGrid.left(4));
+  } else {
+    ui->grid->setText (hisGrid);
+  }
+  if (hisGrid == "" && m_config->ZZ00()) ui->grid->setText("ZZ00");
   ui->name->clear ();
   if (ui->cbTxPower->isChecked ())
     {
@@ -342,7 +347,7 @@ void LogQSO::initLogQSO(QString const& hisCall, QString const& hisGrid, QString 
 
   if (SpOp::FOX == special_op
       || (m_config->autoLog () && ((SpOp::NONE < special_op && special_op < SpOp::FOX)
-          || SpOp::ARRL_DIGI == special_op)))
+          || SpOp::ARRL_DIGI == special_op || !m_config->contestingOnly ())))
     {
       // allow auto logging in Fox mode and contests
       accept();
