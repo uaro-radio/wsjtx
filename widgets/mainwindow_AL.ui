@@ -4684,7 +4684,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionActiveStations"/>
     <addaction name="actionSWL_Mode"/>
     <addaction name="actionQSYMessage_Creator"/>
-	<addaction name="actionQSY_Monitor"/>
+    <addaction name="actionQSY_Monitor"/>
     <addaction name="actionEnable_QSY_Popups"/>
     <addaction name="actionBand_Buttons"/>
     <addaction name="actionUse_Dark_Style"/>
@@ -4697,6 +4697,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionHideToday"/>
     <addaction name="actionHideIgnored"/>
     <addaction name="separator"/>
+    <addaction name="actionIgnoreB4"/>
     <addaction name="actionIgnoreToday"/>
     <addaction name="actionIgnoreIgnored"/>
     <addaction name="separator"/>
@@ -5696,6 +5697,14 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>QSY Monitor</string>
+   </property>
+  </action>
+  <action name="actionIgnoreB4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ignore stations worked before on band</string>
    </property>
   </action>
  </widget>

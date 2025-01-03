@@ -1428,6 +1428,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("HideB4", ui->actionHideB4->isChecked() );
   m_settings->setValue ("HideToday", ui->actionHideToday->isChecked() );
   m_settings->setValue ("HideIgnored", ui->actionHideIgnored->isChecked() );
+  m_settings->setValue ("IgnoreB4", ui->actionIgnoreB4->isChecked() );
   m_settings->setValue ("IgnoreToday", ui->actionIgnoreToday->isChecked() );
   m_settings->setValue ("IgnoreIgnored", ui->actionIgnoreIgnored->isChecked() );
   m_settings->setValue ("HideTerritory1", ui->actionHideTerritory1->isChecked() );
@@ -1624,6 +1625,7 @@ void MainWindow::readSettings()
   ui->actionHideB4->setChecked(m_settings->value("HideB4", false).toBool());
   ui->actionHideToday->setChecked(m_settings->value("HideToday", false).toBool());
   ui->actionHideIgnored->setChecked(m_settings->value("HideIgnored", false).toBool());
+  ui->actionIgnoreB4->setChecked(m_settings->value("IgnoreB4", false).toBool());
   ui->actionIgnoreToday->setChecked(m_settings->value("IgnoreToday", false).toBool());
   ui->actionIgnoreIgnored->setChecked(m_settings->value("IgnoreIgnored", false).toBool());
   ui->actionHideTerritory1->setChecked(m_settings->value("HideTerritory1", false).toBool());
@@ -2608,7 +2610,7 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // hide or ignore callsigns for MSK144
-    if(ui->actionHideIgnored->isChecked() or ui->actionHideToday->isChecked() or ui->actionIgnoreIgnored->isChecked() or ui->actionIgnoreToday->isChecked()) {
+    if (ui->actionHideIgnored->isChecked() or ui->actionHideToday->isChecked() or ui->actionIgnoreIgnored->isChecked() or ui->actionIgnoreToday->isChecked()) {
         QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
         QString yesterday = QDateTime::currentDateTimeUtc().addDays(-1).toString ("yyyy-MM-dd");
         QString deCall;
@@ -2625,6 +2627,21 @@ void MainWindow::fastSink(qint64 frames)
             or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
            ignored = true;
         }
+    }
+    if (ui->actionIgnoreB4->isChecked()) {
+      QString deCall;
+      QString deGrid;
+      decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+      bool callB4onBand;
+      bool countryB4onBand;
+      bool gridB4onBand;
+      bool continentB4onBand;
+      bool CQZoneB4onBand;
+      bool ITUZoneB4onBand;
+      auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+      m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+        continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+      if (callB4onBand && ui->actionIgnoreB4->isChecked() && !ui->cbBypass->isChecked()) ignored = true;
     }
 
     // Stop Wait & Call timeout when in QSO with this station for MSK144
@@ -5998,7 +6015,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         // hide or ignore callsigns
-        if(ui->actionHideIgnored->isChecked() or ui->actionHideToday->isChecked() or ui->actionIgnoreIgnored->isChecked() or ui->actionIgnoreToday->isChecked()) {
+        if (ui->actionHideIgnored->isChecked() or ui->actionHideToday->isChecked() or ui->actionIgnoreIgnored->isChecked() or ui->actionIgnoreToday->isChecked()) {
             QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
             QString yesterday = QDateTime::currentDateTimeUtc().addDays(-1).toString ("yyyy-MM-dd");
             QString deCall;
@@ -6015,6 +6032,21 @@ void MainWindow::readFromStdout()                             //readFromStdout
                 or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
                ignored = true;
             }
+        }
+        QString deCall;
+        QString deGrid;
+        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        if (ui->actionIgnoreB4->isChecked()) {
+          bool callB4onBand;
+          bool countryB4onBand;
+          bool gridB4onBand;
+          bool continentB4onBand;
+          bool CQZoneB4onBand;
+          bool ITUZoneB4onBand;
+          auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+          m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+            continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+          if (callB4onBand && ui->actionIgnoreB4->isChecked() && !ui->cbBypass->isChecked()) ignored = true;
         }
 
         // insert blank line, but only if not filtered and no decodes

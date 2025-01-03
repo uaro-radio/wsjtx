@@ -4357,6 +4357,7 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionHideToday"/>
     <addaction name="actionHideIgnored"/>
     <addaction name="separator"/>
+	<addaction name="actionIgnoreB4"/>
     <addaction name="actionIgnoreToday"/>
     <addaction name="actionIgnoreIgnored"/>
     <addaction name="separator"/>
@@ -5314,7 +5315,15 @@ QPushButton[state=&quot;ok&quot;] {
     <string>QSY Monitor</string>
    </property>
   </action>
- </widget>
+   <action name="actionIgnoreB4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ignore stations worked before on band</string>
+   </property>
+  </action>
+</widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
