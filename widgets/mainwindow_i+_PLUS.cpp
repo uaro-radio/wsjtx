@@ -3203,6 +3203,7 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
 
 void MainWindow::on_autoButton_clicked (bool checked)
 {
+  if (ui->DX_Call_Button->isChecked() && m_specOp==SpecOp::HOUND && m_config.superFox() && !m_bDoubleClicked) return;  // for Wait & Call
   m_config.transceiver_tune (false);  // reset rig tuning
   if (checked && ui->tuneButton->isChecked() && !(m_mode=="WSPR" || m_mode=="FST4W")) return; // not allowed while tuning
   stopWRTimer.stop();                                       // stop any Wait & Reply timeout
@@ -9045,11 +9046,13 @@ void MainWindow::on_RoundRobin_currentTextChanged(QString text)
 void MainWindow::on_DX_Call_Button_clicked (bool checked)
 {
   if((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144") &&
-     (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && m_hisCall!="" && checked) {
+     (m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND) && ui->cbAutoSeq->isChecked() && checked
+     && (m_hisCall!="" or (m_mode=="FT8" && m_specOp==SpecOp::HOUND))) {
       wait_and_call = true;       // toggle Wait & Call on when allowed
   } else {
       wait_and_call = false;      // toggle Wait & Call off in any other case
       ui->DX_Call_Button->setChecked (false);
+      if (m_specOp==SpecOp::HOUND && m_config.superFox() && !m_auto) clearDX();
   }
   check_button_color();
 }
@@ -9342,7 +9345,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {
   if (SpecOp::HOUND==m_specOp && m_config.superFox() && !(m_bDoubleClicked or (m_hisCall0 != ""
-       && (call.left(6).contains(m_hisCall0) or call.right(6).contains(m_hisCall0))))) {
+       && (call.left(6).contains(m_hisCall0) or call.right(6).contains(m_hisCall0))))
+       && !ui->DX_Call_Button->isChecked()) {  // allow Wait & Call
     clearDX();
     return;
   }
@@ -9350,7 +9354,7 @@ void MainWindow::on_dxCallEntry_textChanged (QString const& call)
   m_hisCall = call;
   if(m_QSYMessageCreatorWidget) m_QSYMessageCreatorWidget->getDxBase(QString(Radio::base_callsign(call))); //w3sz
   if (!blocked) ui->dxGridEntry->clear();  // conditional because not always useful with highlightDXCall/DXGrid feature
-  if (ui->DX_Call_Button->isChecked()) ui->DX_Call_Button->click ();
+  if (ui->DX_Call_Button->isChecked() && !(m_mode=="FT8" && SpecOp::HOUND==m_specOp)) ui->DX_Call_Button->click ();
   statusChanged();
   statusUpdate ();
   check_button_color();
@@ -14690,13 +14694,32 @@ void MainWindow::check_button_color()
     // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
     if((((m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="MSK144" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="JT4") &&
           m_specOp==SpecOp::NONE && ui->cbAutoSeq->isChecked() && ui->cbAutoSeq->isChecked()
-          && m_config.Wait_features_enabled()) or m_specOp==SpecOp::HOUND) && m_hisCall!="") {
+          && m_config.Wait_features_enabled()) or m_specOp==SpecOp::HOUND) && (m_hisCall!="" or (m_mode=="FT8" && m_specOp==SpecOp::HOUND))) {
         if (ui->DX_Call_Button->isChecked()) {
             ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
         } else {
+          if (m_mode=="FT8" && m_specOp==SpecOp::HOUND && m_hisCall=="") {
+              if (m_useDarkStyle) {
+                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; color: #ffffff; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
+              }
+          } else {
             ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none;}");
+          }
         }
-        if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
+        if (!m_auto) {
+          if (m_mode=="FT8" && m_specOp==SpecOp::HOUND && m_hisCall=="") {
+            if (m_useDarkStyle) {
+              ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; color: #ffffff; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+            } else {
+              ui->autoButton->setStyleSheet("");
+              ui->autoButton->setStyleSheet("QPushButton {min-width: 5em;}");
+            }
+          } else {
+            ui->autoButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
+          }
+        }
         if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
     } else {
         ui->DX_Call_Button->setChecked(false);
