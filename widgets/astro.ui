@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>359</width>
-    <height>401</height>
+    <width>368</width>
+    <height>508</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -213,15 +213,8 @@
         <property name="title">
          <string>Echo Mode</string>
         </property>
-        <widget class="QWidget" name="">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>20</y>
-           <width>164</width>
-           <height>22</height>
-          </rect>
-         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QSpinBox" name="sbRIT">
@@ -269,21 +262,53 @@
            </widget>
           </item>
          </layout>
-        </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="title">
+         <string>Tx Shift relative to Rx Sked Freq</string>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-       </spacer>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+        <widget class="QSpinBox" name="sbibShift">
+         <property name="toolTip">
+          <string>Enter large offset</string>
+         </property>
+         <property name="suffix">
+          <string> MHz</string>
+         </property>
+         <property name="prefix">
+          <string>Shift </string>
+         </property>
+         <property name="minimum">
+          <number>-30</number>
+         </property>
+         <property name="maximum">
+          <number>30</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>0</number>
+         </property>
+        </widget>
+         </item>
+         <item>
+        <widget class="QCheckBox" name="cbenableShift">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Enable</string>
+         </property>
+        </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>

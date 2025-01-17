@@ -67,6 +67,7 @@ public:
   void selectOnDxEcho();
   qint32 nfRIT();
   qint32 DopplerMethod();
+  qint32 largeOffset();
 
   Q_SLOT void nominal_frequency (Frequency rx, Frequency tx);
   Q_SIGNAL void tracking_update () const;
@@ -96,6 +97,7 @@ private:
   qint32 m_DopplerMethod;
   int m_dop;
   int m_dop00;
+  int ibShift;
   //int m_dx_two_way_dop;
 };
 

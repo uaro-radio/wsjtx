@@ -12363,8 +12363,12 @@ void MainWindow::astroUpdate ()
       if (!m_astroWidget->doppler_tracking() or m_astroWidget->DopplerMethod()==0) {
         // We are not using RF Doppler correction
         m_fAudioShift=m_fDop;
-        return;
+        return; //else if below added by w3sz for enableShift fx
+      } else if (m_astroWidget->DopplerMethod()==10) {
+        // We are not using RF Doppler correction
+        m_fAudioShift=m_fDop;
       }
+
       if ((m_monitoring || m_transmitting)
           && m_freqNominal >= 21000000          // No Doppler correction below 15m
           && m_config.split_mode ())            // Doppler correcion needs split mode

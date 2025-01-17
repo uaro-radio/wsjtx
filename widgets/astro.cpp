@@ -69,9 +69,14 @@ void Astro::read_settings ()
 {
   SettingsGroup g (settings_, "Astro");
   bool b=settings_->value("DopplerTracking",false).toBool();
+  bool sh=settings_->value("EnableShift",false).toBool();
   ui_->cbDopplerTracking->setChecked(b);
   ui_->doppler_widget->setVisible (ui_->cbDopplerTracking->isChecked ());
+  ui_->cbenableShift->setChecked(sh);
   m_DopplerMethod=settings_->value("DopplerMethod",0).toInt();
+  int shVal=settings_->value("ShiftValue",0).toInt();
+  ui_->sbibShift->setValue(shVal);
+ 
   switch (m_DopplerMethod)
     {
     case 0: ui_->rbNoDoppler->setChecked (true); break;
@@ -80,6 +85,7 @@ void Astro::read_settings ()
     case 3: ui_->rbOwnEcho->setChecked (true); break;
     case 4: ui_->rbOnDxEcho->setChecked (true); break;
     case 5: ui_->rbCallDx->setChecked (true); break;
+    case 10: ui_->rbNoDoppler->setChecked (true); break;
     }
   move (settings_->value ("window/pos", pos ()).toPoint ());
 }
@@ -90,6 +96,8 @@ void Astro::write_settings ()
   settings_->setValue ("DopplerTracking", ui_->cbDopplerTracking->isChecked());
   settings_->setValue ("DopplerMethod",m_DopplerMethod);
   settings_->setValue ("window/pos", pos ());
+  settings_->setValue ("EnableShift", ui_->cbenableShift->isChecked());
+  settings_->setValue ("ShiftValue",ui_->sbibShift->value());
 }
 
 auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const& hisgrid, Frequency freq,
@@ -166,12 +174,23 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
     correction.dop=m_dop;
     correction.width=width2;
   }
+  //ibShift=2000000;
+  
+  if (ui_->cbenableShift->isChecked()) {
+  ibShift=ui_->sbibShift->value();
+  ibShift=1000000*ibShift;
+  }else{
+	ibShift=0;  
+  }
+	  
   if (ui_->cbDopplerTracking->isChecked()) {
     ui_->sbRIT->setEnabled(bEchoMode and m_DopplerMethod==0);
     switch (m_DopplerMethod)
       {
+    case 10:  correction.rx = 0;
+        break;
       case 1: // All Doppler correction done here; DX station stays at nominal dial frequency.
-        correction.rx =  m_dop;
+        correction.rx =  m_dop; 
         break;
       case 4: // All Doppler correction done here; DX station stays at nominal dial frequency. (Trial for OnDxEcho)
         correction.rx =  m_dop;
@@ -185,25 +204,35 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
         // Doppler correction to constant frequency on Moon
         correction.rx = m_dop00 / 2;
         break;
+      default: correction.rx = 0;
+          break;
       }
     switch (m_DopplerMethod)
       {
-      case 1: correction.tx = -correction.rx;
+      case 10:  correction.tx = ibShift;
+          break;
+      case 1: correction.tx = -correction.rx + ibShift;
         break;
-      case 2: correction.tx = -correction.rx;
+      //case 2: correction.tx = -correction.rx;
+	  case 2: correction.tx = -correction.rx + ibShift;
         break;
       case 3: correction.tx = 0;
         break;
       case 4: // correction.tx = m_dop - m_dop00;
-        correction.tx = (2 * (m_dop - (m_dop00/2))) - m_dop;
-        //qDebug () << "correction.tx:" << correction.tx;
+        correction.tx = ibShift+(2 * (m_dop - (m_dop00/2))) - m_dop;
         break;
-      case 5: correction.tx = - m_dop00;
+      case 5: correction.tx = ibShift- m_dop00;
+        break;
+      default: correction.tx = ibShift;
         break;
       }
-    //if (3 != m_DopplerMethod || 4 != m_DopplerMethod) correction.tx = -correction.rx;
+    
     
     if(bEchoMode && m_DopplerMethod == 1) correction.rx = 0;
+    if(10==m_DopplerMethod) {
+        correction.tx = ibShift;
+        correction.rx = 0;
+    }
 
     if (no_tx_QSY && 3 != m_DopplerMethod && 0 != m_DopplerMethod)
       {
@@ -235,24 +264,29 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
         FrequencyDelta offset {0};
         switch (m_DopplerMethod)
           {
+          case 10:
+            offset = -ibShift;// version for _7// maybe +?
+            break;
           case 1:
             // All Doppler correction done here; DX station stays at nominal dial frequency.
-            offset = bEchoMode ? m_dop00 : m_dop;
+            offset = bEchoMode ? (m_dop00 - ibShift) : (m_dop - ibShift);
             break;
 
           case 2:
             // Doppler correction to constant frequency on Moon
-            offset = m_dop00 / 2;
+            offset = (m_dop00 / 2) - ibShift;
             break;
 
           case 4:
             // Doppler correction for OnDxEcho
-            offset = m_dop - (2 * (m_dop - (m_dop00/2)));
+            offset = m_dop - (2 * (m_dop - (m_dop00/2))) - ibShift;// maybe +?
             break;
 
             //case 5: correction.tx = - m_dop00;
-          case 5: offset = m_dop00;// version for _7
+          case 5: offset = m_dop00 - ibShift;// version for _7// maybe +?
             break;
+          default: offset = -ibShift;// version for _7// maybe +?
+              break;
           }
         correction.tx = -offset;
         //qDebug () << "correction.tx (no tx qsy):" << correction.tx;
@@ -317,7 +351,12 @@ void Astro::on_rbConstFreqOnMoon_clicked(bool)
 
 void Astro::on_rbNoDoppler_clicked(bool)
 {
-  m_DopplerMethod = 0;
+  if (ui_->cbenableShift->isChecked()) {
+    m_DopplerMethod = 10;
+  } else {
+    m_DopplerMethod = 0;
+  }
+  check_split ();
   Q_EMIT tracking_update ();
 }
 
@@ -336,6 +375,7 @@ void Astro::nominal_frequency (Frequency rx, Frequency tx)
 {
   ui_->sked_frequency_label->setText (Radio::pretty_frequency_MHz_string (rx));
   ui_->sked_tx_frequency_label->setText (Radio::pretty_frequency_MHz_string (tx));
+  if (ui_->cbenableShift->isChecked()) ui_->sked_tx_frequency_label->setText ("N/A Tx Shift!");
 }
 
 void Astro::hideEvent (QHideEvent * e)
