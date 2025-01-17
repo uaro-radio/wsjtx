@@ -72,7 +72,7 @@ void Astro::read_settings ()
   bool sh=settings_->value("EnableShift",false).toBool();
   ui_->cbDopplerTracking->setChecked(b);
   ui_->doppler_widget->setVisible (ui_->cbDopplerTracking->isChecked ());
-  ui_->cbenableShift->setChecked(sh);
+  ui_->cbEnableShift->setChecked(sh);
   m_DopplerMethod=settings_->value("DopplerMethod",0).toInt();
   int shVal=settings_->value("ShiftValue",0).toInt();
   ui_->sbibShift->setValue(shVal);
@@ -96,7 +96,7 @@ void Astro::write_settings ()
   settings_->setValue ("DopplerTracking", ui_->cbDopplerTracking->isChecked());
   settings_->setValue ("DopplerMethod",m_DopplerMethod);
   settings_->setValue ("window/pos", pos ());
-  settings_->setValue ("EnableShift", ui_->cbenableShift->isChecked());
+  settings_->setValue ("EnableShift", ui_->cbEnableShift->isChecked());
   settings_->setValue ("ShiftValue",ui_->sbibShift->value());
 }
 
@@ -176,7 +176,7 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
   }
   //ibShift=2000000;
   
-  if (ui_->cbenableShift->isChecked()) {
+  if (ui_->cbEnableShift->isChecked()) {
   ibShift=ui_->sbibShift->value();
   ibShift=1000000*ibShift;
   }else{
@@ -351,7 +351,7 @@ void Astro::on_rbConstFreqOnMoon_clicked(bool)
 
 void Astro::on_rbNoDoppler_clicked(bool)
 {
-  if (ui_->cbenableShift->isChecked()) {
+  if (ui_->cbEnableShift->isChecked()) {
     m_DopplerMethod = 10;
   } else {
     m_DopplerMethod = 0;
@@ -375,7 +375,7 @@ void Astro::nominal_frequency (Frequency rx, Frequency tx)
 {
   ui_->sked_frequency_label->setText (Radio::pretty_frequency_MHz_string (rx));
   ui_->sked_tx_frequency_label->setText (Radio::pretty_frequency_MHz_string (tx));
-  if (ui_->cbenableShift->isChecked()) ui_->sked_tx_frequency_label->setText ("N/A Tx Shift!");
+  if (ui_->cbEnableShift->isChecked()) ui_->sked_tx_frequency_label->setText ("N/A Tx Shift!");
 }
 
 void Astro::hideEvent (QHideEvent * e)
