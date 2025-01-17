@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>368</width>
-    <height>508</height>
+    <width>356</width>
+    <height>446</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -215,53 +215,53 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QSpinBox" name="sbRIT">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <property name="suffix">
-             <string>  Hz</string>
-            </property>
-            <property name="prefix">
-             <string>RIT  </string>
-            </property>
-            <property name="minimum">
-             <number>-20000</number>
-            </property>
-            <property name="maximum">
-             <number>20000</number>
-            </property>
-            <property name="singleStep">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbDither">
-            <property name="text">
-             <string>Dither</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QSpinBox" name="sbRIT">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="suffix">
+              <string>  Hz</string>
+             </property>
+             <property name="prefix">
+              <string>RIT  </string>
+             </property>
+             <property name="minimum">
+              <number>-20000</number>
+             </property>
+             <property name="maximum">
+              <number>20000</number>
+             </property>
+             <property name="singleStep">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbDither">
+             <property name="text">
+              <string>Dither</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -273,39 +273,39 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-        <widget class="QSpinBox" name="sbibShift">
-         <property name="toolTip">
-          <string>Enter large offset</string>
-         </property>
-         <property name="suffix">
-          <string> MHz</string>
-         </property>
-         <property name="prefix">
-          <string>Shift </string>
-         </property>
-         <property name="minimum">
-          <number>-30</number>
-         </property>
-         <property name="maximum">
-          <number>30</number>
-         </property>
-         <property name="singleStep">
-          <number>1</number>
-         </property>
-         <property name="value">
-          <number>0</number>
-         </property>
-        </widget>
+          <widget class="QSpinBox" name="sbibShift">
+           <property name="toolTip">
+            <string>Enter large offset</string>
+           </property>
+           <property name="suffix">
+            <string> MHz</string>
+           </property>
+           <property name="prefix">
+            <string>Shift </string>
+           </property>
+           <property name="minimum">
+            <number>-30</number>
+           </property>
+           <property name="maximum">
+            <number>30</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
          </item>
          <item>
-        <widget class="QCheckBox" name="cbenableShift">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="text">
-          <string>Enable</string>
-         </property>
-        </widget>
+          <widget class="QCheckBox" name="cbEnableShift">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>Enable</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

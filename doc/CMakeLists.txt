@@ -131,6 +131,7 @@ set (UG_IMGS
   images/settings-frequencies.png
   images/settings-general.png
   images/setup-menu.png
+  images/shift2.png
   images/special-mouse-commands.png
   images/status-bar-a.png
   images/tools-menu.png
