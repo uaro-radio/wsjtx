@@ -2670,7 +2670,7 @@ void MainWindow::fastSink(qint64 frames)
 
     // Wait & Call for MSK144
     if (m_mode=="MSK144" && wait_and_call && m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() &&
-        m_hisCall!="" && (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
+        m_hisCall!="" && (text.contains("CQ " + m_hisCall) or text.contains("CQ DX " + m_hisCall) or text.contains(m_hisCall + " RR73")
         or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73")) && m_config.Wait_features_enabled()
         && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
                   m_bDoubleClicked = true;
@@ -5694,7 +5694,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         // Wait & Call
         if (wait_and_call && (m_mode=="FT8" or m_mode=="FT4" or m_mode=="Q65" or m_mode=="FST4" or m_mode=="JT65" or m_mode=="JT9" or m_mode=="JT4") &&
             m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() && m_hisCall!="" && !no_wait_and_call &&
-            (text.contains("CQ " + m_hisCall) or text.contains(m_hisCall + " RR73")
+            (text.contains("CQ " + m_hisCall) or text.contains("CQ DX " + m_hisCall) or text.contains(m_hisCall + " RR73")
              or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73"))
             && m_config.Wait_features_enabled()) {
               if (!text.contains(" " + m_config.my_callsign() + " " + m_hisCall))
