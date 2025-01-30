@@ -9,7 +9,8 @@ as an extended branch of an earlier program, _WSJT_, first released in
 IV3NWV, have been major contributors to development of _WSJT-X_ since
 2013, 2015, and 2016, respectively. Bill Somerville died suddenly and
 unexpectedly in December 2021; Uwe Risse, DG2YCB, joined the core
-development team soon afterward, and Brian Moran, N9ADG, in 2022.
+development team soon afterward, followed by Brian Moran, N9ADG
+(2022) and John Nelson, G4KLA and Charlie Suckling, Dl3WDG (2024). 
 
 _WSJT-X_ Version {VERSION_MAJOR}.{VERSION_MINOR} offers eleven
 different protocols or modes: *FST4*, *FT4*, *FT8*, *JT4*, *JT9*,
@@ -48,13 +49,14 @@ duration.  User messages are transmitted repeatedly at high rate (up
 to 250 characters per second for MSK144) to make good use of the
 shortest meteor-trail reflections or "`pings`".  MSK144 uses the same
 structured messages as the slow modes and optionally an abbreviated
-format with hashed callsigns.  
+format with hashed callsigns.
 
 Note that some of the modes classified as slow can have T/R sequence
-lengths as short the fast modes.  "`Slow`" in this sense implies
-message frames being sent only once per transmission.  The fast modes
-in _WSJT-X_ send their message frames repeatedly, as many times as
-will fit into the Tx sequence length.
+lengths as short the fast modes. As used here, "`slow`" implies that
+message frames are sent once per transmission. Fast modes in _WSJT-X_
+send message frames repeatedly, as many times as will fit into the Tx
+sequence length, thereby making it possible to take advantage of short
+propagation enhancements.
 
 *WSPR* (pronounced "`whisper`") stands for **W**eak **S**ignal
 **P**ropagation **R**eporter.  The WSPR protocol was designed for
