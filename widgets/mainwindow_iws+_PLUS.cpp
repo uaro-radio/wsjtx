@@ -3034,7 +3034,7 @@ void MainWindow::showQSYMessage(QString message)
                 m_QSYMessageWidget->activateWindow();
               }
               if(m_qsymonitorWidget && finalMatch.mid(0,1) !='Z') m_qsymonitorWidget->getQSYData(QString(bhList[0]) + " " + the_call + " " + finalMatch); //w3sz
-              if (m_config.alert_Enabled() && m_config.alert_QSYmessage() && the_line.contains(m_config.my_callsign())) alertQSYmessage();
+              if (m_config.alert_Enabled() && m_config.alert_QSYmessage() && (the_line.contains(qCall) or the_line.contains(qDXCall))) alertQSYmessage();
             }
           }
         }
@@ -3057,7 +3057,7 @@ void MainWindow::showQSYMessage(QString message)
       m_QSYMessageWidget->show();
       m_QSYMessageWidget->raise();
       m_QSYMessageWidget->activateWindow();
-      if (m_config.alert_Enabled() && m_config.alert_QSYmessage() && the_line.contains(m_config.my_callsign())) alertQSYmessage();
+      if (m_config.alert_Enabled() && m_config.alert_QSYmessage() && (the_line.contains(qCall) or the_line.contains(qDXCall))) alertQSYmessage();
     }
   }
 }
