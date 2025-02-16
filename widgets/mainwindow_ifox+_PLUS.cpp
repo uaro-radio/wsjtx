@@ -2883,48 +2883,45 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // Highlight DX Call/Grid for MSK144
-    if (!pounce && m_config.highlight_DXcall () && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
+    if (!pounce && (m_config.highlight_DXcall () or m_config.alert_Enabled()) && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
         || (decodedtext.string().contains("<...> " + m_hisCall))))  {
+      if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
+      if (m_config.highlight_DXcall()) {
+        // repeated highlighting to override JTAlert
         ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-        if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
-        QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
-            ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-        });
-        QTimer::singleShot (1000, [=] {                      // repeated highlighting to override JTAlert
-            ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-        });
-        QTimer::singleShot (2500, [=] {                      // repeated highlighting to override JTAlert
-            ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-        });
+        QTimer::singleShot (500, [=] {ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);});
+        QTimer::singleShot (1000, [=] {ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);});
+        QTimer::singleShot (2500, [=] {ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);});
+      }
     }
-    if (!pounce && m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid.left(4))))  {
-        ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
-        if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
+    if (!pounce && (m_config.highlight_DXgrid () or m_config.alert_Enabled()) && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid.left(4))))  {
+      if (m_config.highlight_DXgrid()) ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
+      if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
     }
     QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
-        if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
+      if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
 #ifdef WIN32
-            QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
-            QString binPath = QCoreApplication::applicationDirPath();
-            QAudioFormat format;
-            format.setCodec("audio/pcm");
-            format.setSampleRate (48000);
-            format.setChannelCount (1);
-            format.setSampleSize (16);
-            format.setSampleType(QAudioFormat::SignedInt);
-            QAudioOutput* audio;
-            audio = new QAudioOutput(format, this);
-            connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
-            QFile *effect1 = new QFile(this);
-            effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXcall.wav"));
-            effect1->open(QIODevice::ReadOnly);
-            audio->start(effect1);
+        QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
+        QString binPath = QCoreApplication::applicationDirPath();
+        QAudioFormat format;
+        format.setCodec("audio/pcm");
+        format.setSampleRate (48000);
+        format.setChannelCount (1);
+        format.setSampleSize (16);
+        format.setSampleType(QAudioFormat::SignedInt);
+        QAudioOutput* audio;
+        audio = new QAudioOutput(format, this);
+        connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
+        QFile *effect1 = new QFile(this);
+        effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXcall.wav"));
+        effect1->open(QIODevice::ReadOnly);
+        audio->start(effect1);
 #else
-            QString binPath = QCoreApplication::applicationDirPath();
-            QSound::play(binPath + "/sounds/DXcall.wav");  // for Linux and macOS
+        QString binPath = QCoreApplication::applicationDirPath();
+        QSound::play(binPath + "/sounds/DXcall.wav");  // for Linux and macOS
 #endif
-            play_DXcall = false;
-        }
+        play_DXcall = false;
+      }
     });                                                  // UR delete for versions without alerts
 
     m_bDecoded=true;
@@ -6076,41 +6073,42 @@ void MainWindow::readFromStdout()                             //readFromStdout
         // insert blank line, but only if not filtered and no decodes
         int ntime=6;
         if (m_TRperiod>=60) ntime=4;
-        if (m_config.insert_blank () && (line_read.left(ntime) != m_tBlankLine) && message0.left(4).contains(QRegularExpression {"\\d\\d\\d\\d"})) {
-              ui->decodedTextBrowser->new_period ();
-              if (m_specOp == SpecOp::FOX and m_ActiveStationsWidget != NULL) { // clear the ActiveStations window
-                m_ActiveStationsWidget->clearStations();
-                m_ActiveStationsWidget->displayRecentStations("Fox Mode", "");
-              }
-              if (SpecOp::FOX != m_specOp && (!filtered or m_config.filters_for_Wait_and_Pounce_only())) {
-                  QString band;
-                  if(((QDateTime::currentMSecsSinceEpoch() / 1000 - m_secBandChanged) > 4*int(m_TRperiod)/4)
-                      or m_displayBand) {
-                    band = ' ' + m_config.bands ()->find (m_freqNominal);
-                  }
-                  if (ui->actionUse_Dark_Style->isChecked()) {
-                    if (m_config.detailed_blank()) {
-                      if (m_config.DXCC()) {
-                        ui->decodedTextBrowser->insertText(("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode + " ------"), "#a2a2a2", "#000000");
-                      } else {
-                        ui->decodedTextBrowser->insertText(("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode), "#a2a2a2", "#000000");
-                      }
-                    } else {
-                      ui->decodedTextBrowser->insertText(band.rightJustified(40, '-'), "#a2a2a2", "#000000");
-                    }
+        if ((m_config.insert_blank () or m_config.alert_Enabled()) && (line_read.left(ntime) != m_tBlankLine) && message0.left(4).contains(QRegularExpression {"\\d\\d\\d\\d"})) {  // URUR
+          ui->decodedTextBrowser->new_period ();
+          if (m_specOp == SpecOp::FOX and m_ActiveStationsWidget != NULL && m_config.insert_blank ()) { // clear the ActiveStations window
+            m_ActiveStationsWidget->clearStations();
+            m_ActiveStationsWidget->displayRecentStations("Fox Mode", "");
+          }
+          if (SpecOp::FOX != m_specOp && (!filtered or m_config.filters_for_Wait_and_Pounce_only()) && m_config.insert_blank ()) {
+            QString band;
+            if(((QDateTime::currentMSecsSinceEpoch() / 1000 - m_secBandChanged) > 4*int(m_TRperiod)/4) or m_displayBand) {
+              band = ' ' + m_config.bands ()->find (m_freqNominal);
+            }
+            if (m_config.insert_blank ()) {
+              if (ui->actionUse_Dark_Style->isChecked()) {
+                if (m_config.detailed_blank()) {
+                  if (m_config.DXCC()) {
+                    ui->decodedTextBrowser->insertText(("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode + " ------"), "#a2a2a2", "#000000");
                   } else {
-                    if (m_config.detailed_blank()) {
-                      if (m_config.DXCC()) {
-                        ui->decodedTextBrowser->insertLineSpacer ("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode + " ------");
-                      } else {
-                        ui->decodedTextBrowser->insertLineSpacer ("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode);
-                      }
-                    } else {
-                      ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
-                    }
+                    ui->decodedTextBrowser->insertText(("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode), "#a2a2a2", "#000000");
                   }
-                  m_tBlankLine = line_read.left(ntime);
+                } else {
+                  ui->decodedTextBrowser->insertText(band.rightJustified(40, '-'), "#a2a2a2", "#000000");
+                }
+              } else {
+                if (m_config.detailed_blank()) {
+                  if (m_config.DXCC()) {
+                    ui->decodedTextBrowser->insertLineSpacer ("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode + " ------");
+                  } else {
+                    ui->decodedTextBrowser->insertLineSpacer ("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode);
+                  }
+                } else {
+                  ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
+                }
               }
+            }
+            m_tBlankLine = line_read.left(ntime);
+          }
         }
 
         // SuperHound label
@@ -6344,50 +6342,48 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         // Highlight DX Call/Grid
-        if (!pounce && m_config.highlight_DXcall() && (m_hisCall != "") &&
+        if (!pounce && (m_config.highlight_DXcall() or m_config.alert_Enabled()) && (m_hisCall != "") &&
             ((decodedtext.string().contains(QRegularExpression{"(\\w+) " + m_hisCall}))
              || (decodedtext.string().contains(QRegularExpression{"(\\w+) <" + m_hisCall + ">"}))
              || (decodedtext.string().contains(QRegularExpression{"<(\\w+)> " + m_hisCall}))
              || (decodedtext.string().contains(QRegularExpression{"<...> " + m_hisCall})))) {
+          if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
+          if (m_config.highlight_DXcall()) {
+            // repeated highlighting to override JTAlert
             ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-            if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
-            QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
-                ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-                });
-            QTimer::singleShot (1000, [=] {                      // repeated highlighting to override JTAlert
-                ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-                });
-            QTimer::singleShot (2500, [=] {                      // repeated highlighting to override JTAlert
-                ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-                });
+            QTimer::singleShot (500, [=] {ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);});
+            QTimer::singleShot (1000, [=] {ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);});
+            QTimer::singleShot (2500, [=] {ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);});
+          }
         }
-        if (!pounce && m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid.left(4))))  {
-            ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
-            if (m_config.alert_Enabled() && m_config.alert_DXcall()) play_DXcall = true;    // UR disable for versions without alerts
+        if (!pounce && (m_config.highlight_DXgrid () or m_config.alert_Enabled()) && (m_hisGrid!="") &&
+            (decodedtext.string().contains(m_hisGrid.left(4))))  {
+          if (m_config.highlight_DXgrid()) ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
+          if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
         }
         QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
-          if (m_config.alert_Enabled() && m_config.alert_DXcall() && play_DXcall && m_hisCall!="" && !m_muted) {
+          if (m_config.alert_Enabled() && m_config.alert_DXcall() && play_DXcall && m_hisCall!="") {
 #ifdef WIN32
-              QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
-              QString binPath = QCoreApplication::applicationDirPath();
-              QAudioFormat format;
-              format.setCodec("audio/pcm");
-              format.setSampleRate (48000);
-              format.setChannelCount (1);
-              format.setSampleSize (16);
-              format.setSampleType(QAudioFormat::SignedInt);
-              QAudioOutput* audio;
-              audio = new QAudioOutput(format, this);
-              connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
-              QFile *effect1 = new QFile(this);
-              effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXcall.wav"));
-              effect1->open(QIODevice::ReadOnly);
-              audio->start(effect1);
+            QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
+            QString binPath = QCoreApplication::applicationDirPath();
+            QAudioFormat format;
+            format.setCodec("audio/pcm");
+            format.setSampleRate (48000);
+            format.setChannelCount (1);
+            format.setSampleSize (16);
+            format.setSampleType(QAudioFormat::SignedInt);
+            QAudioOutput* audio;
+            audio = new QAudioOutput(format, this);
+            connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
+            QFile *effect1 = new QFile(this);
+            effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXcall.wav"));
+            effect1->open(QIODevice::ReadOnly);
+            audio->start(effect1);
 #else
-              QString binPath = QCoreApplication::applicationDirPath();
-              QSound::play(binPath + "/sounds/DXcall.wav");  // for Linux and macOS
+            QString binPath = QCoreApplication::applicationDirPath();
+            QSound::play(binPath + "/sounds/DXcall.wav");  // for Linux and macOS
 #endif
-              play_DXcall = false;
+            play_DXcall = false;
           }
         });                                                  // UR delete for versions without alerts
 
@@ -6505,6 +6501,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             }
             m_band_changed = false;
           }
+          if (m_config.alert_Enabled() && ui->actionInclude_averaging->isVisible() && ui->actionInclude_averaging->isChecked()) ui->decodedTextBrowser->new_period (); // ensure alerts are played
           ui->decodedTextBrowser2->displayDecodedText (decodedtext0, m_config.my_callsign (), m_mode, m_config.DXCC (),
             m_logBook, m_currentBand, m_config.ppfx (), false, false, 0.0, bDisplayPoints, m_points, "", m_muted);
         }
