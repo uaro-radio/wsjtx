@@ -2620,10 +2620,14 @@ void MainWindow::fastSink(qint64 frames)
               or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
            filtered = true;
         }
-        if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) ignored = true;
+        if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
+          ignored = true;
+          m_muted = true;
+        }
         if (ui->actionIgnoreToday->isChecked() && (txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
             or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
-           ignored = true;
+          ignored = true;
+          m_muted = true;
         }
     }
     if (ui->actionIgnoreB4->isChecked() && (pounce or m_auto)) {
@@ -2639,7 +2643,10 @@ void MainWindow::fastSink(qint64 frames)
       auto const& looked_up = m_logBook.countries ()->lookup (deCall);
       m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
         continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
-      if (callB4onBand && ui->actionIgnoreB4->isChecked() && !ui->cbBypass->isChecked()) ignored = true;
+      if (callB4onBand && ui->actionIgnoreB4->isChecked() && !ui->cbBypass->isChecked()) {
+        ignored = true;
+        m_muted = true;
+      }
     }
 
     // Stop Wait & Call timeout when in QSO with this station for MSK144
@@ -6035,10 +6042,14 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
                filtered = true;
             }
-            if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) ignored = true;
+            if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
+              ignored = true;
+              m_muted = true;
+            }
             if (ui->actionIgnoreToday->isChecked() && (txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
                 or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
                ignored = true;
+               m_muted = true;
             }
         }
         if (ui->actionIgnoreB4->isChecked() && (pounce or m_auto)) {
@@ -6054,7 +6065,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
           auto const& looked_up = m_logBook.countries ()->lookup (deCall);
           m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
             continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
-          if (callB4onBand && ui->actionIgnoreB4->isChecked() && !ui->cbBypass->isChecked()) ignored = true;
+          if (callB4onBand && ui->actionIgnoreB4->isChecked() && !ui->cbBypass->isChecked()) {
+            ignored = true;
+            m_muted = true;
+          }
         }
 
         // insert blank line, but only if not filtered and no decodes
