@@ -1727,7 +1727,18 @@ install (DIRECTORY
   DESTINATION ${CMAKE_INSTALL_BINDIR}
   #COMPONENT runtime
   )
-	
+
+if (WIN32)
+  install (FILES
+    tls/libssl-1_1.dll
+    tls/libcrypto-1_1.dll
+    tls/libssl-1_1-x64.dll
+    tls/libcrypto-1_1-x64.dll
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    #COMPONENT runtime
+  )
+endif (WIN32)
+
 #
 # Mac installer files
 #
