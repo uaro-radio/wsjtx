@@ -1701,11 +1701,59 @@ When not checked you can view the calibration results.</string>
                     </item>
                    </layout>
                   </item>
+                  <item row="4" column="0">
+                   <spacer name="verticalSpacer_4">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
                   <item row="0" column="1">
                    <layout class="QVBoxLayout" name="verticalLayout_13">
                     <item>
                      <layout class="QGridLayout" name="submode_gridLayout">
+                      <property name="horizontalSpacing">
+                       <number>4</number>
+                      </property>
+                      <item row="0" column="1">
+                       <widget class="QPushButton" name="pb15C">
+                        <property name="minimumSize">
+                         <size>
+                          <width>30</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 15 s and Submode C.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
+                        <property name="text">
+                         <string>15C</string>
+                        </property>
+                       </widget>
+                      </item>
                       <item row="0" column="0">
+                       <widget class="QPushButton" name="pb15A">
+                        <property name="minimumSize">
+                         <size>
+                          <width>32</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="toolTip">
+                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 15 s and Submode A.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        </property>
+                        <property name="text">
+                         <string>15A</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="2">
                        <widget class="QPushButton" name="pb30B">
                         <property name="minimumSize">
                          <size>
@@ -1721,11 +1769,11 @@ When not checked you can view the calibration results.</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="1">
+                      <item row="1" column="0">
                        <widget class="QPushButton" name="pb60C">
                         <property name="minimumSize">
                          <size>
-                          <width>32</width>
+                          <width>30</width>
                           <height>0</height>
                          </size>
                         </property>
@@ -1737,11 +1785,11 @@ When not checked you can view the calibration results.</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="0">
+                      <item row="1" column="1">
                        <widget class="QPushButton" name="pb60D">
                         <property name="minimumSize">
                          <size>
-                          <width>32</width>
+                          <width>30</width>
                           <height>0</height>
                          </size>
                         </property>
@@ -1753,11 +1801,11 @@ When not checked you can view the calibration results.</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="1">
+                      <item row="1" column="2">
                        <widget class="QPushButton" name="pb60E">
                         <property name="minimumSize">
                          <size>
-                          <width>32</width>
+                          <width>30</width>
                           <height>0</height>
                          </size>
                         </property>
@@ -1966,19 +2014,6 @@ When not checked you can view the calibration results.</string>
                      </spacer>
                     </item>
                    </layout>
-                  </item>
-                  <item row="4" column="0">
-                   <spacer name="verticalSpacer_4">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
                   </item>
                  </layout>
                 </item>

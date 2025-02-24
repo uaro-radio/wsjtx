@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>854</width>
-    <height>680</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1431,39 +1431,7 @@ When not checked you can view the calibration results.</string>
                        <property name="spacing">
                         <number>0</number>
                        </property>
-                       <item row="0" column="0">
-                        <widget class="QPushButton" name="pb30B">
-                         <property name="minimumSize">
-                          <size>
-                           <width>32</width>
-                           <height>0</height>
-                          </size>
-                         </property>
-                         <property name="toolTip">
-                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 30 s and Submode B.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                         </property>
-                         <property name="text">
-                          <string>30B</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="0" column="1">
-                        <widget class="QPushButton" name="pb60C">
-                         <property name="minimumSize">
-                          <size>
-                           <width>32</width>
-                           <height>0</height>
-                          </size>
-                         </property>
-                         <property name="toolTip">
-                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 60 s and Submode C.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                         </property>
-                         <property name="text">
-                          <string>60C</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
+                       <item row="2" column="0">
                         <widget class="QPushButton" name="pb60D">
                          <property name="minimumSize">
                           <size>
@@ -1480,6 +1448,22 @@ When not checked you can view the calibration results.</string>
                         </widget>
                        </item>
                        <item row="1" column="1">
+                        <widget class="QPushButton" name="pb60C">
+                         <property name="minimumSize">
+                          <size>
+                           <width>32</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 60 s and Submode C.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="text">
+                          <string>60C</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="2" column="1">
                         <widget class="QPushButton" name="pb60E">
                          <property name="minimumSize">
                           <size>
@@ -1492,6 +1476,54 @@ When not checked you can view the calibration results.</string>
                          </property>
                          <property name="text">
                           <string>60E</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="1" column="0">
+                        <widget class="QPushButton" name="pb30B">
+                         <property name="minimumSize">
+                          <size>
+                           <width>32</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 30 s and Submode B.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="text">
+                          <string>30B</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="0">
+                        <widget class="QPushButton" name="pb15A">
+                         <property name="minimumSize">
+                          <size>
+                           <width>32</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 15 s and Submode A.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="text">
+                          <string>15A</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="0" column="1">
+                        <widget class="QPushButton" name="pb15C">
+                         <property name="minimumSize">
+                          <size>
+                           <width>32</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to T/R 15 s and Submode C.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="text">
+                          <string>15C</string>
                          </property>
                         </widget>
                        </item>

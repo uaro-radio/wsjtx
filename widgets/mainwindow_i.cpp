@@ -1895,6 +1895,7 @@ void MainWindow::fixStop()
     if(m_config.decode_at_52s()) m_hsymStop=179;
   } else if (m_mode=="Q65"){
     m_hsymStop=48;                                  // 13.8 s
+//    if(m_TRperiod==15 && m_config.decode_at_52s()) m_hsymStop=50;  // 14.1 s for Q65-15 EME
     if(m_TRperiod==30) {
       m_hsymStop=96;                                // 27.6 s
       if(m_config.decode_at_52s()) m_hsymStop=100;  // 28.8 s
@@ -3675,11 +3676,15 @@ void MainWindow::statusChanged()
     }
   }
   if (m_mode=="Q65" && m_config.enable_VHF_features()) {
+    ui->pb15A->setVisible(true);
+    ui->pb15C->setVisible(true);
     ui->pb30B->setVisible(true);
     ui->pb60C->setVisible(true);
     ui->pb60D->setVisible(true);
     ui->pb60E->setVisible(true);
   } else {
+    ui->pb15C->setVisible(false);
+    ui->pb15A->setVisible(false);
     ui->pb30B->setVisible(false);
     ui->pb60C->setVisible(false);
     ui->pb60D->setVisible(false);
@@ -10542,8 +10547,8 @@ void MainWindow::on_TxFreqSpinBox_valueChanged(int n)
 
   if(m_mode=="Q65") {
     if(((m_nSubMode==4 && m_TRperiod==60.0) || (m_nSubMode==3 && m_TRperiod==30.0) ||
-       (m_nSubMode==2 && m_TRperiod==15.0)) && ui->TxFreqSpinBox->value()!=700) {
-      ui->TxFreqSpinBox->setStyleSheet("QSpinBox{background-color:red}");
+       (m_nSubMode==2 && m_TRperiod==15.0)) && abs(ui->TxFreqSpinBox->value() - 700) > 15) {
+      ui->TxFreqSpinBox->setStyleSheet("QSpinBox{background-color:red; color:white}");
     } else {
       ui->TxFreqSpinBox->setStyleSheet("");
     }
@@ -11697,8 +11702,8 @@ void MainWindow::on_sbSubmode_valueChanged(int n)
   }
   if(m_mode=="Q65") {
     if(((m_nSubMode==4 && m_TRperiod==60.0) || (m_nSubMode==3 && m_TRperiod==30.0) ||
-       (m_nSubMode==2 && m_TRperiod==15.0)) && ui->TxFreqSpinBox->value()!=700) {
-      ui->TxFreqSpinBox->setStyleSheet("QSpinBox{background-color:red}");
+        (m_nSubMode==2 && m_TRperiod==15.0)) && abs(ui->TxFreqSpinBox->value() - 700) > 15) {
+      ui->TxFreqSpinBox->setStyleSheet("QSpinBox{background-color:red; color:white}");
     } else {
       ui->TxFreqSpinBox->setStyleSheet("");
     }
@@ -14059,6 +14064,19 @@ void MainWindow::sfox_tx() {
   sfox_wave_gfsk_();
 }
 
+void MainWindow::on_pb15A_clicked()
+{
+    ui->sbTR->setValue(15);
+    ui->sbSubmode->setValue(0);
+}
+
+void MainWindow::on_pb15C_clicked()
+{
+    ui->sbTR->setValue(15);
+    ui->sbSubmode->setValue(2);
+    ui->TxFreqSpinBox->setValue(700);
+}
+
 void MainWindow::on_pb30B_clicked()
 {
     ui->sbTR->setValue(30);
@@ -14081,6 +14099,7 @@ void MainWindow::on_pb60E_clicked()
 {
     ui->sbTR->setValue(60);
     ui->sbSubmode->setValue(4);
+    ui->TxFreqSpinBox->setValue(700);
 }
 
 void MainWindow::bandHoppingTimer()
@@ -14763,6 +14782,24 @@ void MainWindow::check_button_color()
     }
 
     if (!m_config.button_coloring_disabled()) {
+      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==15 && m_nSubMode==0) {
+          ui->pb15A->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+      } else {
+          if (m_useDarkStyle) {
+              ui->pb15A->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+          } else {
+              ui->pb15A->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+          }
+      }
+      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==15 && m_nSubMode==2) {
+          ui->pb15C->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+      } else {
+          if (m_useDarkStyle) {
+              ui->pb15C->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+          } else {
+              ui->pb15C->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+          }
+      }
       if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==30 && m_nSubMode==1) {
           ui->pb30B->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
       } else {

@@ -127,7 +127,6 @@ subroutine q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
   lag1=-1.0/dtstep
   lag2=1.0/dtstep + 0.9999
   if(nsps.ge.3600 .and. emedelay.gt.0) lag2=5.5/dtstep + 0.9999  !Include EME
-  if(ntrperiod.eq.15 .and. nsps.ge.900 .and. emedelay.gt.0) lag2=4/dtstep + 0.9999  !EME Q65-15
   j0=0.5/dtstep
   if(nsps.ge.7200) j0=1.0/dtstep              !Nominal start-signal index
 
