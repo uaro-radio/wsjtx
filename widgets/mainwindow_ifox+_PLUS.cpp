@@ -247,6 +247,7 @@ int dBpoints2=99;
 int maxdBPoints=-28;
 int mindBPoints=99;
 bool pounce = false;
+bool foxpounce = false;
 bool filtered = false;
 bool ignored = false;
 bool selected = false;
@@ -932,6 +933,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   tuneATU_Timer.setSingleShot(true);
   connect(&tuneATU_Timer, &QTimer::timeout, this, &MainWindow::stopTuneATU);
+
+  foxPounce_Timer.setSingleShot(true);
+  connect(&foxPounce_Timer, &QTimer::timeout, this, &MainWindow::stopFoxPounce);
 
   killFileTimer.setSingleShot(true);
   connect(&killFileTimer, &QTimer::timeout, this, &MainWindow::killFile);
@@ -3704,12 +3708,12 @@ void MainWindow::statusChanged()
     ui->txb6->setEnabled(true);
     ui->txrb6->setEnabled(true);
     ui->houndButton->setChecked(false);
-    if(m_specOp!=SpecOp::FOX) {
-      ui->foxButton->setChecked(false);
-    }
   }
   if (m_specOp==SpecOp::FOX) {
+    ui->foxButton->setChecked(true);
     if (m_config.superFox()) ui->comboBoxCQ->setCurrentIndex(0);    // No directional calls supported yet for SuperFox mode
+  } else {
+    ui->foxButton->setChecked(false);
   }
   if (m_config.enable_VHF_features() && (m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65")) {
     ui->actionInclude_averaging->setVisible(true);
@@ -4002,6 +4006,7 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
   filtered = false;
   ignored = false;
   m_muted = false;
+  foxpounce = false;
   check_button_color();
 }
 
@@ -7402,6 +7407,44 @@ void MainWindow::guiUpdate()
       if ((s >= 0 && s < 15) || (s >= 30 && s < 45)) ui->tuneButton->click ();
     }
 
+    // Fox pounce
+    if (SpecOp::FOX==m_specOp && foxpounce) {
+      tx_watchdog (false);  // pause Tx watchdog
+      QDateTime now = QDateTime::currentDateTimeUtc();
+      int fs = now.time().toString("ss").toInt();
+      if (fs == 28 || fs == 58) {
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+      }
+      if (fs == 29 || fs == 59) {
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+      }
+      if (fs == 30 || fs == 00) {
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+        doubleClickOnCall2(Qt::KeyboardModifier(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier));
+      }
+      QString remFoxPounceTime;
+      if (m_auto) {
+        remFoxPounceTime = QString::asprintf("Pounce %.0f m",foxPounce_Timer.remainingTime()/60000.0);
+        ui->autoButton->setText(remFoxPounceTime);  // display remaining Fox Pounce time
+        if (foxPounce_Timer.remainingTime() < 210000) {
+          ui->autoButton->setStyleSheet("QPushButton {background-color: #ff00ff; color: #ffffff; border: 1px solid #32414B; border-radius: 4px; padding: 3px; outline: none; min-width: 5em;}");
+        } else {
+          ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+        }
+      }
+    }
+
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
     if( SpecOp::HOUND == m_specOp ) {
@@ -9179,6 +9222,18 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       ui->houndButton->clearFocus();
       ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   }
+  if(ui->foxButton->hasFocus() && (event->button() & Qt::RightButton)) {     // toggle SuperFox mode (Fox button)
+      keep_frequency = true;
+      not_erase = true;         // prevent erasing the decodedTextBrowser
+      m_config.toggle_SF();
+      QTimer::singleShot (250, [=] {
+        keep_frequency = false;
+        not_erase = false;
+      });
+      on_actionFT8_triggered();
+      ui->foxButton->clearFocus();
+      ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
+  }
   // Search callsign on qrz.com, qrzcq.com or hamqth.com
   if(ui->lookupButton->hasFocus() && (event->button() & Qt::RightButton)) {   // search callsign on QRZ.com
     QString hisCall=ui->dxCallEntry->text();
@@ -9204,6 +9259,16 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         stopWCTimer.stop();           // Stop any Wait & Call timeout
       } else {
         pounce = false;
+        check_button_color();
+      }
+      // Fox pounce
+      if (!foxpounce && SpecOp::FOX==m_specOp) {
+        foxpounce = true;
+        foxPounce_Timer.start(20*60*1000);  // Fox Pounce time
+        check_button_color();
+      } else {
+        foxpounce = false;
+        foxPounce_Timer.stop();            // reset Fox Pounce timer
         check_button_color();
       }
       ui->autoButton->clearFocus();
@@ -10016,14 +10081,6 @@ void MainWindow::on_actionFT8_triggered()
   if(m_specOp != SpecOp::HOUND) {
       ui->houndButton->setChecked(false);
       m_wideGraph->setSuperHound(false);
-  }
-
-  if(SpecOp::FOX == m_specOp) {
-    ui->foxButton->setChecked(true);
-  }
-
-  if(m_specOp != SpecOp::FOX) {
-      ui->foxButton->setChecked(false);
   }
 
   m_specOp=m_config.special_op_id();
@@ -11045,6 +11102,15 @@ void MainWindow::stopTuneATU()
   ui->tuneButton->setText("Tune");
 }
 
+void MainWindow::stopFoxPounce()
+{
+  foxPounce_Timer.stop ();     // reset Fox pounce mode
+  foxpounce = false;
+  ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+  stopWRTimer.start(180000);   // stop SuperFox transmission if still no human interaction
+  check_button_color();
+}
+
 void MainWindow::on_stopTxButton_clicked()                    // Stop Tx
 {
   if (m_tune) stop_tuning ();
@@ -11072,6 +11138,7 @@ void MainWindow::on_stopTxButton_clicked()                    // Stop Tx
   filtered = false;
   ignored = false;
   m_muted = false;
+  foxpounce = false;
   check_button_color();
 }
 
@@ -12912,7 +12979,7 @@ void MainWindow::on_pbFreeText_clicked()
 
 void MainWindow::on_comboBoxHoundSort_activated(int index)
 {
-  if(index!=-99) houndCallers();            //Silence compiler warning
+  if(index!=-99) houndCallers();   //Silence compiler warning
 }
 
 void MainWindow::on_comboBoxCQ_activated()
@@ -14083,6 +14150,7 @@ void MainWindow::on_houndButton_clicked (bool checked)
     ui->tx1->setVisible(true);
     ui->tx1->setEnabled(true);
     ui->txb1->setEnabled(true);
+    ui->foxButton->setChecked(false);
   } else {
     m_config.setSpecial_None();
     keep_frequency = true;
@@ -14818,26 +14886,40 @@ void MainWindow::check_button_color()
         if (m_useDarkStyle) {
             ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; color: #ffffff; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
             if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; color: #ffffff; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
-            if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+            if (m_auto && !foxpounce) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         } else {
             ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #9fafd5; border: none;}");
             if (!m_auto) {
                 ui->autoButton->setStyleSheet("");
                 ui->autoButton->setStyleSheet("QPushButton {min-width: 5em;}");
             }
-            if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
+            if (m_auto && !foxpounce) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         }
     }
-
     ui->autoButton->setToolTip("Toggle Auto-Tx On/Off");
     if (m_config.Wait_features_enabled()) {
         ui->DX_Call_Button->setToolTip("Toggle Wait & Call On/Off.\n"
                                        "Right-click to clear the DX Call box.");
-        ui->autoButton->setToolTip("Toggle Auto-Tx On/Off.\n"
-                                   "Right-click to toggle Wait & Pounce On/Off.");
+        if (SpecOp::FOX!=m_specOp) {
+          ui->autoButton->setToolTip("Toggle Auto-Tx On/Off.\n"
+                                     "Right-click to toggle Wait & Pounce On/Off.");
+        } else {
+          ui->autoButton->setToolTip("Toggle Auto-Tx On/Off.\n"
+                                     "Right-click to toggle Fox Pounce On/Off.");
+        }
     } else {
         ui->DX_Call_Button->setToolTip("Right-click to clear the DX Call box");
-        ui->autoButton->setToolTip("Toggle Auto-Tx On/Off");
+        if (SpecOp::FOX!=m_specOp) {
+          ui->autoButton->setToolTip("Toggle Auto-Tx On/Off");
+        } else {
+          ui->autoButton->setToolTip("Toggle Auto-Tx On/Off.\n"
+                                     "Right-click to toggle Fox Pounce On/Off.");
+        }
+    }
+    if (SpecOp::FOX==m_specOp && foxpounce) {
+      if (!m_auto) ui->autoButton->setText("Pounce");
+    } else {
+      ui->autoButton->setText("Enable Tx");
     }
     if (m_config.alternate_erase_button()) {
         ui->EraseButton->setToolTip("Left-click to erase left window.\n"
@@ -14963,7 +15045,7 @@ void MainWindow::check_button_color()
           }
       }
       if (ui->foxButton->isChecked()) {
-          ui->foxButton->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+          ui->foxButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
           if (m_useDarkStyle) {
              ui->foxButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
@@ -14982,11 +15064,9 @@ void MainWindow::check_button_color()
       }
     }
     if (m_config.enable_VHF_features() && m_config.decode_at_52s()) {
-      ui->foxButton->setVisible (false);
-      ui->echoButton->setVisible (true);
+        ui->echoButton->setVisible (true);
     } else {
-      ui->foxButton->setVisible (true);
-      ui->echoButton->setVisible (false);
+        ui->echoButton->setVisible (false);
     }
     if (m_mode=="JT65" && m_config.enable_VHF_features() && ui->cbShMsgs->isChecked()) {
         ui->tx3->setStyleSheet("color: #000000; background-color: #66ffff");

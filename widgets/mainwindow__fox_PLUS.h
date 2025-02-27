@@ -329,6 +329,7 @@ private slots:
   void end_tuning ();
   void stop_tuning ();
   void stopTuneATU();
+  void stopFoxPounce();
   void auto_tx_mode(bool);
   void on_actionMessage_averaging_triggered();
   void on_actionActiveStations_triggered();
@@ -715,6 +716,7 @@ private:
   QTimer minuteTimer;
   QTimer splashTimer;
   QTimer p1Timer;
+  QTimer foxPounce_Timer;
 
   QString m_path;
   QString m_baseCall;

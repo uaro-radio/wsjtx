@@ -3995,6 +3995,9 @@ QLabel[oob=&quot;true&quot;] {
                <height>0</height>
               </size>
              </property>
+             <property name="focusPolicy">
+              <enum>Qt::StrongFocus</enum>
+             </property>
              <property name="toolTip">
               <string>Toggle FT8 hound mode On/Off.&lt;br&gt; Right-click to activate or deactivate SuperFox mode.</string>
              </property>
