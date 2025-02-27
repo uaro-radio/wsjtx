@@ -3636,6 +3636,9 @@ void MainWindow::statusChanged()
     ui->txrb6->setEnabled(true);
     ui->houndButton->setChecked(false);
   }
+  if (m_specOp==SpecOp::FOX) {
+    if (m_config.superFox()) ui->comboBoxCQ->setCurrentIndex(0);    // No directional calls supported yet for SuperFox mode
+  }
   if (m_config.enable_VHF_features() && (m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65")) {
     ui->actionInclude_averaging->setVisible(true);
     ui->actionAuto_Clear_Avg->setVisible(true);
@@ -12793,6 +12796,17 @@ void MainWindow::on_comboBoxHoundSort_activated(int index)
 {
   if(index!=-99) houndCallers();            //Silence compiler warning
 }
+
+void MainWindow::on_comboBoxCQ_activated()
+{
+  if(m_config.superFox()) {
+    ui->comboBoxCQ->setCurrentIndex(0);    // No directional calls supported yet for SuperFox mode
+    QTimer::singleShot (0, [=] {           // don't block guiUpdate
+      MessageBox::information_message(this, tr ("Directional calls not yet supported in SuperFox mode"));
+    });
+  }
+}
+
 #ifdef FOX_OTP
 QString MainWindow::foxOTPcode()
 {
