@@ -68,7 +68,7 @@ set (UG_IMGS
   images/active_stations.png
   images/Add_Frequency.png
   images/Add_station_info.png
-  images/alertsn.png
+  images/alerts.png
   images/algui.png
   images/AstroData_2.png
   images/Astronomical_data.png
