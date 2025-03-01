@@ -110,7 +110,6 @@ set (UG_IMGS
   images/JT65B.png
   images/jtalert.png
   images/keyboard-shortcuts.png
-  images/keyboard-shortcuts.png
   images/letter-s.png
   images/log_comments1.png
   images/log_comments2.png
@@ -149,7 +148,7 @@ set (UG_IMGS
   images/shift2.png
   images/showgrid1.png
   images/showgrid2.png
-  images/specialcommand2.png
+  images/specialcommands2.png
   images/specialcommands.png
   images/special-mouse-commands.png
   images/Split_settings.png

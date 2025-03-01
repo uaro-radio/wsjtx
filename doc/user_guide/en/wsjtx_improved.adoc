@@ -1,6 +1,6 @@
 === For New Users
 
-Many of  the special features of _WSJT-X Improved_ are accessed via the *Files | Settings | General*
+Many of  the special features of _WSJT-X Improved_ are accessed via the *File | Settings | General*
 menu. Where screenshots of this are presented, only the relevant items are shown. In other cases, the
 screenshots will show the tab and item, or the setting will be referred to explicitly, as above.
 
@@ -13,7 +13,7 @@ Wide Graph.
 === Wait Features
 
 Three *Wait* features are available: *Wait and Reply*, *Wait and Call* and *Wait and Pounce*.
-The *Wait* features are enabled using the checkbox in the *Files | Settings | General* menu:
+The *Wait* features are enabled using the checkbox in the *File | Settings | General* menu:
 
 image::wait1.png[align="center",alt="wait1"]
 
@@ -36,7 +36,6 @@ of the other station present in the *DX Call* field.
 NOTE: You should not have a callsign present in the *DX Call* field longer than necessary for the QSO 
 unless you wish to monitor the station.  It is good practice to clear the *DX Call* field after a QSO, 
 for example by right clicking on the *DX Call* button.
-
 
 .Wait and Call
 
@@ -62,6 +61,8 @@ image::cqtype.png[align="center",alt="cqtype"]
 
 Wait and Pounce can also be combined with the *Filters* feature. You can then for example “wait” for CQ messages
 containing a certain prefix, grid, callsign or keyword.
+
+TIP: When using CQ: Max Dist, CQ: Max dB, and CQ: Min dB, the program automatically prevents working dupes. The data for this comes from the file "wsjtx.log". Stations from this file are ignored by Wait & Pounce, and when you are calling CQ yourself. To reset everything, click in the *File* menu on *Erase wsjtx.log*.  Attention: Do not accidentally erase the file “wsjtx_log.adi” as it contains your logbook.
 
 IMPORTANT: Your rig may be set to Tx when *Wait and Pounce* is enabled. Take the necessary precautions!
 
@@ -263,11 +264,11 @@ image::wgfeatures2.png[align="center",alt="wgfeatures2"]
 
 === Diagnostic Mode
 
-_Wsjt-x_improved_ has a built-in diagnostic mode, available from the *|Save|* menu tab.
+_Wsjt-x_improved_ has a built-in diagnostic mode, available from the *Save* menu tab.
 This makes it easy to collect data to troubleshoot problems with the program, or with its communication with your rig
 (hamlib issues, not responding COM ports, etc.).
 
-image::diagnostic.png[align="center",alt="diagnostic"]
+image::diagnostic.png[align="center",alt="Diagnostic mode"]
 
 === Audio Alerts
 
@@ -283,24 +284,23 @@ button in Tab 3, as shown below:
 
 image::testalerts.png[align="center",alt="testalerts"]
 
-Audio alerts can be set up via the *Alerts* tab on *| File| Settings|* by selecting the checkboxes according
+Audio alerts can be set up via the *Alerts* tab on *File | Settings* by selecting the checkboxes according
 to your preferences, and then clicking on *Enable Audio Alerts*, which will turn green to indicate that audio alerts
 are active. The available  audio alert settings are shown below:
 
 image::alerts.png[align="center",alt="Alerts"]
 
 The four alerts below the line do not require any further settings to be made to play the sounds.  
-The checkboxes *Highlight DX Call in message* and *Highlight DX Grid in message* in *| File | Settings | General * 
+The checkboxes *Highlight DX Call in message* and *Highlight DX Grid in message* in *File | Settings | General* 
 "Display" group can be used to identify what triggered the "DX" alert. 
 
 The ten alert categories above the line require the checkbox *Show DXCC, grid and worked before status* in 
-*| File | Settings | General *  "Display" group to be selected.  To identify what triggered these alerts, 
-ensure that the relevant categories in *| File | Settings |Colors * are selected.
+*File | Settings | General*  "Display" group to be selected.  To identify what triggered these alerts, 
+ensure that the relevant categories in *File | Settings | Colors* are selected.
 
 TIP: As for callsigns from the "Ignore list", or from the three "Ignore ..." Quick Filters,  no alert sounds are played
 unless you have checked the *BP* (bypass) checkbox,this can be used to mute the alerts for a certain callsign 
-with one click on the *Ignore* button. To reset everything and unmute the alert, click in the *|File|* menu on *Erase Ignore List*, 
-or uncheck the "Ignore ..." Quick Filters.
+with one click on the *Ignore* button. To reset everything and unmute the alert, click in the *File* menu on *Erase Ignore List*, or uncheck the "Ignore ..." Quick Filters.
 
 === Show distance/azimuth with grid
 
@@ -347,7 +347,7 @@ image::specialcommands2.png[align="center",alt="specialcommands2"]
 
 .Map grid locators to U.S. States
 
-US States can be optionally appended to the decoded messages.  The required settings (in *| File | Settings | General|*) are
+US States can be optionally appended to the decoded messages.  The required settings (in *File | Settings | General*) are
 shown below.  The display of States can be configured for CQ calls only, or both CQ calls and all other messages containing
 a grid locator.  Where a grid locator overlaps more than one State, the possibilites are presented.
 
@@ -367,7 +367,7 @@ image::searchcalls.png[align="center",alt="searchcalls"]
 .Tx until 73 is received (MSK144/Q65)
 
 Normally WSJT-X will send only one 73 message.  In some cases it may be desirable to send more than one, which can be enabled using 
-the checkbox *MSK144/Q65: Tx until 73 is received* in *| File | Settings | General|*) Behavior group. A maximum of 10 attempts 
+the checkbox *MSK144/Q65: Tx until 73 is received* in *File | Settings | General*) Behavior group. A maximum of 10 attempts 
 are made before it times out if a 73 message has not yet been received. Use the *Wait & Reply* feature described above in case 
 this is still not enough for you.
 
@@ -386,21 +386,21 @@ image::fox_mode_warning.png[align="center",alt="Second Fox on frequency"]
 .Advanced logging options
 *Special operating activity to comments* allows adds information about the special operating activity used to the Comments field. For example, "PACC Contest" is automatically logged for FT Roundup messages when PACC was selected as Contest Name.
 
-image::log_comments1.png[align="center",alt="Special operating activity to comments"] 
+image::log_comments1.png[align="center",alt="log_comments1"] 
 
-image::log_comments2.png[align="center",alt="Special operating activity to comments"] 
+image::log_comments2.png[align="center",alt="log_comments2"] 
 
 *Log Satellite name and mode* The “Log QSO” window has additional fields where you can log the satellite name and mode. The satellite data is read from the “sat.dat” file.
 
-image::log_comments3.png[align="center",alt="Log satellite name"] 
+image::log_comments3.png[align="center",alt="log_comments3"] 
 
 .Right-click the Tune button to initiate rig tuning (ATU)
 
 With some rig models, you can initiate ATU rig tuning directly from the program. This feature requires that your rig is connected via hamlib, and that your rig model is equipped with an ATU.
 
-image::rig_tuning.png[align="center",alt="Rig tuning (ATU)"] 
+image::rig_tuning.png[align="center",alt="rig_tuning"] 
 
 .Cloudlog support
 
-The program is able to upload your QSOs to Cloudlog. Cloudlog is an open-source PHP & MySQL based amateur radio logging application. Find more information at https://www.magicbug.co.uk/cloudlog/. Activate the “Enable Cloudlog Features” checkbox (in *| File | Settings | Advanced|*) and enter your user data.
+The program is able to upload your QSOs to Cloudlog. Cloudlog is an open-source PHP & MySQL based amateur radio logging application. Find more information at https://www.magicbug.co.uk/cloudlog/. Activate the “Enable Cloudlog Features” checkbox (in *File | Settings | Advanced*) and enter your user data.
 
