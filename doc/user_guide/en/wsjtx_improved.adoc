@@ -70,7 +70,7 @@ IMPORTANT: Your rig may be set to Tx when *Wait and Pounce* is enabled. Take the
 The *Filters* give you a powerful tool for customization of what is being displayed in the Band Activity
 window. The primary *Filters* settings form is accessed from *File | Settings | Filters* and is shown below.
 
-image::filters1.png[align="center",alt="filters1"]
+image::filters1.png[align="center",alt="Filters"]
 
 You can specify up to four territories for which hiding messages can be switched on or off using
 the options available in the *Filter* tab on the main window. From this tab you can also hide messages from a
@@ -106,7 +106,7 @@ TIP: Filters are automatically disabled for Special Operating modes, so that you
 Additional filter options available directly via the main program window. All these so-called Quick Filters are now
 combined in a separate Filters menu, which can be viewed using the *Filters* tab on the main window:
 
-image::filters2.png[align="center",alt="filters2"]
+image::filters2.png[align="center",alt="Quick Filters"]
 
 A checkbox (labelled *BP*) on the main window allows all set filter options to be disabled temporarily with a single
 click. This can be used, for example, if you have skipped certain areas (e.g. to display only DX stations) but now
@@ -172,7 +172,7 @@ suitable for the dark  style due to its more pastel-like colours.  Buttons are p
 either the original _WSJT-X_  or the alternative styles.  With the alternative style, stations uploading their logbook
 to _LotW_ will have black foreground color, others red. Stations worked before are displayed with grey background.
 
-image::highlighting.png[align="center",alt="highlighting"]
+image::highlighting.png[align="center",alt="Decode Highlighting"]
 
 It is still possible for you to customise the color scheme according to your own preferences.
 
@@ -230,7 +230,7 @@ in the *|View|* menu.  This switch adjusts some internal settings and uses an op
 If you have enabled the dark style, you should adjust the highlight color scheme towards pastel tones via
 *File | Settings | Colors|* and adjust the background colors according to your preferences.
 
-image::dark.png[align="center",alt="dark"]
+image::dark.png[align="center",alt="Dark Style"]
 
 === Optional Band Buttons
 
@@ -287,7 +287,7 @@ Audio alerts can be set up via the *Alerts* tab on *| File| Settings|* by select
 to your preferences, and then clicking on *Enable Audio Alerts*, which will turn green to indicate that audio alerts
 are active. The available  audio alert settings are shown below:
 
-image::alertsn.png[align="center",alt="alertsn"]
+image::alerts.png[align="center",alt="Alerts"]
 
 The four alerts below the line do not require any further settings to be made to play the sounds.  
 The checkboxes *Highlight DX Call in message* and *Highlight DX Grid in message* in *| File | Settings | General * 
@@ -339,9 +339,9 @@ image::showgrid2.png[align="center",alt="showgrid2"]
 _Wsjt-x_improved_ has a number of additional special mouse commands and keyboard shortcuts, available via the *Help* menu.
 These are shown below:
 
-image::specialcommands.png[align="center",alt="showgrid1"]
+image::specialcommands.png[align="center",alt="specialcommands"]
 
-image::specialcommands2.png[align="center",alt="showgrid1"]
+image::specialcommands2.png[align="center",alt="specialcommands2"]
 
 === Miscellaneous Features
 
@@ -351,7 +351,7 @@ US States can be optionally appended to the decoded messages.  The required sett
 shown below.  The display of States can be configured for CQ calls only, or both CQ calls and all other messages containing
 a grid locator.  Where a grid locator overlaps more than one State, the possibilites are presented.
 
-image::USstates.png[align="center",alt="showgrid1"]
+image::USstates.png[align="center",alt="USstates"]
 
 
 .Search the DX Call on qrz.com, hamqth.com, or qrzcq.com 
