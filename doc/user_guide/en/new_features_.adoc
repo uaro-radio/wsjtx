@@ -170,8 +170,7 @@ _WSJT-X Improved_ additional capabilities  please refer to  <<WSJT-X_IMPROVED,Se
  A new option has been added  to enable Tx shift relative to an Rx sked frequency to enable wide
  in-band separation of Tx and Rx frequencies.  Buttons are now provided for quick selection of *Echo* mode,
  as well as six sub-modes of Q65.  Submodes 15A, 15B and 15C can now be decoded with EME delay, for experimental
- purposes.  More information on the use of 15s periods for EME can be found here:
- https://bobatkins.com/radio/Q65_15second_modes_EME.html
+ purposes.
  
 - *New technology for the Audible Alerts* Especially on Windows, less resources are required when playing
  the sound files, which are now located in the bin directory of the installation. This

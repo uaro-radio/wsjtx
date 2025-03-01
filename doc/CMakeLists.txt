@@ -34,6 +34,7 @@ set (UG_SRCS
   logging.adoc
   make-qso.adoc
   measurement_tools.adoc
+  modes.adoc
   new_features.adoc
   platform-dependencies.adoc
   protocols.adoc
@@ -58,6 +59,7 @@ set (UG_SRCS
   utilities.adoc
   message-creator.adoc
   vhf-features.adoc
+  wsjtx_improved.adoc
   wsjtx-main.adoc
   wspr.adoc
   )
@@ -66,24 +68,35 @@ set (UG_IMGS
   images/active_stations.png
   images/Add_Frequency.png
   images/Add_station_info.png
+  images/alertsn.png
+  images/algui.png
   images/AstroData_2.png
   images/Astronomical_data.png
   images/auto-seq.png
+  images/bandbutton1.png
+  images/bandbutton2.png
   images/band-settings.png
   images/Best_S+P.png
   images/colors.png
   images/config-menu.png
+  images/cqchoice.png
+  images/cqtype.png
+  images/dark.png
   images/decode-menu.png
+  images/diagnostic.png
   images/download_samples.png
   images/Echo_1296.png
   images/EME_Deep_0.png
   images/EME_Deep_1.png
   images/EME_Deep_2.png
   images/file-menu.png
+  images/filters1.png
+  images/filters2.png
+  images/fox_mode_warning.png
+  images/freemsg.png
   images/FreqCal.png
   images/FreqCal_Graph.png
   images/FreqCal_Results.png
-  images/freemsg.png
   images/FST4_center.png
   images/FST4_Decoding_Limits.png
   images/FST4W_RoundRobin.png
@@ -92,28 +105,20 @@ set (UG_IMGS
   images/ft8_decodes.png
   images/FT8_waterfall.png
   images/help-menu.png
+  images/highlighting.png
   images/JT4F.png
   images/JT65B.png
-  images/keyboard-shortcuts.png
-  images/MSK144.png
-  images/Q65_6m_ionoscatter.png
-  images/WSPR_WideGraphControls.png
-  images/WSPR_1a.png
-  images/WSPR_2.png
   images/jtalert.png
   images/keyboard-shortcuts.png
+  images/keyboard-shortcuts.png
+  images/letter-s.png
+  images/log_comments1.png
+  images/log_comments2.png
+  images/log_comments3.png
   images/log-qso.png
   images/MacAppMenu.png
   images/main-ui.png
   images/main-ui-controls.png
-  images/misc-controls-center.png
-  images/misc-main-ui.png
-  images/mode-menu.png
-  images/new-msg-box.png
-  images/psk-reporter.png
-  images/r3666-config-screen-80.png
-  images/r3666-main-ui-80.png
-  images/r4148-txmac-ui.png
   images/mc1.png
   images/mc2.png
   images/mc3.png
@@ -121,26 +126,49 @@ set (UG_IMGS
   images/mc5.png
   images/mc6.png
   images/mc7.png
-  images/Split_settings.png
-  images/letter-s.png
+  images/misc-controls-center.png
+  images/misc-main-ui.png
+  images/mode-menu.png
+  images/MSK144.png
+  images/new-msg-box.png
+  images/psk-reporter.png
+  images/Q65_6m_ionoscatter.png
+  images/r3666-config-screen-80.png
+  images/r3666-main-ui-80.png
+  images/r4148-txmac-ui.png
   images/RadioTab.png
   images/reporting.png
+  images/rig_tuning.png
   images/save-menu.png
+  images/searchcalls.png
   images/settings-advanced.png
   images/settings-audio.png
   images/settings-frequencies.png
   images/settings-general.png
   images/setup-menu.png
   images/shift2.png
+  images/showgrid1.png
+  images/showgrid2.png
+  images/specialcommand2.png
+  images/specialcommands.png
   images/special-mouse-commands.png
+  images/Split_settings.png
   images/status-bar-a.png
+  images/testalerts.png
   images/tools-menu.png
   images/traditional-msg-box.png
   images/tx-macros.png
+  images/USstates.png
   images/VHF_controls.png
   images/view-menu.png
+  images/wait1.png
+  images/wgfeatures1.png
+  images/wgfeatures2.png
   images/wide-graph-controls.png
   images/Windows_Dark.png
+  images/WSPR_1a.png
+  images/WSPR_2.png
+  images/WSPR_WideGraphControls.png
 )
 
 find_program (ASCIIDOCTOR_EXECUTABLE NAMES asciidoctor)

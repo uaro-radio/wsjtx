@@ -1,6 +1,6 @@
 // This is a comment line, anything with // is ignored at process time.
-= _WSJT-X_ User Guide
-Joseph H Taylor, Jr, K1JT
+= _WSJT-X Improved_ - User Guide
+Joseph H Taylor, Jr, K1JT et al.
 :revnumber: {VERSION}
 // For web-pages, adding :badges: is ok, but is a security issue for
 // package building .deb, .rpm, etc as it exposes the IP address and the images
@@ -34,6 +34,10 @@ include::new_features.adoc[]
 
 [[INTRO_SUBSECTIONS]]
 include::intro_subsections.adoc[]
+
+[[MODES]]
+== Modes
+include::modes.adoc[]
 
 [[SYSREQ]]
 == System Requirements
@@ -230,6 +234,10 @@ include::decoder_notes.adoc[]
 [[MEASUREMENT_TOOLS]]
 == Measurement Tools
 include::measurement_tools.adoc[]
+
+[[WSJT-X_IMPROVED]]
+== WSJT-X Improved
+include::wsjtx_improved.adoc[]
 
 [[COOP_PGMS]]
 == Cooperating Programs

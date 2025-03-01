@@ -1,0 +1,406 @@
+=== For New Users
+
+Many of  the special features of _WSJT-X Improved_ are accessed via the *Files | Settings | General*
+menu. Where screenshots of this are presented, only the relevant items are shown. In other cases, the
+screenshots will show the tab and item, or the setting will be referred to explicitly, as above.
+
+If you have used the default installer, the windows will resemble the standard _WSJT-X_ layout. Two differences
+may be seen: Band Buttons and vertical lines on the Wide Graph.  The Band Buttons  can be removed or restored 
+using the check box in the *View* menu, and the vertical lines are controlled by the *Bars* checkbox on the
+Wide Graph. 
+
+
+=== Wait Features
+
+Three *Wait* features are available: *Wait and Reply*, *Wait and Call* and *Wait and Pounce*.
+The *Wait* features are enabled using the checkbox in the *Files | Settings | General* menu:
+
+image::wait1.png[align="center",alt="wait1"]
+
+When selected, both the ^DX Call* field and *Monitor* button will turn yellow, to warn you that
+an automatic transmission could occur. 
+
+.Wait and Reply
+
+If a callsign is present in the *DX Call* field, *Wait and Reply* will attempt to continue your QSO when
+that station sends you a message. For example, you may have called a station, receive no reply and stop
+transmitting if the station has replied to someone else. If the station then calls you, your QSO will
+resume automatically.  This feature  also ensures that a second RR73 is sent by you in case your first one
+is not answered. 
+
+IMPORTANT: Your rig may be set to Tx when *Wait and Reply* is enabled. Take the necessary precautions!
+
+TIP: *Wait and Reply* is enabled for all modes where Auto Seq is available, as long as you have the callsign 
+of the other station present in the *DX Call* field.
+
+NOTE: You should not have a callsign present in the *DX Call* field longer than necessary for the QSO 
+unless you wish to monitor the station.  It is good practice to clear the *DX Call* field after a QSO, 
+for example by right clicking on the *DX Call* button.
+
+
+.Wait and Call
+
+*Wait and Call* is useful if the station you are trying to work disappears for a time, for example in QSB.
+To enable the feature, click on the *DX Call* box, which will then turn red (if a callsign is present in
+the *DX Call* field). If that station is subsequently decoded sending a message containing CQ, RR73, RRR or 73,
+up to three calls to that station will be made automatically. Any manual intervention, such as pressing the 
+*Halt Tx* or *Stop* buttons, will immediately disable *Wait and Call* giving you full control
+over the QSO.
+
+IMPORTANT: Your rig may be set to Tx when *Wait and Call* is enabled. Take the necessary precautions!
+
+.Wait and Pounce
+
+*Wait and Pounce* can be used to answer a CQ call from another station, with specific criteria. 
+To activate *Wait and Pounce*, ensure that the *DX Call* box is empty, then 
+select one of the applicable CQ: categories from the control on main window  (i.e. CQ: Max Dist
+ or CQ: Max dB or CQ: Min dB) and then right-click on the *Enable Tx* button, which then turns orange
+(with black lettering). In the next period, a reply will be sent automatically, to either the most
+distant / strongest / weakest CQ station.
+
+image::cqtype.png[align="center",alt="cqtype"]
+
+Wait and Pounce can also be combined with the *Filters* feature. You can then for example “wait” for CQ messages
+containing a certain prefix, grid, callsign or keyword.
+
+IMPORTANT: Your rig may be set to Tx when *Wait and Pounce* is enabled. Take the necessary precautions!
+
+=== Filters
+
+The *Filters* give you a powerful tool for customization of what is being displayed in the Band Activity
+window. The primary *Filters* settings form is accessed from *File | Settings | Filters* and is shown below.
+
+image::filters1.png[align="center",alt="filters1"]
+
+You can specify up to four territories for which hiding messages can be switched on or off using
+the options available in the *Filter* tab on the main window. From this tab you can also hide messages from a
+specific continent, or stations worked before on a band.
+
+The form  contains a "Blacklist", a "Whitelist", and an "Always Pass list". These lists can
+be operated in combination, if desired.
+
+.Blacklist
+
+The Blacklist can for example be used to hide pirate stations, contest messages or messages with unwanted 
+content. You can enter whole callsigns, parts of them or keywords.
+
+.Whitelist
+
+A meaningful use of the Whitelist is if you are ONLY interested in messages with certain grids, calls, or
+keywords. All other messages, except those allowed via the Always Pass list, will then be hidden.
+
+.Always Pass List
+
+Use the Always pass list to display specific stations even though the respective country or continent is hidden.
+
+You can optionally apply the filters only to the callsigns of the calling stations, or use the filters for *Wait and 
+Pounce* only. In the latter case, all messages will be displayed in the Band Activity window, but *Wait and Pounce*
+will respond only to stations that meet the set filter criteria. 
+
+As soon as a filter is activated that results in not all decodes being displayed in the Band Activity window, this 
+is indicated in the status label(this is the display at the bottom left of the main wondow).  It changes from green
+"Receiving" to cyan "Receiving, Filters on".
+
+TIP: Filters are automatically disabled for Special Operating modes, so that you don’t accidentally miss a station.
+
+Additional filter options available directly via the main program window. All these so-called Quick Filters are now
+combined in a separate Filters menu, which can be viewed using the *Filters* tab on the main window:
+
+image::filters2.png[align="center",alt="filters2"]
+
+A checkbox (labelled *BP*) on the main window allows all set filter options to be disabled temporarily with a single
+click. This can be used, for example, if you have skipped certain areas (e.g. to display only DX stations) but now
+want to monitor the entire band activity for a certain time.
+
+.Ignore List
+
+A click on the *Ignore* button (located on the main window below the *DX Grid* box) adds the callsign present 
+in the *DX Call* box to a so-called "Ignore list". If you have also activated the "Ignore stations from the Ignore List"
+checkbox (located in the *Filters* tab on the main window), such stations are automatically ignored when you use
+*CQ: First*, *CQ: Max Dist*, *CQ: Max dB*, *CQ: Min dB* or *Wait and Reply*. 
+
+The "Ignore List" will be created in your log directory the first time a station is added to it.
+You can erase the "Ignore List" from the *File* tab on the main window.
+
+TIP: For callsigns from the “Ignore list”, or from the three "Ignore ..." Quick Filters no alert sounds are played
+unless you have activated the *BP* (bypass) checkbox. This can be used to temporarily mute the alerts for a certain callsign.
+
+=== GUI Indicators/Buttons
+
+Several GUI indicators/buttons change colour to indicate that certain features have been enabled, or can 
+have their function modified.  These are listed below:
+
+.DX Call box
+
+If *Wait* features have been selected, the *DX Call* box turns yellow to warn that your station is 'primed' to transmit.
+
+.Enable Tx
+
+If *Wait* features have been selected, the *DX Call* box turns yellow to warn that your station is 'primed' to transmit.
+If *Wait and Pounce* has been set, *Enable Tx* turns orange (with black lettering.
+
+.Monitor
+
+The *Monitor* button turns cyan if audio file saving has been selected from the *Save* tab.
+
+.Erase Button
+
+Alternate Erase button behaviour can be enabled using the checkbox in the "Additional features* group in
+the *File | Settings* page. 
+
+- Left-click --> Erase the Band Activity window
+
+- Right-click --> Erase the Rx Frequency window 
+
+- Double-click on left mouse button --> Erase both windows (unchanged)
+
+.kHz entry without 'k'
+
+EME operation in particular has activity spread out over a range of frequencies within band. Tuning to a new frequency 
+can be accomplished by typing the new frequency into the *Band Combo* box located to the left of the Dial Frequency* 
+indicator. Normally to move a certain number of kHz above band edge you need to type a 'k' sfter the number.  For example,
+if operating on 10368MHz, to move to 10368.123 type 123k followed by the Enter key.  A common mistake during operation is
+to forget the k, in which case you usually experience a rig oontrol error!
+
+By selecting the checkbox in *File | Settings* Behavior group, the requirement to enter the 'k' is no longer needed
+(after closing and restarting the program).
+
+=== Advanced highlighting options
+
+An alternative color scheme is available via the *|Colors|* tab.  Some users find this  easier on the eyes and  is more
+suitable for the dark  style due to its more pastel-like colours.  Buttons are provided to allow the user to select
+either the original _WSJT-X_  or the alternative styles.  With the alternative style, stations uploading their logbook
+to _LotW_ will have black foreground color, others red. Stations worked before are displayed with grey background.
+
+image::highlighting.png[align="center",alt="highlighting"]
+
+It is still possible for you to customise the color scheme according to your own preferences.
+
+In addition, you can  highlight individual callsigns or grids according to your specifications. 
+Callsigns and/or grids can be highlighted with orange or blue background color. Callsigns/grids must be separated
+by commas and can be mixed (e.g. "K1JT, DG2YCB, JO33, JN58,"). 
+
+IMPORTANT: There must be a comma after each callsign, and also at the end of the line.
+
+=== Three Different GUIs
+
+_Wsjt-x_improved_ is  available with three different GUIs.  For technical reasons, each version uses a different intaller.
+
+The default download  has  the standard _WSJT-X_ GUI. The second is  more compact  (= alternative layout, "AL"),and the third
+is optimized for widescreens. The latter two provide a larger Band Activity window, so that you don't need to scroll that often.
+Just try them and see which you like best.
+
+Screen shot of the version with the *alternative layout* (AL):
+
+image::algui.png[align="center",alt="algui"]
+
+Screen shot of the *widescreen* version:
+
+image::widegui.png[align="center",alt="widegui"]
+
+You can also install several program versions side by side by installing them in separate directories 
+(eg "c:\WSJT\wsjtx_improved", "c:\WSJT\wsjtx_improved_AL", "c:\WSJT\wsjtx_improved_widesreen)"), and by creating
+starter hyperlinks on your desktop for the "wsjtx.exe" files located in the respective \bin subfolders. 
+Then you can start them as required and make a good comparison. Your WSJT-X.ini file with your settings will be recognized
+and used automatically.
+
+In Windows, the starter hyperlinks can be located in a suitably named  "batch" file. The batch file is created
+by starting a new text file (for convenience on your desktop) with the following example text:
+
+c:\WSJT\wsjtx_improved\bin
+
+start  wsjtx 
+
+After saving the file, rename it with extension .bat.  Double clicking the batch file will then run WSJT-X from
+the specified directory.
+
+If you want to run several program instances at the same time, this is also possible using the "rig-name"
+method, as desribed elsewhere in the this User Guide.  A suitable batch file for this would be:
+
+c:\WSJT\wsjtx_improved_AL\bin
+
+start  wsjtx --rig-name=NAME_XYZ
+
+The program then creates individual .ini files for each instance so that they can be operated independently of each other.
+
+=== Dark Style
+
+You can switch easily to dark style directly in the main window. Just click on the new item *"Use Dark Style"* 
+in the *|View|* menu.  This switch adjusts some internal settings and uses an optimized stylesheet for the dark style.
+If you have enabled the dark style, you should adjust the highlight color scheme towards pastel tones via
+*File | Settings | Colors|* and adjust the background colors according to your preferences.
+
+image::dark.png[align="center",alt="dark"]
+
+=== Optional Band Buttons
+
+Optional band select buttons can be switched on or off in the View menu.  A click on one of the band select buttons takes
+you to your preferred band/mode default frequency, and a right-click sets the main DXpedition frequencies.
+
+image::bandbutton1.png[align="center",alt="bandbutton1"]
+
+Band select buttons are available for all 3 GUI layouts. This is how it looks with the AL version:
+
+image::bandbutton2.png[align="center",alt="bandbutton2"]
+
+=== Extra Features for the Widegraph window
+
+.Optional display of bars for Rx and Tx frequency on the waterfall 
+
+image::wgfeatures1.png[align="center",alt="wgfeatures1"]
+
+.Additional options for the Time stamp on the waterfall: Off / Left / Right
+
+image::wgfeatures2.png[align="center",alt="wgfeatures2"]
+
+.Improved behavior of the mouse buttons when clicking on the waterfall display
+
+- Left-click --> set Rx offset (unchanged)
+- Right-click --> set Tx offset (NEW feature)
+- Double-click on right mouse button --> set Rx & Tx offset (Rx = Tx), (NEW feature)
+- Shift + left-click --> set Tx offset (unchanged) 
+- Ctrl + left-click --> set Rx & Tx offset (unchanged)
+
+=== Diagnostic Mode
+
+_Wsjt-x_improved_ has a built-in diagnostic mode, available from the *|Save|* menu tab.
+This makes it easy to collect data to troubleshoot problems with the program, or with its communication with your rig
+(hamlib issues, not responding COM ports, etc.).
+
+image::diagnostic.png[align="center",alt="diagnostic"]
+
+=== Audio Alerts
+
+Use of this feature requires that your system is equipped with two sound cards. This requirement is fulfilled when 
+your rig is connected via USB audio (FT-991, IC-7300, etc), or if your computer itelf has an additional soundcard. 
+The audio alerts will be played on the *default audio device* (usually the loudspeaker of your computer), while the normal _WSJT-X_ output is still fed to your rig only. 
+
+IMPORTANT: Ensure that your rig is NOT connected via "Default Device", else your audio alerts could be tranmitted
+over the air!
+
+You can check that the audio alerts are being directed to the PC loudspeaker by right clicking once on the *Band Hopping*
+button in Tab 3, as shown below:
+
+image::testalerts.png[align="center",alt="testalerts"]
+
+Audio alerts can be set up via the *Alerts* tab on *| File| Settings|* by selecting the checkboxes according
+to your preferences, and then clicking on *Enable Audio Alerts*, which will turn green to indicate that audio alerts
+are active. The available  audio alert settings are shown below:
+
+image::alertsn.png[align="center",alt="alertsn"]
+
+The four alerts below the line do not require any further settings to be made to play the sounds.  
+The checkboxes *Highlight DX Call in message* and *Highlight DX Grid in message* in *| File | Settings | General * 
+"Display" group can be used to identify what triggered the "DX" alert. 
+
+The ten alert categories above the line require the checkbox *Show DXCC, grid and worked before status* in 
+*| File | Settings | General *  "Display" group to be selected.  To identify what triggered these alerts, 
+ensure that the relevant categories in *| File | Settings |Colors * are selected.
+
+TIP: As for callsigns from the "Ignore list", or from the three "Ignore ..." Quick Filters,  no alert sounds are played
+unless you have checked the *BP* (bypass) checkbox,this can be used to mute the alerts for a certain callsign 
+with one click on the *Ignore* button. To reset everything and unmute the alert, click in the *|File|* menu on *Erase Ignore List*, 
+or uncheck the "Ignore ..." Quick Filters.
+
+=== Show distance/azimuth with grid
+
+If a station sends a valid Maidenhead locator, _WSJT-X -improved_ now automatically calculates the distance and the great-circle azimuth
+and displays it in the Band Activity pane.  The calculations are made from your grid locator to the centre of the 4 character 
+DX grid locator, with a consequent limitation on accuracy.  
+
+TIP: The Band Activity pane requires sufficient width to display the results.
+
+A new "Align DXCC / distance / azimuth" checkbox allows you to keep the DXCC names (or principal prefixes) 
+as well as distance/azimuth in an aligned table form. Two spin boxes allow further configuration of the preferred layout:
+
+- The first spin box sets the number of spaces between the decoded message and the DXCC name (or the principal prefix). 
+The default is set to "1", which means one  space more compared to the WSJT-X standard.
+
+- The second spin box sets the number of spaces between the DXCC and the distance/azimuth field.
+You can increase or decrease the default number. 
+
+- The first spin box works also when "Align DXCC / distance / azimuth" is not checked.  It can be used to increase the spacing between
+the decoded messages and the DXCC names  because the number of stations with non-standard callsigns has greatly increased,
+and a little more space might be appropriate.
+
+image::showgrid1.png[align="center",alt="showgrid1"]
+
+Some checkboxes have been repositioned to make it a bit more compact and intuitive. The "Show country information for all messages" 
+checkbox has been moved to the General tab and renamed "Show DXCC for all messages" so that the three content-related
+checkboxes are now arranged directly next to each other. 
+
+The following screen shot shows the Band Activity pane with "Show distance in messages with gid", "Show azimuth in messages with grid"
+and "Align DXCC / distance / azimuth" enabled.
+
+image::showgrid2.png[align="center",alt="showgrid2"]
+
+=== Mouse commands and keyboard shortcuts
+
+_Wsjt-x_improved_ has a number of additional special mouse commands and keyboard shortcuts, available via the *Help* menu.
+These are shown below:
+
+image::specialcommands.png[align="center",alt="showgrid1"]
+
+image::specialcommands2.png[align="center",alt="showgrid1"]
+
+=== Miscellaneous Features
+
+.Map grid locators to U.S. States
+
+US States can be optionally appended to the decoded messages.  The required settings (in *| File | Settings | General|*) are
+shown below.  The display of States can be configured for CQ calls only, or both CQ calls and all other messages containing
+a grid locator.  Where a grid locator overlaps more than one State, the possibilites are presented.
+
+image::USstates.png[align="center",alt="showgrid1"]
+
+
+.Search the DX Call on qrz.com, hamqth.com, or qrzcq.com 
+
+Provided you have an internet connection, it is possible to search for details of a station with one mouse click.
+
+image::searchcalls.png[align="center",alt="searchcalls"]
+
+- Right-click on the Lookup button --> Search for the DX Call on qrz.com
+- Right-click on the Add button --> Search for the DX Call on hamqth.com 
+- Right-click on the Ignore button --> Search for the DX Call on qrzcq.com
+
+.Tx until 73 is received (MSK144/Q65)
+
+Normally WSJT-X will send only one 73 message.  In some cases it may be desirable to send more than one, which can be enabled using 
+the checkbox *MSK144/Q65: Tx until 73 is received* in *| File | Settings | General|*) Behavior group. A maximum of 10 attempts 
+are made before it times out if a 73 message has not yet been received. Use the *Wait & Reply* feature described above in case 
+this is still not enough for you.
+
+.CQ: First / CQ: Max Dist / CQ: Max dB / CQ: Min dB
+
+Using the control on the main window, If selected and CQ is called, the program will respond to the first / most distant
+/ strongest / weakest station. 
+
+image::cqchoice.png[align="center",alt="cqchoice"]
+
+.Improvements for Fox operators 
+Inadvertent transmissions on frequencies overlapping the WSPR sub-bands is prevented. Furthermore, the Fox operator is notified if there is probably another Fox station on the frequency.
+
+image::fox_mode_warning.png[align="center",alt="Second Fox on frequency"] 
+
+.Advanced logging options
+*Special operating activity to comments* allows adds information about the special operating activity used to the Comments field. For example, "PACC Contest" is automatically logged for FT Roundup messages when PACC was selected as Contest Name.
+
+image::log_comments1.png[align="center",alt="Special operating activity to comments"] 
+
+image::log_comments2.png[align="center",alt="Special operating activity to comments"] 
+
+*Log Satellite name and mode* The “Log QSO” window has additional fields where you can log the satellite name and mode. The satellite data is read from the “sat.dat” file.
+
+image::log_comments3.png[align="center",alt="Log satellite name"] 
+
+.Right-click the Tune button to initiate rig tuning (ATU)
+
+With some rig models, you can initiate ATU rig tuning directly from the program. This feature requires that your rig is connected via hamlib, and that your rig model is equipped with an ATU.
+
+image::rig_tuning.png[align="center",alt="Rig tuning (ATU)"] 
+
+.Cloudlog support
+
+The program is able to upload your QSOs to Cloudlog. Cloudlog is an open-source PHP & MySQL based amateur radio logging application. Find more information at https://www.magicbug.co.uk/cloudlog/. Activate the “Enable Cloudlog Features” checkbox (in *| File | Settings | Advanced|*) and enter your user data.
+
