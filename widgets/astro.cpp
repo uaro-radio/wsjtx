@@ -69,10 +69,10 @@ void Astro::read_settings ()
 {
   SettingsGroup g (settings_, "Astro");
   bool b=settings_->value("DopplerTracking",false).toBool();
-  bool sh=settings_->value("EnableShift",false).toBool();
+//  bool sh=settings_->value("EnableShift",false).toBool();
   ui_->cbDopplerTracking->setChecked(b);
   ui_->doppler_widget->setVisible (ui_->cbDopplerTracking->isChecked ());
-  ui_->cbEnableShift->setChecked(sh);
+//  ui_->cbEnableShift->setChecked(sh);
   m_DopplerMethod=settings_->value("DopplerMethod",0).toInt();
   int shVal=settings_->value("ShiftValue",0).toInt();
   ui_->sbibShift->setValue(shVal);
