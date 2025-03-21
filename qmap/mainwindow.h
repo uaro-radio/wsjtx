@@ -182,6 +182,7 @@ private:
   QHash<QString,bool> m_worked;
   SignalMeter *xSignalMeter;
   SoundInThread soundInThread;             //Instantiate the audio threads
+  bool doLiveCQ = true;  // liveCQ
 
   //---------------------------------------------------- private functions
   void readSettings();
@@ -190,6 +191,7 @@ private:
   void updateStatusBar();
   void msgBox(QString t);
   bool isGrid4(QString g);
+  void CreateLiveCQ(QStringList cqliveText);  //liveCQ
 };
 
 extern void getfile(QString fname, bool xpol, int idInt);

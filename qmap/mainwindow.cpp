@@ -985,10 +985,67 @@ void MainWindow::decodeBusy(bool b)                             //decodeBusy()
   ui->actionDecode_remaining_files_in_directory->setEnabled(!b);
 }
 
+void MainWindow::CreateLiveCQ(QStringList cqliveText)
+{
+  if (cqliveText.size() == 0) return; //return if cqliveText is empty
+  QFile f("livecq.txt");
+  QStringList cqliveFinalText;
+  QStringList oldFile;
+  bool ok;
+  int freqOffset = ui->sbOffset->value();
+
+  for (const QString &item : cqliveText) {
+    QString line = " ";
+    line = line.repeated(60);
+    QStringList thePieces;
+    QString modeChar = "A";
+    if (m_modeQ65 == 2) modeChar = "B";
+    else if (m_modeQ65 == 3) modeChar = "C";
+    else if (m_modeQ65 == 4) modeChar = "D";
+    else if (m_modeQ65 == 5) modeChar = "E";
+
+    thePieces = item.split(" ",SkipEmptyParts);
+    if(thePieces.at(6) == "CQ" || thePieces.at(6) == "QRZ" || thePieces.at(6) == "CQV" ||  thePieces.at(6) == "CQH" ||  thePieces.at(6) == "QRT") {
+      //extract Fsked freq and format to 3 digits no decimals
+      QString theMsg = thePieces.at(6) + " " + thePieces.at(7) + " " +thePieces.at(8);
+      QStringList thekHz = thePieces.at(2).split(".");
+      int rxFreq = freqOffset + 100 * thekHz.at(1).toInt(&ok);
+      int skedFreq;
+      if (rxFreq <= freqOffset + 500) {
+        skedFreq = thekHz.at(0).toInt(&ok);
+      }
+      else {
+        skedFreq = thekHz.at(0).toInt(&ok) + 1;
+        rxFreq=rxFreq - 1000;
+      }
+      line.insert(0,QString::number(skedFreq));
+      line.insert(4,QString::number(rxFreq));
+      line.insert(10,"0");
+      line.insert(13,thePieces.at(0).mid(0,4));
+      line.insert(19,thePieces.at(3));
+      line.insert(25,thePieces.at(4));
+      line.insert(29,theMsg);
+      line.insert(51,"0 :" + modeChar);
+      cqliveFinalText << line.trimmed();
+    }
+  }
+
+  f.open(QIODevice::Append);
+  if(f.isOpen()) {
+    QTextStream out(&f);
+    for (const QString &item : cqliveFinalText) {
+      out << item << "\n";
+    }
+    f.close();
+  }
+}
+
 //------------------------------------------------------------- //guiUpdate()
 void MainWindow::guiUpdate()
 {
   int khsym=0;
+
+  QStringList cqliveText;  //liveCQ
 
   qint64 ms = QDateTime::currentMSecsSinceEpoch() % 86400000;
   int nsec=ms/1000;
@@ -1012,6 +1069,7 @@ void MainWindow::guiUpdate()
 
   QString t1;
   if(decodes_.ndecodes > m_fetched) {
+    doLiveCQ = true;
     while(m_fetched<decodes_.ndecodes) {
       QString t=QString::fromLatin1(decodes_.result[m_fetched]);
       if(m_UTC0!="" and m_UTC0!=t.left(4)) {
@@ -1025,6 +1083,7 @@ void MainWindow::guiUpdate()
       }
       m_UTC0=t.left(4);
       t=t.trimmed();
+      cqliveText << t;  //liveCQ
       ui->decodedTextBrowser->append(t);
       m_fetched++;
       m_nline++;
@@ -1036,6 +1095,12 @@ void MainWindow::guiUpdate()
       if(t.indexOf(m_myCall)>10 and m_myCallColor==2) f.setBackground(QBrush(Qt::green));
       if(t.indexOf(m_myCall)>10 and m_myCallColor==3) f.setBackground(QBrush(Qt::cyan));
       cursor.setBlockFormat(f);
+    }
+  }
+  if(doLiveCQ) {
+    if(cqliveText.size() != 0) {
+      CreateLiveCQ(cqliveText);  //liveCQ
+      doLiveCQ = false;
     }
   }
 
