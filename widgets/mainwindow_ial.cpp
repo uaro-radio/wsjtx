@@ -9177,12 +9177,14 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
 void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
 {
   if(ui->tuneButton->hasFocus() && (event->button() & Qt::RightButton)) {      // Tune button
+    m_config.transceiver_tune (false);       // reset any prior rig tuning
     blocked=true;
     m_config.transceiver_tune (true);        // toggle rig tuning
     blocked=false;
     if(ui->tuneButton->text()=="Tuning") {   // reset Tune button by another right-click
       ui->tuneButton->setChecked(false);
       ui->tuneButton->setText("Tune");
+      m_config.transceiver_tune (false);     // reset rig tuning
     } else {
       ui->tuneButton->setChecked(true);
       ui->tuneButton->setText("Tuning");
