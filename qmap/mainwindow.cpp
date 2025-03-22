@@ -756,6 +756,9 @@ void MainWindow::decoderFinished()
   lab4->setText(t1);
   decodeBusy(false);
 
+  //if(cqliveText.size() == 0) cqliveText << "0438  57.379  55.0  2.93  -11  CQ ES3RF KO29" << "0438  159.638  157.3  2.18  -12  QRZ WA3GFZ FN20" << "0438  67.507  65.2  3.08  -17  W2ZQ PA3HDG JO31" << "0438  9.356  7.0  2.93  -13  CQ IQ2DB JN45";
+  //CreateLiveCQ(cqliveText);
+
   if(m_bDecodeAgain) {
     datcom_.nhsym=390;
     datcom_.nagain=1;
@@ -987,8 +990,7 @@ void MainWindow::decodeBusy(bool b)                             //decodeBusy()
 
 void MainWindow::CreateLiveCQ(QStringList cqliveText)
 {
-  if (cqliveText.size() == 0) return; //return if cqliveText is empty
-  QFile f("livecq.txt");
+  if (cqliveText.size() == 0) return;  //return if cqliveText is empty
   QStringList cqliveFinalText;
   QStringList oldFile;
   bool ok;
@@ -1030,13 +1032,14 @@ void MainWindow::CreateLiveCQ(QStringList cqliveText)
     }
   }
 
-  f.open(QIODevice::Append);
-  if(f.isOpen()) {
-    QTextStream out(&f);
+  QFile cqlfi("livecq.txt");
+  cqlfi.open(QIODevice::WriteOnly);
+  if(cqlfi.isOpen()) {
+    QTextStream out(&cqlfi);
     for (const QString &item : cqliveFinalText) {
       out << item << "\n";
     }
-    f.close();
+    cqlfi.close();
   }
 }
 
