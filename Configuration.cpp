@@ -2593,7 +2593,7 @@ void Configuration::impl::read_settings ()
   showAzimuth_ = settings_->value("showAzimuth", false).toBool();
   align_ = settings_->value("AlignDistanceAzimuth", true).toBool();
   repeat_Tx_ = settings_->value("RepeatTx",false).toBool ();
-  auto_astro_ = settings_->value("AutoAstroWindow",true).toBool ();
+  auto_astro_ = settings_->value("AutoAstroWindow",false).toBool ();
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
   twoPass_ = settings_->value("TwoPass",true).toBool ();
   highDPI_ = settings_->value("HighDPI",true).toBool ();
