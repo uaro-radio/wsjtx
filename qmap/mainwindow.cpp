@@ -756,9 +756,6 @@ void MainWindow::decoderFinished()
   lab4->setText(t1);
   decodeBusy(false);
 
-  //if(cqliveText.size() == 0) cqliveText << "0438  57.379  55.0  2.93  -11  CQ ES3RF KO29" << "0438  159.638  157.3  2.18  -12  QRZ WA3GFZ FN20" << "0438  67.507  65.2  3.08  -17  W2ZQ PA3HDG JO31" << "0438  9.356  7.0  2.93  -13  CQ IQ2DB JN45";
-  //CreateLiveCQ(cqliveText);
-
   if(m_bDecodeAgain) {
     datcom_.nhsym=390;
     datcom_.nagain=1;
@@ -991,20 +988,22 @@ void MainWindow::decodeBusy(bool b)                             //decodeBusy()
 void MainWindow::CreateLiveCQ(QStringList cqliveText)
 {
   if (cqliveText.size() == 0) return;  //return if cqliveText is empty
+
+  //if(cqliveText.size() == 0) cqliveText << "043800  57.379  55.0  2.93  -11  CQ ES3RF KO29" << "043830  159.638  157.3  2.18  -12  QRZ WA3GFZ FN20" << "043800  67.507  65.2  3.08  -17  W2ZQ PA3HDG JO31" << "043830  9.356  7.0  2.93  -13  CQ IQ2DB JN45";
+
   QStringList cqliveFinalText;
   QStringList oldFile;
   bool ok;
   int freqOffset = ui->sbOffset->value();
+  QStringList bandInfo;
+  bandInfo = ui->labFreq->text().split(".",SkipEmptyParts);
+  QString bandFreq = bandInfo.at(0);
+  QString theDate = ui->labUTC->text().trimmed().mid(0,12);
 
   for (const QString &item : cqliveText) {
     QString line = " ";
-    line = line.repeated(60);
+    line = line.repeated(100);
     QStringList thePieces;
-    QString modeChar = "A";
-    if (m_modeQ65 == 2) modeChar = "B";
-    else if (m_modeQ65 == 3) modeChar = "C";
-    else if (m_modeQ65 == 4) modeChar = "D";
-    else if (m_modeQ65 == 5) modeChar = "E";
 
     thePieces = item.split(" ",SkipEmptyParts);
     if(thePieces.at(6) == "CQ" || thePieces.at(6) == "QRZ" || thePieces.at(6) == "CQV" ||  thePieces.at(6) == "CQH" ||  thePieces.at(6) == "QRT") {
@@ -1020,14 +1019,19 @@ void MainWindow::CreateLiveCQ(QStringList cqliveText)
         skedFreq = thekHz.at(0).toInt(&ok) + 1;
         rxFreq=rxFreq - 1000;
       }
-      line.insert(0,QString::number(skedFreq));
-      line.insert(4,QString::number(rxFreq));
-      line.insert(10,"0");
-      line.insert(13,thePieces.at(0).mid(0,4));
-      line.insert(19,thePieces.at(3));
-      line.insert(25,thePieces.at(4));
-      line.insert(29,theMsg);
-      line.insert(51,"0 :" + modeChar);
+      QString mode = "0 Q65-" + thePieces.at(5);
+      line.insert(0,bandFreq + "." + QString::number(skedFreq));
+      line.insert(10,QString::number(rxFreq));
+      line.insert(15,"0");
+      line.insert(18,thePieces.at(0));
+      line.insert(26,thePieces.at(3));
+      line.insert(32,thePieces.at(4));
+      line.insert(36,theMsg);
+      line.insert(55,mode);
+      line.insert(67,m_myGrid.toUpper());
+      line.insert(74,"Q");
+      line.insert(76,theDate);
+      line.insert(88,m_myCall.toUpper());
       cqliveFinalText << line.trimmed();
     }
   }
