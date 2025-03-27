@@ -156,7 +156,7 @@ contains
     nfreqz=nint(dfx)
     call timer('sync4   ',1)
 
-    nsnr=-26
+    nsnr=nint(snrx)
     if(sync.lt.syncmin) then
        if (associated (this%decode_callback)) then
           call this%decode_callback(nsnr,dtxz,nfreqz,.false.,csync,      &
@@ -166,7 +166,6 @@ contains
     endif
 
 ! We have achieved sync
-    nsnr=nint(snrsync - 22.9)
     decoded=blank
     deepmsg=blank
     special='     '
@@ -194,7 +193,7 @@ contains
              call this%decode_callback(nsnr,dtx,nfreq,.true.,csync,      &
                   .false.,decoded,99.,ich,.false.,0)
           end if
-!###          nsave=0
+          nsave=0
           go to 990
 
        else                                                  !Fano failed
@@ -299,7 +298,6 @@ contains
        nfsave=0
        dtdiff=0.2
        first=.false.
-       nsave=1        ! ### Should this be here? ###
     endif
 
     do i=1,64
