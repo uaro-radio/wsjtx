@@ -42,8 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
   m_settings_filename {m_appDir + "/qmap.ini"},
   m_astro_window {new Astro {m_settings_filename}},
   m_wide_graph_window {new WideGraph {m_settings_filename}},
-  m_gui_timer {new QTimer {this}},
-  cqlfi(new QFile("livecq.txt"))  //liveCQ
+  m_gui_timer {new QTimer {this}}
 {
   ui->setupUi(this);
 //  ui->decodedTextBrowser->clear();
@@ -179,8 +178,6 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     f.close();
   }
-
-  cqlfi->resize(0);  //liveCQ
 
   if(ui->actionLinrad->isChecked()) on_actionLinrad_triggered();
   if(ui->actionCuteSDR->isChecked()) on_actionCuteSDR_triggered();
@@ -1027,7 +1024,7 @@ void MainWindow::CreateLiveCQ(QStringList cqliveText)
     QStringList thePieces;
 
     thePieces = item.split(" ",SkipEmptyParts);
-    if(thePieces.at(6) == "CQ" || thePieces.at(6) == "QRZ" || thePieces.at(6) == "CQV" ||  thePieces.at(6) == "CQH" ||  thePieces.at(6) == "QRT") {
+    if((thePieces.at(6) == "CQ" || thePieces.at(6) == "QRZ" || thePieces.at(6) == "CQV" ||  thePieces.at(6) == "CQH" ||  thePieces.at(6) == "QRT") && m_myCall.length() >=3 && m_myGrid.length()>=4) {
       //extract Fsked freq and format to 3 digits no decimals
       QString theMsg = thePieces.at(6) + " " + thePieces.at(7) + " " +thePieces.at(8);
       QStringList thekHz = thePieces.at(9).split(".");
@@ -1075,18 +1072,6 @@ void MainWindow::CreateLiveCQ(QStringList cqliveText)
   }
 
   sendLiveCQData(decodeList);
-
-  // QFile cqlfi("livecq.txt");
-  cqlfi->open(QIODevice::Append | QIODevice::Text);
-  if(cqlfi->isOpen()) {
-    QTextStream out(cqlfi);
-    for (const QString &item : cqliveFinalText) {
-      out << item << "\n";
-    }
-    out.flush();
-    cqlfi->flush();
-    cqlfi->close();
-  }
 }
 
 void MainWindow::sendLiveCQData(QList<QStringList>decodeList)

@@ -34,7 +34,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   character*20 datetime,datetime1
   common/decodes/ndecodes,ncand2,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,kHzRequested,result(50)
-  common/decodes2/result2(50)              !liveCQ, also changed result(50) to result(55)
+  common/decodes2/result2(50)              !liveCQ
   common/cacb/ca
   data ifile/0/
   save
