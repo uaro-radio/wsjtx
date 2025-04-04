@@ -130,7 +130,7 @@ contains
 !    syncmin=3.0 + minsync
     syncmin=1.0+minsync
     naggressive=0
-    if(ndepth.ge.2) naggressive=1
+    if(iand(ndepth,7).ge.2) naggressive=1
     nq1=3
     nq2=6
     if(naggressive.eq.1) nq1=1
@@ -156,7 +156,7 @@ contains
     nfreqz=nint(dfx)
     call timer('sync4   ',1)
 
-    nsnr=nint(snrx)
+    nsnr=-26
     if(sync.lt.syncmin) then
        if (associated (this%decode_callback)) then
           call this%decode_callback(nsnr,dtxz,nfreqz,.false.,csync,      &
@@ -166,6 +166,7 @@ contains
     endif
 
 ! We have achieved sync
+    nsnr=nint(snrsync - 22.9)
     decoded=blank
     deepmsg=blank
     special='     '
@@ -177,6 +178,7 @@ contains
     qabest=0.
     prtavg=.false.
 
+    idf=0
     do idt=-2,2
        dtx=dtxz + 0.03*idt
        nfreq=nfreqz + 2*idf
@@ -188,12 +190,12 @@ contains
        call timer('decode4 ',1)
 
        if(nfano.gt.0) then
+          call getsnr(dat,npts,mode4,dtx,nfreq,decoded,nsnr)
 ! Fano succeeded: report the message and return              !Fano OK
           if (associated (this%decode_callback)) then
              call this%decode_callback(nsnr,dtx,nfreq,.true.,csync,      &
                   .false.,decoded,99.,ich,.false.,0)
           end if
-          nsave=0
           go to 990
 
        else                                                  !Fano failed
@@ -251,6 +253,7 @@ contains
     qual=qbest
 
     if (associated (this%decode_callback)) then
+       if(qual.gt.0.0) call getsnr(dat,npts,mode4,dtx,nfreq,deepmsg,nsnr)
        if(int(qual).ge.nq1) then
           call this%decode_callback(nsnr,dtx,nfreqz,.true.,csync,.true., &
                deepmsg,qual,ich,.false.,0)
@@ -298,6 +301,7 @@ contains
        nfsave=0
        dtdiff=0.2
        first=.false.
+       nsave=1        ! ### Should this be here? ###
     endif
 
     do i=1,64
@@ -408,3 +412,73 @@ contains
 900 return
   end subroutine avg4
 end module jt4_decode
+
+subroutine getsnr(dat,npts,mode4,dtx,nfreq,decoded,nsnr)
+
+! Compute SNR using raw data, T, DF, and decoded message.
+ 
+  parameter(NSPS=1260,NH=NSPS/2)
+  real dat(npts)
+  real x(NSPS)
+  real s(NH),savg(NH)
+  complex cx(0:NSPS/2)
+  integer itone(206)
+  integer ipk(1)
+  character*22 decoded,msgsent
+  equivalence (x,cx)
+
+  call gen4(decoded,0,msgsent,itone,itype)  !Get itone values for this message
+  dt=1.0/5512.5
+  df=5512.5/NSPS
+  istart=(dtx+1.08)/dt
+  
+  savg=0.
+  do j=1,206                           !Loop over all symbols
+     cx=0.
+     do i=1,NSPS
+        k=(j-1)*NSPS + i + istart
+        if(k.ge.1 .and. k.le.npts) x(i)=dat(k)
+     enddo        
+     call four2a(cx,NSPS,1,-1,0)        !r2c FFT
+     do i=1,nh
+        s(i)=real(cx(i))**2 + aimag(cx(i))**2
+     enddo
+     jtone=nint((fpk-1500)/(mode4*df))
+     nshift=mode4*itone(j)
+     savg=savg + cshift(s,nshift)      !Move all power into lowest tone freq
+  enddo
+
+  nskip=mode4/2
+  call averms(savg,nh,nskip,ave,rms)
+  savg=(savg-ave)/rms
+
+  do i=1,mode4/4
+     call smo121(savg,nh)
+  enddo
+  
+  ipk=maxloc(savg)
+  psig=0.
+  do i=ipk(1),1,-1
+     if(savg(i).lt.0) exit
+     psig=psig + savg(i)
+  enddo
+  i1=i+1
+  do i=ipk(1),nh
+     if(savg(i).lt.0) exit
+     psig=psig + savg(i)
+  enddo
+  i2=i-1
+  pnoise=2500.0*sqrt(206.0)/df
+  snrdb=db(psig/pnoise)
+  nsnr=nint(snrdb)
+  width=(i2-i1)*df
+
+!  rewind(62)
+!  do i=1,nh
+!     write(62,1010) i*df,savg(i)
+!1010 format(2f10.3)
+!  enddo
+!  flush(62)
+
+  return
+end subroutine getsnr
