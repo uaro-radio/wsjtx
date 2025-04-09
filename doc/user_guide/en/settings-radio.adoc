@@ -46,7 +46,7 @@ NOTE: A special value of *USB* is available for custom USB devices
 
 ** _Serial Port Parameters_: Set values for *Baud Rate*, *Data Bits*,
   *Stop Bits*, and *Handshake* method.  Consult your radio's user
-  *guide for the proper parameter values.
+  guide for the proper parameter values.
 
 +
 

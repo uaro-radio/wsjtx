@@ -27,7 +27,7 @@ part of the sky.
 
 On the higher microwave bands, where Faraday rotation is minimal and
 linear polarization is often used, spatial offset reduces signal
-levels. Some stations have implemented mechanical polarisation
+levels. Some stations have implemented mechanical polarization
 adjustment to overcome this loss. The amount of rotation needed is
 predicted in real time by the value of *Dpol*.  Positive Dpol means
 that the antenna should be rotated in a clockwise direction looking

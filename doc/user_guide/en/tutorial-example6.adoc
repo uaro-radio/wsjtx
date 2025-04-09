@@ -30,5 +30,5 @@ screenshot:
 
 image::FST4W-1.png[align="left"]
 
-Note that the weak signal associated with the single decode is all but invisible on the 
-widegraph spectrogram. 
+Note that the weak signal associated with the single decode is all but
+invisible on the Wide Graph spectrogram.

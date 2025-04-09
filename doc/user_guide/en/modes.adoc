@@ -52,7 +52,7 @@ sequences they can be decoded at signal-to-noise ratios as low
 as -31 dB in a 2500 Hz bandwidth. *FST4W* is designed for
 similar purposes, but especially for use on LF and MF bands.
 It includes optional sequence lengths as long as 30 minutes and
-reaches sensitivity tresholds as low as -45 dB.  Users
+reaches sensitivity thresholds as low as -45 dB.  Users
 with internet access can automatically upload WSPR and FST4W
 reception reports to a central database called {wsprnet} that
 provides a mapping facility, archival storage, and many other

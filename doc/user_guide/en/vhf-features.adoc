@@ -51,7 +51,7 @@ value computed for the middle of the Tx period.
 that works best with your radio). *Fake it* is provided to allow the
 necessary changes in receive and transmit frequencies for rigs that have
 only one VFO accessible via CAT. It accomplishes this by sending the
-required tranmsit frequency shortly before the start of the transmit period. 
+required transmit frequency shortly before the start of the transmit period. 
 Functionally there is no difference in operation of *Rig* or *Fake it*.
 If in any doubt *Fake it* is the safest option. 
 
@@ -338,8 +338,6 @@ displays the following information:
  DF        Offset of spectral peak from 1500 Hz
  SNR       Average signal-to-noise ratio (dB/2500 Hz)
  dBerr     Estimated uncertainty of SNR
-
-... more to come ...
 
 === Tips for EME
 
