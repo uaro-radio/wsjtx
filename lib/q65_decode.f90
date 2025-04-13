@@ -83,7 +83,7 @@ contains
     integer time
     logical lclearave,lnewdat0,lapcqonly,unpk77_success
     logical single_decode,lagain
-    complex c00(0:1800000)                !Analytic signal, 6000 Sa/s
+    complex c00(0:3600000)                !Analytic signal, 6000 Sa/s
     type(q3list) callers(MAX_CALLERS)
     save c00
 
