@@ -144,7 +144,7 @@ private:
   
   bool    m_w3szUrl = true; //liveCQ
   QString m_otherUrl="";    //liveCQ
-  QString w3szUrlAddr="https://liveCQ.com/livecq_update.php"; //liveCQ
+  QString w3szUrlAddr="https://w3sz.com/livecq_update.php"; //liveCQ
 
   float   m_pctZap;
 
