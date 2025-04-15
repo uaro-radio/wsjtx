@@ -3995,6 +3995,9 @@ Double-click to reset to the standard 73 message</string>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::WheelFocus</enum>
+           </property>
            <property name="toolTip">
             <string>USB dial frequency</string>
            </property>
@@ -4394,9 +4397,9 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionColors"/>
     <addaction name="actionActiveStations"/>
     <addaction name="actionSWL_Mode"/>
-	<addaction name="actionQSYMessage_Creator"/>
-	<addaction name="actionQSY_Monitor"/>
-	<addaction name="actionEnable_QSY_Popups"/>
+    <addaction name="actionQSYMessage_Creator"/>
+    <addaction name="actionQSY_Monitor"/>
+    <addaction name="actionEnable_QSY_Popups"/>
     <addaction name="actionBand_Buttons"/>
     <addaction name="actionUse_Dark_Style"/>
    </widget>
@@ -5186,7 +5189,7 @@ QPushButton[state=&quot;ok&quot;] {
    <property name="text">
     <string>Message Creator</string>
    </property>
-  </action>  
+  </action>
   <action name="actionHideB4">
    <property name="checkable">
     <bool>true</bool>

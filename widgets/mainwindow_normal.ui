@@ -4001,6 +4001,9 @@ Double-click to reset to the standard 73 message</string>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::WheelFocus</enum>
+           </property>
            <property name="toolTip">
             <string>USB dial frequency</string>
            </property>

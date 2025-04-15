@@ -645,6 +645,9 @@ QPushButton[state=&quot;ok&quot;] {
               <pointsize>14</pointsize>
              </font>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
+            </property>
             <property name="toolTip">
              <string>USB dial frequency</string>
             </property>
