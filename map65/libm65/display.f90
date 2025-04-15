@@ -21,7 +21,7 @@ subroutine display(nkeep,ftol)
      read(26,1010,end=10) line(i)
 1010 format(a77)
      read(line(i),1020) f0,ndf,nh,nm
-1020 format(f9.3,i5,25x,i3,i2)  ! w3sz was format(f8.3... -->9.3
+1020 format(f8.3,i5,25x,i3,i2)
      utc(i)=60*nh + nm
      freqkHz(i)=1000.d0*(f0-144.d0) + 0.001d0*ndf
   enddo
@@ -127,9 +127,9 @@ subroutine display(nkeep,ftol)
   do k=1,k3
      out=line3(k)(1:13)//line3(k)(28:31)//line3(k)(39:45)//       &
           line3(k)(35:38)//line3(k)(46:74)
-     if(out(6:8).ne.'   ') then
+    livecq2=line3(k)
+    if(out(6:8).ne.'   ') then
         cfreq0=out(6:8)
-        livecq2=line3(k)
 
 ! Suppress listing duplicate (same time, decoded message, and frequency)
         if(out(19:22).ne.out0(19:22) .or. out(31:55).ne.out0(31:55) .or.  &

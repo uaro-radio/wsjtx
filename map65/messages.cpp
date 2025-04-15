@@ -159,7 +159,7 @@ void Messages::setText(QString t, QString t2)
   ui->messagesTextBrowser->clear();
   QStringList lines = t.split( "\n", SkipEmptyParts );
   foreach( QString line, lines ) {
-    QString t1=line.mid(0,75); //liveCQ
+    QString t1=line.mid(0,75);     //liveCQ
     int ncq=t1.indexOf(" CQ ");
     if((m_cqOnly or m_cqStarOnly) and  ncq< 0) continue;
     if(m_cqStarOnly) {
@@ -169,7 +169,7 @@ void Messages::setText(QString t, QString t2)
       int i=t2.indexOf(caller);
       if(t2.mid(i-1,1)==" ") continue;
     }
-    int n=line.mid(55,2).toInt();  //liveCQ
+    int n=line.mid(62,2).toInt();  //liveCQ
 //    if(line.indexOf(":")>0) n=-1;
 //    if(n==-1) ui->messagesTextBrowser->setTextColor("#ffffff");  // white
     if(n==0) ui->messagesTextBrowser->setTextColor(m_color0);
@@ -183,7 +183,7 @@ void Messages::setText(QString t, QString t2)
       t1="        " + t1.mid(8,-1);
     }
     cfreq0=cfreq;
-    ui->messagesTextBrowser->append(t1.mid(5,61));
+    ui->messagesTextBrowser->append(t1.mid(5,50));
   }
 
   if(doLiveCQ) {                      //liveCQ
