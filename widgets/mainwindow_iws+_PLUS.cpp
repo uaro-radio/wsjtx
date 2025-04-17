@@ -13000,6 +13000,7 @@ void MainWindow::tx_watchdog (bool triggered)
 
 void MainWindow::update_watchdog_label ()
 {
+  if (!m_auto) m_idleMinutes = 0;   // No countdown unless Enable Tx is active (important for Wait & Call)
   if (m_config.watchdog () && m_mode!="WSPR" && m_mode!="FST4W")
     {
       watchdog_label.setText (tr (" WD:%1m ").arg (m_config.watchdog () - m_idleMinutes));
