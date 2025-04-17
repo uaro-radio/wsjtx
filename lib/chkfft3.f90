@@ -1,25 +1,24 @@
 program chkfft
 
 ! Tests and times one-dimensional FFTs computed by FFTW3
+  
   use, intrinsic :: iso_c_binding
   use FFTW3
   parameter (NMAX=8*1024*1024)           !Maximum FFT length
   complex a(NMAX),b(NMAX),c(NMAX)
   real ar(NMAX),br(NMAX),cr(NMAX)
   real mflops
-!  integer*8 plan1,plan2                  !Pointers to stored plans
   type(C_PTR) :: plan1,plan2              !Pointers to FFTW plans
   character infile*12,arg*8
   logical list
   common/patience/npatience
   equivalence (a,ar),(b,br),(c,cr)
-!  include 'fftw3.f90'                    !FFTW definitions
 
   nargs=iargc()
   if(nargs.ne.5) then
      print*,'Usage: chkfft3 <nfft | infile> nr nw nc np'
      print*,'       nfft:    length of FFT'
-     print*,'       nfft=0:  do lengths 2^n, n=2^4 to 2^23'
+     print*,'       nfft=0:  do lengths 2^n, n=2^8 to 2^23'
      print*,'       infile:  name of file with nfft values, one per line'
      print*,'       nr:      0/1 to not read (or read) wisdom'
      print*,'       nw:      0/1 to not write (or write) wisdom'
@@ -86,7 +85,7 @@ program chkfft
 1020 format('    NFFT     Time        rms      MHz   MFlops  iters',    &
           '  tplan'/61('-'))
   else
-     n1=4
+     n1=8
      n2=23
      write(*,1030) 
 1030 format(' n   N=2^n     Time        rms      MHz   MFlops  iters',  &
@@ -156,11 +155,11 @@ program chkfft
      if(n2.eq.1 .or. n2.eq.999999) then
         write(*,1050) nfft,time,rms,freq,mflops,iter,tplan
         write(12,1050) nfft,time,rms,freq,mflops,iter,tplan
-1050    format(i8,f11.7,f12.8,f7.2,f8.1,i8,f6.1)
+1050    format(i8,f11.7,f12.8,f7.0,f8.0,i8,f6.1)
      else
         write(*,1060) ii,nfft,time,rms,freq,mflops,iter,tplan
         write(12,1060) ii,nfft,time,rms,freq,mflops,iter,tplan
-1060    format(i2,i8,f11.7,f12.8,f7.2,f8.1,i8,f6.1)
+1060    format(i2,i8,f11.7,f12.8,f7.0,f8.0,i8,f6.1)
      endif
   enddo
 

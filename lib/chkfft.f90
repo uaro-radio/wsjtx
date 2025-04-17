@@ -143,11 +143,11 @@ program chkfft
      if(n2.eq.1 .or. n2.eq.999999) then
         write(*,1050) nfft,time,rms,freq,mflops,iter,tplan
         write(12,1050) nfft,time,rms,freq,mflops,iter,tplan
-1050    format(i8,f11.7,f12.8,f7.2,f8.1,i8,f6.1)
+1050    format(i8,f11.7,f12.8,f7.1,f8.1,i8,f6.1)
      else
         write(*,1060) ii,nfft,time,rms,freq,mflops,iter,tplan
         write(12,1060) ii,nfft,time,rms,freq,mflops,iter,tplan
-1060    format(i2,i8,f11.7,f12.8,f7.2,f8.1,i8,f6.1)
+1060    format(i2,i8,f11.7,f12.8,f7.1,f8.1,i8,f6.1)
      endif
      if(mod(ii,50).eq.0) call four2a(0,-1,0,0,0)
   enddo
