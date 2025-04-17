@@ -276,6 +276,7 @@ public:
   bool Blacklisted() const;
   bool Whitelisted() const;
   bool AlwaysPass() const;
+  bool twoDays() const;
   bool filters_for_Wait_and_Pounce_only() const;
   bool filters_for_word2() const;
   bool validate_otp_seed(QString);

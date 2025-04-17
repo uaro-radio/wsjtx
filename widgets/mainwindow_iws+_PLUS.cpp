@@ -2689,7 +2689,7 @@ void MainWindow::fastSink(qint64 frames)
         if (ui->actionHideIgnored->isChecked() && !ui->cbBypass->isChecked() && ignoreList.contains(deCall + ",")) filtered = true;
         if (ui->actionHideToday->isChecked() && !ui->cbBypass->isChecked() && (
               txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
-              or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
+              or (m_config.twoDays() && txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})))) {
            filtered = true;
         }
         if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
@@ -2697,7 +2697,7 @@ void MainWindow::fastSink(qint64 frames)
           m_muted = true;
         }
         if (ui->actionIgnoreToday->isChecked() && (txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
-            or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
+            or (m_config.twoDays() && txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})))) {
           ignored = true;
           m_muted = true;
         }
@@ -2948,7 +2948,7 @@ void MainWindow::fastSink(qint64 frames)
         }
         if (ui->actionHighlightToday->isChecked() && (
               txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
-              or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
+              or (m_config.twoDays() && txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})))) {
            ui->decodedTextBrowser->highlight_callsign(deCall, QColor(100,100,100), QColor(255,255,0), true);
         }
         if (ui->actionHighlightIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
@@ -6171,7 +6171,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             if (ui->actionHideIgnored->isChecked() && !ui->cbBypass->isChecked() && ignoreList.contains(deCall + ",")) filtered = true;
             if (ui->actionHideToday->isChecked() && !ui->cbBypass->isChecked() && (
                   txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
-                  or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
+                  or (m_config.twoDays() && txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})))) {
                filtered = true;
             }
             if (ui->actionIgnoreIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
@@ -6179,7 +6179,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
               m_muted = true;
             }
             if (ui->actionIgnoreToday->isChecked() && (txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
-                or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
+                or (m_config.twoDays() && txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})))) {
                ignored = true;
                m_muted = true;
             }
@@ -6322,7 +6322,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             }
             if (ui->actionHighlightToday->isChecked() && (
                 txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
-                or txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")}))) {
+                or (m_config.twoDays() && txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})))) {
               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(100,100,100), QColor(255,255,0), true);
             }
             if (ui->actionHighlightIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
@@ -15218,6 +15218,16 @@ void MainWindow::check_button_color()
       ui->actionHideTerritory4->setText("Hide stations from Territory 4");
     } else {
       ui->actionHideTerritory4->setText("Hide stations from " + m_config.Territory4());
+    }
+
+    if (m_config.twoDays()) {
+      ui->actionHideToday->setText("Hide stations worked today or yesterday");
+      ui->actionIgnoreToday->setText("Ignore stations worked today or yesterday");
+      ui->actionHighlightToday->setText("Highlight callsigns worked today or yesterday");
+    } else {
+      ui->actionHideToday->setText("Hide stations worked today");
+      ui->actionIgnoreToday->setText("Ignore stations worked today");
+      ui->actionHighlightToday->setText("Highlight callsigns worked today");
     }
 
     if (!m_config.button_coloring_disabled()) {

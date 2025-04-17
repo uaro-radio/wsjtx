@@ -285,6 +285,7 @@ public:
   bool AlwaysPass() const;
   bool filters_for_Wait_and_Pounce_only() const;
   bool filters_for_word2() const;
+  bool twoDays() const;
   bool alert_CQ () const;
   bool alert_MyCall () const;
   bool alert_DXCC () const;

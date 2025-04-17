@@ -914,6 +914,7 @@ private:
   bool AlwaysPass_;
   bool filters_for_Wait_and_Pounce_only_;
   bool filters_for_word2_;
+  bool twoDays_;
   bool bCloudLog_;
   int  SelectedActivity_;
   bool x2ToneSpacing_;
@@ -1081,6 +1082,7 @@ bool Configuration::Whitelisted() const {return m_->Whitelisted_;}
 bool Configuration::AlwaysPass() const {return m_->AlwaysPass_;}
 bool Configuration::filters_for_Wait_and_Pounce_only() const {return m_->filters_for_Wait_and_Pounce_only_;}
 bool Configuration::filters_for_word2() const {return m_->filters_for_word2_;}
+bool Configuration::twoDays() const {return m_->twoDays_;}
 bool Configuration::PWR_and_SWR () const {return m_->PWR_and_SWR_;}
 bool Configuration::check_SWR () const {return m_->check_SWR_;}
 bool Configuration::x2ToneSpacing() const {return m_->x2ToneSpacing_;}
@@ -2173,6 +2175,7 @@ void Configuration::impl::initialize_models ()
   ui_->cbPass->setChecked(AlwaysPass_);
   ui_->cb_filters_for_Wait_and_Pounce_only->setChecked(filters_for_Wait_and_Pounce_only_);
   ui_->cb_filters_for_word2->setChecked(filters_for_word2_);
+  ui_->cb_twoDays->setChecked(twoDays_);
   ui_->gbSpecialOpActivity->setChecked(bSpecialOp_);
   ui_->gbCloudlog->setChecked(bCloudLog_);
   ui_->leCloudlogApiUrl->setText(cloudLogApiUrl_);
@@ -2607,6 +2610,7 @@ void Configuration::impl::read_settings ()
   AlwaysPass_ = settings_->value("AlwaysPass",false).toBool ();
   filters_for_Wait_and_Pounce_only_ = settings_->value("FiltersForWaitAndPounceOnly",false).toBool ();
   filters_for_word2_ = settings_->value("FiltersForWord2",false).toBool ();
+  twoDays_ = settings_->value("TwoDays",false).toBool ();
   bSpecialOp_ = settings_->value("SpecialOpActivity",false).toBool ();
   bCloudLog_ = settings_->value("CloudLog",false).toBool ();
   cloudLogApiUrl_ = settings_->value ("CloudLogApiUrl", QString {}).toString ();
@@ -2870,6 +2874,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("AlwaysPass", AlwaysPass_);
   settings_->setValue ("FiltersForWaitAndPounceOnly", filters_for_Wait_and_Pounce_only_);
   settings_->setValue ("FiltersForWord2", filters_for_word2_);
+  settings_->setValue ("TwoDays", twoDays_);
   settings_->setValue ("SelectedActivity", SelectedActivity_);
   settings_->setValue ("SpecialOpActivity", bSpecialOp_);
   settings_->setValue ("CloudLog", bCloudLog_);
@@ -3450,6 +3455,7 @@ void Configuration::impl::accept ()
   AlwaysPass_ = ui_->cbPass->isChecked ();
   filters_for_Wait_and_Pounce_only_ = ui_->cb_filters_for_Wait_and_Pounce_only->isChecked ();
   filters_for_word2_ = ui_->cb_filters_for_word2->isChecked ();
+  twoDays_ = ui_->cb_twoDays->isChecked ();
   bSpecialOp_ = ui_->gbSpecialOpActivity->isChecked ();
   bCloudLog_ = ui_->gbCloudlog->isChecked ();
   cloudLogApiUrl_ = ui_->leCloudlogApiUrl->text ();
@@ -3561,6 +3567,7 @@ void Configuration::impl::accept ()
   AlwaysPass_ = ui_->cbPass->isChecked();
   filters_for_Wait_and_Pounce_only_ = ui_->cb_filters_for_Wait_and_Pounce_only->isChecked();
   filters_for_word2_ = ui_->cb_filters_for_word2->isChecked();
+  twoDays_ = ui_->cb_twoDays->isChecked();
   alert_CQ_ = ui_->cbCQ->isChecked();
   alert_MyCall_ = ui_->cbMyCall->isChecked();
   alert_DXCC_ = ui_->cbDXCC->isChecked();
