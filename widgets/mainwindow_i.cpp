@@ -9183,25 +9183,28 @@ void MainWindow::on_DX_Call_Button_clicked (bool checked)
 
 void MainWindow::wheelEvent(QWheelEvent *event)         // mouse wheel events
 {
-  if(ui->labDialFreq->hasFocus()) {   // temporary soloution before we've found something better
+  if(ui->labDialFreq->hasFocus() && !m_transmitting) {                         // kHz + or -
     Frequency dial_frequency {m_rigState.ptt () && m_rigState.split () ?
         m_rigState.tx_frequency () : m_rigState.frequency ()};
-    if (event->angleDelta().x() > 0 or event->angleDelta().y() > 0) {
+    if (event->angleDelta().x() > 2 or event->angleDelta().y() > 2) {
       dial_frequency = dial_frequency + 1000;
       ui->labDialFreq->setText (Radio::pretty_frequency_MHz_string (dial_frequency));
-    } else if (event->angleDelta().x() < 0 or event->angleDelta().y() < 0) {
+    } else if (event->angleDelta().x() < -2 or event->angleDelta().y() < -2) {
       dial_frequency = dial_frequency - 1000;
       ui->labDialFreq->setText (Radio::pretty_frequency_MHz_string (dial_frequency));
     }
-  setRig(dial_frequency);
+  if (m_astroWidget && m_astroWidget->doppler_tracking() && m_astroWidget->DopplerMethod()!=0) {
+    setRig(dial_frequency - m_astroCorrection.rx);
+  } else {
+    setRig(dial_frequency);
+  }
   setXIT (ui->TxFreqSpinBox->value ());
   ui->labDialFreq->clearFocus();
-  }
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
 {
-  if(ui->labDialFreq->hasFocus()) {                                         // kHz + or -
+  if(ui->labDialFreq->hasFocus() && !m_transmitting) {                         // kHz + or -
     if (event->button() & Qt::RightButton) {
       m_bandEdited = true;
       band_changed(m_freqNominal+1000);
