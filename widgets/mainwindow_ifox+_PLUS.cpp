@@ -9341,6 +9341,7 @@ void MainWindow::wheelEvent(QWheelEvent *event)         // mouse wheel events
   }
   setXIT (ui->TxFreqSpinBox->value ());
   ui->labDialFreq->clearFocus();
+  }
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
