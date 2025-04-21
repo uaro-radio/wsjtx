@@ -72,6 +72,8 @@ set (UG_IMGS
   images/algui.png
   images/AstroData_2.png
   images/Astronomical_data.png
+  images/audiostep1.png
+  images/audiostep2.png
   images/auto-seq.png
   images/bandbutton1.png
   images/bandbutton2.png
@@ -92,6 +94,7 @@ set (UG_IMGS
   images/file-menu.png
   images/filters1.png
   images/filters2.png
+  images/filters3.png
   images/fox_mode_warning.png
   images/freemsg.png
   images/FreqCal.png
@@ -106,6 +109,7 @@ set (UG_IMGS
   images/FT8_waterfall.png
   images/help-menu.png
   images/highlighting.png
+  images/livecq.png
   images/JT4F.png
   images/JT65B.png
   images/jtalert.png

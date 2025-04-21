@@ -193,6 +193,10 @@ _WSJT-X Improved_ additional capabilities  please refer to  <<WSJT-X_IMPROVED,Se
  - *Improvements for Fox operators* Inadvertent transmissions on frequencies overlapping the WSPR sub-bands is 
  now prevented. Furthermore, the Fox operator is notified if there is probably another Fox station on the frequency.
  
+ - *LiveCQ* is a tool for sending your decodes of other stations' CQ calls  from QMAP or MAP65 via the internet
+ to a website for others to view. The spots include all the information needed  to allow the spotted station to be found
+ on the band, including the mode in use. Spotting is fully automatic, but can be disabled if required.
+ 
 - *Numerous code improvements and fixes*
 
  

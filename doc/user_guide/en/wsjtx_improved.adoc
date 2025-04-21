@@ -109,6 +109,12 @@ combined in a separate Filters menu, which can be viewed using the *Filters* tab
 
 image::filters2.png[align="center",alt="Quick Filters"]
 
+An additional option allows the three respective Hide/Ignore/Highlight Quick Filters to be  switchable between “worked today”
+and “worked today or yesterday”. There is now a third checkbox for this in Settings/Filters. The text displayed in the main program
+under Filters switches accordingly. The new additional option is shown below.
+
+image::filters3.png[align="center",alt="Quick Filters 2"]
+
 A checkbox (labelled *BP*) on the main window allows all set filter options to be disabled temporarily with a single
 click. This can be used, for example, if you have skipped certain areas (e.g. to display only DX stations) but now
 want to monitor the entire band activity for a certain time.
@@ -165,6 +171,11 @@ to forget the k, in which case you usually experience a rig oontrol error!
 
 By selecting the checkbox in *File | Settings* Behavior group, the requirement to enter the 'k' is no longer needed
 (after closing and restarting the program).
+
+.Control of rig frequency by mouse
+
+Mouse buttons (left and right) and the scroll wheel can be used to adjust the dial frequency in 1Khz increments.
+These tuning options are available when the mouse pointer is placed over the Dial Frequency indicator.
 
 === Advanced highlighting options
 
@@ -273,13 +284,27 @@ image::diagnostic.png[align="center",alt="Diagnostic mode"]
 === Audio Alerts
 
 Use of this feature requires that your system is equipped with two sound cards. This requirement is fulfilled when 
-your rig is connected via USB audio (FT-991, IC-7300, etc), or if your computer itelf has an additional soundcard. 
-The audio alerts will be played on the *default audio device* (usually the loudspeaker of your computer), while the normal _WSJT-X_ output is still fed to your rig only. 
+your rig is connected via USB audio (FT-991, IC-7100, etc), or if your computer itelf has an additional soundcard. 
+The audio alerts will be played on the *default audio device* (for example the loudspeaker of your computer),
+while the normal _WSJT-X_ output is still fed to your rig only. 
+
+The first step  is to set up the computer's audio devices appropriately.
+The figure below shows the settings for a Windows 10 computer,  where the internal sound card provides audio via
+an analogue cable to the radio, and an external USB dongle has been added to play the audio alerts.  The menu was obtained
+by right clicking on the loudspeaker tray icon, selecting 'Sounds' and then the 'Playback' tab.
+
+image::audiostep1.png[align="center", alt="audiostep1"]
+
+The second step is to ensure that your radio receives transmit audio from the correct device.  This is shown below for
+the same computer.
+
+image::audiostep2.png[align="center", alt="audiostep2"]
+
 
 IMPORTANT: Ensure that your rig is NOT connected via "Default Device", else your audio alerts could be tranmitted
 over the air!
 
-You can check that the audio alerts are being directed to the PC loudspeaker by right clicking once on the *Band Hopping*
+You can check that the audio alerts are being directed to the correct device by right clicking once on the *Band Hopping*
 button in Tab 3, as shown below:
 
 image::testalerts.png[align="center",alt="testalerts"]
@@ -343,6 +368,38 @@ image::specialcommands.png[align="center",alt="specialcommands"]
 
 image::specialcommands2.png[align="center",alt="specialcommands2"]
 
+=== LiveCQ
+
+LiveCQ is a tool for sending your decodes of other stations' CQ calls  from QMAP or MAP65 via the internet to a website for others to view.
+The spots include all the information needed  to allow the spotted station to be found on the band, including the mode in use.
+You can also make use of it to see whether other stations can decode your own CQ calls. It has also been used for monitoring 
+who you are receiving if you are away from the shack, using a mobile device viewing the website.
+
+Spots from QMAP are formatted to show the sked frequency and audio offset in use, assuming
+of course that the calling station is using the CFOM Doppler method. 
+
+Spotting requires no action on your part, and is fully automatic.  If for any reason you do not wish to upload spots, this can be
+accomplished by selecting the 'Other' radio button in the settings, and leaving the adjacent field blank.  However, we do reommend to upload 
+spots, since this benefits everyone!
+
+The URL where LiveCQ spots are displayed is 
+
+https://w3sz.com/livecqMsgWindow.html
+
+The layout of the webpage is shown below.
+
+image::livecq.png[align="center",alt="livecq"]
+
+The buttons allow you to select only spots from specific bands.  The buttons are toggled on and off and are active when highlighted.
+‘None’ will clear all buttons, so you can select which band you are interested in with one mouse click.  ‘All’ will show all bands.
+You may view combinations of bands. If you wish to see spots from a specific spotting station (‘spotter’) or for a specific station
+being spotted (‘spottee’) use the checkbox and dialogue box below the buttons. Options for further customising the display are selected
+from the checkboxes above the buttons.
+
+TIP: If it seems that the webpage is not displaying correctly,  press CTRL+F5 to refresh the page
+
+
+
 === Miscellaneous Features
 
 .Map grid locators to U.S. States
@@ -403,4 +460,12 @@ image::rig_tuning.png[align="center",alt="rig_tuning"]
 .Cloudlog support
 
 The program is able to upload your QSOs to Cloudlog. Cloudlog is an open-source PHP & MySQL based amateur radio logging application. Find more information at https://www.magicbug.co.uk/cloudlog/. Activate the “Enable Cloudlog Features” checkbox (in *File | Settings | Advanced*) and enter your user data.
+
+.Download CALL3.TXT master files
+
+The CALL3.TXT file optionally used by some modes (e.g. JT65) can be updated from the *File|Settings|Colors* tab.
+
+
+
+
 
