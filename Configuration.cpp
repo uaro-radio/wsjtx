@@ -2784,7 +2784,7 @@ void Configuration::impl::write_settings ()
   }
   if (!audio_output_device_.isNull ()) {
     settings_->setValue ("SoundOutName", audio_output_device_.deviceName ());
-    settings_->setValue ("AudioOutputChannel", AudioDevice::toString (audio_input_channel_));
+    settings_->setValue ("AudioOutputChannel", AudioDevice::toString (audio_output_channel_));
   } else if (is_tci_ && tci_audio_) {
     settings_->setValue ("SoundOutName", "TCI audio");
     settings_->setValue ("AudioOutputChannel", "TCI audio");
