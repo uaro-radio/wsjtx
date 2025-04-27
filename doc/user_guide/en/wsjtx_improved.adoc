@@ -383,7 +383,7 @@ spots, since this benefits everyone!
 
 The URL where LiveCQ spots are displayed is 
 
-https://w3sz.com/livecqMsgWindow.html
+https://w3sz.com/livecq.html
 
 The layout of the webpage is shown below.
 
