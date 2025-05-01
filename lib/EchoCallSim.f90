@@ -14,7 +14,7 @@ program EchoCallSim
   complex z
   real*8 f0,dt,twopi,phi,dphi,dftone,fsample,freq
   character callsign*6,fname*17,arg*8
-  character*37 c
+!  character*37 c
 
   equivalence (nDop0,iwave(1))
   equivalence (nDopAudio0,iwave(3))
@@ -22,7 +22,7 @@ program EchoCallSim
   equivalence (f10,iwave(7))
   equivalence (fspread0,iwave(9))
   
-  data c/' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
+!  data c/' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
   
   nargs=iargc()
   if(nargs.ne.7) then
@@ -55,8 +55,6 @@ program EchoCallSim
      if(m.ge.65 .and. m.le.90) itone(i)=m-54       !A-Z
      if(m.ge.97 .and. m.le.122) itone(i)=m-86      !a-z
   enddo
-  write(*,3001) itone
-3001 format(10i3)
   
   twopi=8.d0*atan(1.d0)
   rms=100.
