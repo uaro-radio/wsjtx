@@ -513,7 +513,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         m_config.udp_server_name (), m_config.udp_server_port (),
         m_config.udp_interface_names (), m_config.udp_TTL (),
         this}},
-  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " "}.simplified ()},     // UR
+  m_psk_Reporter {&m_config, QString {"WSJT-X v" + version () + " i+"}.simplified ()},     // UR
   m_manual {&m_network_manager},
   m_block_udp_status_updates {false},
   m_useDarkStyle {false}
@@ -1197,7 +1197,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   if(QCoreApplication::applicationVersion().contains("-devel") or
      QCoreApplication::applicationVersion().contains("-rc")) {
-//    QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));     // UR
+//    QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));
   }
 
   m_specOp=m_config.special_op_id();
@@ -1514,7 +1514,6 @@ void MainWindow::writeSettings()
   m_settings->setValue ("HideAF", ui->actionHideAF->isChecked() );
   m_settings->setValue ("HideOC", ui->actionHideOC->isChecked() );
   m_settings->setValue ("HideAN", ui->actionHideAN->isChecked() );
-  m_settings->setValue ("HighlightCallsigns", ui->actionHighlightCallsigns->isChecked() );
   m_settings->endGroup();
 }
 
@@ -1709,7 +1708,6 @@ void MainWindow::readSettings()
   ui->actionHideAF->setChecked(m_settings->value("HideAF", false).toBool());
   ui->actionHideOC->setChecked(m_settings->value("HideOC", false).toBool());
   ui->actionHideAN->setChecked(m_settings->value("HideAN", false).toBool());
-  ui->actionHighlightCallsigns->setChecked(m_settings->value("HighlightCallsigns", false).toBool());
 //  m_mode=m_settings->value("Mode","FT8").toString();
   ui->actionNone->setChecked(m_settings->value("SaveNone",true).toBool());
   ui->actionSave_decoded->setChecked(m_settings->value("SaveDecoded",false).toBool());
@@ -1768,7 +1766,7 @@ void MainWindow::readSettings()
     // We need this to initialize the height of tab 1 correctly
     ui->pbFreeText->setVisible(false);
     ui->cbSendMsg->setVisible(false);
-    ui->tabWidget->setCurrentIndex(2);
+    ui->tabWidget->setCurrentIndex(1);
     ui->tabWidget->setCurrentIndex(n);
   }
   outBufSize=m_settings->value("OutBufSize",4096).toInt();
@@ -1891,40 +1889,40 @@ void MainWindow::set_application_font (QFont const& font)
       ui->label->setAlignment(Qt::AlignCenter);
       ui->outAttenuation->setMinimumWidth (2.8*pointSize + 8);
   }
-  if (pointSize < 10) {
-      ui->tabWidget->setMaximumHeight(220);                           // UR for AL
-//      if (ui->actionUse_Dark_Style->isChecked()) {
-//          ui->tabWidget->setMaximumHeight(228);                       // UR for normal + widescreen
-//          ui->houndButton->setMinimumWidth(50);                       // UR for normal + widescreen
-//          ui->ft8Button->setMinimumWidth(50);                         // UR for normal + widescreen
-//          ui->ft4Button->setMinimumWidth(50);                         // UR for normal + widescreen
-//          ui->msk144Button->setMinimumWidth(50);                      // UR for normal + widescreen
-//          ui->q65Button->setMinimumWidth(50);                         // UR for normal + widescreen
-//          ui->jt65Button->setMinimumWidth(50);                        // UR for normal + widescreen
-//      } else {
-//          ui->tabWidget->setMaximumHeight(228);                       // UR for normal + widescreen
-//          ui->houndButton->setMaximumWidth(40);                       // UR for normal + widescreen
-//          ui->ft8Button->setMaximumWidth(40);                         // UR for normal + widescreen
-//          ui->ft4Button->setMaximumWidth(40);                         // UR for normal + widescreen
-//          ui->msk144Button->setMaximumWidth(40);                      // UR for normal + widescreen
-//          ui->q65Button->setMaximumWidth(40);                         // UR for normal + widescreen
-//          ui->jt65Button->setMaximumWidth(40);                        // UR for normal + widescreen
-//          ui->houndButton->setMinimumWidth(0);                        // UR for normal + widescreen
-//          ui->ft8Button->setMinimumWidth(0);                          // UR for normal + widescreen
-//          ui->ft4Button->setMinimumWidth(0);                          // UR for normal + widescreen
-//          ui->msk144Button->setMinimumWidth(0);                       // UR for normal + widescreen
-//          ui->q65Button->setMinimumWidth(0);                          // UR for normal + widescreen
-//          ui->jt65Button->setMinimumWidth(0);                         // UR for normal + widescreen
-//      }
+  if (pointSize < 11) {
+//      ui->tabWidget->setMaximumHeight(210);                           // UR for AL
+      if (ui->actionUse_Dark_Style->isChecked()) {
+//          ui->tabWidget->setMaximumHeight(225);                       // UR for normal + widescreen
+          ui->houndButton->setMinimumWidth(50);                       // UR for normal + widescreen
+          ui->ft8Button->setMinimumWidth(50);                         // UR for normal + widescreen
+          ui->ft4Button->setMinimumWidth(50);                         // UR for normal + widescreen
+          ui->msk144Button->setMinimumWidth(50);                      // UR for normal + widescreen
+          ui->q65Button->setMinimumWidth(50);                         // UR for normal + widescreen
+          ui->jt65Button->setMinimumWidth(50);                        // UR for normal + widescreen
+      } else {
+//          ui->tabWidget->setMaximumHeight(225);                       // UR for normal + widescreen
+          ui->houndButton->setMaximumWidth(40);                       // UR for normal + widescreen
+          ui->ft8Button->setMaximumWidth(40);                         // UR for normal + widescreen
+          ui->ft4Button->setMaximumWidth(40);                         // UR for normal + widescreen
+          ui->msk144Button->setMaximumWidth(40);                      // UR for normal + widescreen
+          ui->q65Button->setMaximumWidth(40);                         // UR for normal + widescreen
+          ui->jt65Button->setMaximumWidth(40);                        // UR for normal + widescreen
+          ui->houndButton->setMinimumWidth(0);                        // UR for normal + widescreen
+          ui->ft8Button->setMinimumWidth(0);                          // UR for normal + widescreen
+          ui->ft4Button->setMinimumWidth(0);                          // UR for normal + widescreen
+          ui->msk144Button->setMinimumWidth(0);                       // UR for normal + widescreen
+          ui->q65Button->setMinimumWidth(0);                          // UR for normal + widescreen
+          ui->jt65Button->setMinimumWidth(0);                         // UR for normal + widescreen
+      }
   } else {
-      ui->tabWidget->setMaximumHeight(255);                           // UR for AL
+//      ui->tabWidget->setMaximumHeight(255);                           // UR for AL
 //      ui->tabWidget->setMaximumHeight(500);                           // UR for normal + widescreen
-//      ui->houndButton->setMinimumWidth(50);                           // UR for normal + widescreen
-//      ui->ft8Button->setMinimumWidth(50);                             // UR for normal + widescreen
-//      ui->ft4Button->setMinimumWidth(50);                             // UR for normal + widescreen
-//      ui->msk144Button->setMinimumWidth(50);                          // UR for normal + widescreen
-//      ui->q65Button->setMinimumWidth(50);                             // UR for normal + widescreen
-//      ui->jt65Button->setMinimumWidth(50);                            // UR for normal + widescreen
+      ui->houndButton->setMinimumWidth(50);                           // UR for normal + widescreen
+      ui->ft8Button->setMinimumWidth(50);                             // UR for normal + widescreen
+      ui->ft4Button->setMinimumWidth(50);                             // UR for normal + widescreen
+      ui->msk144Button->setMinimumWidth(50);                          // UR for normal + widescreen
+      ui->q65Button->setMinimumWidth(50);                             // UR for normal + widescreen
+      ui->jt65Button->setMinimumWidth(50);                            // UR for normal + widescreen
   }
   if (m_config.largerTabWidget()) ui->tabWidget->setMaximumHeight(1000);
   for (auto& widget : qApp->topLevelWidgets ())
@@ -3740,7 +3738,7 @@ void MainWindow::displayDialFrequency ()
           no_decodes_to_UDP = false;  // prevent wrong frequencies for devices connected via UDP
           pskSetLocal ();   // prevent wrong frequencies for PSK Reporter antenna description
       });
-  }
+    }
 
   // search working frequencies for one we are within 10kHz of (1 Mhz
   // of on VHF and up)
@@ -6313,37 +6311,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         // highlight callsigns worked B4 on band or worked today
-//        if (ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked() or ui->actionHighlightIgnored->isChecked()) {
-//            QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
-//            QString yesterday = QDateTime::currentDateTimeUtc().addDays(-1).toString ("yyyy-MM-dd");
-//            QString deCall;
-//            QString deGrid;
-//            decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-//            bool callB4onBand;
-//            bool countryB4onBand;
-//            bool gridB4onBand;
-//            bool continentB4onBand;
-//            bool CQZoneB4onBand;
-//            bool ITUZoneB4onBand;
-//            if (ui->actionHighlightB4->isChecked()) {
-//                auto const& looked_up = m_logBook.countries ()->lookup (deCall);
-//                m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
-//                                 continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
-//                if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
-//            }
-//            if (ui->actionHighlightToday->isChecked() && (
-//                  txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
-//                  or (m_config.twoDays() && txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})))) {
-//               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(100,100,100), QColor(255,255,0), true);
-//            }
-//            if (ui->actionHighlightIgnored->isChecked() && ignoreList.contains(deCall + ",")) {
-//               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(85,0,0), QColor(255,255,0), true);
-//            }
-//        }
-
-        // highlight callsigns   // DG2YCB only
-        if(ui->actionHighlightCallsigns->isChecked() or ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked()
-           or ui->actionHighlightIgnored->isChecked()) {
+        if (ui->actionHighlightB4->isChecked() or ui->actionHighlightToday->isChecked() or ui->actionHighlightIgnored->isChecked()) {
             QString today = QDateTime::currentDateTimeUtc().toString ("yyyy-MM-dd");
             QString yesterday = QDateTime::currentDateTimeUtc().addDays(-1).toString ("yyyy-MM-dd");
             QString deCall;
@@ -6355,25 +6323,12 @@ void MainWindow::readFromStdout()                             //readFromStdout
             bool continentB4onBand;
             bool CQZoneB4onBand;
             bool ITUZoneB4onBand;
-            auto const& looked_up = m_logBook.countries ()->lookup (deCall);
-            auto countryName = looked_up.entity_name;
-            QString continent = AD1CCty::continent (looked_up.continent);
-            m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
-              continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
-            if (!m_band_changed) {
-              if (ui->actionHighlightCallsigns->isChecked() && deCall!="" && (m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm") && (!callB4onBand and
-                  (!(countryName.contains("Germany") or countryName.contains("Netherlands") or countryName.contains("Belgium"))))) {
-                ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,255,0), QColor(0,0,0), true);
-              }
-              if (ui->actionHighlightCallsigns->isChecked() && deCall!="" && (m_currentBandPeriod == "2m" or m_currentBandPeriod == "70cm" or m_currentBandPeriod == "6m" or m_currentBandPeriod == "160m") && continent != "EU") {
-                ui->decodedTextBrowser->highlight_callsign(deCall, QColor(255,130,255), QColor(0,0,0), true);
-              }
+            if (ui->actionHighlightB4->isChecked()) {
+                auto const& looked_up = m_logBook.countries ()->lookup (deCall);
+                m_logBook.match (deCall, m_mode, deGrid, looked_up, callB4onBand, countryB4onBand, gridB4onBand,
+                                 continentB4onBand, CQZoneB4onBand, ITUZoneB4onBand, m_currentBand);
+                if (callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
             }
-//            if (ui->actionHighlightCallsigns->isChecked() && (deCall=="K1JT" or deCall=="K9AN" or deCall=="W2PU" or deCall=="N9ADG" or deCall=="IV3NWV"))
-//               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(170,0,225), QColor(255,255,255), true);
-            if (ui->actionHighlightCallsigns->isChecked() && (deCall=="MM0HVU" or deCall=="LZ2HV" or deCall=="ES1JA" or deCall=="UA3DJY" or deCall=="OE1MWW"))
-              ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,0,0), QColor(255,255,0), true);
-            if (ui->actionHighlightB4->isChecked() && callB4onBand) ui->decodedTextBrowser->highlight_callsign(deCall, QColor(195,195,195), QColor(0,0,0), true);
             if (ui->actionHighlightToday->isChecked() && (
                 txLog.contains(QRegularExpression{today + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})
                 or (m_config.twoDays() && txLog.contains(QRegularExpression{yesterday + ",[0-9][0-9]:[0-9][0-9]:[0-9][0-9]," + (deCall + ",")})))) {
@@ -7756,9 +7711,9 @@ void MainWindow::guiUpdate()
     }
 
     QDateTime t = QDateTime::currentDateTimeUtc();
-//    QString utc = t.date().toString("yyyy MMM dd") + "\n " +
-//      t.time().toString() + " ";
-    QString utc = t.time().toString();      // UR for AL version use this and disable the 2 lines above
+    QString utc = t.date().toString("yyyy MMM dd") + "\n " +
+      t.time().toString() + " ";
+//    QString utc = t.time().toString();      // UR for AL version use this and disable the 2 lines above
     ui->labUTC->setText(utc);
     if(m_bBestSPArmed and (m_dateTimeBestSP.secsTo(t) >= 120)) on_pbBestSP_clicked(); //BestSP timeout
     if(!m_monitoring and !m_diskData) ui->signal_meter_widget->setValue(0,0);
@@ -10027,8 +9982,8 @@ void MainWindow::on_actionFST4_triggered()
   });
   m_mode="FST4";
   if(m_specOp==SpecOp::HOUND) {
-    m_config.setSpecial_None();
-    m_specOp=m_config.special_op_id();
+  m_config.setSpecial_None();
+  m_specOp=m_config.special_op_id();
   }
   ui->actionFST4->setChecked(true);
   m_bFast9=false;
@@ -10872,7 +10827,7 @@ void MainWindow::switch_mode (Mode mode)
     ui->RxFreqSpinBox->setMaximum(1600);
     ui->RxFreqSpinBox->setSingleStep(25);
   } else {
-    ui->RxFreqSpinBox->setMinimum(100);     // UR 200->100
+    ui->RxFreqSpinBox->setMinimum(200);     // UR 200->100
     ui->RxFreqSpinBox->setMaximum(5000);
     ui->RxFreqSpinBox->setSingleStep(1);
   }
@@ -10880,7 +10835,7 @@ void MainWindow::switch_mode (Mode mode)
   ui->tabWidget->setVisible(!b);
   if(b) {
     ui->DX_controls_widget->setVisible(false);
-//    ui->rh_decodes_widget->setVisible (false);     // UR disable for AL + widescreen versions
+    ui->rh_decodes_widget->setVisible (false);     // UR disable for AL + widescreen versions
     ui->lh_decodes_title_label->setVisible(false);
   }
   QTimer::singleShot (500, [=] {
@@ -10892,7 +10847,7 @@ void MainWindow::switch_mode (Mode mode)
 
 void MainWindow::WSPR_config(bool b)
 {
-//  ui->rh_decodes_widget->setVisible(!b);     // UR disable for AL + widescreen version
+  ui->rh_decodes_widget->setVisible(!b);     // UR disable for AL + widescreen version
   ui->controls_stack_widget->setCurrentIndex (b && m_mode != "Echo" ? 1 : 0);
   ui->QSO_controls_widget->setVisible (!b);
   ui->DX_controls_widget->setVisible (!b or (m_mode=="Echo"));
@@ -11646,16 +11601,8 @@ void MainWindow::rigFailure (QString const& reason)
   if (m_first_error)
     {
       // one automatic retry
-      QTimer::singleShot (1000, this, SLOT (rigOpen ()));          // UR retry each second
-//      m_first_error = false;                                     // UR retry for 10 seconds before MessageBox comes
-      if (!blocked) {
-        QTimer::singleShot (10000, [=] {m_first_error = false;});  // UR retry for 10 seconds
-        ui->pbBandHopping->setChecked(false);                      // UR stop BandHopping
-        ui->stopTxButton->click();                                 // UR stop Tx instead
-        monitor (false);                                           // UR stop monitoring
-        m_loopall=false;                                           // UR stop monitoring
-        blocked = true;
-      }
+      QTimer::singleShot (0, this, SLOT (rigOpen ()));
+      m_first_error = false;
     }
   else
     {
@@ -11696,7 +11643,6 @@ void MainWindow::rigFailure (QString const& reason)
             }
         }
       m_first_error = true;     // reset
-      blocked = false;          // UR reset done bolean
     }
 }
 
@@ -12151,7 +12097,8 @@ void MainWindow::on_sbTR_valueChanged(int value)
     m_wideGraph->setPeriod (value, m_nsps);
     progressBar.setMaximum (value);
   }
-//  if(m_transmitting) on_stopTxButton_clicked();      //### Is this needed or desirable? ###
+  //  if(m_transmitting) on_stopTxButton_clicked();      //### Is this needed or desirable? ###
+  if (m_mode=="FST4") chk_FST4_freq_range();
   on_sbSubmode_valueChanged(ui->sbSubmode->value());
   statusUpdate ();
   check_button_color();
@@ -14532,18 +14479,9 @@ void MainWindow::on_jt65Button_clicked()
     on_actionJT65_triggered();
 }
 
-void MainWindow::on_fst4Button_clicked()     // UR disable for normal + widescreen versions
+void MainWindow::on_echoButton_clicked()
 {
-    if (m_config.enable_VHF_features() && m_config.decode_at_52s()) {
-        on_actionEcho_triggered();
-    } else {
-        on_actionFST4_triggered();
-    }
-}
-
-void MainWindow::on_wsprButton_clicked()     // UR disable for normal + widescreen versions
-{
-    on_actionWSPR_triggered();
+    on_actionEcho_triggered();
 }
 
 void MainWindow::sfox_tx() {
@@ -15070,7 +15008,7 @@ void MainWindow::on_actionDiagnostic_mode_triggered()
 {
 #if defined(Q_OS_WIN)
     static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx_log_config.ini")};
-#else 
+#else
     static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::ConfigLocation)}.absoluteFilePath ("wsjtx_log_config.ini")};
 #endif
     if(!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -15184,18 +15122,18 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
     }
     // ensure a balanced layout
     qreal pointSize = m_config.text_font().pointSizeF();
-    if (pointSize < 9) ui->controls_stack_widget->setMaximumWidth(180);     // UR for AL
-    if (pointSize == 9) ui->controls_stack_widget->setMaximumWidth(200);    // UR for AL
-    if (pointSize == 10) ui->controls_stack_widget->setMaximumWidth(220);   // UR for AL
-    if (pointSize > 10) ui->controls_stack_widget->setMaximumWidth(240);    // UR for AL
+//    if (pointSize < 9) ui->controls_stack_widget->setMaximumWidth(180);     // UR for AL
+//    if (pointSize == 9) ui->controls_stack_widget->setMaximumWidth(200);    // UR for AL
+//    if (pointSize == 10) ui->controls_stack_widget->setMaximumWidth(220);   // UR for AL
+//    if (pointSize > 10) ui->controls_stack_widget->setMaximumWidth(240);    // UR for AL
     if (pointSize < 11) {
-        ui->tabWidget->setMaximumHeight(220);                               // UR for AL
-        ui->controls_stack_widget->setMaximumHeight(200);                   // UR for AL
-//        if (ui->actionUse_Dark_Style->isChecked()) ui->tabWidget->setMaximumHeight(225);  // UR for normal + widescreen
+//        ui->tabWidget->setMaximumHeight(210);                               // UR for AL
+//        ui->controls_stack_widget->setMaximumHeight(200);                   // UR for AL
+        if (ui->actionUse_Dark_Style->isChecked()) ui->tabWidget->setMaximumHeight(225);  // UR for normal + widescreen
     } else {
-        ui->tabWidget->setMaximumHeight(255);                               // UR for AL
-        ui->controls_stack_widget->setMaximumHeight(220);                   // UR for AL
-//        ui->tabWidget->setMaximumHeight(500);                               // UR for normal + widescreen
+//        ui->tabWidget->setMaximumHeight(255);                               // UR for AL
+//        ui->controls_stack_widget->setMaximumHeight(225);                   // UR for AL
+        ui->tabWidget->setMaximumHeight(500);                               // UR for normal + widescreen
     }
     for (auto& widget : qApp->topLevelWidgets ())
       {
@@ -15240,7 +15178,7 @@ void MainWindow::check_button_color()
     } else {
         ui->DX_Call_Button->setChecked(false);
         if (m_useDarkStyle) {
-           ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; color: #ffffff; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+            ui->DX_Call_Button->setStyleSheet("QPushButton {background-color: #505F69; color: #ffffff; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
             if (!m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #505F69; color: #ffffff; border: 1px solid #32414B; color: #F0F0F0; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
             if (m_auto) ui->autoButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 5em;}");
         } else {
@@ -15306,7 +15244,7 @@ void MainWindow::check_button_color()
     }
 
     if (!m_config.button_coloring_disabled()) {
-      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==15 && m_nSubMode==0 && !m_config.button_coloring_disabled()) {
+      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==15 && m_nSubMode==0) {
           ui->pb15A->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
       } else {
           if (m_useDarkStyle) {
@@ -15315,7 +15253,7 @@ void MainWindow::check_button_color()
               ui->pb15A->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
           }
       }
-      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==15 && m_nSubMode==2 && !m_config.button_coloring_disabled()) {
+      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==15 && m_nSubMode==2) {
           ui->pb15C->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
       } else {
           if (m_useDarkStyle) {
@@ -15324,7 +15262,7 @@ void MainWindow::check_button_color()
               ui->pb15C->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
           }
       }
-      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==30 && m_nSubMode==1 && !m_config.button_coloring_disabled()) {
+      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==30 && m_nSubMode==1) {
           ui->pb30B->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
       } else {
           if (m_useDarkStyle) {
@@ -15333,7 +15271,7 @@ void MainWindow::check_button_color()
               ui->pb30B->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
           }
       }
-      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==60 && m_nSubMode==2 && !m_config.button_coloring_disabled()) {
+      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==60 && m_nSubMode==2) {
           ui->pb60C->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
       } else {
           if (m_useDarkStyle) {
@@ -15361,95 +15299,77 @@ void MainWindow::check_button_color()
           }
       }
       if (ui->houndButton->isChecked() && !m_config.button_coloring_disabled()) {
-          ui->houndButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          ui->houndButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
-          if (SpecOp::FOX==m_specOp && !m_config.button_coloring_disabled()) {
-            ui->houndButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+        if (SpecOp::FOX==m_specOp && !m_config.button_coloring_disabled()) {
+          ui->houndButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
+        } else {
+          if (m_useDarkStyle) {
+             ui->houndButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
           } else {
-            if (m_useDarkStyle) {
-               ui->houndButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-            } else {
-               ui->houndButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
-            }
+             ui->houndButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
           }
+        }
       }
       if (m_mode=="FT8") {
-        ui->ft8Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          ui->ft8Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
-        if (m_useDarkStyle) {
-            ui->ft8Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-        } else {
-            ui->ft8Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
-        }
+          if (m_useDarkStyle) {
+             ui->ft8Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->ft8Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
       }
       if (m_mode=="FT4") {
-        ui->ft4Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          ui->ft4Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
-        if (m_useDarkStyle) {
-            ui->ft4Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-        } else {
-            ui->ft4Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
-        }
+          if (m_useDarkStyle) {
+             ui->ft4Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->ft4Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
       }
       if (m_mode=="MSK144") {
-        ui->msk144Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          ui->msk144Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
-         if (m_useDarkStyle) {
-            ui->msk144Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-        } else {
-            ui->msk144Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
-        }
+          if (m_useDarkStyle) {
+             ui->msk144Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->msk144Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
       }
       if (m_mode=="Q65") {
-        ui->q65Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          ui->q65Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
-        if (m_useDarkStyle) {
-            ui->q65Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-        } else {
-            ui->q65Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
-        }
+          if (m_useDarkStyle) {
+             ui->q65Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->q65Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
       }
       if (m_mode=="JT65") {
-        ui->jt65Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          ui->jt65Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
-        if (m_useDarkStyle) {
-            ui->jt65Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-        } else {
-            ui->jt65Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
-        }
+          if (m_useDarkStyle) {
+             ui->jt65Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->jt65Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
       }
-      if (m_mode=="WSPR") {
-        ui->wsprButton->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+      if (m_mode=="Echo" && ui->echoButton->isVisible()) {
+          ui->echoButton->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
-        if (m_useDarkStyle) {
-            ui->wsprButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-        } else {
-            ui->wsprButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
-        }
+          if (m_useDarkStyle) {
+             ui->echoButton->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none; min-width: 3em;}");
+          } else {
+             ui->echoButton->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none; min-width: 3em;}");
+          }
       }
     }
     if (m_config.enable_VHF_features() && m_config.decode_at_52s()) {
-        ui->fst4Button->setText ("Echo");
-        if (m_mode=="Echo") {
-          ui->fst4Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
-        } else {
-          if (m_useDarkStyle) {
-              ui->fst4Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-          } else {
-              ui->fst4Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
-          }
-        }
+        ui->echoButton->setVisible (true);
     } else {
-        ui->fst4Button->setText ("FST4");
-        if (m_mode=="FST4") {
-          ui->fst4Button->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
-        } else {
-          if (m_useDarkStyle) {
-              ui->fst4Button->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
-          } else {
-              ui->fst4Button->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
-          }
-        }
+        ui->echoButton->setVisible (false);
     }
     if (m_mode=="JT65" && m_config.enable_VHF_features() && ui->cbShMsgs->isChecked()) {
         ui->tx3->setStyleSheet("color: #000000; background-color: #66ffff");

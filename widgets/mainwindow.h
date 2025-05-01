@@ -183,8 +183,7 @@ private slots:
   void on_msk144Button_clicked();
   void on_q65Button_clicked();
   void on_jt65Button_clicked();
-  void on_fst4Button_clicked();
-  void on_wsprButton_clicked();
+  void on_echoButton_clicked();
   void on_pb15A_clicked();
   void on_pb15C_clicked();
   void on_pb30B_clicked();
