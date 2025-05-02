@@ -38,6 +38,8 @@ program testEchoCall
   df=6000.0/NH
   p2=0.
 
+  write(*,1000)
+1000 format(' N   Sent    Rcvd'/19('-'))
   do ifile=2,narg
      call getarg(ifile,fname)
      open(10,file=trim(fname),access='stream',status='unknown')
@@ -64,8 +66,8 @@ program testEchoCall
         k=nint(((ipk(1)-1)*df - 1500.0)/DFTONE) + 1
         if(k.ge.1 .and. k.le.37) rxcall(j:j)=c(k:k)
      enddo
-     write(*,1000) txcall,rxcall
-1000 format('Sent: ',a6,'   Received: ',a6)
+     write(*,1100) ifile-1,txcall,rxcall
+1100 format(i3,2x,a6,2x,a6)
 
 !     do i=0,NSPS/2
 !        write(13,3012) i*df,p(i)
