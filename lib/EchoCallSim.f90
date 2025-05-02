@@ -5,6 +5,7 @@ program EchoCallSim
   use wavhdr
   parameter (NSPS=4480,NZ=3*12000)
   parameter (NMAX=6*NSPS)                !Samples in .wav file, 2.2*12000
+  parameter (DFTONE=10.0)                !Tone spacing, Hz)
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NZ)                    !Generated waveform
   integer itone(6)                       !Channel symbols, values 0-37
@@ -12,7 +13,7 @@ program EchoCallSim
   real*4 dat(NMAX)                       !Generated real data
   complex cdat(NMAX)                     !Generated complex waveform
   complex z
-  real*8 f0,dt,twopi,phi,dphi,dftone,fsample,freq
+  real*8 f0,dt,twopi,phi,dphi,fsample,freq
   character callsign*6,fname*17,arg*8
 !  character*37 c
 
@@ -25,9 +26,9 @@ program EchoCallSim
 !  data c/' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
   
   nargs=iargc()
-  if(nargs.ne.7) then
-     print*,'Usage:   EchoCallSim callsign f0 fdop fspread ndf nfiles snrdb'
-     print*,'Example: EchoCallSim   K1JT  1500 0.0  10.0    2    10    -15'
+  if(nargs.ne.6) then
+     print*,'Usage:   EchoCallSim callsign f0 fdop fspread nfiles snrdb'
+     print*,'Example: EchoCallSim   K1JT  1500 0.0  10.0     10    -15'
      go to 999
   endif
   call getarg(1,callsign)
@@ -38,14 +39,12 @@ program EchoCallSim
   call getarg(4,arg)
   read(arg,*) fspread
   call getarg(5,arg)
-  read(arg,*) ndf
-  call getarg(6,arg)
   read(arg,*) nfiles
-  call getarg(7,arg)
+  call getarg(6,arg)
   read(arg,*) snrdb
 
   write(*,1000)
-1000 format('   N   f0     fDop fSpread dftone  SNR   File name'/58('-'))
+1000 format('   N   f0     fDop fSpread  SNR   File name'/58('-'))
   
   itone=0                                               !Default character is blank
   k=1
@@ -64,7 +63,6 @@ program EchoCallSim
   nh=nfft/2
   dt=1.d0/fsample                    !Sample interval (s)
   df=12000.0/NSPS
-  dftone=ndf*df
   
   do ifile=1,nfiles  !Loop over requested number of files
      xnoise=0.
@@ -82,7 +80,7 @@ program EchoCallSim
      dphi=0.d0
      k=0
      do j=1,6
-        freq=f0 + fdop + itone(j)*dftone
+        freq=f0 + fdop + itone(j)*DFTONE
         dphi=twopi*freq*dt
         do i=1,NSPS
            phi=phi + dphi
@@ -119,8 +117,8 @@ program EchoCallSim
      write(10) h,iwave                        !Save the .wav file
      close(10)
 
-     write(*,1110) ifile,f0,fdop,fspread,dftone,snrdb,fname
-1110 format(i4,5f7.1,2x,a17)
+     write(*,1110) ifile,f0,fdop,fspread,snrdb,fname
+1110 format(i4,4f7.1,2x,a17)
 
   enddo
 
