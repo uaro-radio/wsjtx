@@ -375,9 +375,6 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_secID {0},
   m_idleMinutes {0},
   m_nSubMode {0},
-  m_nSubMode_Q65 {0},
-  m_nSubMode_JT65 {0},
-  m_nSubMode_JT4 {0},
   m_nclearave {1},
   m_nWSPRdecodes {0},
   m_k0 {9999999},
@@ -1611,18 +1608,18 @@ void MainWindow::readSettings()
   }
   if (m_mode=="Q65") {
     m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();
-    ui->sbSubmode->setValue(m_nSubMode_Q65);
+    ui->sbSubmode->setValue(m_nSubMode);
     ui->sbFtol->setValue (m_settings->value("Ftol_Q65", 50).toInt());
     ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());
   }
   if (m_mode=="JT65") {
     m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();
-    ui->sbSubmode->setValue(m_nSubMode_JT65);
+    ui->sbSubmode->setValue(m_nSubMode);
     ui->sbFtol->setValue (m_settings->value("Ftol_JT65", 50).toInt());
   }
   if (m_mode=="JT4") {
     m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();
-    ui->sbSubmode->setValue(m_nSubMode_JT4);
+    ui->sbSubmode->setValue(m_nSubMode);
     ui->sbFtol->setValue (m_settings->value("Ftol_JT4", 50).toInt());
     ui->sbTR->setValue (m_settings->value ("TRPeriod_FST4", 60).toInt());
   }
