@@ -78,7 +78,7 @@ controls supporting the features of each mode.
 the *Settings | Frequencies* tab.  Offset is defined as (transceiver
 dial reading) minus (on-the-air frequency).  For example, when using a
 144 MHz radio at 10368 MHz, *Offset (MHz)* = (144 - 10368) =
--10224.000.  If the band is already in the table, you can edit the
+-10224.  If the band is already in the table, you can edit the
 offset by double clicking on the offset field itself.  Otherwise a new
 band can be added by right clicking in the table and selecting
 *Insert*.
