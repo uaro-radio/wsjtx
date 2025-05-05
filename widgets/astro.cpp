@@ -29,9 +29,9 @@ extern "C" {
                 double * azsun, double * elsun, double * azmoon,
                 double * elmoon, double * azmoondx, double * elmoondx, int * ntsky,
                 int * ndop, int * ndop00, double * ramoon, double * decmoon, double * dgrd,
-                double * poloffset, double * xnr, double * techo, double * width1,
+                double * poloffset, double * xnr, bool extraazel, double * techo, double * width1,
                 double * width2, bool bTx, const char * AzElFileName,
-                const char * jpleph);
+                const char * jpleph); 
 }
 
 Astro::Astro(QSettings * settings, Configuration const * configuration, QWidget * parent)
@@ -119,13 +119,14 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
   if(freq_moon < 1) freq_moon = 144000000;
   auto const& AzElFileName = QDir::toNativeSeparators (configuration_->azel_directory ().absoluteFilePath ("azel.dat"));
   auto const& jpleph = configuration_->data_dir ().absoluteFilePath ("JPLEPH");
-
+  SettingsGroup g (settings_, "Configuration");
+  bool extraazel=settings_->value("AzElExtraLines",false).toBool();
   astrosub(nyear, month, nday, uth, static_cast<double> (freq_moon),
            mygrid.toLatin1 ().data (),
            hisgrid.toLatin1().data(),
            &azsun, &elsun, &azmoon, &elmoon,
            &azmoondx, &elmoondx, &ntsky, &m_dop, &m_dop00, &ramoon, &decmoon,
-           &dgrd, &poloffset, &xnr, &techo, &width1, &width2,
+           &dgrd, &poloffset, &xnr, extraazel, &techo, &width1, &width2,
            bTx,
            AzElFileName.toLocal8Bit ().constData (),
            jpleph.toLocal8Bit ().constData ());
@@ -257,7 +258,7 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
                   hisgrid.toLatin1().data(),
                   &azsun, &elsun, &azmoon, &elmoon,
                   &azmoondx, &elmoondx, &ntsky, &m_dop, &m_dop00, &ramoon, &decmoon,
-                  &dgrd, &poloffset, &xnr, &techo, &width1, &width2,
+                  &dgrd, &poloffset, &xnr, extraazel, &techo, &width1, &width2,
                   bTx,
                   nullptr,      // don't overwrite azel.dat
                   jpleph.toLocal8Bit ().constData ());

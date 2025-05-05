@@ -11,7 +11,7 @@ contains
 
   subroutine astrosub(nyear,month,nday,uth8,freq8,mygrid_cp,                    &
        hisgrid_cp,AzSun8,ElSun8,AzMoon8,ElMoon8,AzMoonB8,ElMoonB8,              &
-       ntsky,ndop,ndop00,RAMoon8,DecMoon8,Dgrd8,poloffset8,xnr8,techo8,width1,  &
+       ntsky,ndop,ndop00,RAMoon8,DecMoon8,Dgrd8,poloffset8,xnr8,extraazel,techo8,width1,  &
        width2,bTx,AzElFileName_cp,jpleph_file_name_cp)                          &
        bind (C, name="astrosub")
 
@@ -19,6 +19,7 @@ contains
     use :: C_interface_module, only: C_int, C_double, C_bool, C_ptr, C_string_value, assignment(=)
 
     integer(C_int), intent(in), value :: nyear, month, nday
+	logical(C_int), value :: extraazel
     real(C_double), intent(in), value :: uth8, freq8
     real(C_double), intent(out) :: AzSun8, ElSun8, AzMoon8, ElMoon8, AzMoonB8,  &
          ElMoonB8, Ramoon8, DecMoon8, Dgrd8, poloffset8, xnr8, techo8, width1,  &
@@ -75,11 +76,12 @@ contains
     nfreq=freq8/1000000
     doppler=ndop
     doppler00=ndop00
+	
     write(15,1010,err=10) ih,im,is,AzMoon8,ElMoon8,                     &
          ih,im,is,AzSun8,ElSun8,                                        &
          ih,im,is,AzAux,ElAux,                                          &
          nfreq,doppler,dfdt,doppler00,dfdt0,c1
-    if (azel_extra_lines.ge.1) write(15, 1020, err=10) poloffset8,      &
+    if (extraazel .or. (azel_extra_lines.ge.1)) write(15, 1020, err=10) poloffset8,      &
          xnr8,Dgrd8,width1,width2
 1010 format(                                                          &
          i2.2,':',i2.2,':',i2.2,',',f5.1,',',f5.1,',Moon'/               &
