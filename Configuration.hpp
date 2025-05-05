@@ -252,6 +252,7 @@ public:
   QDir azel_directory () const;
   QString rig_name () const;
   Type2MsgGen type_2_msg_gen () const;
+  bool AzElExtraLines () const;
   bool pwrBandTxMemory () const;
   bool pwrBandTuneMemory () const;
   LotWUsers const& lotw_users () const;

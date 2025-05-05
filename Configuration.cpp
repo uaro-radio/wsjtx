@@ -937,6 +937,7 @@ private:
   bool bLowSidelobes_;
   bool sortAlphabetically_;
   bool hideCARD_;
+  bool AzElExtraLines_;
   bool pwrBandTxMemory_;
   bool pwrBandTuneMemory_;
   bool highlight_DXcall_;
@@ -1113,6 +1114,7 @@ QStringListModel const * Configuration::macros () const {return &m_->macros_;}
 QDir Configuration::save_directory () const {return m_->save_directory_;}
 QDir Configuration::azel_directory () const {return m_->azel_directory_;}
 QString Configuration::rig_name () const {return m_->rig_params_.rig_name;}
+bool Configuration::AzElExtraLines () const {return m_->AzElExtraLines_;}
 bool Configuration::pwrBandTxMemory () const {return m_->pwrBandTxMemory_;}
 bool Configuration::pwrBandTuneMemory () const {return m_->pwrBandTuneMemory_;}
 LotWUsers const& Configuration::lotw_users () const {return m_->lotw_users_;}
@@ -2193,6 +2195,7 @@ void Configuration::impl::initialize_models ()
   ui_->CAT_handshake_button_group->button (rig_params_.handshake)->setChecked (true);
   ui_->cbSortAlphabetically->setChecked(sortAlphabetically_);
   ui_->cbHideCARD->setChecked(hideCARD_);
+  ui_->checkBoxAzElExtraLines->setChecked(AzElExtraLines_);
   ui_->checkBoxPwrBandTxMemory->setChecked(pwrBandTxMemory_);
   ui_->checkBoxPwrBandTuneMemory->setChecked(pwrBandTuneMemory_);
   if (rig_params_.force_dtr)
@@ -2635,6 +2638,7 @@ void Configuration::impl::read_settings ()
   calibration_.slope_ppm = settings_->value ("CalibrationSlopePPM", 0.).toDouble ();
   sortAlphabetically_ = settings_->value("SortAlphabetically",true).toBool ();
   hideCARD_ = settings_->value("HideCARD",true).toBool ();
+  AzElExtraLines_ = settings_->value("AzElExtraLines",false).toBool ();
   pwrBandTxMemory_ = settings_->value("pwrBandTxMemory",false).toBool ();
   pwrBandTuneMemory_ = settings_->value("pwrBandTuneMemory",false).toBool ();
   highlight_DXcall_ = settings_->value("highlight_DXcall",true).toBool ();
@@ -2897,6 +2901,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("CalibrationSlopePPM", calibration_.slope_ppm);
   settings_->setValue ("SortAlphabetically", sortAlphabetically_);
   settings_->setValue ("HideCARD", hideCARD_);
+  settings_->setValue ("AzElExtraLines", AzElExtraLines_);
   settings_->setValue ("pwrBandTxMemory", pwrBandTxMemory_);
   settings_->setValue ("pwrBandTuneMemory", pwrBandTuneMemory_);
   settings_->setValue ("Region", QVariant::fromValue (region_));
@@ -3467,6 +3472,7 @@ void Configuration::impl::accept ()
   calibration_.slope_ppm = ui_->calibration_slope_ppm_spin_box->value ();
   sortAlphabetically_ = ui_->cbSortAlphabetically->isChecked ();
   hideCARD_ = ui_->cbHideCARD->isChecked ();
+  AzElExtraLines_ = ui_->checkBoxAzElExtraLines->isChecked ();
   pwrBandTxMemory_ = ui_->checkBoxPwrBandTxMemory->isChecked ();
   pwrBandTuneMemory_ = ui_->checkBoxPwrBandTuneMemory->isChecked ();
   opCall_=ui_->opCallEntry->text();
