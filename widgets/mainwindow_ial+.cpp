@@ -2915,6 +2915,8 @@ void MainWindow::fastSink(qint64 frames)
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        QStringList tw;
+        tw=text.mid(22).split(" ",SkipEmptyParts);
         if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deCall + ","))
             ui->decodedTextBrowser->highlight_callsign(deCall, QColor(225,75,0), QColor(255,255,255), true);
         if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid))
@@ -2923,6 +2925,11 @@ void MainWindow::fastSink(qint64 frames)
             ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
         if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid))
             ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
+        // highlight directional calls
+        if (m_config.highlight_orange() && tw[0]=="CQ" && m_config.highlight_orange_callsigns().contains(tw[1] + ","))
+            ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(225,75,0), QColor(255,255,255), true);
+        if (m_config.highlight_blue() && tw[0]=="CQ" && m_config.highlight_blue_callsigns().contains(tw[1] + ","))
+            ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(0,100,255), QColor(255,255,255), true);
     }
 
     // highlight callsigns worked B4 on band or worked today or from the Ignore List for MSK144
@@ -6478,6 +6485,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
               ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
           if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid))
               ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
+          // highlight directional calls
+          if (m_config.highlight_orange() && tw[0]=="CQ" && m_config.highlight_orange_callsigns().contains(tw[1] + ","))
+              ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(225,75,0), QColor(255,255,255), true);
+          if (m_config.highlight_blue() && tw[0]=="CQ" && m_config.highlight_blue_callsigns().contains(tw[1] + ","))
+              ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(0,100,255), QColor(255,255,255), true);
         }
 
         // Highlight DX Call/Grid
