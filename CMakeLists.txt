@@ -303,6 +303,13 @@ set (wsjtx_CXXSRCS
   widgets/qsymonitor.cpp
   )
 
+if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+  set_source_files_properties (
+    widgets/plotter.cpp 
+    widgets/mainwindow.cpp
+    PROPERTIES COMPILE_FLAGS "-Wno-vla-extension")
+endif ()
+
 set (wsjt_CXXSRCS
   Logger.cpp
   lib/crc10.cpp
@@ -1009,7 +1016,8 @@ endif (NOT APPLE)
 if (WIN32)
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 endif (WIN32)
-if (APPLE AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+
+if (APPLE AND ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 else ()
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
