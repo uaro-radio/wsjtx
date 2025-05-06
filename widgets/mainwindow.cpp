@@ -11965,18 +11965,24 @@ void MainWindow::transmit (double snr)
     if(m_astroWidget && m_astroWidget->bDither()) m_fDither = 20.0*(double(qrand())/RAND_MAX) - 10.0; //Dither by +/- 10 Hz
 #endif
 
-    unsigned int numEchoSymbols=27;
-    double framesPerSymbol=1024.0;
+    unsigned int numEchoSymbols=6;
+    double framesPerSymbol=4480;
     double freq=1500.0+m_fDither;
     double toneSpacing=0.0;
     if(ui->cbEchoCall->isChecked()) {
-      //Parameters for the EchoCall submode
-      numEchoSymbols=6;
-      framesPerSymbol=4480.0;
       freq=1500.0;
       toneSpacing=10.0;
     }
+    int nsps4=4*framesPerSymbol;                           //48000 Hz sampling
+    int nsym=numEchoSymbols;
+    float fsample=48000.0;
+    int nwave=nsym*nsps4;
+    int icmplx=0;
+    float f0=freq;
+    genwave_(const_cast<int *>(itone),&nsym,&nsps4,&nwave,
+             &fsample,&toneSpacing,&f0,&icmplx,foxcom_.wave,foxcom_.wave);
 
+    toneSpacing=-5.0;  //Flag Modulator to use precomputed foxcom_.wave[].
     if (m_tci_audio) {
       Q_EMIT m_config.transceiver_modulator_start(m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,
              false,false,snr,m_TRperiod);

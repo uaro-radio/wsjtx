@@ -542,7 +542,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,2,2,2,2,2,0,2,2,2,2,1">
+        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,2,2,2,2,2,0,2,0,2,2,2,1">
          <item>
           <widget class="QCheckBox" name="cbCQonly">
            <property name="toolTip">
@@ -560,13 +560,6 @@
            </property>
            <property name="text">
             <string>BP</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbEchoCall">
-           <property name="text">
-            <string>Echo Call</string>
            </property>
           </widget>
          </item>
@@ -727,6 +720,13 @@
            </property>
            <property name="checkable">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbEchoCall">
+           <property name="text">
+            <string>Echo Call</string>
            </property>
           </widget>
          </item>
@@ -4347,7 +4347,7 @@ QPushButton[state=&quot;ok&quot;] {
      <x>0</x>
      <y>0</y>
      <width>880</width>
-     <height>17</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
