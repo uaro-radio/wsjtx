@@ -126,6 +126,8 @@ extern "C" {
               float s[], int* jh, float *pxmax, float *rmsNoGain, char line[],
               fortran_charlen_t, fortran_charlen_t, fortran_charlen_t, fortran_charlen_t);
 
+  void gen_echocall_(char* basecall, int itone[], fortran_charlen_t);
+
   void genft8_(char* msg, int* i3, int* n3, char* msgsent, char ft8msgbits[],
                int itone[], fortran_charlen_t, fortran_charlen_t);
 
@@ -1236,6 +1238,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
       });
   }
 #endif
+
+  ui->cbEchoCall->setVisible(false);
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
@@ -3949,6 +3953,7 @@ void MainWindow::statusChanged()
   if (ui->tx1->text()=="" && !(m_mode=="FT8" && (SpecOp::HOUND==m_specOp or SpecOp::FOX==m_specOp))
       && !m_bDoubleClicked) ui->txb6->click();
   check_button_color();
+  ui->cbEchoCall->setVisible(m_mode=="Echo");
 }
 
 bool MainWindow::eventFilter (QObject * object, QEvent * event)
@@ -7259,6 +7264,10 @@ void MainWindow::guiUpdate()
     m_currentMessageType = 0;
     if(m_tune or m_mode=="Echo") {
       itone[0]=0;
+      if(ui->cbEchoCall->isChecked()) {
+//        qDebug() << "aa" << m_baseCall << ui->cbEchoCall->isChecked();
+        gen_echocall_(const_cast <char *> (m_baseCall.toLatin1().constData()),const_cast<int *>(itone),(FCL)6);
+      }
     } else {
       if(m_QSOProgress==REPORT || m_QSOProgress==ROGER_REPORT) m_bSentReport=true;
       if(m_bSentReport and (m_QSOProgress<REPORT or m_QSOProgress>ROGER_REPORT)) m_bSentReport=false;
@@ -11955,11 +11964,24 @@ void MainWindow::transmit (double snr)
 #else
     if(m_astroWidget && m_astroWidget->bDither()) m_fDither = 20.0*(double(qrand())/RAND_MAX) - 10.0; //Dither by +/- 10 Hz
 #endif
+
+    unsigned int numEchoSymbols=27;
+    double framesPerSymbol=1024.0;
+    double freq=1500.0+m_fDither;
+    double toneSpacing=0.0;
+    if(ui->cbEchoCall->isChecked()) {
+      //Parameters for the EchoCall submode
+      numEchoSymbols=6;
+      framesPerSymbol=4480.0;
+      freq=1500.0;
+      toneSpacing=10.0;
+    }
+
     if (m_tci_audio) {
-      Q_EMIT m_config.transceiver_modulator_start(m_mode, 27,1024.0,1500.0+m_fDither, 0.0,
+      Q_EMIT m_config.transceiver_modulator_start(m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,
              false,false,snr,m_TRperiod);
     } else {
-      Q_EMIT sendMessage (m_mode, 27, 1024.0, 1500.0+m_fDither, 0.0, m_soundOutput,
+      Q_EMIT sendMessage (m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,m_soundOutput,
                           m_config.audio_output_channel(), false, false, snr, m_TRperiod);
     }
   }
@@ -12998,6 +13020,12 @@ void MainWindow::on_cbCQTx_toggled(bool b)
   }
   setRig ();
   setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_cbEchoCall_toggled(bool b)
+{
+    if(m_mode=="Echo" and !b) mode_label.setText("Echo");
+    if(m_mode=="Echo" and b) mode_label.setText("Echo Call");
 }
 
 void MainWindow::statusUpdate () const
