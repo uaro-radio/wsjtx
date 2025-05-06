@@ -45,16 +45,9 @@ program EchoCallSim
 
   write(*,1000)
 1000 format('   N   f0     fDop fSpread  SNR   File name'/58('-'))
-  
-  itone=0                                               !Default character is blank
-  k=1
-  do i=1,len(trim(callsign))
-     m=ichar(callsign(i:i))
-     if(m.ge.48 .and. m.le.57) itone(i)=m-47       !0-9
-     if(m.ge.65 .and. m.le.90) itone(i)=m-54       !A-Z
-     if(m.ge.97 .and. m.le.122) itone(i)=m-86      !a-z
-  enddo
-  
+
+  call gen_echocall(callsign,itone)
+
   twopi=8.d0*atan(1.d0)
   rms=100.
   fsample=12000.d0                   !Sample rate (Hz)
@@ -123,3 +116,5 @@ program EchoCallSim
   enddo
 
 999 end program EchoCallSim
+
+

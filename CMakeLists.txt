@@ -466,6 +466,7 @@ set (wsjt_FSRCS
   lib/gen4.f90
   lib/gen65.f90
   lib/gen9.f90
+  lib/gen_echocall.f90
   lib/genwave.f90
   lib/ft8/genft8.f90
   lib/qra/q65/genq65.f90
