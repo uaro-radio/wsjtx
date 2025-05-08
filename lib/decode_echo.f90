@@ -28,6 +28,7 @@ subroutine decode_echo(txcall,iwave,rxcall)
   if(ntonespacing0.ne.5 .and. ntonespacing0.ne.10 .and.                    &
        ntonespacing0.ne.20 .and. ntonespacing0.ne.50) ntonespacing0=10
   dftone=ntonespacing0
+  fspread=fspread0
   
   itone=0                                               !Default character is blank
   do i=1,len(trim(txcall))
@@ -63,6 +64,11 @@ subroutine decode_echo(txcall,iwave,rxcall)
      k=nint(((ipk(1)-1)*df - 1500.0)/dftone) + 1
      if(k.ge.1 .and. k.le.37) rxcall(j:j)=c(k:k)
   enddo
+
+
+!  call echo_snr(p,p,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
+!  write(*,3101) fspread,snrdb,db_err,dfreq,snr_detect
+!3101 format(5f10.3)
 
   do i=0,NSPS/2
      write(53,3012) i*df,p(i)
