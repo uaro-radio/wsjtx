@@ -409,6 +409,7 @@ set (wsjt_FSRCS
   lib/decode65a.f90
   lib/decode65b.f90
   lib/decode9w.f90
+  lib/decode_echo.f90
   lib/ft8/decode174_91.f90
   lib/decoder.f90
   lib/env_module.f90

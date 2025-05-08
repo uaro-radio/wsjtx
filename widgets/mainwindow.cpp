@@ -175,11 +175,13 @@ extern "C" {
 
   int savec2_(char const * fname, int* TR_seconds, double* dial_freq, fortran_charlen_t);
 
-  void save_echo_params_(int* ndoptotal, int* ndop, int* nfrit, float* f1, float* fspread, short id2[], int* idir);
+  void save_echo_params_(int* ndoptotal, int* ndop, int* nfrit, float* f1, float* fspread,
+                         int* toneSpacing, short id2[], int* idir);
 
-  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* navg, int* nqual, float* f1,
-                float* level, float* sigdb, float* snr, float* dfreq,
-                float* width, bool* bDiskData);
+  void avecho_( short id2[], int* dop, int* nfrit, int* ntonespacing, int* nauto, int* navg,
+                int* nqual, float* f1, float* level, float* sigdb, float* snr, float* dfreq,
+                float* width, bool* bDiskData, bool* bEchoCall, char const * txcall,
+                char rxcall[], FCL len1, FCL len2);
 
   void fast_decode_(short id2[], int narg[], double * trperiod,
                     char msg[], char mycall[], char hiscall[],
@@ -2142,12 +2144,20 @@ void MainWindow::dataSink(qint64 frames)
       if(m_astroWidget && m_astroWidget->DopplerMethod()==2) nDop=0;   //Using CFOM
       int nDopTotal=m_fDop;
       int navg=ui->sbEchoAvg->value();
+      int ntonespacing=0;
       if(m_diskData) {
         int idir=-1;
-        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
+        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ntonespacing,dec_data.d2,&idir);
       }
-      avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
-          &dBerr,&dfreq,&width,&m_diskData);
+      bool bEchoCall=ui->cbEchoCall->isChecked();
+      QString txcall=m_baseCall;
+      static char crxcall[7];
+      avecho_(dec_data.d2,&nDop,&nfrit,&ntonespacing,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
+          &dBerr,&dfreq,&width,&m_diskData,&bEchoCall,txcall.toLatin1().constData(),
+          &crxcall[0],(FCL)6,(FCL)6);
+      crxcall[6]=0;
+      QString rxcall {QString::fromLatin1(crxcall)};
+
       //Don't restart Monitor after an Echo transmission
       if(m_bEchoTxed and !m_auto) {
         monitor(false);
@@ -2176,17 +2186,19 @@ void MainWindow::dataSink(qint64 frames)
         QString t;
         t = t.asprintf("%9.6f  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",hour,xlevel,
                        nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
-        t = t0 + t;
-        if (ui) ui->decodedTextBrowser->insertText(t);
-        t=t1+t;
+        t = t0 + t + "   " + rxcall;
+        if(ui) ui->decodedTextBrowser->insertText(t);
+        t=t1 + t;
         write_all("Rx",t);
         if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
       }
 
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
       if(m_saveAll and !m_diskData) {
+        int ntoneSpacing=0;
+        if(ui->cbEchoCall->isChecked()) ntoneSpacing=ui->sbToneSpacing->value();
         int idir=1;
-        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
+        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,&ntoneSpacing,dec_data.d2,&idir);
         m_fSpread=width;
       }
       m_nclearave=0;
@@ -3390,6 +3402,8 @@ void MainWindow::monitor (bool state)
         if(ms>=10) {
           QTimer::singleShot (ms, [=] {resumeAudioInputStream();});
         } else {
+//        qint64 ms=QDateTime::currentMSecsSinceEpoch();
+//        qDebug() << "Rx start: " << ms << ms-m_msEchoTxStart;
           Q_EMIT resumeAudioInputStream ();
         }
       }

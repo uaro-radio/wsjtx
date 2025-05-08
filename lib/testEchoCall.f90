@@ -1,24 +1,11 @@
 program testEchoCall
 
   parameter (NSPS=4096,NH=NSPS/2,NZ=3*12000)
-  parameter (DFTONE=10.0)
   integer ihdr(11)
-  integer itone(6)
-  integer ipk(1)
   integer*2 iwave(NZ)                    !Raw data, 12000 Hz sample rate
-  complex c0(NZ)                         !Analytic data, 6000 Hz sample rate
-  complex c1(0:NH-1)
-  real s(0:NSPS-1),p(0:NSPS-1)
-  real p2(0:NSPS-1,6)
   character*120 fname
-  character*37 c
   character*6 txcall,rxcall
-  equivalence (nDop0,iwave(1))
-  equivalence (nDopAudio0,iwave(3))
-  equivalence (nfrit0,iwave(5))
-  equivalence (f10,iwave(7))
-  equivalence (fspread0,iwave(9))
-  data c/' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
+  common/echocom/nclearave,nsum,blue(4096),red(4096)
 
   narg=iargc()
   if(narg.lt.2) then
@@ -27,52 +14,19 @@ program testEchoCall
   endif
   call getarg(1,txcall)
 
-  itone=0                                               !Default character is blank
-  do i=1,len(trim(txcall))
-     m=ichar(txcall(i:i))
-     if(m.ge.48 .and. m.le.57) itone(i)=m-47       !0-9
-     if(m.ge.65 .and. m.le.90) itone(i)=m-54       !A-Z
-     if(m.ge.97 .and. m.le.122) itone(i)=m-86      !a-z
-  enddo
-
-  df=6000.0/NH
-  p2=0.
-
   write(*,1000)
 1000 format(' N   Sent    Rcvd'/19('-'))
+
+  nclearave=1
   do ifile=2,narg
      call getarg(ifile,fname)
      open(10,file=trim(fname),access='stream',status='unknown')
      read(10) ihdr,iwave
      close(10)
-     iwave(1:12)=0
-     call ana64(iwave,NZ,c0)
-     p=0.
-     rxcall='      '
-     do j=1,6
-        ib=j*NH
-        ia=ib-NH+1
-        c1=c0(ia:ib)
-        call four2a(c1,NH,1,-1,1)           !Forward c2c
-        do i=0,NH-1
-           s(i)=real(c1(i))**2 + aimag(c1(i))**2
-!           write(12,3012) i*df,s(i)
-        enddo
-        n=nint(itone(j)*DFTONE/df)
-        p=p+cshift(s,n)
-        p2(:,j)=p2(:,j)+s
-!        ipk=maxloc(s)
-        ipk=maxloc(p2(:,j))
-        k=nint(((ipk(1)-1)*df - 1500.0)/DFTONE) + 1
-        if(k.ge.1 .and. k.le.37) rxcall(j:j)=c(k:k)
-     enddo
+     call decode_echo(txcall,iwave,rxcall)
      write(*,1100) ifile-1,txcall,rxcall
 1100 format(i3,2x,a6,2x,a6)
-
-!     do i=0,NSPS/2
-!        write(13,3012) i*df,p(i)
-!3012    format(f10.3,e12.3)
-!     enddo
+     nclearave=0
   enddo
 
 999 end program testEchoCall

@@ -1,5 +1,5 @@
-subroutine avecho(id2,ndop,nfrit,nauto,navg,nqual,f1,xlevel,snrdb,   &
-     db_err,dfreq,width,bDiskData)
+subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
+     snrdb,db_err,dfreq,width,bDiskData,bEchoCall,txcall,rxcall)
 
   integer TXLENGTH
   parameter (TXLENGTH=27648)           !27*1024
@@ -17,8 +17,9 @@ subroutine avecho(id2,ndop,nfrit,nauto,navg,nqual,f1,xlevel,snrdb,   &
   real x(NFFT)
   integer ipkv(1)
   logical ex
-  logical*1 bDiskData
+  logical*1 bDiskData,bEchoCall
   complex c(0:NH)
+  character*6 txcall,rxcall
   equivalence (x,c),(ipk,ipkv)
   common/echocom/nclearave,nsum,blue(NZ),red(NZ)
   common/echocom2/fspread_self,fspread_dx
@@ -116,5 +117,8 @@ subroutine avecho(id2,ndop,nfrit,nauto,navg,nqual,f1,xlevel,snrdb,   &
   blue=blue-0.5*(bblue1+bblue2)
 
 900 call sleep_msec(10)   !Avoid the "blue Decode button" syndrome
+
+  call decode_echo(txcall,id2,rxcall)
+  
   return
 end subroutine avecho
