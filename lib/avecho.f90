@@ -118,7 +118,7 @@ subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
 
 900 call sleep_msec(10)   !Avoid the "blue Decode button" syndrome
 
-  call decode_echo(txcall,id2,rxcall)
+  call decode_echo(id2,rxcall)
   
   return
 end subroutine avecho

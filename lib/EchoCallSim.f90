@@ -15,20 +15,14 @@ program EchoCallSim
   complex z
   real*8 f0,dt,twopi,phi,dphi,fsample,freq
   character callsign*6,fname*17,arg*8
-!  character*37 c
 
-  equivalence (nDop0,iwave(1))
-  equivalence (nDopAudio0,iwave(3))
-  equivalence (nfrit0,iwave(5))
-  equivalence (f10,iwave(7))
-  equivalence (fspread0,iwave(9))
-  
+!  character*37 c
 !  data c/' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
   
   nargs=iargc()
-  if(nargs.ne.6) then
-     print*,'Usage:   EchoCallSim callsign f0 fdop fspread nfiles snrdb'
-     print*,'Example: EchoCallSim   K1JT  1500 0.0  10.0     10    -15'
+  if(nargs.ne.7) then
+     print*,'Usage:   EchoCallSim callsign f0 fdop fspread ndf nfiles snrdb'
+     print*,'Example: EchoCallSim   K1JT  1500 0.0  10.0    10   10    -15'
      go to 999
   endif
   call getarg(1,callsign)
@@ -39,12 +33,14 @@ program EchoCallSim
   call getarg(4,arg)
   read(arg,*) fspread
   call getarg(5,arg)
-  read(arg,*) nfiles
+  read(arg,*) ndf
   call getarg(6,arg)
+  read(arg,*) nfiles
+  call getarg(7,arg)
   read(arg,*) snrdb
 
   write(*,1000)
-1000 format('   N   f0     fDop fSpread  SNR   File name'/58('-'))
+1000 format('   N   f0     fDop fSpread  ndf  SNR   File name'/63('-'))
 
   call gen_echocall(callsign,itone)
 
@@ -93,11 +89,14 @@ program EchoCallSim
      if(snrdb.lt.90.0) iwave(1:npts)=nint(rms*dat(1:npts))
      iwave(npts+1:)=0
 
-     nDop0=nint(fdop)
-     nDopAudio0=0
-     nfrit0=0
-     f10=f0 + fdop
-     fspread0=fspread
+     nDop=nint(fdop)
+     nDopAudio=0
+     nfrit=0
+     f1=f0 + fdop
+     idir=1
+
+     call save_echo_params(nDop,nDopAudio,nfrit,f1,fspread,ndf, &
+          itone,iwave,idir)
 
      h=default_header(12000,NZ)
      n=6*(ifile-1)
@@ -110,8 +109,8 @@ program EchoCallSim
      write(10) h,iwave                        !Save the .wav file
      close(10)
 
-     write(*,1110) ifile,f0,fdop,fspread,snrdb,fname
-1110 format(i4,4f7.1,2x,a17)
+     write(*,1110) ifile,f0,fdop,fspread,ndf,snrdb,fname
+1110 format(i4,3f7.1,i5,f7.1,2x,a17)
 
   enddo
 

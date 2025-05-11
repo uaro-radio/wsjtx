@@ -1,79 +1,98 @@
-subroutine decode_echo(txcall,iwave,rxcall)
+subroutine decode_echo(iwave,rxcall)
 
-  parameter (NSPS=4096,NH=NSPS/2,NZ=3*12000)
-  character*6 txcall,rxcall
-  integer*2 iwave(NZ)
-  integer*2 id2a(12)
+! Recovers the transmitted callsign from received EME echoes in EchoCall mode.
+!     iwave(NZ)  received echo data
+!     rxcall     decoded callsign
+! Time alignment of received data is assumed accurate, since EME delay is known.
 
-  integer itone(6)
+  parameter (NSPS=4096,NZ=6*NSPS)
+  integer*2 iwave(NZ)      !Raw Rx data
+  integer itone(6)         !Tone offsets corresponding to ransmitted callsign
   integer ipk(1)
-  complex c0(NZ)                         !Analytic data, 6000 Hz sample rate
-  complex c1(0:NH-1)
-  real s(0:NSPS-1),p(0:NSPS-1)
-  real p2(0:NSPS-1,6)
+  complex c0(0:NZ)                !Analytic data, 12000 Hz sample rate
+  complex c1(0:NSPS-1)            !Data for a single echo character
+  complex c2(0:NZ)                !Analytic data with shifted tone freqs
+  character*6 rxcall              !The recovered callsign
+  real s(0:NSPS-1)                !Spectrum for one received character
+  real p(0:NSPS-1,6)
+  real snr2(6)
+  real a(3)
   character*37 c
   common/echocom/nclearave,nsum,blue(4096),red(4096)
-
-  equivalence (nDopTotal0,id2a(1))
-  equivalence (nDopAudio0,id2a(3))
-  equivalence (nfrit0,id2a(5))
-  equivalence (f10,id2a(7))
-  equivalence (fspread0,id2a(9))
-  equivalence (ntonespacing0,id2a(11))
-
+  equivalence (ipk1,ipk(1))
   data c/' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
 
-  id2a=iwave(1:12)
-  iwave(1:12)=0
-  if(ntonespacing0.ne.5 .and. ntonespacing0.ne.10 .and.                    &
-       ntonespacing0.ne.20 .and. ntonespacing0.ne.50) ntonespacing0=10
-  dftone=ntonespacing0
-  fspread=fspread0
-  
-  itone=0                                               !Default character is blank
-  do i=1,len(trim(txcall))
-     m=ichar(txcall(i:i))
-     if(m.ge.48 .and. m.le.57) itone(i)=m-47       !0-9
-     if(m.ge.65 .and. m.le.90) itone(i)=m-54       !A-Z
-     if(m.ge.97 .and. m.le.122) itone(i)=m-86      !a-z
-  enddo
+! Retrieve some information known at the time of transmissiion
+  call save_echo_params(nDop,nDopAudio,nfrit,f1,fspread,ndf,itone,iwave,-1)
 
-  df=6000.0/NH
-  if(nclearave.ne.0) p2=0.
+  df=12000.0/NSPS
+  if(nclearave.ne.0) p=0.
+  nfft=NZ
+  df1=12000.0/nfft
+  fac=2.0/(32767.0*nfft)
+  c0(0:NZ-1)=fac*iwave(1:NZ)
+  call four2a(c0,nfft,1,-1,1)             !Forward c2c FFT
+  c0(nfft/2+1:nfft-1)=0.
+  c0(0)=0.5*c0(0)
+  call four2a(c0,nfft,1,1,1)              !Inverse c2c FFT; c0 is analytic sig
 
-!  write(*,3001) nDopTotal0,nDopAudio0,nfrit0,ntonespacing0,f10,fspread0
-!3001 format(4i6,2f7.1)
-  iwave(1:12)=0
-  call ana64(iwave,NZ,c0)
-  p=0.
   rxcall='      '
+  i1=nint((f1 - 5*ndf)/df)
+  i2=nint((f1 + 42*ndf)/df)
+  nn=i2-i1+1
+  nskip=2*fspread/df
+  nerr=0
+
   do j=1,6
-     ib=j*NH
-     ia=ib-NH+1
+     ia=(j-1)*NSPS
+     ib=ia+NSPS-1
      c1=c0(ia:ib)
-     call four2a(c1,NH,1,-1,1)           !Forward c2c
-     do i=0,NH-1
+     call four2a(c1,NSPS,1,-1,1)           !Forward c2c
+     do i=0,NSPS/2
         s(i)=real(c1(i))**2 + aimag(c1(i))**2
-        write(52,3012) i*df,s(i)
      enddo
-     n=nint(itone(j)*dftone/df)
-     p=p+cshift(s,n)
-     p2(:,j)=p2(:,j)+s
-!        ipk=maxloc(s)
-     ipk=maxloc(p2(:,j))
-     k=nint(((ipk(1)-1)*df - 1500.0)/dftone) + 1
-     if(k.ge.1 .and. k.le.37) rxcall(j:j)=c(k:k)
+     call smo121(s,NSPS/4)
+     call smo121(s,NSPS/4)
+     p(:,j)=p(:,j) + s                     !Sum the spectra for each character
+     ipk=maxloc(p(i1:i2,j))
+     k=nint(((ipk1+i1-1)*df - f1)/ndf) + 1
+     call averms(p,nn,nskip,ave,rms)
+     spk=maxval(p(i1:i2,j))
+     snr=(spk-ave)/rms
+     snr2(j)=snr
+     if(k-1-itone(j).ne.0) nerr=nerr+1
+!     write(61,3001) ave,rms,spk,snr,j,k-1,itone(j),abs(k-1-itone(j))
+!3001 format(4f8.3,4i5)
+!     do i=i1,i2
+!        write(62,3062) i*df,p(i,j),ave,rms,snr
+!3062    format(2f10.3,3f8.2)
+!     enddo
+     if(k.ge.1 .and. k.le.37) rxcall(j:j)=c(k:k)    !SNR test here ???
   enddo
 
+!  write(*,4001) snr2
+!4001 format(6f7.1)
 
 !  call echo_snr(p,p,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
 !  write(*,3101) fspread,snrdb,db_err,dfreq,snr_detect
 !3101 format(5f10.3)
 
-  do i=0,NSPS/2
-     write(53,3012) i*df,p(i)
+  do j=1,6
+     ia=(j-1)*NSPS
+     ib=ia+NSPS-1
+     a=0.
+     a(1)=-itone(j)*ndf
+     call twkfreq(c0(ia:ib),c2(ia:ib),NSPS,12000.0,a)
+  enddo
+  nfft=32768
+  call four2a(c2,nfft,1,-1,1)           !Forward c2c
+  do i=0,8192
+     f=i*12000.0/32768
+     sq=real(c2(i))**2 + aimag(c2(i))**2
+     write(54,3012) f,sq
 3012 format(f10.3,e12.3)
   enddo
-
+!  print*,'AAA',nn,nskip,nerr
+  
   return
 end subroutine decode_echo
