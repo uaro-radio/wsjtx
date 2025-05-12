@@ -1,11 +1,10 @@
 subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
      snrdb,db_err,dfreq,width,bDiskData,bEchoCall,txcall,rxcall)
 
-  integer TXLENGTH
-  parameter (TXLENGTH=27648)           !27*1024
+  parameter (NTX=6*4096)
   parameter (NFFT=32768,NH=NFFT/2)
   parameter (NZ=4096)
-  integer*2 id2(34560)                 !Buffer for Rx data
+  integer*2 id2(NTX)                   !Buffer for Rx data
   real sa(NZ)      !Avg spectrum relative to initial Doppler echo freq
   real sb(NZ)      !Avg spectrum with Dither and changing Doppler removed
   real, dimension (:,:), allocatable :: sax
@@ -25,7 +24,7 @@ subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
   common/echocom2/fspread_self,fspread_dx
   data navg0/-1/
   save dop0,navg0,sax,sbx
-
+  
   call decode_echo(id2,rxcall)
 
   if(navg.ne.navg0) then
@@ -50,11 +49,11 @@ subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
   width=fspread
   dop=ndop
   sq=0.
-  do i=1,TXLENGTH
+  do i=1,NTX
      x(i)=id2(i)
      sq=sq + x(i)*x(i)
   enddo
-  xlevel=10.0*log10(sq/TXLENGTH)
+  xlevel=10.0*log10(sq/NTX)
 
   if(nclearave.ne.0) nsum=0
   if(nsum.eq.0) then
@@ -63,8 +62,8 @@ subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
      sbx=0.
   endif
 
-  x(TXLENGTH+1:)=0.
-  x=x/TXLENGTH
+  x(NTX+1:)=0.
+  x=x/NTX
   call four2a(x,NFFT,1,-1,0)
   df=12000.0/NFFT
   do i=1,8192                             !Get spectrum 0 - 3 kHz
@@ -89,7 +88,6 @@ subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
      sa(i)=sum(sax(1:navg,i))
      sb(i)=sum(sbx(1:navg,i))
   enddo
-  
   call echo_snr(sa,sb,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
   nqual=snr_detect-2
   if(nqual.lt.0) nqual=0
