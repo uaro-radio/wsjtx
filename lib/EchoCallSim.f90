@@ -5,7 +5,6 @@ program EchoCallSim
   use wavhdr
   parameter (NSPS=4096,NZ=3*12000)
   parameter (NMAX=6*NSPS)                !Samples in .wav file, 2.2*12000
-  parameter (DFTONE=10.0)                !Tone spacing, Hz)
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NZ)                    !Generated waveform
   integer itone(6)                       !Channel symbols, values 0-37
@@ -69,7 +68,7 @@ program EchoCallSim
      dphi=0.d0
      k=0
      do j=1,6
-        freq=f0 + fdop + itone(j)*DFTONE
+        freq=f0 + fdop + itone(j)*ndf
         dphi=twopi*freq*dt
         do i=1,NSPS
            phi=phi + dphi
