@@ -2147,7 +2147,6 @@ void MainWindow::dataSink(qint64 frames)
       int ntonespacing=0;
       if(m_diskData) {
         int idir=-1;
-
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ntonespacing,&itone[0],dec_data.d2,&idir);
       }
       bool bEchoCall=ui->cbEchoCall->isChecked();
@@ -2185,7 +2184,7 @@ void MainWindow::dataSink(qint64 frames)
         float hour=n/10000 + ((n/100)%100)/60.0 + (n%100)/3600.0;
         m_echoRunning=true;
         QString t;
-        t = t.asprintf("%9.6f  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",hour,xlevel,
+        t = t.asprintf("%9.6f  %5.2f %7d %7.1f %5d %5d %6d %6.1f %7.1f",hour,xlevel,
                        nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
         t = t0 + t + "   " + rxcall;
         if(ui) ui->decodedTextBrowser->insertText(t);
@@ -2196,10 +2195,9 @@ void MainWindow::dataSink(qint64 frames)
 
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
       if(m_saveAll and !m_diskData) {
-        int ntoneSpacing=0;
-        if(ui->cbEchoCall->isChecked()) ntoneSpacing=ui->sbToneSpacing->value();
+        if(ui->cbEchoCall->isChecked()) ntonespacing=ui->sbToneSpacing->value();
         int idir=1;
-        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,&ntoneSpacing,&itone[0],dec_data.d2,&idir);
+        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,&ntonespacing,&itone[0],dec_data.d2,&idir);
         m_fSpread=width;
       }
       m_nclearave=0;
@@ -10874,7 +10872,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC      Hour    Level  Doppler  Width       N       Q      DF     SNR    dBerr");
+  ui->lh_decodes_headings_label->setText("  UTC      Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);

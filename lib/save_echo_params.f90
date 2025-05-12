@@ -29,7 +29,7 @@ subroutine save_echo_params(nDopTotal,nDopAudio,nfrit,f1,fspread,ntonespacing, &
      f1=f10
      fspread=fspread0
      if(ntonespacing0.ne.5 .and. ntonespacing0.ne.10 .and.                    &
-          ntonespacing0.ne.20 .and. ntonespacing0.ne.50) ntonespacing0=10
+          ntonespacing0.ne.20 .and. ntonespacing0.ne.50) ntonespacing0=0
      ntonespacing=ntonespacing0
      if(any(itone0.lt.0) .or. any(itone0.gt.36)) itone0=0
      itone=itone0

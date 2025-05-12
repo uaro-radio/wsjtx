@@ -3,6 +3,7 @@ program testEchoCall
   parameter (NSPS=4096,NH=NSPS/2,NZ=3*12000)
   integer*2 iwave(NZ)                    !Raw data, 12000 Hz sample rate
   integer ihdr(11)
+  integer*1 itone(6)
   character*120 fname
   character*6 rxcall
   common/echocom/nclearave,nsum,blue(4096),red(4096)
@@ -22,7 +23,6 @@ program testEchoCall
      open(10,file=trim(fname),access='stream',status='unknown')
      read(10) ihdr,iwave
      close(10)
-!     nclearave=1
      call decode_echo(iwave,rxcall)
      write(*,1100) ifile,rxcall
 1100 format(i3,2x,a6)
