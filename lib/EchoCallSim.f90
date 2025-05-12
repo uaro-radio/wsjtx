@@ -93,10 +93,7 @@ program EchoCallSim
      nDopAudio=0
      nfrit=0
      f1=f0 + fdop
-     idir=1
-
-     call save_echo_params(nDop,nDopAudio,nfrit,f1,fspread,ndf, &
-          itone,iwave,idir)
+     call save_echo_params(nDop,nDopAudio,nfrit,f1,fspread,ndf,itone,iwave,1)
 
      h=default_header(12000,NZ)
      n=6*(ifile-1)

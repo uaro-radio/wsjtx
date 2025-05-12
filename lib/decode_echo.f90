@@ -25,6 +25,8 @@ subroutine decode_echo(iwave,rxcall)
 ! Retrieve some information known at the time of transmissiion
   call save_echo_params(nDop,nDopAudio,nfrit,f1,fspread,ndf,itone,iwave,-1)
 
+!  write(*,4001) nDop,nDopAudio,nfrit,f1,fspread,ndf,itone
+!4001 format(3i6,2f7.1,i5,3x,6i3)
   df=12000.0/NSPS
   if(nclearave.ne.0) p=0.
   nfft=NZ
@@ -37,6 +39,7 @@ subroutine decode_echo(iwave,rxcall)
   call four2a(c0,nfft,1,1,1)              !Inverse c2c FFT; c0 is analytic sig
 
   rxcall='      '
+  if(f1.eq.0.0) f1=1500.0
   i1=nint((f1 - 5*ndf)/df)
   i2=nint((f1 + 42*ndf)/df)
   nn=i2-i1+1
@@ -77,21 +80,27 @@ subroutine decode_echo(iwave,rxcall)
 !  write(*,3101) fspread,snrdb,db_err,dfreq,snr_detect
 !3101 format(5f10.3)
 
-  do j=1,6
+  do j=1,6                               !Move all tone frequencies to f1
      ia=(j-1)*NSPS
      ib=ia+NSPS-1
      a=0.
      a(1)=-itone(j)*ndf
      call twkfreq(c0(ia:ib),c2(ia:ib),NSPS,12000.0,a)
   enddo
-  nfft=32768
-  call four2a(c2,nfft,1,-1,1)           !Forward c2c
-  do i=0,8192
-     f=i*12000.0/32768
-     sq=real(c2(i))**2 + aimag(c2(i))**2
-     write(54,3012) f,sq
-3012 format(f10.3,e12.3)
-  enddo
+
+  iwave(1:NZ)=32767.0*real(c2(0:NZ-1))
+  iwave(NZ:)=0
+     
+!  nfft=32768
+!  call four2a(c2,nfft,1,-1,1)           !Forward c2c
+!  do i=0,8192
+!     f=i*12000.0/32768
+!     sq=real(c2(i))**2 + aimag(c2(i))**2
+!     write(54,3012) f,sq
+!3012 format(f10.3,e12.3)
+!  enddo
+
+! Return real(c2) as iwave ...
 !  print*,'AAA',nn,nskip,nerr
   
   return

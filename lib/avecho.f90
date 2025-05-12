@@ -26,6 +26,8 @@ subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
   data navg0/-1/
   save dop0,navg0,sax,sbx
 
+  call decode_echo(id2,rxcall)
+
   if(navg.ne.navg0) then
      if(allocated(sax)) deallocate(sax)
      if(allocated(sbx)) deallocate(sbx)
@@ -117,8 +119,6 @@ subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
   blue=blue-0.5*(bblue1+bblue2)
 
 900 call sleep_msec(10)   !Avoid the "blue Decode button" syndrome
-
-  call decode_echo(id2,rxcall)
   
   return
 end subroutine avecho

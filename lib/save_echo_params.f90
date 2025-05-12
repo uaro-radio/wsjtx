@@ -23,7 +23,6 @@ subroutine save_echo_params(nDopTotal,nDopAudio,nfrit,f1,fspread,ntonespacing, &
      id2=id2a
   else
      id2a=id2
-     id2(1:15)=0
      nDopTotal=nDopTotal0
      nDopAudio=nDopAudio0
      nfrit=nfrit0
