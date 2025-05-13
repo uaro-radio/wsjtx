@@ -2144,15 +2144,16 @@ void MainWindow::dataSink(qint64 frames)
       if(m_astroWidget && m_astroWidget->DopplerMethod()==2) nDop=0;   //Using CFOM
       int nDopTotal=m_fDop;
       int navg=ui->sbEchoAvg->value();
-      int ntonespacing=0;
+      int ndf=0;
       if(m_diskData) {
         int idir=-1;
-        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ntonespacing,&itone[0],dec_data.d2,&idir);
+        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
       }
+//      qDebug() << "aa" << ndf;
       bool bEchoCall=ui->cbEchoCall->isChecked();
       QString txcall=m_baseCall;
       static char crxcall[7];
-      avecho_(dec_data.d2,&nDop,&nfrit,&ntonespacing,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
+      avecho_(dec_data.d2,&nDop,&nfrit,&ndf,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData,&bEchoCall,txcall.toLatin1().constData(),
           &crxcall[0],(FCL)6,(FCL)6);
       crxcall[6]=0;
@@ -2195,13 +2196,15 @@ void MainWindow::dataSink(qint64 frames)
 
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
       if(m_saveAll and !m_diskData) {
-        if(ui->cbEchoCall->isChecked()) ntonespacing=ui->sbToneSpacing->value();
+        if(ui->cbEchoCall->isChecked()) ndf=ui->sbToneSpacing->value();
         int idir=1;
-        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,&ntonespacing,&itone[0],dec_data.d2,&idir);
+//        qDebug() << "bb" << ndf << itone[0];
+        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
         m_fSpread=width;
       }
       m_nclearave=0;
     }
+
     if(m_mode=="FreqCal") return;
 
     if(m_dialFreqRxWSPR==0) m_dialFreqRxWSPR=m_freqNominal;

@@ -1,4 +1,4 @@
-subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
+subroutine avecho(id2,ndop,nfrit,ndf,nauto,navg,nqual,f1,xlevel,  &
      snrdb,db_err,dfreq,width,bDiskData,bEchoCall,txcall,rxcall)
 
   parameter (NTX=6*4096)
