@@ -15,6 +15,7 @@ subroutine decode_echo(iwave,rxcall)
   character*6 rxcall       !The recovered callsign
   real s(0:NSPS-1)         !Spectrum for one received character
   real p(0:NSPS-1,6)
+!  real snr(6)
   real a(3)
   character*37 c
   common/echocom/nclearave,nsum,blue(4096),red(4096)
@@ -49,7 +50,7 @@ subroutine decode_echo(iwave,rxcall)
   nn=i2-i1+1
   nerr=0
   nskip=2*fspread/df
-  nsmo=fspread/df
+!  nsmo=fspread/df
 
   do j=1,6
      ia=(j-1)*NSPS
@@ -64,10 +65,13 @@ subroutine decode_echo(iwave,rxcall)
      k=nint(((ipk1+i1-1)*df - f1)/ndf) + 1
 !     call averms(p,nn,nskip,ave,rms)
 !     spk=maxval(p(i1:i2,j))
-!     snr=(spk-ave)/rms
+!     snr(j)=(spk-ave)/rms
      if(k-1-itone(j).ne.0) nerr=nerr+1
      if(k.ge.1 .and. k.le.37) rxcall(j:j)=c(k:k)    !SNR test here ???
   enddo
+
+!  write(*,4010) snr
+!4010 format(6f8.2)
 
   do j=1,6                               !Move all tone frequencies to f1
      ia=(j-1)*NSPS
