@@ -4,7 +4,6 @@ subroutine gen_EchoCall(callsign,itone)
   integer itone(6)
   
   itone=0                                             !Default character is blank
-  k=1
   do i=1,len(trim(callsign))
      m=ichar(callsign(i:i))
      if(m.ge.48 .and. m.le.57) itone(i)=m-47       !0-9

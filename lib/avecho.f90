@@ -19,12 +19,29 @@ subroutine avecho(id2,ndop,nfrit,ntonespacing,nauto,navg,nqual,f1,xlevel,  &
   logical*1 bDiskData,bEchoCall
   complex c(0:NH)
   character*6 txcall,rxcall
+  integer*2 id2a(15)
+  integer*4 itone4(6)
+  integer*1 itone1(6)
+  equivalence (itone1,id2a(13))
   equivalence (x,c),(ipk,ipkv)
   common/echocom/nclearave,nsum,blue(NZ),red(NZ)
   common/echocom2/fspread_self,fspread_dx
   data navg0/-1/
   save dop0,navg0,sax,sbx
-  
+
+  if(bEchoCall .and. .not.bDiskData) then
+     call gen_echocall(txcall,itone4)
+     itone1=itone4
+     id2(13:15)=id2a(13:15)
+  endif
+
+!###
+!  id2a=id2(1:15)
+!  write(*,4001) txcall,itone1,bEchoCall
+!4001 format('cc',2x,a6,2x,6i3,2x,L3)
+!###
+
+  rxcall='      '
   call decode_echo(id2,rxcall)
 
   if(navg.ne.navg0) then

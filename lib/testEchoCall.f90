@@ -5,7 +5,7 @@ program testEchoCall
   integer ihdr(11)
   integer*1 itone(6)
   character*120 fname
-  character*6 rxcall
+  character*6 rxcall,hhmmss
   common/echocom/nclearave,nsum,blue(4096),red(4096)
   common/echocom2/fspread_self,fspread_dx
 
@@ -15,8 +15,9 @@ program testEchoCall
      go to 999
   endif
 
-  write(*,1000)
-1000 format(' N   Rcvd'/11('-'))
+  write(*,1000) 
+1000 format('  UTC     Hour   Level  Doppler  Width     N     Q     DF' &
+            '    SNR   dBerr'/72('-'))
 
   nclearave=1
   navg=10
@@ -35,10 +36,12 @@ program testEchoCall
      call avecho(iwave,0,nfrit,ndf,nauto,navg,nqual,f1,xlevel,snrdb,db_err,dfreq, &
           width,bDiskData,bEchoCall,txcall,rxcall)
      i1=index(fname,'.wav')
-     read(fname(i1-6:i1-1),'(3i2)') ih,im,is
+     hhmmss=fname(i1-6:i1-1)
+     read(hhmmss,'(3i2)') ih,im,is
      hour=ih + im/60.0 + is/3600.0
-     write(*,1110) hour,xlevel,ndop,fspread,nsum,nqual,nint(dfreq),snrdb,db_err,rxcall
-1110 format(f7.4,2x,f5.2,1x,i7,1x,f7.1,1x,i5,1x,i5,1x,i6,1x,f6.1,1x,f7.1,3x,a6)
+     write(*,1110) hhmmss,hour,xlevel,ndop,fspread,nsum,nqual,nint(dfreq),  &
+          snrdb,db_err,rxcall
+1110 format(a6,2x,f7.4,2x,f5.2,1x,i7,1x,f7.1,1x,i5,1x,i5,1x,i6,1x,f6.1,1x,f7.1,3x,a6)
      nclearave=0
   enddo
 
