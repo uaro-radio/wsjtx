@@ -2145,8 +2145,13 @@ void MainWindow::dataSink(qint64 frames)
       int nDopTotal=m_fDop;
       int navg=ui->sbEchoAvg->value();
       int ndf=0;
+      int idir=1;
+      if(ui->cbEchoCall->isChecked() and !m_diskData) {
+        ndf=ui->sbToneSpacing->value();
+        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
+      }
       if(m_diskData) {
-        int idir=-1;
+        idir=-1;
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
       }
 //      qDebug() << "aa" << ndf;
