@@ -1,10 +1,11 @@
-subroutine avecho(id2,ndop,nfrit,ndf,nauto,navg,nqual,f1,xlevel,  &
+subroutine avecho(id2_0,ndop,nfrit,ndf,nauto,navg,nqual,f1,xlevel,  &
      snrdb,db_err,dfreq,width,bDiskData,bEchoCall,txcall,rxcall)
 
   parameter (NTX=6*4096)
   parameter (NFFT=32768,NH=NFFT/2)
   parameter (NZ=4096)
-  integer*2 id2(NTX)                   !Buffer for Rx data
+  integer*2 id2_0(NTX)                 !Raw Rx data
+  integer*2 id2(NTX)                   !Local copy of Rx data
   real sa(NZ)      !Avg spectrum relative to initial Doppler echo freq
   real sb(NZ)      !Avg spectrum with Dither and changing Doppler removed
   real, dimension (:,:), allocatable :: sax
@@ -28,6 +29,8 @@ subroutine avecho(id2,ndop,nfrit,ndf,nauto,navg,nqual,f1,xlevel,  &
   common/echocom2/fspread_self,fspread_dx
   data navg0/-1/
   save dop0,navg0,sax,sbx
+
+  id2=id2_0                                !Copy Rx data into our work array
 
   if(bEchoCall .and. .not.bDiskData) then
      call gen_echocall(txcall,itone4)
