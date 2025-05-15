@@ -1243,7 +1243,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   ui->cbEchoCall->setVisible(false);
   ui->sbToneSpacing->setVisible(false);
-  ui->sbToneSpacing->values({5, 10, 20, 50});
+  ui->sbToneSpacing->values({10, 20, 50});
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
