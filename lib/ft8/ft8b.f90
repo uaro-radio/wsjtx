@@ -247,34 +247,47 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
 !   3        regular decoding, nsym=3 
 !   4        regular decoding, nsym=1, bit-by-bit normalized 
 !   5        ap pass 1, nsym=1
-!   6        ap pass 2
-!   7        ap pass 3
-!   8        ap pass 4
+!   6        ap pass 1, nsym=2
+!   7        ap pass 1, nsym=3
+!   8        ap pass 1, nsym=1, bit-by-bit normalized
+!   9        ap pass 2
+!   10       ap pass 2
+!   11       ap pass 2
+!   12       ap pass 2
+!   13       ap pass 3
+!   14       ap pass 3
+!   15       ap pass 3
+!   16       ap pass 3
+!   17       ap pass 4
+!   18       ap pass 4
+!   19       ap pass 4
+!   20       ap pass 4
 
   if(lapon.or.ncontest.eq.7) then !Hounds always use AP
      if(.not.lapcqonly) then
-        npasses=4+nappasses(nQSOProgress)
+        npasses=4+4*nappasses(nQSOProgress)
      else
-        npasses=5 
+        npasses=8
      endif
   else
      npasses=4
   endif
   if(nzhsym.lt.50) npasses=4
-  
+
   do ipass=1,npasses 
-     llrz=llra
-     if(ipass.eq.2) llrz=llrb
-     if(ipass.eq.3) llrz=llrc
-     if(ipass.eq.4) llrz=llrd
+     if(mod(ipass,4).eq.1) llrz=llra
+     if(mod(ipass,4).eq.2) llrz=llrb
+     if(mod(ipass,4).eq.3) llrz=llrc
+     if(mod(ipass,4).eq.0) llrz=llrd
      if(ipass.le.4) then
         apmask=0
         iaptype=0
      endif
      if(ipass .gt. 4) then
-        llrz=llra
+!        llrz=llra
         if(.not.lapcqonly) then
-           iaptype=naptypes(nQSOProgress,ipass-4)
+           itype=(ipass-1)/4
+           iaptype=naptypes(nQSOProgress,itype)
         else
            iaptype=1
         endif
@@ -405,7 +418,7 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
      norder=2
      maxosd=2
      if(ndepth.eq.1) maxosd=-1  ! BP only
-     if(ndepth.eq.2) maxosd=0   ! uncoupled BP+OSD
+!     if(ndepth.eq.2) maxosd=0   ! uncoupled BP+OSD
      if(ndepth.eq.3 .and.         &
         (abs(nfqso-f1).le.napwid .or. abs(nftx-f1).le.napwid .or. ncontest.eq.7)) then
         maxosd=2
@@ -419,7 +432,7 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
 
      msg37='                                     '
      nbadcrc=1
-     if(nharderrors.lt.0 .or. nharderrors.gt.36) cycle
+     if(nharderrors.lt.0 .or. nharderrors.gt.39) cycle
      if(count(cw.eq.0).eq.174) cycle           !Reject the all-zero codeword
      write(c77,'(77i1)') message77
      read(c77(72:74),'(b3)') n3
