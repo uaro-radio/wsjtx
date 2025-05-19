@@ -1243,7 +1243,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   ui->cbEchoCall->setVisible(false);
   ui->sbToneSpacing->setVisible(false);
-  ui->sbToneSpacing->values({5, 10, 20, 50});
+  ui->sbToneSpacing->values({10, 15, 20, 25, 30});
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
@@ -2146,16 +2146,28 @@ void MainWindow::dataSink(qint64 frames)
       if(m_astroWidget && m_astroWidget->DopplerMethod()==2) nDop=0;   //Using CFOM
       int nDopTotal=m_fDop;
       int navg=ui->sbEchoAvg->value();
-      int ntonespacing=0;
+      int ndf=0;
+      int idir=1;
+      if(ui->cbEchoCall->isChecked() and !m_diskData) {
+        ndf=ui->sbToneSpacing->value();
+        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
+      }
       if(m_diskData) {
-        int idir=-1;
+        idir=-1;
+        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
 
-        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ntonespacing,&itone[0],dec_data.d2,&idir);
+        ui->cbEchoCall->setChecked(ndf!=0);
+//        QTextStream out(stdout);
+//        out << "aa " << ndf << " " << itone[0] << " " << itone[1] << " " << itone[2] << " "
+//                  << itone[3] << " " << itone[4] << " " << itone[5] << "\n";
+//        qDebug() << "bb" << ndf << itone[0] << itone[1] << itone[2]
+//                 << itone[3] << itone[4] << itone[5];
+
       }
       bool bEchoCall=ui->cbEchoCall->isChecked();
       QString txcall=m_baseCall;
       static char crxcall[7];
-      avecho_(dec_data.d2,&nDop,&nfrit,&ntonespacing,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
+      avecho_(dec_data.d2,&nDop,&nfrit,&ndf,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData,&bEchoCall,txcall.toLatin1().constData(),
           &crxcall[0],(FCL)6,(FCL)6);
       crxcall[6]=0;
@@ -2187,7 +2199,7 @@ void MainWindow::dataSink(qint64 frames)
         float hour=n/10000 + ((n/100)%100)/60.0 + (n%100)/3600.0;
         m_echoRunning=true;
         QString t;
-        t = t.asprintf("%9.6f  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",hour,xlevel,
+        t = t.asprintf("%7.4f  %5.2f %7d %7.1f %5d %5d %6d %6.1f %7.1f",hour,xlevel,
                        nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
         t = t0 + t + "   " + rxcall;
         if(ui) ui->decodedTextBrowser->insertText(t);
@@ -2198,14 +2210,15 @@ void MainWindow::dataSink(qint64 frames)
 
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
       if(m_saveAll and !m_diskData) {
-        int ntoneSpacing=0;
-        if(ui->cbEchoCall->isChecked()) ntoneSpacing=ui->sbToneSpacing->value();
+        if(ui->cbEchoCall->isChecked()) ndf=ui->sbToneSpacing->value();
         int idir=1;
-        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,&ntoneSpacing,&itone[0],dec_data.d2,&idir);
+//        qDebug() << "bb" << ndf << itone[0];
+        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
         m_fSpread=width;
       }
       m_nclearave=0;
     }
+
     if(m_mode=="FreqCal") return;
 
     if(m_dialFreqRxWSPR==0) m_dialFreqRxWSPR=m_freqNominal;
@@ -10919,7 +10932,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC      Hour    Level  Doppler  Width       N       Q      DF     SNR    dBerr");
+  ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
@@ -12052,7 +12065,7 @@ void MainWindow::transmit (double snr)
     if(ui->cbEchoCall->isChecked()) {
       freq=1500.0;
       toneSpacing=ui->sbToneSpacing->value();
-      if(toneSpacing==50.0) freq=500.0;
+//      if(toneSpacing==50.0) freq=500.0;
     }
     int nsps4=4*framesPerSymbol;                           //48000 Hz sampling
     int nsym=numEchoSymbols;
@@ -13115,9 +13128,12 @@ void MainWindow::on_cbEchoCall_toggled(bool b)
   ui->sbToneSpacing->setVisible(b);
   if(b) {
     mode_label.setText("Echo Call");
+    ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr   Echo Call");
     ui->dxCallEntry->setText(m_baseCall);
   } else {
     mode_label.setText("Echo");
+    ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr");
+
   }
 }
 
