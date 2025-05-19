@@ -1243,7 +1243,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   ui->cbEchoCall->setVisible(false);
   ui->sbToneSpacing->setVisible(false);
-  ui->sbToneSpacing->values({10, 20, 50});
+  ui->sbToneSpacing->values({10, 15, 20, 25, 30});
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
@@ -12011,7 +12011,7 @@ void MainWindow::transmit (double snr)
     if(ui->cbEchoCall->isChecked()) {
       freq=1500.0;
       toneSpacing=ui->sbToneSpacing->value();
-      if(toneSpacing==50.0) freq=500.0;
+//      if(toneSpacing==50.0) freq=500.0;
     }
     int nsps4=4*framesPerSymbol;                           //48000 Hz sampling
     int nsym=numEchoSymbols;
