@@ -17,7 +17,7 @@ program testEchoCall
 
   write(*,1000) 
 1000 format('  UTC     Hour   Level  Doppler  Width     N     Q     DF' &
-            '    SNR   dBerr'/72('-'))
+            '    SNR   dBerr   Message'/82('-'))
 
   nclearave=1
   navg=10
