@@ -15555,7 +15555,7 @@ void MainWindow::check_button_color()
     }
     if (ui->monitorButton->isChecked()) {
       if (m_saveAll or m_saveDecoded) {
-        ui->monitorButton->setStyleSheet("QPushButton {background-color: #00ffff; color: #000000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
+        ui->monitorButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
       } else {
         ui->monitorButton->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
       }

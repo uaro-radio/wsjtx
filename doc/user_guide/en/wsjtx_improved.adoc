@@ -147,7 +147,7 @@ If *Wait and Pounce* has been set, *Enable Tx* turns orange (with black letterin
 
 .Monitor
 
-The *Monitor* button turns cyan if audio file saving has been selected from the *Save* tab.
+The *Monitor* button turns yellow if audio file saving has been selected from the *Save* tab.
 
 .Erase Button
 

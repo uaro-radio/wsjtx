@@ -126,7 +126,7 @@ MainWindow::MainWindow(QWidget *parent) :
   m_pbmonitor_style="QPushButton{background-color: #00ff00; \
       border-style: outset; border-width: 1px; border-radius: 5px; \
       border-color: black; min-width: 5em; padding: 3px;}";
-  m_pbmonitor_style2="QPushButton{background-color: #00ffff; \
+  m_pbmonitor_style2="QPushButton{background-color: #ffff00; \
       border-style: outset; border-width: 1px; border-radius: 5px; \
       border-color: black; min-width: 5em; padding: 3px;}";
   m_pbAutoOn_style="QPushButton{background-color: red; \
