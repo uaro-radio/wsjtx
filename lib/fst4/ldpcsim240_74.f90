@@ -6,7 +6,7 @@ program ldpcsim240_74
 
    parameter(N=240, NN=120)
    character*8 arg
-   character*37 msg0,msgsent,msg
+   character*37 msg0
    character*77 c77
    character*24 c24
    integer*1 msgbits(101)
@@ -98,6 +98,7 @@ program ldpcsim240_74
 !   call init_random_seed()
 !   call sgran()
 
+   iq=1
    one=.false.
    do i=0,65535
       do j=0,15

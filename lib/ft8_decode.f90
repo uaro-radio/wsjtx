@@ -46,7 +46,6 @@ contains
     procedure(ft8_decode_callback) :: callback
     parameter (MAXCAND=1000,MAX_EARLY=200,NPTS=15*12000)
     real*8 tsec,tseq
-    real s(NH1,NHSYM)
     real sbase(NH1)
     real candidate(3,MAXCAND)
     real dd(NPTS),dd1(NPTS)
