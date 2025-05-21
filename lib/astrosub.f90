@@ -19,7 +19,7 @@ contains
     use :: C_interface_module, only: C_int, C_double, C_bool, C_ptr, C_string_value, assignment(=)
 
     integer(C_int), intent(in), value :: nyear, month, nday
-	logical(C_int), value :: extraazel
+    logical(C_int), value :: extraazel
     real(C_double), intent(in), value :: uth8, freq8
     real(C_double), intent(out) :: AzSun8, ElSun8, AzMoon8, ElMoon8, AzMoonB8,  &
          ElMoonB8, Ramoon8, DecMoon8, Dgrd8, poloffset8, xnr8, techo8, width1,  &

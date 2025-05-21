@@ -190,7 +190,7 @@ contains
        call timer('decode4 ',1)
 
        if(nfano.gt.0) then
-          call getsnr(dat,npts,mode4,dtx,nfreq,decoded,nsnr)
+          call getsnr(dat,npts,mode4,dtx,decoded,nsnr)
 ! Fano succeeded: report the message and return              !Fano OK
           if (associated (this%decode_callback)) then
              call this%decode_callback(nsnr,dtx,nfreq,.true.,csync,      &
@@ -253,7 +253,7 @@ contains
     qual=qbest
 
     if (associated (this%decode_callback)) then
-       if(qual.gt.0.0) call getsnr(dat,npts,mode4,dtx,nfreq,deepmsg,nsnr)
+       if(qual.gt.0.0) call getsnr(dat,npts,mode4,dtx,deepmsg,nsnr)
        if(int(qual).ge.nq1) then
           call this%decode_callback(nsnr,dtx,nfreqz,.true.,csync,.true., &
                deepmsg,qual,ich,.false.,0)
@@ -413,7 +413,7 @@ contains
   end subroutine avg4
 end module jt4_decode
 
-subroutine getsnr(dat,npts,mode4,dtx,nfreq,decoded,nsnr)
+subroutine getsnr(dat,npts,mode4,dtx,decoded,nsnr)
 
 ! Compute SNR using raw data, T, DF, and decoded message.
  
