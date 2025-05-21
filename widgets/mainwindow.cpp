@@ -2196,6 +2196,7 @@ void MainWindow::dataSink(qint64 frames)
         if(!m_echoRunning or echocom_.nsum<2) m_echoSec0=nsec;
         float hour=n/10000 + ((n/100)%100)/60.0 + (n%100)/3600.0;
         m_echoRunning=true;
+        if(ndf<0 or ndf>30) ndf=0;
         QString t;
         t = t.asprintf("%7.4f  %5.2f %7d %7.1f %5d %5d %6d %6.1f %7.1f %3d",hour,xlevel,
                        nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr,ndf);

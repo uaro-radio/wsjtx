@@ -24,14 +24,15 @@ subroutine decode_echo(iwave,rxcall)
 
 ! Retrieve params known at time of transmissiion and saved in iwave
   call save_echo_params(nDop,nDopAudio,nfrit,f1,fspread,ndf,itone,iwave,-1)
-!  itone=(/21,24,3,19,30,26/)  !KN2ITP
-!  itone=(/33,3,36,27,0,0/)    !W2ZQ
-!  write(*,4001) itone,ndf
-!4001 format(6i4,i8)
-
-  if(ndf.eq.0) return
 
   df=12000.0/NSPS
+  if(ndf.lt.10 .or. ndf.gt.30) return
+  if(f1.eq.0.0) f1=1500.0
+  i1=nint((f1 - 5*ndf)/df)
+  i2=nint((f1 + 42*ndf)/df)
+  if(i1.le.0 .or. i1.gt.4096 .or. i2.le.0 .or. i2.gt.4096) return
+  nn=i2-i1+1
+
   if(nclearave.ne.0) p=0.
   nfft=NZ
   df1=12000.0/nfft
@@ -44,10 +45,6 @@ subroutine decode_echo(iwave,rxcall)
   call four2a(c0,nfft,1,1,1)            !Inverse c2c FFT; c0 is analytic sig
 
   rxcall='      '
-  if(f1.eq.0.0) f1=1500.0
-  i1=nint((f1 - 5*ndf)/df)
-  i2=nint((f1 + 42*ndf)/df)
-  nn=i2-i1+1
   nerr=0
   nskip=2*fspread/df
 !  nsmo=fspread/df
