@@ -164,16 +164,14 @@ subroutine q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
 ! Get 2d CCF and ccf2 using sync symbols only
   if(iavg.eq.0) then
      call timer('ccf_22a ',0)
-     call q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
-          f0a,xdta,ccf2)
+     call q65_ccf_22(s1,iz,jz,nfqso,ntol,ipk,jpk,f0a,xdta,ccf2)
      call timer('ccf_22a ',1)
   endif
 
 ! Get 2d CCF and ccf2_avg using sync symbols only
   if(iavg.ge.1) then
      call timer('ccf_22b ',0)
-     call q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
-          f0a,xdta,ccf2_avg)
+     call q65_ccf_22(s1,iz,jz,nfqso,ntol,ipk,jpk,f0a,xdta,ccf2_avg)
      call timer('ccf_22b ',1)
   endif
   if(idec.lt.0) then
@@ -467,8 +465,7 @@ subroutine q65_ccf_85(s1,iz,jz,nfqso,ia,ia2,ipk,jpk,f0,xdt,imsg_best,   &
   return
 end subroutine q65_ccf_85
 
-subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
-     f0,xdt,ccf2)
+subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ipk,jpk,f0,xdt,ccf2)
 
 ! Attempt synchronization using only the 22 sync symbols.  Return ccf2
 ! for the "orange sync curve".
@@ -486,7 +483,6 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
 
   ia=max(nfa,100)/df
   ib=min(nfb,4900)/df
-!  if(nqd.ne.1 .or. iavg.ne.0) max_drift=0    !### Disabled March 22, 2023
   if(max_drift.ne.0) then
      ia=max(nint(100/df),nint((nfqso-ntol)/df))
      ib=min(nint(4900/df),nint((nfqso+ntol)/df))
