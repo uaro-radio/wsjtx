@@ -83,3 +83,43 @@ subroutine decode_echo(iwave,rxcall)
   
   return
 end subroutine decode_echo
+
+subroutine echo_time(icall)
+
+  character*8 cdate
+  character*12 source(6)
+  integer nt(8)
+  logical ready,op
+  data ready/.false./,op/.false./
+  save txdelay,techo,ready,op
+
+  inquire(61,opened=op)
+  if(.not.op) open(61,file='echo_timing.txt',position='append')
+
+  if(icall.eq.1) ready=.true.
+  if(.not.ready) go to 999
+  
+  source(1)='ModStartTx'
+  source(2)='stopTx'
+  source(3)='ResumeAudIn'
+  source(4)='stopTx2'
+
+  if(icall.lt.1 .or. icall.gt.6) then
+     if(icall.ge.2400 .and. icall.le.2700) then
+        techo=0.001*icall
+     else
+        txdelay=0.001*icall
+     endif
+     go to 999
+  endif
+
+  call date_and_time(cdate,values=nt)
+  msec=1000*nt(7) + nt(8)
+  s6=0.001*mod(msec,6000)
+  write(61,1010) cdate,nt(5),nt(6),nt(7),nt(8),techo,txdelay,s6,icall, &
+       source(icall)
+1010 format(a8,2x,i2.2,':',i2.2,':',i2.2,'.',i3.3,3f7.2,i5,2x,a12)
+  flush(61)
+
+999 return
+end subroutine echo_time

@@ -183,6 +183,8 @@ extern "C" {
                 float* width, bool* bDiskData, bool* bEchoCall, char const * txcall,
                 char rxcall[], FCL len1, FCL len2);
 
+  void echo_time_(int* icall);
+
   void fast_decode_(short id2[], int narg[], double * trperiod,
                     char msg[], char mycall[], char hiscall[],
                     fortran_charlen_t, fortran_charlen_t, fortran_charlen_t);
@@ -3420,6 +3422,7 @@ void MainWindow::monitor (bool state)
 //        qDebug() << "Rx start: " << ms << ms-m_msEchoTxStart;
           Q_EMIT resumeAudioInputStream ();
         }
+        int icall=3; echo_time_(&icall);
       }
     }
   } else {
@@ -7922,6 +7925,7 @@ void MainWindow::startTx2()
 
 void MainWindow::stopTx()
 {
+  int icall=2; echo_time_(&icall);
   if (m_tci_audio) Q_EMIT m_config.transceiver_modulator_stop();
   else Q_EMIT endTransmitMessage ();
   m_btxok = false;
@@ -7941,7 +7945,8 @@ void MainWindow::stopTx()
 }
 
 void MainWindow::stopTx2()
-{    
+{
+  int icall=4; echo_time_(&icall);
   if (m_tci_audio) {
       Q_EMIT m_config.transceiver_ptt (false);      //Lower PTT
       monitor (true);
@@ -12024,6 +12029,11 @@ void MainWindow::transmit (double snr)
 
     toneSpacing=-5.0;  //Flag Modulator to use precomputed foxcom_.wave[].
     m_msEchoTxStart=QDateTime::currentMSecsSinceEpoch();
+    int icall=1000*m_config.txDelay(); echo_time_(&icall);
+//    qDebug() << "yy" << icall << m_tEcho << m_config.txDelay();
+    icall=1000*m_tEcho; echo_time_(&icall);
+//    qDebug() << "zz" << icall << m_tEcho << m_config.txDelay();
+    icall=1; echo_time_(&icall);
     if (m_tci_audio) {
       Q_EMIT m_config.transceiver_modulator_start(m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,
              false,false,snr,m_TRperiod);
