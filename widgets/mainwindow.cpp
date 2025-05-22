@@ -2155,15 +2155,15 @@ void MainWindow::dataSink(qint64 frames)
       if(m_diskData) {
         idir=-1;
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
-
         ui->cbEchoCall->setChecked(ndf!=0);
+      }
+
 //        QTextStream out(stdout);
 //        out << "aa " << ndf << " " << itone[0] << " " << itone[1] << " " << itone[2] << " "
 //                  << itone[3] << " " << itone[4] << " " << itone[5] << "\n";
-//        qDebug() << "bb" << ndf << itone[0] << itone[1] << itone[2]
-//                 << itone[3] << itone[4] << itone[5];
+        qDebug() << "bb" << ndf << itone[0] << itone[1] << itone[2]
+                 << itone[3] << itone[4] << itone[5];
 
-      }
       bool bEchoCall=ui->cbEchoCall->isChecked();
       QString txcall=m_baseCall;
       static char crxcall[7];
