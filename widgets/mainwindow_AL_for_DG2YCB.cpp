@@ -2198,10 +2198,11 @@ void MainWindow::dataSink(qint64 frames)
         if(!m_echoRunning or echocom_.nsum<2) m_echoSec0=nsec;
         float hour=n/10000 + ((n/100)%100)/60.0 + (n%100)/3600.0;
         m_echoRunning=true;
+        if(ndf<0 or ndf>30) ndf=0;
         QString t;
-        t = t.asprintf("%7.4f  %5.2f %7d %7.1f %5d %5d %6d %6.1f %7.1f",hour,xlevel,
-                       nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
-        t = t0 + t + "   " + rxcall;
+        t = t.asprintf("%7.4f  %5.2f %7d %7.1f %5d %5d %6d %6.1f %7.1f %3d",hour,xlevel,
+                       nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr,ndf);
+        t = t0 + t + "  " + rxcall;
         if(ui) ui->decodedTextBrowser->insertText(t);
         t=t1 + t;
         write_all("Rx",t);
@@ -2212,7 +2213,6 @@ void MainWindow::dataSink(qint64 frames)
       if(m_saveAll and !m_diskData) {
         if(ui->cbEchoCall->isChecked()) ndf=ui->sbToneSpacing->value();
         int idir=1;
-//        qDebug() << "bb" << ndf << itone[0];
         save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
         m_fSpread=width;
       }
@@ -10932,7 +10932,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr");
+  ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr  TS  Echo Call");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
@@ -13126,14 +13126,12 @@ void MainWindow::on_cbCQTx_toggled(bool b)
 void MainWindow::on_cbEchoCall_toggled(bool b)
 {
   ui->sbToneSpacing->setVisible(b);
+  ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr  TS  Echo Call");
   if(b) {
     mode_label.setText("Echo Call");
-    ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr   Echo Call");
     ui->dxCallEntry->setText(m_baseCall);
   } else {
     mode_label.setText("Echo");
-    ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr");
-
   }
 }
 
