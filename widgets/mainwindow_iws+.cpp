@@ -4180,6 +4180,11 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
   check_button_color();
 }
 
+void MainWindow::on_pbBandHopping_clicked()
+{
+  if (m_auto) ui->pbBandHopping->setChecked(false); // don't allow band hopping when in QSO
+}
+
 void MainWindow::on_actionRelease_Notes_triggered ()
 {
   QDesktopServices::openUrl (QUrl {"https://wsjt-x-improved.sourceforge.io/Release_Notes.txt"});

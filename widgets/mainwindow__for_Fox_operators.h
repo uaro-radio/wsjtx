@@ -202,6 +202,7 @@ private slots:
   void on_autoButton_clicked (bool);
   void on_stopTxButton_clicked();
   void on_stopButton_clicked();
+  void on_pbBandHopping_clicked();
   void on_actionRelease_Notes_triggered ();
   void on_actionFT8_DXpedition_Mode_User_Guide_triggered();
   void on_actionSuperFox_User_Guide_triggered();
