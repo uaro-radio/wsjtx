@@ -247,6 +247,7 @@ bool wait_and_call = false;
 bool no_wait_and_call = false;
 bool no_a7_decodes = false;
 bool keep_frequency = false;
+bool keep_last_tx_label = false;
 int m_Nslots0 {1};
 int m_TxFreqFox {300};
 bool not_erase = false;
@@ -4049,6 +4050,7 @@ void MainWindow::setup_status_bar (bool vhf)
   } else if ("FreqCal" == m_mode) {
     mode_label.setStyleSheet ("QLabel{color: #000000; background-color: #ff9933}");
   }
+  keep_last_tx_label = true;
   last_tx_label.setText (QString {});
   if (m_mode.contains (QRegularExpression {R"(^(Echo))"})) {
     if (band_hopping_label.isVisible ()) statusBar ()->removeWidget (&band_hopping_label);
@@ -4147,6 +4149,7 @@ void MainWindow::closeEvent(QCloseEvent * e)
 
 void MainWindow::on_stopButton_clicked()                       //stopButton
 {
+  ui->pbBandHopping->setChecked(false); // disable band hopping
   monitor (false);
   m_loopall=false;
   if(m_bRefSpec) {
@@ -7894,6 +7897,7 @@ void MainWindow::stopTx2()
     WSPR_scheduling ();
     m_ntr=0;
   }
+  keep_last_tx_label = true;
   last_tx_label.setText(tr ("Last Tx: %1").arg (m_currentMessage.trimmed()));
 }
 
@@ -9742,6 +9746,7 @@ void MainWindow::on_dxGridEntry_textChanged (QString const& grid)
 
 void MainWindow::on_genStdMsgsPushButton_clicked()          //genStdMsgs button
 {
+  ui->pbBandHopping->setChecked(false); // disable band hopping
   genStdMsgs(m_rpt);
   if (!m_bDoubleClicked && m_hisCall!="") {
       if (ui->tx1->isEnabled ()) {
@@ -11309,6 +11314,7 @@ void MainWindow::on_rptSpinBox_valueChanged(int n)
 
 void MainWindow::on_tuneButton_clicked (bool checked)
 {
+  ui->pbBandHopping->setChecked(false); // disable band hopping
   // prevent tuning on top of a SuperFox message
   if (SpecOp::HOUND==m_specOp && m_config.superFox() && !m_tune) {
     QDateTime now = QDateTime::currentDateTimeUtc();
@@ -11391,6 +11397,7 @@ void MainWindow::stopTuneATU()
 
 void MainWindow::on_stopTxButton_clicked()                    // Stop Tx
 {
+  ui->pbBandHopping->setChecked(false); // disable band hopping
   if (m_tune) stop_tuning ();
   if (m_auto and !m_tuneup) auto_tx_mode (false);
   m_btxok=false;
@@ -15643,6 +15650,18 @@ void MainWindow::check_button_color()
       }
     } else {
       ui->monitorButton->setStyleSheet("");
+    }
+    if (ui->pbBandHopping->isChecked()) {
+      keep_last_tx_label = false;
+      ui->pbBandHopping->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
+      last_tx_label.setText(" Band Hopping On ");
+      last_tx_label.setStyleSheet ("QLabel{color: #ffffff; background-color: #ff0000}");
+      ui->genStdMsgsPushButton->setStyleSheet("QPushButton {background-color: #ffff00; color: #000000; border-style: outset; border-width: 1px; border-radius: 5px; border-color: black; min-width: 5em; padding: 3px;}");
+    } else {
+      ui->pbBandHopping->setStyleSheet ("");
+      if (!keep_last_tx_label) last_tx_label.setText ("");
+      last_tx_label.setStyleSheet ("");
+      ui->genStdMsgsPushButton->setStyleSheet ("");
     }
 }
 
