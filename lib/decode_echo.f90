@@ -91,7 +91,7 @@ subroutine echo_time(icall)
   integer nt(8)
   logical ready,op
   data ready/.false./,op/.false./
-  save txdelay,techo,ready,op
+  save txdelay,techo,ready,op,t1
 
   inquire(61,opened=op)
   if(.not.op) open(61,file='echo_timing.txt',position='append')
@@ -100,11 +100,9 @@ subroutine echo_time(icall)
   if(.not.ready) go to 999
   
   source(1)='ModStartTx'
-  source(2)='stopTx'
-  source(3)='ResumeAudIn'
-  source(4)='stopTx2'
+  source(2)='ResumeAudIn'
 
-  if(icall.lt.1 .or. icall.gt.6) then
+  if(icall.lt.1 .or. icall.gt.2) then
      if(icall.ge.2400 .and. icall.le.2700) then
         techo=0.001*icall
      else
@@ -116,10 +114,14 @@ subroutine echo_time(icall)
   call date_and_time(cdate,values=nt)
   msec=1000*nt(7) + nt(8)
   s6=0.001*mod(msec,6000)
-  write(61,1010) cdate,nt(5),nt(6),nt(7),nt(8),techo,txdelay,s6,icall, &
-       source(icall)
-1010 format(a8,2x,i2.2,':',i2.2,':',i2.2,'.',i3.3,3f7.2,i5,2x,a12)
-  flush(61)
+  if(icall.eq.1) t1=s6
+  if(icall.eq.2) then
+     t2=s6
+     write(61,1010) cdate,nt(5),nt(6),nt(7),nt(8),techo,txdelay,t1,t2,  &
+          t2-t1
+1010 format(a8,2x,i2.2,':',i2.2,':',i2.2,'.',i3.3,5f7.2)
+     flush(61)
+  endif
 
 999 return
 end subroutine echo_time

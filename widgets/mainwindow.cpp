@@ -1244,6 +1244,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 #endif
 
   ui->cbEchoCall->setVisible(false);
+  ui->sbEchoAdjust->setVisible(false);
   ui->sbToneSpacing->setVisible(false);
   ui->sbToneSpacing->values({10, 15, 20, 25, 30});
 
@@ -1410,6 +1411,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("FST4_FLow",ui->sbF_Low->value());
   m_settings->setValue("FST4_FHigh",ui->sbF_High->value());
   m_settings->setValue("EchoToneSpacing",ui->sbToneSpacing->value());
+  m_settings->setValue("EchoAdjust",ui->sbEchoAdjust->value());
   m_settings->setValue("DTtol",m_DTtol);
   m_settings->setValue("MinSync",m_minSync);
   m_settings->setValue ("AutoSeq", ui->cbAutoSeq->isChecked ());
@@ -1730,6 +1732,7 @@ void MainWindow::readSettings()
   ui->sbF_High->setValue(m_settings->value("FST4_FHigh",1400).toInt());
   ui->sbFST4W_FTol->setValue(m_settings->value("FST4W_FTol",100).toInt());
   ui->sbToneSpacing->setValue(m_settings->value("EchoToneSpacing",10).toInt());
+  ui->sbEchoAdjust->setValue(m_settings->value("EchoAdjust",0.0).toDouble());
   m_minSync=m_settings->value("MinSync",0).toInt();
   ui->syncSpinBox->setValue(m_minSync);
   ui->cbAutoSeq->setChecked (m_settings->value ("AutoSeq", false).toBool());
@@ -3422,7 +3425,7 @@ void MainWindow::monitor (bool state)
 //        qDebug() << "Rx start: " << ms << ms-m_msEchoTxStart;
           Q_EMIT resumeAudioInputStream ();
         }
-        int icall=3; echo_time_(&icall);
+        int icall=2; echo_time_(&icall);
       }
     }
   } else {
@@ -7106,7 +7109,9 @@ void MainWindow::guiUpdate()
   } else {
     // For all modes other than WSPR and FST4W
     m_bTxTime = (t2p >= tx1) and (t2p < tx2);
-    if(m_mode=="Echo") m_bTxTime = m_bTxTime and m_bEchoTxOK;
+    if(m_mode=="Echo") {
+      m_bTxTime = (t2p >= tx1) and (t2p < (tx2+ui->sbEchoAdjust->value())) and m_bEchoTxOK;
+    }
     if(m_mode=="FT8" and ui->tx5->currentText().contains("/B ")) {
       //FT8 beacon transmission from Tx5 only at top of a UTC minute
       double t4p=fmod(tsec,4*m_TRperiod);
@@ -7925,7 +7930,6 @@ void MainWindow::startTx2()
 
 void MainWindow::stopTx()
 {
-  int icall=2; echo_time_(&icall);
   if (m_tci_audio) Q_EMIT m_config.transceiver_modulator_stop();
   else Q_EMIT endTransmitMessage ();
   m_btxok = false;
@@ -7946,7 +7950,6 @@ void MainWindow::stopTx()
 
 void MainWindow::stopTx2()
 {
-  int icall=4; echo_time_(&icall);
   if (m_tci_audio) {
       Q_EMIT m_config.transceiver_ptt (false);      //Lower PTT
       monitor (true);
@@ -13083,6 +13086,7 @@ void MainWindow::on_cbCQTx_toggled(bool b)
 void MainWindow::on_cbEchoCall_toggled(bool b)
 {
   ui->sbToneSpacing->setVisible(b);
+  ui->sbEchoAdjust->setVisible(b);
   ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr  TS  Echo Call");
   if(b) {
     mode_label.setText("Echo Call");
