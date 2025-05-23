@@ -29,7 +29,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   character*4 grid4
   character*3 csubmode
   character*17 fname
-  character*64 result,ctmp
+  character*66 result,ctmp
   character*8 result2                      !liveCQ
   character*20 datetime,datetime1
   common/decodes/ndecodes,ncand2,nQDecoderDone,nWDecoderBusy,              &

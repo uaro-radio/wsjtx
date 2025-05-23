@@ -94,7 +94,7 @@ extern struct {
   int nWDecoderBusy;     //Set to 1 when WSJT-X decoder is busy
   int nWTransmitting;    //Set to TRperiod when WSJT-X is transmitting
   int kHzRequested;      //Integer kHz dial frequency request to WSJT-X
-  char result[50][64];   //Staging area for QMAP decodes
+  char result[50][66];   //Staging area for QMAP decodes
 } decodes_;
 
 extern struct {
