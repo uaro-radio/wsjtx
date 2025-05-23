@@ -183,7 +183,7 @@ extern "C" {
                 float* width, bool* bDiskData, bool* bEchoCall, char const * txcall,
                 char rxcall[], FCL len1, FCL len2);
 
-  void echo_time_(int* icall);
+  void echo_time_(int* icall, float echo_data[]);
 
   void fast_decode_(short id2[], int narg[], double * trperiod,
                     char msg[], char mycall[], char hiscall[],
@@ -234,6 +234,7 @@ float fast_green[703];
 float fast_green2[703];
 float fast_s[44992];                                    //44992=64*703
 float fast_s2[44992];
+float echo_data[6];
 int   fast_jh {0};
 int   fast_jhpeak {0};
 int   fast_jh2 {0};
@@ -2173,6 +2174,9 @@ void MainWindow::dataSink(qint64 frames)
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData,&bEchoCall,txcall.toLatin1().constData(),
           &crxcall[0],(FCL)6,(FCL)6);
+      int icall=99;
+      echo_data[5]=sigdb;
+      echo_time_(&icall,echo_data);
       crxcall[6]=0;
       QString rxcall {QString::fromLatin1(crxcall)};
 
@@ -3425,7 +3429,11 @@ void MainWindow::monitor (bool state)
 //        qDebug() << "Rx start: " << ms << ms-m_msEchoTxStart;
           Q_EMIT resumeAudioInputStream ();
         }
-        int icall=2; echo_time_(&icall);
+        int icall=2;
+        echo_data[0]=m_config.txDelay();
+        echo_data[1]=ui->sbEchoAdjust->value();
+        echo_data[2]=m_tEcho;
+        echo_time_(&icall,echo_data);
       }
     }
   } else {
@@ -12032,11 +12040,8 @@ void MainWindow::transmit (double snr)
 
     toneSpacing=-5.0;  //Flag Modulator to use precomputed foxcom_.wave[].
     m_msEchoTxStart=QDateTime::currentMSecsSinceEpoch();
-    int icall=1000*m_config.txDelay(); echo_time_(&icall);
-//    qDebug() << "yy" << icall << m_tEcho << m_config.txDelay();
-    icall=1000*m_tEcho; echo_time_(&icall);
-//    qDebug() << "zz" << icall << m_tEcho << m_config.txDelay();
-    icall=1; echo_time_(&icall);
+    int icall=1;
+    echo_time_(&icall,echo_data);
     if (m_tci_audio) {
       Q_EMIT m_config.transceiver_modulator_start(m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,
              false,false,snr,m_TRperiod);

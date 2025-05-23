@@ -84,44 +84,34 @@ subroutine decode_echo(iwave,rxcall)
   return
 end subroutine decode_echo
 
-subroutine echo_time(icall)
+subroutine echo_time(icall,echo_data)
 
+  real echo_data(0:5)
   character*8 cdate
-  character*12 source(6)
   integer nt(8)
-  logical ready,op
-  data ready/.false./,op/.false./
-  save txdelay,techo,ready,op,t1
-
-  inquire(61,opened=op)
-  if(.not.op) open(61,file='echo_timing.txt',position='append')
-
-  if(icall.eq.1) ready=.true.
-  if(.not.ready) go to 999
-  
-  source(1)='ModStartTx'
-  source(2)='ResumeAudIn'
-
-  if(icall.lt.1 .or. icall.gt.2) then
-     if(icall.ge.2400 .and. icall.le.2700) then
-        techo=0.001*icall
-     else
-        txdelay=0.001*icall
-     endif
-     go to 999
-  endif
 
   call date_and_time(cdate,values=nt)
   msec=1000*nt(7) + nt(8)
   s6=0.001*mod(msec,6000)
-  if(icall.eq.1) t1=s6
-  if(icall.eq.2) then
-     t2=s6
-     write(61,1010) cdate,nt(5),nt(6),nt(7),nt(8),techo,txdelay,t1,t2,  &
-          t2-t1
-1010 format(a8,2x,i2.2,':',i2.2,':',i2.2,'.',i3.3,5f7.2)
-     flush(61)
+  if(icall.eq.1) then
+     echo_data(3)=s6
+     go to 999
+  else if(icall.eq.2) then
+     echo_data(4)=s6
+     go to 999
   endif
+
+  txdelay=echo_data(0)
+  echoAdjust=echo_data(1)
+  t_eme=echo_data(2)
+  t1=echo_data(3)
+  t2=echo_data(4)
+  snr=echo_data(5)
+  open(61,file='echo_timing.txt',position='append')
+  write(61,1010) cdate,nt(5),nt(6),nt(7),nt(8),txdelay,echoAdjust,t_eme, &
+       t1,t2,t2-t1,snr
+1010 format(a8,2x,i2.2,':',i2.2,':',i2.2,'.',i3.3,7f7.2)
+  close(61)
 
 999 return
 end subroutine echo_time
