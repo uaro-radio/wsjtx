@@ -2155,6 +2155,9 @@ void MainWindow::dataSink(qint64 frames)
       if(ui->cbEchoCall->isChecked() and !m_diskData) {
         ndf=ui->sbToneSpacing->value();
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
+//        QTextStream out(stdout);
+//        out << "aa " << ndf << " " << itone[0] << " " << itone[1] << " " << itone[2] << " "
+//                  << itone[3] << " " << itone[4] << " " << itone[5] << "\n";
       }
       if(m_diskData) {
         idir=-1;
@@ -2162,14 +2165,8 @@ void MainWindow::dataSink(qint64 frames)
         ui->cbEchoCall->setChecked(ndf!=0);
       }
 
-//        QTextStream out(stdout);
-//        out << "aa " << ndf << " " << itone[0] << " " << itone[1] << " " << itone[2] << " "
-//                  << itone[3] << " " << itone[4] << " " << itone[5] << "\n";
-        qDebug() << "bb" << ndf << itone[0] << itone[1] << itone[2]
-                 << itone[3] << itone[4] << itone[5];
-
       bool bEchoCall=ui->cbEchoCall->isChecked();
-      QString txcall=m_baseCall;
+      QString txcall=ui->dxCallEntry->text();
       static char crxcall[7];
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData,&bEchoCall,txcall.toLatin1().constData(),

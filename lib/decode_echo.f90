@@ -79,7 +79,7 @@ subroutine decode_echo(iwave,rxcall)
   enddo
 
 ! Return real(c2) as iwave ...
-  iwave(1:NZ)=32767.0*real(c2(0:NZ-1))
+  iwave(16:NZ)=32767.0*real(c2(15:NZ-1))
   
   return
 end subroutine decode_echo
