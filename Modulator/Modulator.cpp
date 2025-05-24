@@ -77,7 +77,6 @@ void Modulator::start (QString mode, unsigned symbolsLength, double framesPerSym
   if((mode=="FT8" and m_nsps==1024)) delay_ms=400;            //SuperFox Qary Polar Code transmission
   if(mode=="Q65" and m_nsps<=3600) delay_ms=500;              //Q65-15 and Q65-30
   if(mode=="FT4") delay_ms=300;                               //FT4
-  if(mode=="Echo") delay_ms=400;
 
 // noise generator parameters
   if (m_addNoise) {
@@ -103,6 +102,7 @@ void Modulator::start (QString mode, unsigned symbolsLength, double framesPerSym
           m_ic = (mstr - delay_ms) * m_frameRate / 1000;
         }
     }
+  if(mode=="Echo") m_ic=0;
 
   initialize (QIODevice::ReadOnly, channel);
   Q_EMIT stateChanged ((m_state = (synchronize && m_silentFrames) ?
@@ -210,7 +210,6 @@ qint64 Modulator::readData (char * data, qint64 maxSize)
         if(m_bFastMode and (icw[0]>0) and (tsec > (m_TRperiod-5.0))) fastCwId=true;
         if(!m_bFastMode) m_nspd=2560;                 // 22.5 WPM
 
-//        qDebug() << "Mod A" << m_ic << isym << tsec;
 
         if(slowCwId or fastCwId) {     // Transmit CW ID?
           m_dphi = m_twoPi*m_frequency/m_frameRate;
