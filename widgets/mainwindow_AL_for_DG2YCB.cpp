@@ -2933,6 +2933,43 @@ void MainWindow::fastSink(qint64 frames)
         // mute audible alerts when callsign is on the Ignored List for MSK144
         if (m_config.alert_Enabled() && !ui->cbBypass->isChecked() && deCall!="" && ignoreList.contains(deCall + ",")) m_muted = true;
 
+        // insert blank line for MSK144
+        int ntime=6;
+        if ((m_config.insert_blank() or m_config.alert_Enabled()) && !BlankLineInserted && (text.left(ntime) != m_tBlankLine) && text.left(4).contains(QRegularExpression {"\\d\\d\\d\\d"}) ) {
+          ui->decodedTextBrowser->new_period ();
+          if (m_config.insert_blank () && (!filtered or m_config.filters_for_Wait_and_Pounce_only())) {
+            QString band;
+            if(((QDateTime::currentMSecsSinceEpoch() / 1000 - m_secBandChanged) > 4*int(m_TRperiod)/4) or m_displayBand) {
+              band = ' ' + m_config.bands ()->find (m_freqNominal);
+            }
+            if (m_config.insert_blank ()) {
+              if (ui->actionUse_Dark_Style->isChecked()) {
+                if (m_config.detailed_blank()) {
+                  if (m_config.DXCC()) {
+                    ui->decodedTextBrowser->insertText(("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode + " ------"), "#a2a2a2", "#000000");
+                  } else {
+                    ui->decodedTextBrowser->insertText(("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode), "#a2a2a2", "#000000");
+                  }
+                } else {
+                  ui->decodedTextBrowser->insertText(band.rightJustified(40, '-'), "#a2a2a2", "#000000");
+                }
+              } else {
+                if (m_config.detailed_blank()) {
+                  if (m_config.DXCC()) {
+                    ui->decodedTextBrowser->insertLineSpacer ("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode + " ------");
+                  } else {
+                    ui->decodedTextBrowser->insertLineSpacer ("------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + m_currentBandPeriod + " - " + m_mode);
+                  }
+                } else {
+                  ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (40, '-'));
+                }
+              }
+            }
+            BlankLineInserted = true;
+            m_tBlankLine = text.left(ntime);
+          }
+        }
+
         // display decodes for the fast modes must be done before highlighting any call or grid for MSK144
         bool haveFSpread {false};
         float fSpread {0.};
@@ -7666,6 +7703,19 @@ void MainWindow::guiUpdate()
 //Once per second (onesec)
   if(nsec != m_sec0) {
 
+    // reset blank line for MSK144
+    if (m_mode=="MSK144") {
+      QDateTime now = QDateTime::currentDateTimeUtc();
+      int s = now.time().toString("ss").toInt();
+      if ((m_TRperiod==5 && (s==0 || s==5 || s==10 || s==15 || s==20 || s==25 || s==30 || s==35 || s==40 || s==45 || s==50 || s==55))
+          or (m_TRperiod==10 && (s==0 || s==10 || s==20 || s==30 || s==40 || s==50))
+          or (m_TRperiod==15 && (s==0 || s==15 || s==30 || s==45))
+          or (m_TRperiod==30 && (s==0 || s==30))) {
+        BlankLineInserted = false;
+        m_dateTimeSeqStart = qt_truncate_date_time_to (QDateTime::currentDateTimeUtc (), m_TRperiod * 1.e3);
+      }
+    }
+
     if (m_tune && m_config.tune_watchdog() && !(m_mode=="WSPR" || m_mode=="FST4W")) {
         QString remtime;
         remtime = QString::asprintf("%.0f s",tuneATU_Timer.remainingTime()/1000.0);
@@ -8699,6 +8749,16 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
   QString s1 = m_QSOText.trimmed ();
   QString s2 = message.clean_string ().trimmed();
   if (s1!=s2 and !message.isTX()) {
+    // insert blank line in decodedTextBrowser2 when band was changed for MSK144
+    if (m_mode=="MSK144" && m_config.insert_blank () && m_band_changed && (m_currentBandPeriod == m_currentBand) && !BlankLineInserted) {
+      if (ui->actionUse_Dark_Style->isChecked()) {
+        ui->decodedTextBrowser2->insertText(("------------------- " + m_currentBandPeriod + " -----------------"), "#a2a2a2", "#000000");
+      } else {
+        ui->decodedTextBrowser2->insertLineSpacer ("------------------- " + m_currentBandPeriod + " -----------------");
+      }
+      BlankLineInserted = true;
+      m_band_changed = false;
+    }
     if (!s2.contains(m_baseCall) or m_mode=="MSK144") {  // Taken care of elsewhere if for_us and slow mode
       ui->decodedTextBrowser2->displayDecodedText (message, m_config.my_callsign (), m_mode, m_config.DXCC (),
         m_logBook, m_currentBand, m_config.ppfx (), false, false, 0.0, false, -99, "", m_muted);
