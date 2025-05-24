@@ -17,7 +17,7 @@ module ft8_a7
 
 contains
 
-subroutine ft8_a7_save(nutc,dt,f,msg)
+subroutine ft8_a7_save(jseq,dt,f,msg)
 
   use packjt77
   character*37 msg,msg1
@@ -37,8 +37,7 @@ subroutine ft8_a7_save(nutc,dt,f,msg)
   call split77(msg,nwords,nw,w)          !Parse msg into words
   if(nwords.lt.1) go to 999
   if(w(1)(1:3).eq.'CQ_') go to 999
-  j=mod(nutc/5,2)                        !j is 0 or 1 for odd/even sequence
-  jseq=j
+  j=jseq
 
 ! Add this decode to current table for this sequence
   ndec(j,1)=ndec(j,1)+1                  !Number of decodes in this sequence

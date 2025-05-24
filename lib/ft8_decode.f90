@@ -75,6 +75,8 @@ contains
     write(datetime,1001) nutc        !### TEMPORARY ###
 1001 format("000000_",i6.6)
 
+    if(nzhsym .eq. 41) jseq=mod(nutc/5,2)
+
     if(nutc0.eq.-1) then
        msg0=' '
        dt0=0.
@@ -230,7 +232,7 @@ contains
               qual=1.0-(nharderrors+dmin)/60.0 ! scale qual to [0.0,1.0]
               if(emedelay.ne.0) xdt=xdt+2.0
               call this%callback(sync,nsnr,xdt,f1,msg37,iaptype,qual)
-              call ft8_a7_save(nutc,xdt,f1,msg37)  !Enter decode in table
+              call ft8_a7_save(jseq,xdt,f1,msg37)  !Enter decode in table
            endif
         endif
         call timestamp(tsec,tseq,ctime)
@@ -272,7 +274,7 @@ contains
                iaptype=7
                qual=1.0
                call this%callback(sync,nsnr,xdt,f1,msg37,iaptype,qual)
-               call ft8_a7_save(nutc,xdt,f1,msg37)  !Enter decode in table
+               call ft8_a7_save(jseq,xdt,f1,msg37)  !Enter decode in table
             endif
          endif
       enddo
