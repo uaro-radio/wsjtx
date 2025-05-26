@@ -15,7 +15,6 @@ subroutine decode_echo(iwave,rxcall)
   character*6 rxcall       !The recovered callsign
   real s(0:NSPS-1)         !Spectrum for one received character
   real p(0:NSPS-1,6)
-!  real snr(6)
   real a(3)
   character*37 c
   common/echocom/nclearave,nsum,blue(4096),red(4096)
@@ -45,9 +44,7 @@ subroutine decode_echo(iwave,rxcall)
   call four2a(c0,nfft,1,1,1)            !Inverse c2c FFT; c0 is analytic sig
 
   rxcall='      '
-  nerr=0
   nskip=2*fspread/df
-!  nsmo=fspread/df
 
   do j=1,6
      ia=(j-1)*NSPS
@@ -60,15 +57,8 @@ subroutine decode_echo(iwave,rxcall)
      p(:,j)=p(:,j) + s                     !Sum the spectra for each character
      ipk=maxloc(p(i1:i2,j))
      k=nint(((ipk1+i1-1)*df - f1)/ndf) + 1
-!     call averms(p,nn,nskip,ave,rms)
-!     spk=maxval(p(i1:i2,j))
-!     snr(j)=(spk-ave)/rms
-     if(k-1-itone(j).ne.0) nerr=nerr+1
      if(k.ge.1 .and. k.le.37) rxcall(j:j)=c(k:k)    !SNR test here ???
   enddo
-
-!  write(*,4010) snr
-!4010 format(6f8.2)
 
   do j=1,6                               !Move all tone frequencies to f1
      ia=(j-1)*NSPS
@@ -83,35 +73,3 @@ subroutine decode_echo(iwave,rxcall)
   
   return
 end subroutine decode_echo
-
-subroutine echo_time(icall,echo_data)
-
-  real echo_data(0:5)
-  character*8 cdate
-  integer nt(8)
-
-  call date_and_time(cdate,values=nt)
-  msec=1000*nt(7) + nt(8)
-  s6=0.001*mod(msec,6000)
-  if(icall.eq.1) then
-     echo_data(3)=s6
-     go to 999
-  else if(icall.eq.2) then
-     echo_data(4)=s6
-     go to 999
-  endif
-
-  txdelay=echo_data(0)
-  echoAdjust=echo_data(1)
-  t_eme=echo_data(2)
-  t1=echo_data(3)
-  t2=echo_data(4)
-  snr=echo_data(5)
-  open(61,file='echo_timing.txt',position='append')
-  write(61,1010) cdate,nt(5),nt(6),nt(7),nt(8),txdelay,echoAdjust,t_eme, &
-       t1,t2,t2-t1,snr
-1010 format(a8,2x,i2.2,':',i2.2,':',i2.2,'.',i3.3,7f7.2)
-  close(61)
-
-999 return
-end subroutine echo_time

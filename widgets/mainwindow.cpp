@@ -181,9 +181,7 @@ extern "C" {
   void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* navg,
                 int* nqual, float* f1, float* level, float* sigdb, float* snr, float* dfreq,
                 float* width, bool* bDiskData, bool* bEchoCall, char const * txcall,
-                char rxcall[], FCL len1, FCL len2);
-
-  void echo_time_(int* icall, float echo_data[]);
+                char rxcall[], float* xdt, FCL len1, FCL len2);
 
   void fast_decode_(short id2[], int narg[], double * trperiod,
                     char msg[], char mycall[], char hiscall[],
@@ -234,7 +232,6 @@ float fast_green[703];
 float fast_green2[703];
 float fast_s[44992];                                    //44992=64*703
 float fast_s2[44992];
-float echo_data[6];
 int   fast_jh {0};
 int   fast_jhpeak {0};
 int   fast_jh2 {0};
@@ -2134,7 +2131,6 @@ void MainWindow::dataSink(qint64 frames)
   }
   if(bCallDecoder) {
     if(m_mode=="Echo") {
-      qDebug() << "Decoder called (2136)" << m_s6;
       float dBerr=0.0;
       int nfrit=0;
       if(m_astroWidget) nfrit=m_astroWidget->nfRIT();
@@ -2169,12 +2165,10 @@ void MainWindow::dataSink(qint64 frames)
       bool bEchoCall=ui->cbEchoCall->isChecked();
       QString txcall=ui->dxCallEntry->text();
       static char crxcall[7];
+      float xdt=0.0;
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData,&bEchoCall,txcall.toLatin1().constData(),
-          &crxcall[0],(FCL)6,(FCL)6);
-      int icall=99;
-      echo_data[5]=sigdb;
-      echo_time_(&icall,echo_data);
+          &crxcall[0],&xdt,(FCL)6,(FCL)6);
       crxcall[6]=0;
       QString rxcall {QString::fromLatin1(crxcall)};
 
@@ -2205,9 +2199,10 @@ void MainWindow::dataSink(qint64 frames)
         m_echoRunning=true;
         if(ndf<0 or ndf>30) ndf=0;
         QString t;
-        t = t.asprintf("%7.4f  %5.2f %7d %7.1f %5d %5d %6d %6.1f %7.1f %3d",hour,xlevel,
-                       nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr,ndf);
+        t = t.asprintf("%7.4f  %5.2f %7d %7.1f %5d %5d %6d %6.1f %7.1f %3d %5.2f",hour,xlevel,
+                       nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr,ndf,xdt);
         t = t0 + t + "  " + rxcall;
+        if(!bEchoCall) t=t.left(72);
         if(ui) ui->decodedTextBrowser->insertText(t);
         t=t1 + t;
         write_all("Rx",t);
@@ -3419,19 +3414,11 @@ void MainWindow::monitor (bool state)
       } else {
         float t_rxdelay=0.001*(QDateTime::currentMSecsSinceEpoch() - m_msEchoTxStart);
         int ms=int(1000*(m_tEcho-t_rxdelay+ui->sbEchoAdjust->value()));
-        qDebug() << "gg" << t_rxdelay << ms << m_tEcho;
-//        if(m_mode=="Echo") ms=0;
-        qDebug() << "Start Rx audio (3378)" << m_s6 << m_tEcho;
         if(ms>=10) {
           QTimer::singleShot (ms, [=] {resumeAudioInputStream();});
         } else {
           Q_EMIT resumeAudioInputStream ();
         }
-        int icall=2;
-        echo_data[0]=m_config.txDelay();
-        echo_data[1]=ui->sbEchoAdjust->value();
-        echo_data[2]=m_tEcho;
-        echo_time_(&icall,echo_data);
       }
     }
   } else {
@@ -7254,8 +7241,6 @@ void MainWindow::guiUpdate()
       }
 
       setXIT (ui->TxFreqSpinBox->value ());
-      qDebug() << "\nRequest to assert PTT (7204)" << m_s6 << m_config.txDelay()
-               << ui->sbEchoAdjust->value() << QDateTime::currentDateTimeUtc ().toString ("yyMMdd_hhmmss") << m_tEcho;
       m_config.transceiver_ptt (true); //Assert the PTT
       m_tx_when_ready = true;
     }
@@ -7919,7 +7904,6 @@ void MainWindow::startTx2()
       ui->cbAutoSeq->setChecked(true);
       ui->respondComboBox->setCurrentIndex(1);
     }
-    qDebug() << "Request to transmit (7855)" << m_s6;
     transmit (snr);
     ui->signal_meter_widget->setValue(0,0);
     if(m_mode=="Echo" and !m_tune) m_bTransmittedEcho=true;
@@ -10904,7 +10888,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr  TS  Echo Call");
+  ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr  TS   DT   Echo Call");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
@@ -11637,7 +11621,6 @@ void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const&
     if (m_tx_when_ready && g_iptt) {    // waiting to Tx and still needed
       int ms_delay=1000*m_config.txDelay();
       if(m_mode=="FT4") ms_delay=20;
-      qDebug() << "Start ptt1Timer (11559)" << m_s6;
       ptt1Timer.start(ms_delay); //Start-of-transmission sequencer delay
       m_tx_when_ready = false;
     }
@@ -12042,8 +12025,6 @@ void MainWindow::transmit (double snr)
 
     toneSpacing=-5.0;  //Flag Modulator to use precomputed foxcom_.wave[].
     m_msEchoTxStart=QDateTime::currentMSecsSinceEpoch();
-    int icall=1;
-    echo_time_(&icall,echo_data);
     if (m_tci_audio) {
       Q_EMIT m_config.transceiver_modulator_start(m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,
              false,false,snr,m_TRperiod);
@@ -13094,7 +13075,7 @@ void MainWindow::on_cbEchoCall_toggled(bool b)
 {
   ui->sbToneSpacing->setVisible(b);
   ui->sbEchoAdjust->setVisible(b);
-  ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr  TS  Echo Call");
+  ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr  TS   DT   Echo Call");
   if(b) {
     mode_label.setText("Echo Call");
     ui->dxCallEntry->setText(m_baseCall);
@@ -14058,8 +14039,6 @@ Transmit:
   bool bSuperFox=m_config.superFox();
   foxcom_.bMoreCQs=ui->cbMoreCQs->isChecked();
   foxcom_.bSendMsg=ui->cbSendMsg->isChecked();
-//  qDebug() << "cc" << foxcom_.bMoreCQs << foxcom_.bSendMsg << foxcom_.nslots
-//           << m_Nslots << m_freeTextMsg0;
   ::memcpy(foxcom_.textMsg, m_freeTextMsg0.leftJustified(26,' ').toLatin1(),26);
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
