@@ -35,8 +35,8 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,navg,nqual,f1,xlevel,  &
   dtime=0.05
   idtbest=-9999
   snrbest=-9999.
-  idt1=-10
-  idt2=10
+  idt1=-20
+  idt2=20
 
 10 do idt=idt1,idt2
      i0=12000.0*dtime*idt
