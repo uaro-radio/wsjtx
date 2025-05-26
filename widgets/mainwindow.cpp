@@ -3418,9 +3418,10 @@ void MainWindow::monitor (bool state)
         }
       } else {
         float t_rxdelay=0.001*(QDateTime::currentMSecsSinceEpoch() - m_msEchoTxStart);
-        int ms=int(1000*(m_tEcho-t_rxdelay));
-        if(m_mode=="Echo") ms=0;
-        qDebug() << "Start Rx audio (3378)" << m_s6;
+        int ms=int(1000*(m_tEcho-t_rxdelay+ui->sbEchoAdjust->value()));
+        qDebug() << "gg" << t_rxdelay << ms << m_tEcho;
+//        if(m_mode=="Echo") ms=0;
+        qDebug() << "Start Rx audio (3378)" << m_s6 << m_tEcho;
         if(ms>=10) {
           QTimer::singleShot (ms, [=] {resumeAudioInputStream();});
         } else {
@@ -7254,7 +7255,7 @@ void MainWindow::guiUpdate()
 
       setXIT (ui->TxFreqSpinBox->value ());
       qDebug() << "\nRequest to assert PTT (7204)" << m_s6 << m_config.txDelay()
-               << ui->sbEchoAdjust->value();
+               << ui->sbEchoAdjust->value() << QDateTime::currentDateTimeUtc ().toString ("yyMMdd_hhmmss") << m_tEcho;
       m_config.transceiver_ptt (true); //Assert the PTT
       m_tx_when_ready = true;
     }
