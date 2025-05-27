@@ -1242,7 +1242,6 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 #endif
 
   ui->cbEchoCall->setVisible(false);
-  ui->sbEchoAdjust->setVisible(false);
   ui->sbToneSpacing->setVisible(false);
   ui->sbToneSpacing->values({10, 15, 20, 25, 30});
 
@@ -1409,7 +1408,6 @@ void MainWindow::writeSettings()
   m_settings->setValue("FST4_FLow",ui->sbF_Low->value());
   m_settings->setValue("FST4_FHigh",ui->sbF_High->value());
   m_settings->setValue("EchoToneSpacing",ui->sbToneSpacing->value());
-  m_settings->setValue("EchoAdjust",ui->sbEchoAdjust->value());
   m_settings->setValue("DTtol",m_DTtol);
   m_settings->setValue("MinSync",m_minSync);
   m_settings->setValue ("AutoSeq", ui->cbAutoSeq->isChecked ());
@@ -1730,7 +1728,6 @@ void MainWindow::readSettings()
   ui->sbF_High->setValue(m_settings->value("FST4_FHigh",1400).toInt());
   ui->sbFST4W_FTol->setValue(m_settings->value("FST4W_FTol",100).toInt());
   ui->sbToneSpacing->setValue(m_settings->value("EchoToneSpacing",10).toInt());
-  ui->sbEchoAdjust->setValue(m_settings->value("EchoAdjust",0.0).toDouble());
   m_minSync=m_settings->value("MinSync",0).toInt();
   ui->syncSpinBox->setValue(m_minSync);
   ui->cbAutoSeq->setChecked (m_settings->value ("AutoSeq", false).toBool());
@@ -3413,7 +3410,7 @@ void MainWindow::monitor (bool state)
         }
       } else {
         float t_rxdelay=0.001*(QDateTime::currentMSecsSinceEpoch() - m_msEchoTxStart);
-        int ms=int(1000*(m_tEcho-t_rxdelay+ui->sbEchoAdjust->value()));
+        int ms=int(1000*(m_tEcho-t_rxdelay));
         if(ms>=10) {
           QTimer::singleShot (ms, [=] {resumeAudioInputStream();});
         } else {
@@ -7103,7 +7100,6 @@ void MainWindow::guiUpdate()
     // For all modes other than WSPR and FST4W
     m_bTxTime = (t2p >= tx1) and (t2p < tx2);
     if(m_mode=="Echo") {
-//        m_bTxTime = (t2p >= tx1) and (t2p < (tx2+ui->sbEchoAdjust->value())) and m_bEchoTxOK;
         m_bTxTime = (t2p >= tx1) and (t2p < (tx2+m_config.txDelay())) and m_bEchoTxOK;
     }
     if(m_mode=="FT8" and ui->tx5->currentText().contains("/B ")) {
@@ -13075,7 +13071,6 @@ void MainWindow::on_cbCQTx_toggled(bool b)
 void MainWindow::on_cbEchoCall_toggled(bool b)
 {
   ui->sbToneSpacing->setVisible(b);
-  ui->sbEchoAdjust->setVisible(b);
   ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr   DT   TS   Echo Call");
   if(b) {
     mode_label.setText("Echo Call");

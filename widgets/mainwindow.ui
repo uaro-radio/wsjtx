@@ -1027,28 +1027,6 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QDoubleSpinBox" name="sbEchoAdjust">
-                  <property name="minimumSize">
-                   <size>
-                    <width>60</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="suffix">
-                   <string> s</string>
-                  </property>
-                  <property name="minimum">
-                   <double>-1.000000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>1.000000000000000</double>
-                  </property>
-                  <property name="singleStep">
-                   <double>0.010000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <widget class="HintedSpinBox" name="sbToneSpacing">
                   <property name="minimumSize">
                    <size>
