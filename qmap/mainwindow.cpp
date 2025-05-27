@@ -102,6 +102,8 @@ MainWindow::MainWindow(QWidget *parent) :
   m_modeQ65=0;
   m_TRperiod=60;
 
+  datcom_.fcenter=1296.090;
+
   xSignalMeter = new SignalMeter(ui->xMeterFrame);
   xSignalMeter->resize(50, 160);
 
