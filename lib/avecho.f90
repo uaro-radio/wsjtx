@@ -33,7 +33,7 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,navg,nqual,f1,xlevel,  &
 !  id2=id2_0                                !Copy Rx data into our work array
 
   dtime=0.05
-  idtbest=-9999
+  idtbest=0
   snrbest=-9999.
   idt1=-10
   idt2=10
