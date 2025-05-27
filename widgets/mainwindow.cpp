@@ -285,7 +285,7 @@ struct {
   int nWDecoderBusy;     //WSJT-X decoder is busy (0 or 1)
   int nWTransmitting;    //WSJT-X is transmitting (0 or 1)
   int kHzRequested;      //Integer kHz dial frequency requested from QMAP
-  char result[50][64];   //Decodes as character*64 arrays
+  char result[50][72];   //Decodes as character*72 arrays
 } qmapcom;
 int* ipc_qmap;
 

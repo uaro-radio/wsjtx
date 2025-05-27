@@ -20,7 +20,7 @@ subroutine q65c
   character*12 mycall,hiscall
   character*6 mygrid,hisgrid
   character*20 datetime
-  character*64 result
+  character*72 result
   character*8 result2               !liveCQ
   common/decodes/ndecodes,ncand2,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,kHzRequested,result(50)
