@@ -29,9 +29,10 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   character*4 grid4
   character*3 csubmode
   character*17 fname
-  character*66 result,ctmp
+  character*64 result,ctmp
   character*8 result2                      !liveCQ
   character*20 datetime,datetime1
+  character*1 c1
   common/decodes/ndecodes,ncand2,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,kHzRequested,result(50)
   common/decodes2/result2(50)              !liveCQ
@@ -160,6 +161,27 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 0.001*offset
      ctmp=csubmode//'  '//trim(msg0)
+
+!###
+! Should find a better way to handle extra-long messages!  (K1JT, 5/27/2025)
+! Here, I remove the < > characters and one leading space, to make it fit.
+! Just increrasing the character* size of 'result' fails to work properly.
+     mm=len(trim(ctmp))
+     if(mm.gt.27) then
+        j=0
+        do i=1,30
+           if(i.eq.4) cycle
+           c1=ctmp(i:i)
+           if(c1.ne.'<' .and. c1.ne.'>') then
+              j=j+1
+              ctmp(j:j)=c1
+           endif
+        enddo
+     endif
+     ctmp(27:)='                                   '
+     mm=len(trim(ctmp))
+!###
+
      ndecodes=min(ndecodes+1,50)
      write(result(ndecodes),1120) nhhmmss,frx,fsked,xdt0,nsnr0,trim(ctmp)
 1120 format(i6.6,f9.3,f7.1,f7.2,i5,2x,a)
