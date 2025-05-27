@@ -16,7 +16,6 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,navg,nqual,f1,xlevel,  &
   real s(8192)
   real x(NFFT)
   integer ipkv(1)
-  logical ex
   logical*1 bDiskData,bEchoCall
   complex c(0:NH)
   character*6 txcall,rxcall
@@ -68,12 +67,6 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,navg,nqual,f1,xlevel,  &
      fspread=fspread_dx                !### Use the predicted Doppler spread ###
      if(bDiskData) fspread=width
      if(nauto.eq.1) fspread=fspread_self
-     inquire(file='fspread.txt',exist=ex)
-     if(ex) then
-        open(39,file='fspread.txt',status='old')
-        read(39,*) fspread
-        close(39)
-     endif
      fspread=min(max(0.04,fspread),700.0)
      width=fspread
      dop=ndop
@@ -110,8 +103,9 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,navg,nqual,f1,xlevel,  &
         go to 900
      endif
 
-     nsum=nsum+1
+     if(idt1.eq.idt2) nsum=nsum+1
      j=mod(nsum-1,navg)+1
+     if(j.lt.1) j=1
      do i=1,NZ
         sax(j,i)=s(ia+i-2048)    !Center at initial doppler freq
         sbx(j,i)=s(ib+i-2048)    !Center at expected echo freq
