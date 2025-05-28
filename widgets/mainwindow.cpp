@@ -3989,6 +3989,7 @@ void MainWindow::statusChanged()
       && !m_bDoubleClicked) ui->txb6->click();
   check_button_color();
   ui->cbEchoCall->setVisible(m_mode=="Echo");
+  ui->sbToneSpacing->setVisible(m_mode=="Echo" && ui->cbEchoCall->isChecked());
 }
 
 bool MainWindow::eventFilter (QObject * object, QEvent * event)
