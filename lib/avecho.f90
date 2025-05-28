@@ -1,4 +1,4 @@
-subroutine avecho(id2_0,ndop,nfrit,nauto,navg,nqual,f1,xlevel,  &
+subroutine avecho(id2_0,ndop,nfrit,nauto,ndf,navg,nqual,f1,xlevel,  &
      snrdb,db_err,dfreq,width,bDiskData,bEchoCall,txcall,rxcall,xdt)
 
   parameter (NTX=6*4096)
@@ -6,10 +6,14 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,navg,nqual,f1,xlevel,  &
   parameter (NZ=4096)
   integer*2 id2_0(NTX+4096)                 !Raw Rx data
   integer*2 id2(NTX+4096)                   !Local copy of Rx data
+  integer*2 id2_ts(NTX+4096)                !Tone-shifted Rx data
+  integer*2 id2a(15)                        !Just the parameter portion
+  integer*4 itone4(6)
+  integer*1 itone1(6)
   real sa(NZ)      !Avg spectrum relative to initial Doppler echo freq
   real sb(NZ)      !Avg spectrum with Dither and changing Doppler removed
-  real, dimension (:,:), allocatable :: sax
-  real, dimension (:,:), allocatable :: sbx
+  real, dimension (:,:), allocatable :: sax  !2D sa spectrum with navg slots
+  real, dimension (:,:), allocatable :: sbx  !2D sb spectrum with navg slots
   integer nsum       !Number of integrations
   real dop0          !Doppler shift for initial integration (Hz)
   real dop           !Doppler shift for current integration (Hz)
@@ -17,11 +21,9 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,navg,nqual,f1,xlevel,  &
   real x(NFFT)
   integer ipkv(1)
   logical*1 bDiskData,bEchoCall
+  logical searching
   complex c(0:NH)
   character*6 txcall,rxcall
-  integer*2 id2a(15)
-  integer*4 itone4(6)
-  integer*1 itone1(6)
   equivalence (itone1,id2a(13))
   equivalence (x,c),(ipk,ipkv)
   common/echocom/nclearave,nsum,blue(NZ),red(NZ)
@@ -29,107 +31,128 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,navg,nqual,f1,xlevel,  &
   data navg0/-1/
   save dop0,navg0,sax,sbx
 
-!  id2=id2_0                                !Copy Rx data into our work array
+  if(bEchoCall .and. .not.bDiskData) then
+! Calculate the transmitted tones for real-time Echo Call testing
+     call gen_echocall(txcall,itone4)
+     itone1=itone4
+     id2_0(13:15)=id2a(13:15)           !Copy the tone values into id2_0
+  endif
 
-  dtime=0.05
+  fspread=fspread_dx                    !Use the predicted spread
+  if(bDiskData) fspread=width
+  if(nauto.eq.1) fspread=fspread_self
+  fspread=min(max(0.04,fspread),700.0)
+  width=fspread
+
+  if(navg.ne.navg0) then
+! If navg changes, start fresh by reallocating sax and sbx
+     if(allocated(sax)) deallocate(sax)
+     if(allocated(sbx)) deallocate(sbx)
+     allocate(sax(1:navg,1:NZ))
+     allocate(sbx(1:navg,1:NZ))
+     nsum=0
+     navg0=navg
+  endif
+  
+  sq=sum(float(id2_0(16:NTX))**2)
+  xlevel=10.0*log10(sq/(NTX-15))
+
+  if(navg.eq.1) nclearave=1
+  if(nclearave.ne.0) nsum=0
+  dop=ndop
+  if(nsum.eq.0) then
+     dop0=dop                             !Remember the initial Doppler
+     sax=0.                               !Clear the average arrays
+     sbx=0.
+  endif
+
+  df=12000.0/NFFT
+  fnominal=1500.0           !Nominal audio frequency w/o doppler or dither
+  ia=nint((fnominal+dop0-nfrit)/df)
+  ib=nint((f1+dop-nfrit)/df)
+     
+! If some parameter is way off, abort this procedure
+  if(ia.lt.2048 .or. ib.lt.2048 .or. ia.gt.6144 .or. ib.gt.6144) then
+     snrdb=0.
+     db_err=0.
+     dfreq=0.
+     go to 900
+  endif
+  
+  dtime=0.05                            !Setup for searching a range of DT
   idtbest=0
   snrbest=-9999.
   idt1=-10
   idt2=10
 
-10 do idt=idt1,idt2
-     i0=12000.0*dtime*idt
+10 searching=(idt1.ne.idt2)
+  do idt=idt1,idt2
+     
+! Copy time-shifted data from id2_0 to id2     
+     i0=12000*dtime*idt
      id2(1:15)=id2_0(1:15)
-     id2(16:)=0
      do i=16,NTX
         j=i+i0
+        id2(i)=0
         if(j.ge.16 .and. j.le.NTX) id2(i)=id2_0(j)
      enddo
 
-     if(bEchoCall .and. .not.bDiskData) then
-        call gen_echocall(txcall,itone4)
-        itone1=itone4
-        id2(13:15)=id2a(13:15)
-     endif
-
+! Shift all tone frequencies to 1500 Hz. Return modified data in id2 and decoded 
+! message in rxcall.
      rxcall='      '
-     call decode_echo(id2,rxcall,ndf)
+     call decode_echo(id2,rxcall)
 
-     if(navg.ne.navg0) then
-        if(allocated(sax)) deallocate(sax)
-        if(allocated(sbx)) deallocate(sbx)
-        allocate(sax(1:navg,1:NZ))
-        allocate(sbx(1:navg,1:NZ))
-        nsum=0
-        navg0=navg
-     endif
-  
-     fspread=fspread_dx                !### Use the predicted Doppler spread ###
-     if(bDiskData) fspread=width
-     if(nauto.eq.1) fspread=fspread_self
-     fspread=min(max(0.04,fspread),700.0)
-     width=fspread
-     dop=ndop
-     sq=0.
-     do i=1,NTX
-        x(i)=id2(i)
-        sq=sq + x(i)*x(i)
-     enddo
-     xlevel=10.0*log10(sq/NTX)
-
-     if(navg.eq.1) nclearave=1
-     if(nclearave.ne.0) nsum=0
-     if(nsum.eq.0) then
-        dop0=dop                             !Remember the initial Doppler
-        sax=0.                               !Clear the average arrays
-        sbx=0.
-     endif
-
+     x(1:NTX)=id2(1:NTX)
      x(NTX+1:)=0.
      x=x/NTX
-     call four2a(x,NFFT,1,-1,0)
-     df=12000.0/NFFT
-     do i=1,8192                             !Get spectrum 0 - 3 kHz
+     call four2a(x,NFFT,1,-1,0)              !Compute the tone-aligned spectrum
+     do i=1,8192                             !Array s(1:8192) is spectrum 0-3 kHz
         s(i)=real(c(i))**2 + aimag(c(i))**2
      enddo
 
-     fnominal=1500.0           !Nominal audio frequency w/o doppler or dither
-     ia=nint((fnominal+dop0-nfrit)/df)
-     ib=nint((f1+dop-nfrit)/df)
-     if(ia.lt.2048 .or. ib.lt.2048 .or. ia.gt.6144 .or. ib.gt.6144) then
-        snrdb=0.
-        db_err=0.
-        dfreq=0.
-        go to 900
+     if(searching) then
+        do i=1,NZ
+           sa(i)=s(ia+i-2048)    !Center at initial doppler freq
+           sb(i)=s(ib+i-2048)    !Center at expected echo freq
+        enddo
+     else
+        nsum=nsum+1
      endif
-
-     if(idt1.eq.idt2) nsum=nsum+1
-     j=mod(nsum-1,navg)+1
-     if(j.lt.1) j=1
-     do i=1,NZ
-        sax(j,i)=s(ia+i-2048)    !Center at initial doppler freq
-        sbx(j,i)=s(ib+i-2048)    !Center at expected echo freq
-        sa(i)=sum(sax(1:navg,i))
-        sb(i)=sum(sbx(1:navg,i))
-     enddo
+ 
      call echo_snr(sa,sb,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
-     nqual=snr_detect-2
-     if(nqual.lt.0) nqual=0
-     if(nqual.gt.10) nqual=10
-     if(idt1.ne.idt2) then
+!     nqual=snr_detect-2
+!     if(nqual.lt.0) nqual=0
+!     if(nqual.gt.10) nqual=10
+     if(searching) then
         if(snrdb.gt.snrbest .and. (ndf.eq.0 .or. dfreq.le.0.5*ndf)) then
            snrbest=snrdb
            idtbest=idt
+           j=mod(nsum,navg)+1
+!           print*,'A',j,idtbest,snrbest
+           do i=1,NZ
+              sax(j,i)=s(ia+i-2048)    !Center at initial doppler freq
+              sbx(j,i)=s(ib+i-2048)    !Center at expected echo freq
+           enddo
         endif
      endif
   enddo
-  if(idt1.ne.idt2) then
+  if(searching) then
      idt1=idtbest
      idt2=idtbest
      go to 10
   endif
-  xdt=idtbest*dtime
 
+  xdt=idtbest*dtime
+  do i=1,NZ
+     sa(i)=sum(sax(1:navg,i))
+     sb(i)=sum(sbx(1:navg,i))
+  enddo
+  call echo_snr(sa,sb,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
+  nqual=snr_detect-2
+  if(nqual.lt.0) nqual=0
+  if(nqual.gt.10) nqual=10
+  print*,'B',snrdb
+ 
 ! Scale for plotting
   redmax=maxval(red)
   fac=10.0/max(redmax,10.0)

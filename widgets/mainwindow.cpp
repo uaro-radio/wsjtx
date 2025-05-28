@@ -178,7 +178,7 @@ extern "C" {
   void save_echo_params_(int* ndoptotal, int* ndop, int* nfrit, float* f1, float* fspread,
                          int* toneSpacing, volatile int itone[], short id2[], int* idir);
 
-  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* navg,
+  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* ndf, int* navg,
                 int* nqual, float* f1, float* level, float* sigdb, float* snr, float* dfreq,
                 float* width, bool* bDiskData, bool* bEchoCall, char const * txcall,
                 char rxcall[], float* xdt, FCL len1, FCL len2);
@@ -2163,7 +2163,7 @@ void MainWindow::dataSink(qint64 frames)
       QString txcall=ui->dxCallEntry->text();
       static char crxcall[7];
       float xdt=0.0;
-      avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
+      avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&ndf,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData,&bEchoCall,txcall.toLatin1().constData(),
           &crxcall[0],&xdt,(FCL)6,(FCL)6);
       crxcall[6]=0;

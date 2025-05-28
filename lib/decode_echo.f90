@@ -1,12 +1,12 @@
-subroutine decode_echo(iwave,rxcall,ndf)
+subroutine decode_echo(id2,rxcall)
 
 ! For EchoCall mode, recovers transmitted callsign from received echoes.
-!     iwave(NZ)  received echo data
+!     id2(NZ)  received echo data
 !     rxcall     decoded callsign
 ! Time alignment of received data is assumed accurate, as EME delay is known.
 
   parameter (NSPS=4096,NZ=6*NSPS)
-  integer*2 iwave(NZ)      !Raw Rx data
+  integer*2 id2(NZ)      !Raw Rx data
   integer itone(6)         !Tone offsets corresponding to ransmitted callsign
   integer ipk(1)
   complex c0(0:NZ)         !Analytic data, 12000 Hz sample rate
@@ -21,8 +21,8 @@ subroutine decode_echo(iwave,rxcall,ndf)
   equivalence (ipk1,ipk(1))
   data c/' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'/
 
-! Retrieve params known at time of transmissiion and saved in iwave
-  call save_echo_params(nDop,nDopAudio,nfrit,f1,fspread,ndf,itone,iwave,-1)
+! Retrieve params known at time of transmission and saved in id2
+  call save_echo_params(nDop,nDopAudio,nfrit,f1,fspread,ndf,itone,id2,-1)
 
   df=12000.0/NSPS
   if(ndf.lt.10 .or. ndf.gt.30) return
@@ -36,7 +36,7 @@ subroutine decode_echo(iwave,rxcall,ndf)
   nfft=NZ
   df1=12000.0/nfft
   fac=2.0/(32767.0*nfft)
-  c0(0:NZ-1)=fac*iwave(1:NZ)
+  c0(0:NZ-1)=fac*id2(1:NZ)
   c0(0:14)=0.
   call four2a(c0,nfft,1,-1,1)           !Forward c2c FFT
   c0(nfft/2+1:nfft-1)=0.
@@ -68,8 +68,8 @@ subroutine decode_echo(iwave,rxcall,ndf)
      call twkfreq(c0(ia:ib),c2(ia:ib),NSPS,12000.0,a)
   enddo
 
-! Return real(c2) as iwave ...
-  iwave(16:NZ)=32767.0*real(c2(15:NZ-1))
+! Return real(c2) as id2 ...
+  id2(16:NZ)=32767.0*real(c2(15:NZ-1))
   
   return
 end subroutine decode_echo
