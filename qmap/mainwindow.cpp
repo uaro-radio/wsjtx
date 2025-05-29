@@ -1003,9 +1003,8 @@ void MainWindow::decodeBusy(bool b)                             //decodeBusy()
 
 void MainWindow::CreateLiveCQ(QStringList cqliveText)
 {
-  if (cqliveText.size() == 0) return;  //return if cqliveText is empty
-
-  //if(cqliveText.size() == 0) cqliveText << "043800  57.379  55.0  2.93  -11  CQ ES3RF KO29" << "043830  159.638  157.3  2.18  -12  QRZ WA3GFZ FN20" << "043800  67.507  65.2  3.08  -17  W2ZQ PA3HDG JO31" << "043830  9.356  7.0  2.93  -13  CQ IQ2DB JN45";
+//return if cqliveText is empty or data were read from disk.
+  if (m_diskData or (cqliveText.size() == 0)) return;
 
   QStringList cqliveFinalText;
   QStringList oldFile;
@@ -1026,8 +1025,17 @@ void MainWindow::CreateLiveCQ(QStringList cqliveText)
     thePieces = item.split(" ",SkipEmptyParts);
     if((thePieces.at(6) == "CQ" || thePieces.at(6) == "QRZ" || thePieces.at(6) == "CQV" ||  thePieces.at(6) == "CQH" ||  thePieces.at(6) == "QRT") && m_myCall.length() >=3 && m_myGrid.length()>=4) {
       //extract Fsked freq and format to 3 digits no decimals
-      QString theMsg = thePieces.at(6) + " " + thePieces.at(7) + " " +thePieces.at(8);
-      QStringList thekHz = thePieces.at(9).split(".");
+      QString theMsg;
+      QStringList thekHz;
+      int nWords=thePieces.length();
+      if(nWords==9) {
+        // Handle CQ messages that do not include a locator
+        theMsg = thePieces.at(6) + " " + thePieces.at(7);
+        thekHz = thePieces.at(8).split(".");
+      } else {
+        theMsg = thePieces.at(6) + " " + thePieces.at(7) + " " +thePieces.at(8);
+        thekHz = thePieces.at(9).split(".");
+      }
       int rxFreq = freqOffset + thekHz.at(1).toInt(&ok);
       // int rxFreq = freqOffset + 100 * thekHz.at(1).toInt(&ok);
       int skedFreq;
