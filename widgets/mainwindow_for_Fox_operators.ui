@@ -1003,7 +1003,7 @@
                </widget>
               </item>
               <item row="2" column="0" colspan="2">
-               <layout class="QHBoxLayout" name="horizontalLayout">
+               <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,2">
                 <item>
                  <widget class="QCheckBox" name="cbEchoCall">
                   <property name="minimumSize">
@@ -1017,28 +1017,6 @@
                   </property>
                   <property name="text">
                    <string>Echo Call</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="sbEchoAdjust">
-                  <property name="minimumSize">
-                   <size>
-                    <width>60</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="suffix">
-                   <string> s</string>
-                  </property>
-                  <property name="minimum">
-                   <double>-1.000000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>1.000000000000000</double>
-                  </property>
-                  <property name="singleStep">
-                   <double>0.010000000000000</double>
                   </property>
                  </widget>
                 </item>
