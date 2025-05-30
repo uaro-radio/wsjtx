@@ -160,6 +160,8 @@ extern "C" {
 
   void gen65(char* msg, int* ichk, char msgsent[], int itone[], int* itext);
 
+  void gen_cw_wave_(char* msg, int* ifreq, float wave[], fortran_charlen_t);
+
   void genq65_(char* msg, int* ichk, char* msgsent, int itone[],
               int* i3, int* n3, fortran_charlen_t, fortran_charlen_t);
 
@@ -1243,7 +1245,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   ui->cbEchoCall->setVisible(false);
   ui->sbToneSpacing->setVisible(false);
-  ui->sbToneSpacing->values({10, 15, 20, 25, 30});
+  ui->sbToneSpacing->values({0, 10, 15, 20, 25, 30});
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
@@ -12008,25 +12010,34 @@ void MainWindow::transmit (double snr)
     double freq=1500.0+m_fDither;
     double toneSpacing=0.0;
     if(ui->cbEchoCall->isChecked()) {
-      freq=1500.0;
       toneSpacing=ui->sbToneSpacing->value();
-//      if(toneSpacing==50.0) freq=500.0;
-    }
-    int nsps4=4*framesPerSymbol;                           //48000 Hz sampling
-    int nsym=numEchoSymbols;
-    float fsample=48000.0;
-    int nwave=nsym*nsps4;
-    int icmplx=0;
-    float f0=freq;
-    genwave_(const_cast<int *>(itone),&nsym,&nsps4,&nwave,
-             &fsample,&toneSpacing,&f0,&icmplx,foxcom_.wave,foxcom_.wave);
 
-    toneSpacing=-5.0;  //Flag Modulator to use precomputed foxcom_.wave[].
+      if(toneSpacing==0) {
+        freq=700.0;
+        int ifreq=freq;
+        int n=ui->dxCallEntry->text().length();
+        gen_cw_wave_(const_cast<char *> (ui->dxCallEntry->text().toLatin1().constData()), &ifreq,
+                   foxcom_.wave, (FCL)n);
+//        qDebug() << "aa" << ui->dxCallEntry->text() << n << ifreq;
+      } else {
+        int nsps4=4*framesPerSymbol;                           //48000 Hz sampling
+        int nsym=numEchoSymbols;
+        float fsample=48000.0;
+        int nwave=nsym*nsps4;
+        int icmplx=0;
+        float f0=freq;
+        genwave_(const_cast<int *>(itone),&nsym,&nsps4,&nwave,
+             &fsample,&toneSpacing,&f0,&icmplx,foxcom_.wave,foxcom_.wave);
+      }
+      toneSpacing=-5.0;  //Flag Modulator to use precomputed foxcom_.wave[].
+    }
+
     m_msEchoTxStart=QDateTime::currentMSecsSinceEpoch();
     if (m_tci_audio) {
       Q_EMIT m_config.transceiver_modulator_start(m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,
              false,false,snr,m_TRperiod);
     } else {
+//      qDebug() << "cc" << numEchoSymbols << framesPerSymbol << freq << toneSpacing;
       Q_EMIT sendMessage (m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,m_soundOutput,
                           m_config.audio_output_channel(), false, false, snr, m_TRperiod);
     }
