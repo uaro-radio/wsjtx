@@ -102,8 +102,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_modeQ65=0;
   m_TRperiod=60;
 
-  datcom_.fcenter=1296.090;
-
   xSignalMeter = new SignalMeter(ui->xMeterFrame);
   xSignalMeter->resize(50, 160);
 
@@ -181,20 +179,6 @@ MainWindow::MainWindow(QWidget *parent) :
     f.close();
   }
 
-// Read items for fAddComboBox
-  ui->fAddComboBox->addItem (0);
-  ui->fAddComboBox->setItemText(0, QString::number(m_fAdd));
-  QFile g("fadd.txt");
-  QTextStream stream(&g);
-  if(g.open (QIODevice::ReadOnly | QIODevice::Text)) {
-    while (!stream.atEnd()) {
-      QString fAddline = stream.readLine();
-      if (fAddline != "") ui->fAddComboBox->addItem (fAddline);
-    }
-    stream.flush();
-    g.close();
-  }
-
   if(ui->actionLinrad->isChecked()) on_actionLinrad_triggered();
   if(ui->actionCuteSDR->isChecked()) on_actionCuteSDR_triggered();
   if(ui->actionAFMHot->isChecked()) on_actionAFMHot_triggered();
@@ -255,7 +239,6 @@ void MainWindow::writeSettings()
   settings.setValue("SaveAll",ui->actionSave_all->isChecked());
   settings.setValue("SaveDecoded",ui->actionSave_decoded->isChecked());
   settings.setValue("ContinuousWaterfall",ui->continuous_waterfall->isChecked());
-  settings.setValue("FaddControls",ui->actionFadd_controls->isChecked());
   settings.setValue("NB",m_NB);
   settings.setValue("NBslider",m_NBslider);
   settings.setValue("MaxDrift",ui->sbMaxDrift->value());
@@ -306,7 +289,6 @@ void MainWindow::readSettings()
   ui->actionSave_all->setChecked(settings.value("SaveAll",false).toBool());
   ui->actionSave_decoded->setChecked(settings.value("SaveDecoded",false).toBool());
   ui->continuous_waterfall->setChecked(settings.value("ContinuousWaterfall",false).toBool());
-  ui->actionFadd_controls->setChecked(settings.value("FaddControls",false).toBool());
   m_saveAll=ui->actionSave_all->isChecked();
   m_saveDecoded=ui->actionSave_decoded->isChecked();
   if(m_saveAll) {
@@ -335,10 +317,6 @@ void MainWindow::readSettings()
   }
   m_w3szUrl=settings.value("w3szUrl",true).toBool();    //liveCQ
   m_otherUrl=settings.value("otherUrl","").toString();  //liveCQ
-  ui->fAddComboBox->setVisible(ui->actionFadd_controls->isChecked());
-  ui->fAdd_label->setVisible(ui->actionFadd_controls->isChecked());
-  ui->pbSet->setVisible(ui->actionFadd_controls->isChecked());
-  ui->pbAdd->setVisible(ui->actionFadd_controls->isChecked());
 }
 
 //-------------------------------------------------------------- dataSink()
@@ -508,11 +486,6 @@ void MainWindow::on_actionSettings_triggered()
       soundInThread.setRate(96000.0);
       soundInThread.setNrx(1);
       soundInThread.start(QThread::HighestPriority);
-    }
-
-    if (ui->fAddComboBox->isVisible()) {
-      ui->fAddComboBox->setItemText(0, QString::number(m_fAdd));
-      ui->fAddComboBox->setCurrentIndex(0);
     }
   }
 }
@@ -1098,11 +1071,7 @@ void MainWindow::CreateLiveCQ(QStringList cqliveText)
       thePostLine.insert(6, "Q65-" + thePieces.at(5)); //Q65 submode
       thePostLine.insert(7, thePieces.at(6)); //msg type
       thePostLine.insert(8, thePieces.at(7)); //dx call
-      if (thePieces.at(8).contains(".")) {
-        thePostLine.insert(9, "--"); //no dx grid
-      } else {
-        thePostLine.insert(9, thePieces.at(8)); //dx grid
-      }
+      thePostLine.insert(9, thePieces.at(8)); //dx grid
       thePostLine.insert(10, m_myGrid.toUpper()); //myGrid
       thePostLine.insert(11, theDate);  //the date
       thePostLine.insert(12, m_myCall.toUpper()); //myCall
@@ -1411,58 +1380,4 @@ void MainWindow::on_actionExport_wav_file_at_fQSO_30b_triggered()
 {
   datcom_.newdat=0;
   datcom_.nagain=4;
-  decode();
-}
-
-void MainWindow::on_actionFadd_controls_triggered()
-{
-  if (ui->actionFadd_controls->isChecked()) {
-    ui->fAddComboBox->setVisible(true);
-    ui->fAdd_label->setVisible(true);
-    ui->pbSet->setVisible(true);
-    ui->pbAdd->setVisible(true);
-  } else {
-    ui->fAddComboBox->setVisible(false);
-    ui->fAdd_label->setVisible(false);
-    ui->pbSet->setVisible(false);
-    ui->pbAdd->setVisible(false);
-  }
-}
-
-void MainWindow::on_fAddComboBox_activated()
-{
-  if (ui->fAddComboBox->isVisible() && ui->fAddComboBox->currentText() != "") {
-    m_fAdd=ui->fAddComboBox->currentText().toDouble();
-    soundInThread.setFadd(m_fAdd);
-    ui->decodedTextBrowser->append("Setting Fadd to " + QString::number(m_fAdd) + " MHz");
-  }
-}
-
-void MainWindow::on_pbSet_clicked()
-{
-  m_fAdd=ui->fAddComboBox->currentText().toDouble();
-  soundInThread.setFadd(m_fAdd);
-  ui->decodedTextBrowser->append("Setting Fadd to " + QString::number(m_fAdd) + " MHz");
-}
-
-void MainWindow::on_pbAdd_clicked()
-{
-  m_fAdd=ui->fAddComboBox->currentText().toDouble();
-  if (ui->fAddComboBox->currentText() != "") {
-    QFile g("fadd.txt");
-    if(g.open(QIODevice::Text | QIODevice::Append)) {
-      QString addedEntry = (ui->fAddComboBox->currentText());
-      QTextStream out(&g);
-      out << addedEntry <<
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-          endl
-#else
-          Qt::endl
-#endif
-          ;
-      g.close();
-      if (ui->fAddComboBox->findText(addedEntry) < 0) ui->fAddComboBox->addItem (QString::number(m_fAdd));
-      ui->decodedTextBrowser->append("Adding " + QString::number(m_fAdd) + " to file fadd.txt");
-    }
-  }
-}
+  decode();}
