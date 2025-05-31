@@ -179,6 +179,24 @@ MainWindow::MainWindow(QWidget *parent) :
     f.close();
   }
 
+  // If file "fadd.txt" exists, read items for fAdd combo box
+  ui->fAddComboBox->setVisible(false);
+  ui->fAdd_label->setVisible(false);
+  QFile g("fadd.txt");
+  QTextStream stream(&g);
+  if(g.open (QIODevice::ReadOnly | QIODevice::Text)) {
+    ui->fAddComboBox->setVisible(true);
+    ui->fAdd_label->setVisible(true);
+    ui->fAddComboBox->addItem (0);
+    ui->fAddComboBox->setItemText(0, QString::number(m_fAdd));
+    while (!stream.atEnd()) {
+      QString fAddline = stream.readLine();
+      ui->fAddComboBox->addItem (fAddline);
+    }
+    stream.flush();
+    g.close();
+  }
+
   if(ui->actionLinrad->isChecked()) on_actionLinrad_triggered();
   if(ui->actionCuteSDR->isChecked()) on_actionCuteSDR_triggered();
   if(ui->actionAFMHot->isChecked()) on_actionAFMHot_triggered();
@@ -486,6 +504,11 @@ void MainWindow::on_actionSettings_triggered()
       soundInThread.setRate(96000.0);
       soundInThread.setNrx(1);
       soundInThread.start(QThread::HighestPriority);
+    }
+
+    if (ui->fAddComboBox->isVisible()) {
+      ui->fAddComboBox->setItemText(0, QString::number(m_fAdd));
+      ui->fAddComboBox->setCurrentIndex(0);
     }
   }
 }
@@ -1384,4 +1407,14 @@ void MainWindow::on_actionExport_wav_file_at_fQSO_30b_triggered()
 {
   datcom_.newdat=0;
   datcom_.nagain=4;
-  decode();}
+  decode();
+}
+
+void MainWindow::on_fAddComboBox_activated()
+{
+  if (ui->fAddComboBox->isVisible() && ui->fAddComboBox->currentText() != "") {
+    m_fAdd=ui->fAddComboBox->currentText().toDouble();
+    soundInThread.setFadd(m_fAdd);
+    ui->decodedTextBrowser->append("Setting Fadd to " + QString::number(m_fAdd,'f',3) + " MHz");
+  }
+}
