@@ -10992,6 +10992,7 @@ void MainWindow::WSPR_config(bool b)
 {
   ui->rh_decodes_widget->setVisible(!b);     // UR disable for AL + widescreen version
   ui->controls_stack_widget->setCurrentIndex (b && m_mode != "Echo" ? 1 : 0);
+  if(m_mode=="Echo") ui->controls_stack_widget->setCurrentIndex(2);
   ui->QSO_controls_widget->setVisible (!b);
   ui->DX_controls_widget->setVisible (!b or (m_mode=="Echo"));
   ui->WSPR_controls_widget->setVisible (b);
