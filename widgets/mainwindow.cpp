@@ -12018,7 +12018,6 @@ void MainWindow::transmit (double snr)
         int n=ui->dxCallEntry->text().length();
         gen_cw_wave_(const_cast<char *> (ui->dxCallEntry->text().toLatin1().constData()), &ifreq,
                    foxcom_.wave, (FCL)n);
-//        qDebug() << "aa" << ui->dxCallEntry->text() << n << ifreq;
       } else {
         int nsps4=4*framesPerSymbol;                           //48000 Hz sampling
         int nsym=numEchoSymbols;
@@ -12037,7 +12036,6 @@ void MainWindow::transmit (double snr)
       Q_EMIT m_config.transceiver_modulator_start(m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,
              false,false,snr,m_TRperiod);
     } else {
-//      qDebug() << "cc" << numEchoSymbols << framesPerSymbol << freq << toneSpacing;
       Q_EMIT sendMessage (m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,m_soundOutput,
                           m_config.audio_output_channel(), false, false, snr, m_TRperiod);
     }
