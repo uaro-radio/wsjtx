@@ -2972,11 +2972,18 @@ void MainWindow::fastSink(qint64 frames)
         float fSpread {0.};
         bool bDisplayPoints {false};
         m_points = 0;
+
         ui->decodedTextBrowser->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC (),
           m_logBook, m_currentBandPeriod, m_config.ppfx (),
           ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
           haveFSpread, fSpread, bDisplayPoints, m_points, distance, m_muted);
         if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
+
+        // display "73" messages for us also in the right pane
+        if (m_mode=="MSK144" && text.mid(22).contains(m_baseCall + " " + m_hisCall + " 73")) {
+            ui->decodedTextBrowser2->displayDecodedText (decodedtext, m_config.my_callsign (), m_mode, m_config.DXCC (),
+              m_logBook, m_currentBand, m_config.ppfx (), false, false, 0.0, false, -99, "", m_muted);
+        }
     }
 
     // Ensure that Tx stops when "RR73" or "73" is received and repeat_Tx is enabled for MSK144
