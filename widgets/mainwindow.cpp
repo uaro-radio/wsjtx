@@ -1243,9 +1243,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   }
 #endif
 
-  ui->cbEchoCall->setVisible(false);
-  ui->sbToneSpacing->setVisible(false);
-  ui->sbToneSpacing->values({0, 10, 15, 20, 25, 30});
+  ui->sbToneSpacing->values({10, 15, 20, 25, 30});
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
@@ -2148,21 +2146,18 @@ void MainWindow::dataSink(qint64 frames)
       int navg=ui->sbEchoAvg->value();
       int ndf=0;
       int idir=1;
-      if(ui->cbEchoCall->isChecked() and !m_diskData) {
+      if(!ui->rbFixedTone->isChecked() and !m_diskData) {
         ndf=ui->sbToneSpacing->value();
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
-//        QTextStream out(stdout);
-//        out << "aa " << ndf << " " << itone[0] << " " << itone[1] << " " << itone[2] << " "
-//                  << itone[3] << " " << itone[4] << " " << itone[5] << "\n";
       }
       if(m_diskData) {
         idir=-1;
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
-        ui->cbEchoCall->setChecked(ndf!=0);
+        if(ndf==0 and ui->rbEchoMessage->isChecked()) ui->rbFixedTone->setChecked(true);
       }
 
-      bool bEchoCall=ui->cbEchoCall->isChecked();
-      QString txcall=ui->dxCallEntry->text();
+      bool bEchoCall=ui->rbEchoMessage->isChecked();
+      QString txcall=ui->leEchoMessage->text();
       static char crxcall[7];
       float xdt=0.0;
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&ndf,&navg,&nqual,&f1,&xlevel,&sigdb,
@@ -2210,7 +2205,7 @@ void MainWindow::dataSink(qint64 frames)
 
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
       if(m_saveAll and !m_diskData) {
-        if(ui->cbEchoCall->isChecked()) ndf=ui->sbToneSpacing->value();
+        if(ui->rbEchoMessage->isChecked()) ndf=ui->sbToneSpacing->value();
         int idir=1;
         save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
         m_fSpread=width;
@@ -3990,8 +3985,6 @@ void MainWindow::statusChanged()
   if (ui->tx1->text()=="" && !(m_mode=="FT8" && (SpecOp::HOUND==m_specOp or SpecOp::FOX==m_specOp))
       && !m_bDoubleClicked) ui->txb6->click();
   check_button_color();
-  ui->cbEchoCall->setVisible(m_mode=="Echo");
-  ui->sbToneSpacing->setVisible(m_mode=="Echo" && ui->cbEchoCall->isChecked());
 }
 
 bool MainWindow::eventFilter (QObject * object, QEvent * event)
@@ -7304,8 +7297,8 @@ void MainWindow::guiUpdate()
     m_currentMessageType = 0;
     if(m_tune or m_mode=="Echo") {
       itone[0]=0;
-      if(ui->cbEchoCall->isChecked()) {
-        QString echoMsg=ui->dxCallEntry->text().left(6);
+      if(ui->rbEchoMessage->isChecked() or ui->rbEchoCW->isChecked()) {
+        QString echoMsg=ui->leEchoMessage->text();
         gen_echocall_(const_cast <char *> (echoMsg.toLatin1().constData()),const_cast<int *>(itone),(FCL)6);
       }
     } else {
@@ -12010,16 +12003,16 @@ void MainWindow::transmit (double snr)
     double framesPerSymbol=4096;
     double freq=1500.0+m_fDither;
     double toneSpacing=0.0;
-    if(ui->cbEchoCall->isChecked()) {
-      toneSpacing=ui->sbToneSpacing->value();
+    if(ui->rbEchoMessage->isChecked() or ui->rbEchoCW->isChecked()) {
 
-      if(toneSpacing==0) {
+      if(ui->rbEchoCW->isChecked()) {
         freq=700.0;
         int ifreq=freq;
         int n=ui->dxCallEntry->text().length();
-        gen_cw_wave_(const_cast<char *> (ui->dxCallEntry->text().toLatin1().constData()), &ifreq,
+        gen_cw_wave_(const_cast<char *> (ui->leEchoMessage->text().toLatin1().constData()), &ifreq,
                    foxcom_.wave, (FCL)n);
       } else {
+        toneSpacing=ui->sbToneSpacing->value();
         int nsps4=4*framesPerSymbol;                           //48000 Hz sampling
         int nsym=numEchoSymbols;
         float fsample=48000.0;
@@ -13077,18 +13070,6 @@ void MainWindow::on_cbCQTx_toggled(bool b)
   }
   setRig ();
   setXIT (ui->TxFreqSpinBox->value ());
-}
-
-void MainWindow::on_cbEchoCall_toggled(bool b)
-{
-  ui->sbToneSpacing->setVisible(b);
-  ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr   DT   TS  EchoMsg");
-  if(b) {
-    mode_label.setText("Echo Call");
-    ui->dxCallEntry->setText(m_baseCall);
-  } else {
-    mode_label.setText("Echo");
-  }
 }
 
 void MainWindow::statusUpdate () const
