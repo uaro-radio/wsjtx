@@ -1408,6 +1408,10 @@ void MainWindow::writeSettings()
   m_settings->setValue("FST4_FLow",ui->sbF_Low->value());
   m_settings->setValue("FST4_FHigh",ui->sbF_High->value());
   m_settings->setValue("EchoToneSpacing",ui->sbToneSpacing->value());
+  m_settings->setValue("EchoFixedTone",ui->rbFixedTone->isChecked());
+  m_settings->setValue("EchoMessageRB",ui->rbEchoMessage->isChecked());
+  m_settings->setValue("EchoCW",ui->rbEchoCW->isChecked());
+  m_settings->setValue("EchoMessage",ui->leEchoMessage->text());
   m_settings->setValue("DTtol",m_DTtol);
   m_settings->setValue("MinSync",m_minSync);
   m_settings->setValue ("AutoSeq", ui->cbAutoSeq->isChecked ());
@@ -1728,6 +1732,10 @@ void MainWindow::readSettings()
   ui->sbF_High->setValue(m_settings->value("FST4_FHigh",1400).toInt());
   ui->sbFST4W_FTol->setValue(m_settings->value("FST4W_FTol",100).toInt());
   ui->sbToneSpacing->setValue(m_settings->value("EchoToneSpacing",10).toInt());
+  ui->rbFixedTone->setChecked(m_settings->value("EchoFixedTone",true).toBool());
+  ui->rbEchoMessage->setChecked(m_settings->value("EchoMessageRB",true).toBool());
+  ui->rbEchoCW->setChecked(m_settings->value("EchoCW",true).toBool());
+  ui->leEchoMessage->setText(m_settings->value("EchoMessage",QString {}).toString());
   m_minSync=m_settings->value("MinSync",0).toInt();
   ui->syncSpinBox->setValue(m_minSync);
   ui->cbAutoSeq->setChecked (m_settings->value ("AutoSeq", false).toBool());
@@ -12418,6 +12426,20 @@ void MainWindow::on_cbSWL_toggled(bool b)
 void MainWindow::on_cbTx6_toggled(bool)
 {
   genCQMsg ();
+}
+
+void MainWindow::on_rbFixedTone_toggled(bool b)
+{
+  ui->leEchoMessage->setEnabled(!b);
+  ui->sbToneSpacing->setEnabled(!b);
+}
+void MainWindow::on_rbEchoMessage_toggled(bool b)
+{
+  ui->sbToneSpacing->setEnabled(b);
+}
+void MainWindow::on_rbEchoCW_toggled(bool b)
+{
+  ui->sbToneSpacing->setEnabled(!b);
 }
 
 // Takes a decoded CQ line and sets it up for reply

@@ -4050,6 +4050,9 @@ Double-click to reset to the standard 73 message</string>
                  </item>
                  <item row="1" column="1">
                   <widget class="HintedSpinBox" name="sbToneSpacing">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="minimumSize">
                     <size>
                      <width>100</width>
@@ -4095,6 +4098,25 @@ Double-click to reset to the standard 73 message</string>
                    </property>
                   </widget>
                  </item>
+                 <item row="2" column="1">
+                  <widget class="QLineEdit" name="leEchoMessage">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>K1JT</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="2" column="0">
                   <widget class="QRadioButton" name="rbEchoCW">
                    <property name="minimumSize">
@@ -4111,16 +4133,6 @@ Double-click to reset to the standard 73 message</string>
                    </property>
                    <property name="text">
                     <string>CW</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="QLineEdit" name="leEchoMessage">
-                   <property name="maximumSize">
-                    <size>
-                     <width>100</width>
-                     <height>16777215</height>
-                    </size>
                    </property>
                   </widget>
                  </item>

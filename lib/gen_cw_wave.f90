@@ -20,6 +20,7 @@ subroutine gen_cw_wave(message,ifreq,wave)
      if(i1.eq.0 .and. icw(i).eq.1) i1=i
      if(icw(i).eq.1) i2=i
   enddo
+  if(i1.lt.1 .or. i2.gt.200) go to 999
   ncw=i2-i1+1
   icw(1:ncw)=icw(i1:i2)
 
@@ -51,5 +52,6 @@ subroutine gen_cw_wave(message,ifreq,wave)
   y=y/nadd
   cdat=y*z
   wave=real(cdat)
-
+  
+999 return
 end subroutine gen_cw_wave

@@ -412,6 +412,9 @@ private slots:
   void update_tx5(const QString &qsy_text);
   void reply_tx5(const QString &qsy_text);
   void setQSYMessageCreatorStatus(const bool &QSYMessageCreatorValue);
+  void on_rbFixedTone_toggled(bool b);
+  void on_rbEchoMessage_toggled(bool b);
+  void on_rbEchoCW_toggled(bool b);
 
 private:
   Q_SIGNAL void initializeAudioOutputStream (QAudioDeviceInfo,
