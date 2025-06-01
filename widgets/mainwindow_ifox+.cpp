@@ -160,6 +160,8 @@ extern "C" {
 
   void gen65(char* msg, int* ichk, char msgsent[], int itone[], int* itext);
 
+  void gen_cw_wave_(char* msg, int* ifreq, float wave[], fortran_charlen_t);
+
   void genq65_(char* msg, int* ichk, char* msgsent, int itone[],
               int* i3, int* n3, fortran_charlen_t, fortran_charlen_t);
 
@@ -1245,8 +1247,6 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   }
 #endif
 
-  ui->cbEchoCall->setVisible(false);
-  ui->sbToneSpacing->setVisible(false);
   ui->sbToneSpacing->values({10, 15, 20, 25, 30});
 
 // this must be the last statement of constructor
@@ -1412,6 +1412,10 @@ void MainWindow::writeSettings()
   m_settings->setValue("FST4_FLow",ui->sbF_Low->value());
   m_settings->setValue("FST4_FHigh",ui->sbF_High->value());
   m_settings->setValue("EchoToneSpacing",ui->sbToneSpacing->value());
+  m_settings->setValue("EchoFixedTone",ui->rbFixedTone->isChecked());
+  m_settings->setValue("EchoMessageRB",ui->rbEchoMessage->isChecked());
+  m_settings->setValue("EchoCW",ui->rbEchoCW->isChecked());
+  m_settings->setValue("EchoMessage",ui->leEchoMessage->text());
   m_settings->setValue("DTtol",m_DTtol);
   m_settings->setValue("MinSync",m_minSync);
   m_settings->setValue ("AutoSeq", ui->cbAutoSeq->isChecked ());
@@ -1732,6 +1736,10 @@ void MainWindow::readSettings()
   ui->sbF_High->setValue(m_settings->value("FST4_FHigh",1400).toInt());
   ui->sbFST4W_FTol->setValue(m_settings->value("FST4W_FTol",100).toInt());
   ui->sbToneSpacing->setValue(m_settings->value("EchoToneSpacing",10).toInt());
+  ui->rbFixedTone->setChecked(m_settings->value("EchoFixedTone",true).toBool());
+  ui->rbEchoMessage->setChecked(m_settings->value("EchoMessageRB",true).toBool());
+  ui->rbEchoCW->setChecked(m_settings->value("EchoCW",true).toBool());
+  ui->leEchoMessage->setText(m_settings->value("EchoMessage",QString {}).toString());
   m_minSync=m_settings->value("MinSync",0).toInt();
   ui->syncSpinBox->setValue(m_minSync);
   ui->cbAutoSeq->setChecked (m_settings->value ("AutoSeq", false).toBool());
@@ -2154,21 +2162,18 @@ void MainWindow::dataSink(qint64 frames)
       int navg=ui->sbEchoAvg->value();
       int ndf=0;
       int idir=1;
-      if(ui->cbEchoCall->isChecked() and !m_diskData) {
+      if(!ui->rbFixedTone->isChecked() and !m_diskData) {
         ndf=ui->sbToneSpacing->value();
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
-//        QTextStream out(stdout);
-//        out << "aa " << ndf << " " << itone[0] << " " << itone[1] << " " << itone[2] << " "
-//                  << itone[3] << " " << itone[4] << " " << itone[5] << "\n";
       }
       if(m_diskData) {
         idir=-1;
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
-        ui->cbEchoCall->setChecked(ndf!=0);
+        if(ndf==0 and ui->rbEchoMessage->isChecked()) ui->rbFixedTone->setChecked(true);
       }
 
-      bool bEchoCall=ui->cbEchoCall->isChecked();
-      QString txcall=ui->dxCallEntry->text();
+      bool bEchoCall=ui->rbEchoMessage->isChecked();
+      QString txcall=ui->leEchoMessage->text();
       static char crxcall[7];
       float xdt=0.0;
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&ndf,&navg,&nqual,&f1,&xlevel,&sigdb,
@@ -2216,7 +2221,7 @@ void MainWindow::dataSink(qint64 frames)
 
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
       if(m_saveAll and !m_diskData) {
-        if(ui->cbEchoCall->isChecked()) ndf=ui->sbToneSpacing->value();
+        if(ui->rbEchoMessage->isChecked()) ndf=ui->sbToneSpacing->value();
         int idir=1;
         save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,&ndf,&itone[0],dec_data.d2,&idir);
         m_fSpread=width;
@@ -4000,8 +4005,6 @@ void MainWindow::statusChanged()
   if (ui->tx1->text()=="" && !(m_mode=="FT8" && (SpecOp::HOUND==m_specOp or SpecOp::FOX==m_specOp))
       && !m_bDoubleClicked) ui->txb6->click();
   check_button_color();
-  ui->cbEchoCall->setVisible(m_mode=="Echo");
-  ui->sbToneSpacing->setVisible(m_mode=="Echo" && ui->cbEchoCall->isChecked());
 }
 
 bool MainWindow::eventFilter (QObject * object, QEvent * event)
@@ -7301,8 +7304,8 @@ void MainWindow::guiUpdate()
     m_currentMessageType = 0;
     if(m_tune or m_mode=="Echo") {
       itone[0]=0;
-      if(ui->cbEchoCall->isChecked()) {
-        QString echoMsg=ui->dxCallEntry->text().left(6);
+      if(ui->rbEchoMessage->isChecked() or ui->rbEchoCW->isChecked()) {
+        QString echoMsg=(ui->leEchoMessage->text()+"      ").left(6);
         gen_echocall_(const_cast <char *> (echoMsg.toLatin1().constData()),const_cast<int *>(itone),(FCL)6);
       }
     } else {
@@ -11049,6 +11052,7 @@ void MainWindow::WSPR_config(bool b)
 {
   ui->rh_decodes_widget->setVisible(!b);     // UR disable for AL + widescreen version
   ui->controls_stack_widget->setCurrentIndex (b && m_mode != "Echo" ? 1 : 0);
+  if(m_mode=="Echo") ui->controls_stack_widget->setCurrentIndex(2);
   ui->QSO_controls_widget->setVisible (!b);
   ui->DX_controls_widget->setVisible (!b or (m_mode=="Echo"));
   ui->WSPR_controls_widget->setVisible (b);
@@ -12076,21 +12080,29 @@ void MainWindow::transmit (double snr)
     double framesPerSymbol=4096;
     double freq=1500.0+m_fDither;
     double toneSpacing=0.0;
-    if(ui->cbEchoCall->isChecked()) {
-      freq=1500.0;
-      toneSpacing=ui->sbToneSpacing->value();
-//      if(toneSpacing==50.0) freq=500.0;
-    }
-    int nsps4=4*framesPerSymbol;                           //48000 Hz sampling
-    int nsym=numEchoSymbols;
-    float fsample=48000.0;
-    int nwave=nsym*nsps4;
-    int icmplx=0;
-    float f0=freq;
-    genwave_(const_cast<int *>(itone),&nsym,&nsps4,&nwave,
-             &fsample,&toneSpacing,&f0,&icmplx,foxcom_.wave,foxcom_.wave);
 
-    toneSpacing=-5.0;  //Flag Modulator to use precomputed foxcom_.wave[].
+    if(ui->rbEchoMessage->isChecked() or ui->rbEchoCW->isChecked()) {
+
+      if(ui->rbEchoCW->isChecked()) {
+        freq=700.0;
+        int ifreq=freq;
+        int n=ui->leEchoMessage->text().length();
+        gen_cw_wave_(const_cast<char *> (ui->leEchoMessage->text().toLatin1().constData()), &ifreq,
+                   foxcom_.wave, (FCL)n);
+      } else {
+        toneSpacing=ui->sbToneSpacing->value();
+        int nsps4=4*framesPerSymbol;                           //48000 Hz sampling
+        int nsym=numEchoSymbols;
+        float fsample=48000.0;
+        int nwave=nsym*nsps4;
+        int icmplx=0;
+        float f0=freq;
+        genwave_(const_cast<int *>(itone),&nsym,&nsps4,&nwave,
+             &fsample,&toneSpacing,&f0,&icmplx,foxcom_.wave,foxcom_.wave);
+      }
+      toneSpacing=-5.0;  //Flag Modulator to use precomputed foxcom_.wave[].
+    }
+
     m_msEchoTxStart=QDateTime::currentMSecsSinceEpoch();
     if (m_tci_audio) {
       Q_EMIT m_config.transceiver_modulator_start(m_mode,numEchoSymbols,framesPerSymbol,freq,toneSpacing,
@@ -12485,6 +12497,29 @@ void MainWindow::on_cbTx6_toggled(bool)
 {
   genCQMsg ();
 }
+
+void MainWindow::on_rbFixedTone_toggled(bool b)
+{
+  ui->leEchoMessage->setEnabled(!b);
+  ui->sbToneSpacing->setEnabled(!b);
+}
+
+void MainWindow::on_rbEchoMessage_toggled(bool b)
+{
+  ui->sbToneSpacing->setEnabled(b);
+}
+
+void MainWindow::on_rbEchoCW_toggled(bool b)
+{
+  ui->sbToneSpacing->setEnabled(!b);
+}
+
+void MainWindow::on_leEchoMessage_textChanged()
+{
+  QString t=ui->leEchoMessage->text().toUpper();
+  ui->leEchoMessage->setText(t);
+}
+
 
 // Takes a decoded CQ line and sets it up for reply
 void MainWindow::replyToCQ (QTime time, qint32 snr, float delta_time, quint32 delta_frequency
@@ -13136,18 +13171,6 @@ void MainWindow::on_cbCQTx_toggled(bool b)
   }
   setRig ();
   setXIT (ui->TxFreqSpinBox->value ());
-}
-
-void MainWindow::on_cbEchoCall_toggled(bool b)
-{
-  ui->sbToneSpacing->setVisible(b);
-  ui->lh_decodes_headings_label->setText("  UTC    Hour    Level  Doppler  Width     N     Q     DF    SNR   dBerr   DT   TS  EchoMsg");
-  if(b) {
-    mode_label.setText("Echo Call");
-    ui->dxCallEntry->setText(m_baseCall);
-  } else {
-    mode_label.setText("Echo");
-  }
 }
 
 void MainWindow::statusUpdate () const
