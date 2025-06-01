@@ -12015,7 +12015,7 @@ void MainWindow::transmit (double snr)
     if(ui->rbEchoMessage->isChecked() or ui->rbEchoCW->isChecked()) {
 
       if(ui->rbEchoCW->isChecked()) {
-        freq=700.0;
+        freq=1500.0;
         int ifreq=freq;
         int n=ui->leEchoMessage->text().length();
         gen_cw_wave_(const_cast<char *> (ui->leEchoMessage->text().toLatin1().constData()), &ifreq,
