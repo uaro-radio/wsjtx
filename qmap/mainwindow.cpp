@@ -1019,7 +1019,7 @@ void MainWindow::CreateLiveCQ(QStringList cqliveText)
   for (const QString &item : cqliveText) {
     QString line = " ";
     QStringList thePostLine;
-    line = line.repeated(100);
+    line = line.repeated(100).replace("<","").replace(">","");
     QStringList thePieces;
 
     thePieces = item.split(" ",SkipEmptyParts);
