@@ -172,6 +172,7 @@ contains
 ! ndepth=2: subtraction, 3 passes, bp+osd (no subtract refinement) 
 ! ndepth=3: subtraction, 3 passes, bp+osd
     npass=3
+    imetric=1
     if(ndepth.eq.1) npass=2
     do ipass=1,npass
       newdat=.true.
@@ -181,14 +182,17 @@ contains
       if(ipass.eq.1) then
         lsubtract=.true.
         ndeep=ndepth
-        if(ndepth.eq.3) ndeep=2
+        imetric=1
       elseif(ipass.eq.2) then
         n2=ndecodes
-        if(ndecodes.eq.0) cycle
+imetric=2
+!        if(ndecodes.eq.0) imetric=2 
         lsubtract=.true.
         ndeep=ndepth
       elseif(ipass.eq.3) then
-        if((ndecodes-n2).eq.0) cycle
+        imetric=2
+!        if((ndecodes-n2).eq.0) cycle
+        if(ndecodes.eq.0) cycle
         lsubtract=.true. 
         ndeep=ndepth
       endif 
@@ -204,7 +208,7 @@ contains
         msg37='                                     '
         call timer('ft8b    ',0)
         call ft8b(dd,newdat,nQSOProgress,nfqso,nftx,ndeep,nzhsym,lft8apon,  &
-             lapcqonly,napwid,lsubtract,nagain,ncontest,iaptype,mycall12,   &
+             lapcqonly,napwid,lsubtract,nagain,ncontest,imetric,iaptype,mycall12,   &
              hiscall12,f1,xdt,xbase,apsym2,aph10,nharderrors,dmin,          &
              nbadcrc,iappass,msg37,xsnr,itone)
         call timer('ft8b    ',1)
