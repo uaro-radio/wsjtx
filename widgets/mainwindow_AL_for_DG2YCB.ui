@@ -2371,7 +2371,7 @@ When not checked you can view the calibration results.</string>
                   <property name="sizeHint" stdset="0">
                    <size>
                     <width>20</width>
-                    <height>40</height>
+                    <height>10</height>
                    </size>
                   </property>
                  </spacer>
@@ -2380,15 +2380,21 @@ When not checked you can view the calibration results.</string>
                  <layout class="QGridLayout" name="gridLayout_2">
                   <item row="1" column="0">
                    <widget class="QRadioButton" name="rbEchoMessage">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
+                      <width>0</width>
                       <height>0</height>
                      </size>
                     </property>
                     <property name="maximumSize">
                      <size>
-                      <width>100</width>
+                      <width>16777215</width>
                       <height>16777215</height>
                      </size>
                     </property>
@@ -2402,15 +2408,21 @@ When not checked you can view the calibration results.</string>
                     <property name="enabled">
                      <bool>false</bool>
                     </property>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
+                      <width>0</width>
                       <height>0</height>
                      </size>
                     </property>
                     <property name="maximumSize">
                      <size>
-                      <width>100</width>
+                      <width>16777215</width>
                       <height>16777215</height>
                      </size>
                     </property>
@@ -2427,15 +2439,21 @@ When not checked you can view the calibration results.</string>
                   </item>
                   <item row="0" column="0">
                    <widget class="QRadioButton" name="rbFixedTone">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
+                      <width>0</width>
                       <height>0</height>
                      </size>
                     </property>
                     <property name="maximumSize">
                      <size>
-                      <width>100</width>
+                      <width>16777215</width>
                       <height>16777215</height>
                      </size>
                     </property>
@@ -2452,9 +2470,15 @@ When not checked you can view the calibration results.</string>
                     <property name="enabled">
                      <bool>false</bool>
                     </property>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
-                      <width>100</width>
+                      <width>16777215</width>
                       <height>16777215</height>
                      </size>
                     </property>
@@ -2468,15 +2492,21 @@ When not checked you can view the calibration results.</string>
                   </item>
                   <item row="2" column="0">
                    <widget class="QRadioButton" name="rbEchoCW">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
+                      <width>0</width>
                       <height>0</height>
                      </size>
                     </property>
                     <property name="maximumSize">
                      <size>
-                      <width>100</width>
+                      <width>16777215</width>
                       <height>16777215</height>
                      </size>
                     </property>
@@ -2492,10 +2522,13 @@ When not checked you can view the calibration results.</string>
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
                   </property>
+                  <property name="sizeType">
+                   <enum>QSizePolicy::Preferred</enum>
+                  </property>
                   <property name="sizeHint" stdset="0">
                    <size>
                     <width>20</width>
-                    <height>40</height>
+                    <height>10</height>
                    </size>
                   </property>
                  </spacer>
