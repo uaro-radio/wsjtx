@@ -70,14 +70,12 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,ndf,navg,nqual,f1,xlevel,  &
   fnominal=1500.0           !Nominal audio frequency w/o doppler or dither
   ia=nint((fnominal+dop0-nfrit)/df)
   ib=nint((f1+dop-nfrit)/df)
-     
+  snrdb=0.
+  db_err=0.
+  dfreq=0.
+
 ! If some parameter is way off, abort this procedure
-  if(ia.lt.2048 .or. ib.lt.2048 .or. ia.gt.6144 .or. ib.gt.6144) then
-     snrdb=0.
-     db_err=0.
-     dfreq=0.
-     go to 900
-  endif
+  if(ia.lt.2048 .or. ib.lt.2048 .or. ia.gt.6144 .or. ib.gt.6144) go to 900
   
   dtime=0.05                            !Setup for searching a range of DT
   idtbest=0
@@ -120,6 +118,7 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,ndf,navg,nqual,f1,xlevel,  &
      endif
  
      call echo_snr(sa,sb,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
+
 !     nqual=snr_detect-2
 !     if(nqual.lt.0) nqual=0
 !     if(nqual.gt.10) nqual=10
@@ -186,6 +185,7 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,ndf,navg,nqual,f1,xlevel,  &
   blue=blue-0.5*(bblue1+bblue2)
 
 900 call sleep_msec(10)   !Avoid the "blue Decode button" syndrome
+  if(abs(dfreq).ge.1000.0) dfreq=0.
   
   return
 end subroutine avecho
