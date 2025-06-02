@@ -5,8 +5,7 @@ subroutine gen_cw_wave(message,ifreq,wave)
   parameter (NMAX=98304)                 !2.048*48000
   character*(*) message
   integer icw(200)                       !Encoded CW message bits
-  complex cdat(NMAX)                     !Complex waveform
-  complex z(NMAX)
+  real*4 z(NMAX)
   real*8 dt,twopi,phi,dphi,fsample,tdit,t
   real*4 wave(NMAX)                      !Generated waveform
   real x(NMAX)
@@ -18,7 +17,7 @@ subroutine gen_cw_wave(message,ifreq,wave)
   i2=0
   do i=1,ncw
      if(i1.eq.0 .and. icw(i).eq.1) i1=i
-     if(icw(i).eq.1) i2=i
+     if(icw(i).eq.1) i2=i+1
   enddo
   if(i1.lt.1 .or. i2.gt.200) go to 999
   ncw=i2-i1+1
@@ -43,18 +42,16 @@ subroutine gen_cw_wave(message,ifreq,wave)
      xphi=phi
      k=k+1
      x(k)=icw(j)
-     z(k)=cmplx(cos(xphi),sin(xphi))
+     z(k)=sin(xphi)
   enddo
 
-  nadd=0.001/dt
+  nadd=0.002/dt
   call smo(x,NMAX,y,nadd)
   call smo(y,NMAX,x,nadd)
   call smo(x,NMAX,y,nadd)
-  call smo(y,NMAX,x,nadd)
-  call smo(x,NMAX,y,nadd)
+  y(NMAX-3*NADD:NMAX)=0.
   fac=0.99999/maxval(abs(y))
-  cdat=fac*y*z
-  wave=real(cdat)
+  wave=fac*y*z
   
 999 return
 end subroutine gen_cw_wave
