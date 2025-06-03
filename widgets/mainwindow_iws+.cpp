@@ -5719,8 +5719,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
   // Filtering out some false decodes, and don't write all.txt for such
       // FDR step 1
       and (!(SpecOp::NONE==m_specOp &&
-           (message0.contains("<...> <")                                       // don't allow two hashes
-           || message0.contains("> <...>")                                     // don't allow two hashes
+           (message0.contains("> <")                                           // don't allow two hashes
            || message0.contains(QRegularExpression {"(\\w+)/P (\\w+)/P "})     // don't allow two /P calls
            || message0.contains(QRegularExpression {"(\\w+)/R (\\w+)/R "})     // don't allow two /R calls
            || (message0.contains("/R ") && message0.contains("?"))             // insecure /R decodes
