@@ -176,8 +176,7 @@ contains
     if(ndepth.eq.1) npass=2
     do ipass=1,npass
       newdat=.true.
-      syncmin=1.22
-      if(ndepth.le.2) syncmin=1.6
+      syncmin=1.6
       if(nzhsym.eq.41) syncmin=2.0
       if(ipass.eq.1) then
         lsubtract=.true.
@@ -185,11 +184,12 @@ contains
         imetric=1
       elseif(ipass.eq.2) then
         n2=ndecodes
-imetric=2
+	    imetric=2
 !        if(ndecodes.eq.0) imetric=2 
         lsubtract=.true.
         ndeep=ndepth
       elseif(ipass.eq.3) then
+        syncmin=1.3
         imetric=2
 !        if((ndecodes-n2).eq.0) cycle
         if(ndecodes.eq.0) cycle
