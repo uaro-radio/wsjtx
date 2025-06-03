@@ -5721,26 +5721,26 @@ void MainWindow::readFromStdout()                             //readFromStdout
       // FDR step 1
       and (!(SpecOp::NONE==m_specOp &&
            (message0.contains("<...> <...>")                                   // don't allow two unsesolved hashes
-           || message0.contains(QRegularExpression {"(\\w+)/P (\\w+)/P"})      // don't allow two /P calls
-           || message0.contains(QRegularExpression {"(\\w+)/R (\\w+)/R"})      // don't allow two /R calls
+           || message0.contains(QRegularExpression {"(\\w+)/P (\\w+)/P "})     // don't allow two /P calls
+           || message0.contains(QRegularExpression {"(\\w+)/R (\\w+)/R "})     // don't allow two /R calls
+           || (message0.contains("/R ") && message0.contains("?") && SpecOp::NONE==m_specOp)  // insecure /R decodes
            || (message0.contains(";") && message0.contains(" R ")))))          // don't allow such at all
       // FDR step 2
       and (!(SpecOp::NONE==m_specOp && ui->actionReduce_false_decodes->isChecked() && m_mode=="FT8" &&
-           ((((message0.contains("/P") && message0.contains(" R "))                    // /P and R
-           || (message0.contains(";") && message0.contains("/R"))                      // ; and /R
-           || (message0.contains(";") && message0.contains("/P"))                      // ; and /P
+           ((((message0.contains("/P ") && message0.contains(" R "))                   // /P and R
+           || (message0.contains(";") && message0.contains("/R "))                     // ; and /R
+           || (message0.contains(";") && message0.contains("/P "))                     // ; and /P
            || (message0.contains("<...>") && message0.contains(" R "))                 // hash and R
-           || (message0.contains("<...>") && message0.contains("/P"))                  // hash and /P
+           || (message0.contains("<...>") && message0.contains("/P "))                 // hash and /P
            || (message0.contains("<...>") && message0.contains(";"))                   // hash and ;
-           || message0.contains(QRegularExpression {"\\w\\w\\w\\w\\w\\w\\w\\w"})       // likely invalid calls
+           || message0.contains(QRegularExpression {"\\w\\w\\w\\w\\w\\w\\w\\w"})       // likely invalid callsigns
            || message0.contains(QRegularExpression {"\\d\\d\\d \\d\\d\\d"})            // contest messages
-           || message0.contains("3.") || message0.contains("2.")
-           || message0.contains("1."))                                                 // -0.9 < dt <  0.9
+           || message0.contains("3.") || message0.contains("2."))                      // -1.9 < dt <  1.9
            && (message0.contains("-1") || message0.contains("-2")))            // for such SNRmin = -09
-           or ((message0.contains("/R") or message0.contains(" R ")) && message0.contains("-2"))  // for /R or contest calls SNRmin = -19
+           or ((message0.contains("/R ") or message0.contains(" R ")) && message0.contains("-2"))  // for /R or contest calls SNRmin = -19
            or (((message0.contains("<...>") || message0.contains(";")                  // unresolved hash and F/H messages
                || message0.contains("? a")                                             // ap decodes of low confidence
-               || message0.contains("/R") || message0.contains(" R ")                  // rover and contest calls
+               || message0.contains("/R ") || message0.contains(" R ")                 // rover and contest callsigns
                || message0.contains("-24") || message0.contains("-25"))                // SNR < -23
                && (message0.contains("3.") || message0.contains("2.")))))))    // for such -1.9 < dt < 1.9
       )
