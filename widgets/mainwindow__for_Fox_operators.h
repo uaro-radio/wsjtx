@@ -157,6 +157,8 @@ private slots:
   void initialize_fonts ();
   void ScrollBarPosition(int n);
   void on_actionUse_Dark_Style_triggered (bool checked);
+  void on_actionBand_Buttons_triggered ();
+  void on_actionVHF_UHF_Buttons_triggered ();
   void on_pb160_clicked();
   void on_pb80_clicked();
   void on_pb60_clicked();
@@ -170,6 +172,19 @@ private slots:
   void on_pb6_clicked();
   void on_pb2_clicked();
   void on_pb70_clicked();
+  void on_pb50_clicked();
+  void on_pb4_clicked();
+  void on_pb144_clicked();
+  void on_pb220_clicked();
+  void on_pb432_clicked();
+  void on_pb902_clicked();
+  void on_pb23_clicked();
+  void on_pb13_clicked();
+  void on_pb9_clicked();
+  void on_pb5G_clicked();
+  void on_pb10G_clicked();
+  void on_pb24G_clicked();
+  void on_pb47G_clicked();
   void check_button_color();
   void stopWRTimeout();
   void stopWCTimeout();

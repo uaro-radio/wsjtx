@@ -1505,6 +1505,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("DisableEventLogging", ui->actionDisable_event_logging->isChecked() );
   m_settings->setValue ("DarkStyle", ui->actionUse_Dark_Style->isChecked() );
   m_settings->setValue ("BandButtons", ui->actionBand_Buttons->isChecked() );
+  m_settings->setValue ("VHFUHFButtons", ui->actionVHF_UHF_Buttons->isChecked() );
   m_settings->setValue ("HighlightB4", ui->actionHighlightB4->isChecked() );
   m_settings->setValue ("HighlightToday", ui->actionHighlightToday->isChecked() );
   m_settings->setValue ("HighlightIgnored", ui->actionHighlightIgnored->isChecked() );
@@ -1704,6 +1705,7 @@ void MainWindow::readSettings()
   ui->actionDisable_event_logging->setChecked(m_settings->value("DisableEventLogging", false).toBool());
   ui->actionUse_Dark_Style->setChecked(m_settings->value("DarkStyle", false).toBool());
   ui->actionBand_Buttons->setChecked(m_settings->value("BandButtons", true).toBool());
+  ui->actionVHF_UHF_Buttons->setChecked(m_settings->value("VHFUHFButtons", false).toBool());
   ui->actionHighlightB4->setChecked(m_settings->value("HighlightB4", false).toBool());
   ui->actionHighlightToday->setChecked(m_settings->value("HighlightToday", false).toBool());
   ui->actionHighlightIgnored->setChecked(m_settings->value("HighlightIgnored", false).toBool());
@@ -4002,6 +4004,11 @@ void MainWindow::statusChanged()
   }
   if (ui->tx1->text()=="" && !(m_mode=="FT8" && (SpecOp::HOUND==m_specOp or SpecOp::FOX==m_specOp))
       && !m_bDoubleClicked) ui->txb6->click();
+  if (ui->actionBand_Buttons->isChecked()) {
+    ui->actionVHF_UHF_Buttons->setVisible(true);
+  } else {
+    ui->actionVHF_UHF_Buttons->setVisible(false);
+  }
   check_button_color();
 }
 
@@ -15447,6 +15454,20 @@ void MainWindow::on_actionUse_Dark_Style_triggered (bool checked)
     guiUpdate();
 }
 
+void MainWindow:: on_actionBand_Buttons_triggered ()
+{
+  if (ui->actionBand_Buttons->isChecked()) {
+    ui->actionVHF_UHF_Buttons->setVisible(true);
+  } else {
+    ui->actionVHF_UHF_Buttons->setVisible(false);
+  }
+}
+
+void MainWindow:: on_actionVHF_UHF_Buttons_triggered ()
+{
+  check_button_color();
+}
+
 void MainWindow::check_button_color()
 {
     // Yellow background for the DX Call and Enable Tx buttons when the rig is allowed to Tx automatically
@@ -15711,6 +15732,152 @@ void MainWindow::check_button_color()
         if (!keepTx5) ui->tx5->setStyleSheet("");
     }
     if (ui->actionBand_Buttons->isChecked()) {
+      QString band=m_config.bands()->find(m_freqNominal);
+      if (ui->actionVHF_UHF_Buttons->isChecked()) {          // URUR
+          ui->pb160->setVisible(false);
+          ui->pb80->setVisible(false);
+          ui->pb60->setVisible(false);
+          ui->pb40->setVisible(false);
+          ui->pb30->setVisible(false);
+          ui->pb20->setVisible(false);
+          ui->pb17->setVisible(false);
+          ui->pb15->setVisible(false);
+          ui->pb12->setVisible(false);
+          ui->pb10->setVisible(false);
+          ui->pb6->setVisible(false);
+          ui->pb2->setVisible(false);
+          ui->pb70->setVisible(false);
+          ui->pb50->setVisible(true);
+          ui->pb4->setVisible(true);
+          ui->pb144->setVisible(true);
+          ui->pb220->setVisible(true);
+          ui->pb432->setVisible(true);
+          ui->pb902->setVisible(true);
+          ui->pb23->setVisible(true);
+          ui->pb13->setVisible(true);
+          ui->pb9->setVisible(true);
+          ui->pb5G->setVisible(true);
+          ui->pb10G->setVisible(true);
+          ui->pb24G->setVisible(true);
+          ui->pb47G->setVisible(true);
+          if (band=="6m") {
+              ui->pb50->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb50->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb50->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="4m") {
+              ui->pb4->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb4->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb4->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="2m") {
+              ui->pb144->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb144->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb144->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="1.25m") {
+              ui->pb220->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb220->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb220->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="70cm") {
+              ui->pb432->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb432->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb432->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="33cm") {
+            ui->pb902->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb902->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb902->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="23cm") {
+            ui->pb23->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb23->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb23->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="13cm") {
+            ui->pb13->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb13->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb13->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="9cm") {
+            ui->pb9->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb9->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb9->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="6cm") {
+            ui->pb5G->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb5G->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb5G->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="3cm") {
+            ui->pb10G->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb10G->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb10G->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="1.25cm") {
+            ui->pb24G->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb24G->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb24G->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+          if (band=="6mm") {
+            ui->pb47G->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+          } else {
+              if (m_useDarkStyle) {
+                 ui->pb47G->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+              } else {
+                 ui->pb47G->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+              }
+          }
+      } else {
         ui->pb160->setVisible(true);
         ui->pb80->setVisible(true);
         ui->pb60->setVisible(true);
@@ -15724,7 +15891,19 @@ void MainWindow::check_button_color()
         ui->pb6->setVisible(true);
         ui->pb2->setVisible(true);
         ui->pb70->setVisible(true);
-        QString band=m_config.bands()->find(m_freqNominal);
+        ui->pb50->setVisible(false);
+        ui->pb4->setVisible(false);
+        ui->pb144->setVisible(false);
+        ui->pb220->setVisible(false);
+        ui->pb432->setVisible(false);
+        ui->pb902->setVisible(false);
+        ui->pb23->setVisible(false);
+        ui->pb13->setVisible(false);
+        ui->pb9->setVisible(false);
+        ui->pb5G->setVisible(false);
+        ui->pb10G->setVisible(false);
+        ui->pb24G->setVisible(false);
+        ui->pb47G->setVisible(false);
         if (band=="160m") {
             ui->pb160->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
         } else {
@@ -15850,20 +16029,34 @@ void MainWindow::check_button_color()
               }
           }
         }
+      }
     } else {
-        ui->pb160->setVisible(false);
-        ui->pb80->setVisible(false);
-        ui->pb60->setVisible(false);
-        ui->pb40->setVisible(false);
-        ui->pb30->setVisible(false);
-        ui->pb20->setVisible(false);
-        ui->pb17->setVisible(false);
-        ui->pb15->setVisible(false);
-        ui->pb12->setVisible(false);
-        ui->pb10->setVisible(false);
-        ui->pb6->setVisible(false);
-        ui->pb2->setVisible(false);
-        ui->pb70->setVisible(false);
+      ui->pb160->setVisible(false);
+      ui->pb80->setVisible(false);
+      ui->pb60->setVisible(false);
+      ui->pb40->setVisible(false);
+      ui->pb30->setVisible(false);
+      ui->pb20->setVisible(false);
+      ui->pb17->setVisible(false);
+      ui->pb15->setVisible(false);
+      ui->pb12->setVisible(false);
+      ui->pb10->setVisible(false);
+      ui->pb6->setVisible(false);
+      ui->pb2->setVisible(false);
+      ui->pb70->setVisible(false);
+      ui->pb50->setVisible(false);
+      ui->pb4->setVisible(false);
+      ui->pb144->setVisible(false);
+      ui->pb220->setVisible(false);
+      ui->pb432->setVisible(false);
+      ui->pb902->setVisible(false);
+      ui->pb23->setVisible(false);
+      ui->pb13->setVisible(false);
+      ui->pb9->setVisible(false);
+      ui->pb5G->setVisible(false);
+      ui->pb10G->setVisible(false);
+      ui->pb24G->setVisible(false);
+      ui->pb47G->setVisible(false);
     }
     if (ui->monitorButton->isChecked()) {
       if (m_saveAll or m_saveDecoded) {
@@ -16068,6 +16261,188 @@ void MainWindow::on_pb70_clicked()
       QTimer::singleShot (250, [=] {keep_frequency = false;});
     }
     setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb50_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (50313000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(50316000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb4_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (70154000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(70154000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb144_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (144074000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(144077000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb220_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (222174000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(222177000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb432_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (432174000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(432177000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb902_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (902174000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(902177000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb23_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (1296065000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(1296065000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb13_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (2304065000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(2304065000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb9_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (3400065000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(3400065000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb5G_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (5760200000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(5760200000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb10G_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (10368200000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(10368200000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb24G_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (24048200000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(24048200000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
+}
+
+void MainWindow::on_pb47G_clicked()
+{
+  auto const& row = m_config.frequencies ()->best_working_frequency (47088000000);
+  ui->bandComboBox->setCurrentIndex (row);
+  if (row >= 0) {
+    on_bandComboBox_activated (row);
+  } else {
+    keep_frequency = true;
+    setRig(47088000000);
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
+  }
+  setXIT (ui->TxFreqSpinBox->value ());
 }
 
 void MainWindow::read_txLog()
