@@ -180,9 +180,12 @@
          </widget>
         </item>
         <item>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="Band_buttons_Layout">
           <property name="bottomMargin">
            <number>1</number>
+          </property>
+          <property name="spacing">
+           <number>3</number>
           </property>
           <item row="0" column="1">
            <widget class="QPushButton" name="pb80">
