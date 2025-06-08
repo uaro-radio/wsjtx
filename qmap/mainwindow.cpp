@@ -1004,7 +1004,7 @@ void MainWindow::decodeBusy(bool b)                             //decodeBusy()
 void MainWindow::CreateLiveCQ(QStringList cqliveText)
 {
 //return if cqliveText is empty or data were read from disk.
-  if (m_diskData or (cqliveText.size() == 0)) return;
+  if ((m_diskData && m_myCall.toUpper() != "W3SZ" && m_myCall.toUpper() != "DL3WDG") or (cqliveText.size() == 0)) return;
 
   QStringList cqliveFinalText;
   QStringList oldFile;
