@@ -304,38 +304,36 @@ being readable by anyone listening in.
 *Echo* mode provides tools for two types of measurements: lunar echoes
 of your own transmitted signal, and broadband noise power received
 from the Sun, Moon, and other sources including ambient-temperature
-ground and nearby objects, relative to cold sky. Such measurements are
-widely used for optimizing a station's capabilities for
-Earth-Moon-Earth (EME) communication. In addition, you can transmit
-and receive lunar echoes of very short alphanumeric messages for
-demonstration and amusement purposes.
+ground and nearby objects. Such measurements are widely used for
+optimizing a station's capabilities for Earth-Moon-Earth (EME)
+communication. In addition, you can generate lunar echoes of short
+alphanumeric messages for demonstration and amusement purposes.
 
 For quantitative measurements the Echo-mode transmission is a
 fixed-frequency 1500 Hz tone lasting 2.048 s. After sending it
-_WSJT-X_ switches to to receive, records the lunar echo arriving about
-2.5 s later, computes its spectrum, and displays results. The program
-takes care of necessary T/R switching and frequency adjustments for
-Doppler compensation. To make such measurements, be sure to check
-*Enable VHF and submode features* on the *File | Settings | General*
-tab.  Set *Split Operation* to *Rig* or *Fake It* on the *Settings |
-Radio* tab, *Doppler tracking* and *Own Echo* or *Constant frequency
-on Moon* on the Astronomical Data window, and *Fixed Tone* on the
-mwin window. Point your antenna at the Moon and click *Enable Tx* to
-start a sequence of echo measurements.
+_WSJT-X_ switches back to receive, records the lunar echo about 2.5 s
+later, computes its spectrum, and displays results. The program takes
+care of necessary T/R switching and frequency adjustments for Doppler
+compensation. To make such measurements, be sure to check *Enable VHF
+and submode features* on the *File | Settings | General* tab.  Set
+*Split Operation* to *Rig* or *Fake It* on the *Settings | Radio* tab,
+*Doppler tracking* and *Own Echo* or *Constant frequency on Moon* on
+the Astronomical Data window, and *Fixed Tone* on the mwin
+window. Point your antenna at the Moon and click *Enable Tx* to start
+a sequence of echo measurements.
 
 Each Echo-mode cycle takes 6 seconds. The average echo spectrum will
-be displayed in the Echo Graph window, and numerical parameters of the
-measurements appear in the main window. If echoes are strong enough
-they will be visible in the waterfall, centered at 1500 Hz. Mote that
-a spinner control labeled *Avg* (to the left of the *Decode* button)
-controls averaging of successive Echo sequences. Displayed SNR and the
-plotted Echo spectrum will be averaged over the selected number of
-sequences.
+be displayed in the *Echo Graph* window, and measurements appear in
+the main window. If echoes are strong enough they will be visible in
+the waterfall, centered at 1500 Hz. A spinner control labeled *Avg*
+(to the left of the *Decode* button) controls averaging of successive
+Echo sequences. Displayed SNR and the plotted Echo spectrum will be
+averaged over the selected number of sequences.
 
 image::Echo_1296.png[align="center",alt="Echo 144 MHz"]
 
-Each echo cycle produces a line of data in the main text window with
-the following information:
+Each echo cycle produces a line of data in the main window with the
+following information:
 
  UTC       Time in hhmmss format
  Hour      UTC in hours and decimal fraction
@@ -349,54 +347,66 @@ the following information:
  dBerr     Estimated uncertainty of SNR
 
 In addition to the traditional Echo mode, for amusement you can
-transmit very short messages (up to six alphanumeric characters) and
+transmit short messages (up to six alphanumeric characters) and
 receive their echoes, using either multi-tone frequency-shift keying
-or standard Morse code.  For example, select *MFSK* and a suitable
-tone spacing -- ideally at least one-third of the expected Soppler
-spread -- and enter your callsign in the field provided. If your
-radio's dial frequency is controlled in 10 Hz steps, you should use
-tone spacing of at least 20 Hz.
+or standard Morse code.  For the former, select *MFSK*, a suitable
+tone spacing at least one-third of the expected Soppler spread, and
+enter your callsign in the field provided. If your radio's dial
+frequency is controlled in 10 Hz steps, you should use tone spacing of
+at least 20 Hz.
 
 image::Echo_controls.png[align="center",alt="Echo controls"]
 
-After you click Enable Tx, _WSJT-X_ will send a sequence of six tones,
-each lasting 0.341 s, to convey the characters in the entry
+After you click *Enable Tx*, _WSJT-X_ will send a sequence of six
+tones, each lasting 0.341 s, to convey the characters in the entry
 field. Message encoding is trivial, with no forward error correction:
 each tone has a frequency offset from 1500 Hz corresponding to the
 position of that character in the sequence
-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.  Note that when *MFSK* is
-selected, with *Avg* set to anything larger than 1 the decoded echo
-message will accumulate indefinitely.
+0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ. Lines displayed in the main text
+window will now include three additional items:
+
+ DT        Timing offset (s), for disgnostic purposes
+ TS        Tone spacing (Hz)
+ EchoMsg   Decoded MFSK message
+ 
+Note that when *MFSK* is selected and *Avg* is set to anything larger
+than 1, the decoded echo message will be averaged indefinitely, until
+you click *Clear Avg*.
 
 image::Echo_10GHz.png[align="center",alt="Echo 10 GHz"]
 
-Select *CW* to send a short message by Morse code, repeated on the
+Select *CW* to send a short message by Morse code, repeated with the
 usual 6 s Echo cycle. If you can hear your own echoes, this feature is
 especially good for demonstration purposes. Code speed will be
 automatically adjusted so the message just fits into the allotted
 2.048 s Tx interval. The most useful CW messages will be short and
-very simple, such as “O” or “OO”.
+simple, such as “O” or “OO”.
 
-System timing details are important in Echo mode: its features work
-best when the station's T/R switchover times are no longer than a few
-hundred milliseconds in each direction. In most amateur EME setups
-these times are determined by delays explicitly programmed in the
-software, response time of CAT-controlled transceivers, and any
-hardware sequencers that are used.
+System timing details are important. Echo-mode features work best when
+the station's T/R switchover times are no longer than a few hundred
+milliseconds in each direction. In most amateur EME setups these times
+are determined by delays explicitly programmed in the software,
+response time of CAT-controlled transceivers, and any hardware
+sequencers in use.
 
-Most features in Echo mode require Doppler compensation via CAT
-control of your radio, and you may find it important to experiment
-with software options that affect system timing. Use the radio’s
-Monitor function (or listen on another receiver) to make sure that in
-*MFSK* mode you transmit all six tones at their full programmed
-length. Try sending message sequence “07ELSZ”, for example. The
-software *Tx delay* (set on the *File | Settings | Advanced* tab)
-should be no larger than necessary. Experiment with using *Split
-Operation* set to both *Rig* or *Fake It* on the *File | Settings |
-Radio* tab. On the *Astronomical Data* window, you might find that
-Doppler tracking by *Own Echo* works better for Echo mode than
+Most Echo-mode features require Doppler compensation via CAT control
+of your radio. You may find it important to experiment with software
+options that affect system timing. Use the radio’s Monitor function
+(or listen on another receiver) to make sure that in *MFSK* mode you
+transmit all six tones at their full programmed length. Try sending
+message sequence “07ELSZ”, for example. *Tx delay* (set on the *File |
+Settings | Advanced* tab) should be no larger than necessary.
+Experiment with setting *Split Operation* to both *Rig* and *Fake It*
+on the *File | Settings | Radio* tab. On the *Astronomical Data*
+window, Doppler tracking by *Own Echo* might work better than
 *Constant Frequency on Moon*.
 
+Measurements of noise from the Sun, Moon, and ground are made relative
+to that from a suitable "cold sky" direction. For example, you may
+want to make potential improvements to your system that will maximize
+the difference between *Level* when pointed at ths Sun, and when
+pointed away by several beamwidths or more. Click *Monitor* to start a
+continuous sequence of noise measurements.
 
 === Tips for EME
 
