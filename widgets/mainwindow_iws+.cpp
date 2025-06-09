@@ -2213,7 +2213,7 @@ void MainWindow::dataSink(qint64 frames)
         t = t.asprintf("%7.4f  %5.2f %7d %7.1f %5d %5d %6d %6.1f %7.1f %5.2f %3d",hour,xlevel,
                        nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr,xdt,ndf);
         t = t0 + t + "  " + rxcall;
-        if(!bEchoCall) t=t.left(78);
+        if(!bEchoCall) t=t.left(72);
         if(ui) ui->decodedTextBrowser->insertText(t);
         t=t1 + t;
         write_all("Rx",t);
