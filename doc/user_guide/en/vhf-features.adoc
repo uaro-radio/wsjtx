@@ -173,7 +173,7 @@ In many ways JT65 operation on VHF and higher bands is similar to HF
 usage, but a few important differences should be noted.  Typical
 VHF/UHF operation involves only a single signal (or perhaps two or
 three) in the receiver passband.  We recommend that you check *Single
-decode* on the *Settings -> General* tab, and do not check *Two pass
+decode* on the *Settings | General* tab, and do not check *Two pass
 decoding* on the *Advanced* tab.  With VHF features enabled the JT65
 decoder will respond to special message formats often used for EME:
 the OOO signal report and two-tone shorthand messages for RO, RRR, and
