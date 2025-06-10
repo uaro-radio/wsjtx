@@ -9717,9 +9717,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
     decodeDone();  // Clear a hung decoder status
     ui->DecodeButton->clearFocus();
   }
-  if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {     // Switch contest mode on/off
-      not_erase = true;  // prevent erasing the decodedTextBrowser
-      QTimer::singleShot (350, [=] {not_erase = false;});
+  if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {      // Toggle last used specOp on/off
+    keep_frequency = true;
+    not_erase = true;
+      QTimer::singleShot (350, [=] {
+        keep_frequency = false;
+        not_erase = false;
+      });
       m_specOp=m_config.special_op_id();
       if (!m_config.bSpecialOp()) {
         m_config.setSpecial_On();
@@ -9734,8 +9738,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         if (m_specOp==SpecOp::HOUND) {
         ui->houndButton->setChecked(false);
         m_config.setSpecial_None();
-        keep_frequency = true;
-        QTimer::singleShot (250, [=] {keep_frequency = false;});
         }
       }
       m_specOp=m_config.special_op_id();
@@ -9767,8 +9769,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       ui->ft8Button->clearFocus();
       statusChanged();
   }
-  // freeze the Tx5 text
-  if(ui->txb5->hasFocus() && (event->button() & Qt::RightButton)) {
+  if(ui->txb5->hasFocus() && (event->button() & Qt::RightButton)) {           // freeze the Tx5 text
       if (!keepTx5) {
         keepTx5 = true;
         ui->tx5->setStyleSheet("color: #000000; background-color: #ffff00");
@@ -9778,7 +9779,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       }
       ui->txb5->clearFocus();
   }
-  // Toggle FT8 DXp frequencies
+  // band buttons
   if(ui->pb80->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(3567000);
