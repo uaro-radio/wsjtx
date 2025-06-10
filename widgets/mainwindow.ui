@@ -4213,7 +4213,7 @@ Double-click to reset to the standard 73 message</string>
                     </size>
                    </property>
                    <property name="text">
-                    <string>MFSK</string>
+                    <string>Message</string>
                    </property>
                   </widget>
                  </item>
