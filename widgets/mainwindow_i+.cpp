@@ -8314,6 +8314,18 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     }
     return;
   }
+
+  // inform users that a QSO with two compound callsigns won't work, but allow copying the callsign when Alt is pressed
+  QString hiscall;
+  QString hisgrid;
+  message.deCallAndGrid(/*out*/hiscall,hisgrid);
+  if (modifiers!=Qt::AltModifier && m_config.my_callsign().contains("/") && hiscall.contains("/")) {
+    auto const& msg = tr("A QSO between two stations with compound callsigns won't work.\n\n"
+                         "Auto Seq would get stuck in an endless loop.");
+    MessageBox::information_message (this, msg);
+    return;   // prevent starting such a QSO
+  }
+
   int nmod = fmod(double(message.timeInSeconds()),2.0*m_TRperiod);
   if(ui->txFirstCheckBox->isVisible() && !ui->txFirstCheckBox->isEnabled() && (
         (nmod!=0 && !ui->txFirstCheckBox->isChecked()) or
@@ -15691,7 +15703,7 @@ void MainWindow::check_button_color()
     }
     if (ui->actionBand_Buttons->isChecked()) {
       QString band=m_config.bands()->find(m_freqNominal);
-      if (ui->actionVHF_UHF_Buttons->isChecked()) {          // URUR
+      if (ui->actionVHF_UHF_Buttons->isChecked()) {
           ui->pb160->setVisible(false);
           ui->pb80->setVisible(false);
           ui->pb60->setVisible(false);
