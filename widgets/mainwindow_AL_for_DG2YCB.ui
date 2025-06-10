@@ -2568,7 +2568,7 @@ When not checked you can view the calibration results.</string>
                      </size>
                     </property>
                     <property name="text">
-                     <string>Message</string>
+                     <string>MFSK</string>
                     </property>
                    </widget>
                   </item>
