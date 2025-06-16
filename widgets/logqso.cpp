@@ -48,7 +48,7 @@ namespace
      , {"RS", QT_TRANSLATE_NOOP ("LogQSO", "Rain scatter")}
      , {"SAT", QT_TRANSLATE_NOOP ("LogQSO", "Satellite")}
      , {"TEP", QT_TRANSLATE_NOOP ("LogQSO", "Trans-equatorial")}
-     , {"TR", QT_TRANSLATE_NOOP ("LogQSO", "Troposheric ducting")}
+     , {"TR", QT_TRANSLATE_NOOP ("LogQSO", "Tropospheric ducting")}
     };
   struct SatMode
   {
