@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>826</width>
+    <width>827</width>
     <height>705</height>
    </rect>
   </property>
@@ -1736,53 +1736,6 @@ this setting allows you to select which audio input will be used
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="1" column="0">
-           <widget class="QLabel" name="sound_output_label">
-            <property name="text">
-             <string>Ou&amp;tput:</string>
-            </property>
-            <property name="buddy">
-             <cstring>sound_output_combo_box</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QComboBox" name="sound_input_channel_combo_box">
-            <property name="toolTip">
-             <string>Select the channel to use for receiving.</string>
-            </property>
-            <item>
-             <property name="text">
-              <string>Mono</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Left</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Right</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Both</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbSortAlphabetically">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sort audio device names alphabetically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Sort alphabetically</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
            <widget class="QLabel" name="sound_input_label">
             <property name="text">
              <string>&amp;Input:</string>
@@ -1792,7 +1745,17 @@ this setting allows you to select which audio input will be used
             </property>
            </widget>
           </item>
-          <item row="1" column="3">
+          <item row="2" column="0">
+           <widget class="QLabel" name="sound_output_label">
+            <property name="text">
+             <string>Ou&amp;tput:</string>
+            </property>
+            <property name="buddy">
+             <cstring>sound_output_combo_box</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="4">
            <widget class="QComboBox" name="sound_output_channel_combo_box">
             <property name="toolTip">
              <string>Select the audio channel used for transmission.
@@ -1822,17 +1785,47 @@ both here.</string>
             </item>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QCheckBox" name="cbHideCARD">
+          <item row="1" column="4">
+           <widget class="QComboBox" name="sound_input_channel_combo_box">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hide the usually unusable ALSA CARD subdevices on Linux.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Select the channel to use for receiving.</string>
             </property>
-            <property name="text">
-             <string>Hide ALSA CARD subdevices (Linux only)</string>
+            <item>
+             <property name="text">
+              <string>Mono</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Left</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Right</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Both</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="3">
+           <widget class="LazyFillComboBox" name="sound_input_combo_box">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Select the audio CODEC to use for receiving.</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" colspan="2">
+          <item row="2" column="1" colspan="3">
            <widget class="LazyFillComboBox" name="sound_output_combo_box">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1849,18 +1842,90 @@ transmitting periods.</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" colspan="2">
-           <widget class="LazyFillComboBox" name="sound_input_combo_box">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="refresh_push_button">
             <property name="toolTip">
-             <string>Select the audio CODEC to use for receiving.</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Refresh audio device list.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Refresh</string>
             </property>
            </widget>
+          </item>
+          <item row="3" column="1" colspan="4">
+           <layout class="QHBoxLayout" name="sound_settings_layout">
+            <item>
+             <widget class="QCheckBox" name="tci_audio_check_box">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use TCI Audio when available.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Use TCI Audio (restart required)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="TCI_spin_box">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Rx audio level&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="suffix">
+               <string> dB</string>
+              </property>
+              <property name="prefix">
+               <string>Rx </string>
+              </property>
+              <property name="minimum">
+               <number>-50</number>
+              </property>
+              <property name="maximum">
+               <number>0</number>
+              </property>
+              <property name="singleStep">
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item alignment="Qt::AlignHCenter">
+             <widget class="QCheckBox" name="cbSortAlphabetically">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sort audio device names alphabetically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Sort alphabetically</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbHideCARD">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hide the usually unusable ALSA CARD subdevices on Linux.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Hide ALSA CARD subdevices (Linux only)</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -4017,17 +4082,10 @@ Right click for insert and delete options.</string>
        <string>Alerts</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_20">
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_23">
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_22">
          <property name="text">
-          <string>Ensure that you have made meaningful settings on the Colors tab, so that you see which message triggered the alert.</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_21">
-         <property name="text">
-          <string>Audio Alerts will be played on the default audio device (usually the loudspeaker of your PC).</string>
+          <string>Alert categories above the line require to have the box &quot;Show DXCC, grid, and worked-before status&quot; on the General tab checked.</string>
          </property>
         </widget>
        </item>
@@ -4035,6 +4093,20 @@ Right click for insert and delete options.</string>
         <widget class="QLabel" name="label_16">
          <property name="text">
           <string>WARNING: THIS FEATURE IS FOR EXPERIENCED USERS ONLY !!!</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_23">
+         <property name="text">
+          <string>Ensure that you have made meaningful settings on the Colors tab, so that you see which message triggered the alert.</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>Ensure that your rig is NOT connected via &quot;Default Device&quot; !!!</string>
          </property>
         </widget>
        </item>
@@ -4065,13 +4137,13 @@ Right click for insert and delete options.</string>
           <property name="spacing">
            <number>6</number>
           </property>
-          <item row="7" column="0">
-           <widget class="QCheckBox" name="cbMyCall">
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="cbITUZOB">
             <property name="toolTip">
-             <string>My Call in message</string>
+             <string>New ITU Zone on Band</string>
             </property>
             <property name="text">
-             <string>My Call</string>
+             <string>New ITU Zone on Band</string>
             </property>
            </widget>
           </item>
@@ -4085,6 +4157,53 @@ Right click for insert and delete options.</string>
             </property>
            </widget>
           </item>
+          <item row="12" column="0">
+           <widget class="QCheckBox" name="cbDXcall">
+            <property name="toolTip">
+             <string>DX Call or DX Grid in message</string>
+            </property>
+            <property name="text">
+             <string>DX Call or DX Grid in message</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QCheckBox" name="cbGrid">
+            <property name="toolTip">
+             <string>New Grid</string>
+            </property>
+            <property name="text">
+             <string>New Grid</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="cbContinentOB">
+            <property name="toolTip">
+             <string>New Continent on Band</string>
+            </property>
+            <property name="text">
+             <string>New Continent on Band</string>
+            </property>
+           </widget>
+          </item>
+          <item row="13" column="0">
+           <widget class="QCheckBox" name="cbQSYmessage">
+            <property name="text">
+             <string>Message received</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="cbITUZ">
+            <property name="toolTip">
+             <string>New ITU Zone</string>
+            </property>
+            <property name="text">
+             <string>New ITU Zone</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="0">
            <widget class="QCheckBox" name="cbCQZ">
             <property name="toolTip">
@@ -4095,7 +4214,74 @@ Right click for insert and delete options.</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="1" rowspan="3">
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="cbDXCCOB">
+            <property name="toolTip">
+             <string>New DXCC on Band</string>
+            </property>
+            <property name="text">
+             <string>New DXCC on Band</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="0">
+           <widget class="QCheckBox" name="cbMyCall">
+            <property name="toolTip">
+             <string>My Call in message</string>
+            </property>
+            <property name="text">
+             <string>My Call</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="cbCQZOB">
+            <property name="toolTip">
+             <string>New CQ Zone on Band</string>
+            </property>
+            <property name="text">
+             <string>New CQ Zone on Band</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="cbDXCC">
+            <property name="toolTip">
+             <string>New DXCC</string>
+            </property>
+            <property name="text">
+             <string>New DXCC</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QCheckBox" name="cbGridOB">
+            <property name="toolTip">
+             <string>New Grid on Band</string>
+            </property>
+            <property name="text">
+             <string>New Grid on Band</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="0" colspan="2">
+           <widget class="Line" name="line_9">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="11" column="0">
+           <widget class="QCheckBox" name="cbCQ">
+            <property name="toolTip">
+             <string>CQ in message</string>
+            </property>
+            <property name="text">
+             <string>CQ in message</string>
+            </property>
+           </widget>
+          </item>
+          <item row="10" column="1" rowspan="3">
            <widget class="QPushButton" name="pbAlerts">
             <property name="minimumSize">
              <size>
@@ -4126,135 +4312,7 @@ Right click for insert and delete options.</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="cbDXCCOB">
-            <property name="toolTip">
-             <string>New DXCC on Band</string>
-            </property>
-            <property name="text">
-             <string>New DXCC on Band</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbCQZOB">
-            <property name="toolTip">
-             <string>New CQ Zone on Band</string>
-            </property>
-            <property name="text">
-             <string>New CQ Zone on Band</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="cbITUZOB">
-            <property name="toolTip">
-             <string>New ITU Zone on Band</string>
-            </property>
-            <property name="text">
-             <string>New ITU Zone on Band</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QCheckBox" name="cbGrid">
-            <property name="toolTip">
-             <string>New Grid</string>
-            </property>
-            <property name="text">
-             <string>New Grid</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="cbContinentOB">
-            <property name="toolTip">
-             <string>New Continent on Band</string>
-            </property>
-            <property name="text">
-             <string>New Continent on Band</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="cbDXCC">
-            <property name="toolTip">
-             <string>New DXCC</string>
-            </property>
-            <property name="text">
-             <string>New DXCC</string>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="0">
-           <widget class="QCheckBox" name="cbDXcall">
-            <property name="toolTip">
-             <string>DX Call or DX Grid in message</string>
-            </property>
-            <property name="text">
-             <string>DX Call or DX Grid in message</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QCheckBox" name="cbITUZ">
-            <property name="toolTip">
-             <string>New ITU Zone</string>
-            </property>
-            <property name="text">
-             <string>New ITU Zone</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0" colspan="2">
-           <widget class="Line" name="line_9">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QCheckBox" name="cbCQ">
-            <property name="toolTip">
-             <string>CQ in message</string>
-            </property>
-            <property name="text">
-             <string>CQ in message</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QCheckBox" name="cbGridOB">
-            <property name="toolTip">
-             <string>New Grid on Band</string>
-            </property>
-            <property name="text">
-             <string>New Grid on Band</string>
-            </property>
-           </widget>
-          </item>
-          <item row="10" column="0">
-           <widget class="QCheckBox" name="cbQSYmessage">
-            <property name="text">
-             <string>Message received</string>
-            </property>
-           </widget>
-          </item>
          </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_17">
-         <property name="text">
-          <string>Use of this feature requires that your computer is equipped with two sound cards.</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="label_22">
-         <property name="text">
-          <string>IMPORTANT NOTES</string>
-         </property>
         </widget>
        </item>
        <item row="5" column="0">
@@ -4280,17 +4338,24 @@ Right click for insert and delete options.</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_19">
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_21">
          <property name="text">
-          <string>Ensure that your rig is NOT connected via &quot;DefaultAudioDevice&quot; !!!</string>
+          <string>Audio Alerts will be played on the default audio device (usually the loudspeaker of your PC).</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_24">
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_25">
          <property name="text">
-          <string>Alert categories above the line require to have the box &quot;Show DXCC, grid, and worked-before status&quot; on the General tab checked.</string>
+          <string>IMPORTANT NOTES</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_17">
+         <property name="text">
+          <string>Use of this feature requires that your computer is equipped with two sound cards.</string>
          </property>
         </widget>
        </item>
