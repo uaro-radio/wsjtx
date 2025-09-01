@@ -11333,7 +11333,7 @@ void MainWindow::on_actionMSK144_triggered()
     ui->labDXped->setText(t0);
     on_contest_log_action_triggered();
   }
-  if(m_rigState.frequency() > 0) m_msk144basefreq = m_rigState.frequency();  // MSK144 QSY
+  if(!(programStart or m_rigState.frequency() == 0)) m_msk144basefreq = m_rigState.frequency();  // MSK144 QSY
   msk144qsy = false;  // MSK144 QSY
 }
 
