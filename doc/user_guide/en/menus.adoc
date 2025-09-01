@@ -182,7 +182,7 @@ in your setup.
 
 image::decode-menu.png[align="left",alt="Decode Menu"]
 
-To invoke *Full Duplex Mode*, select it from the *Decode* menu. Audio
+*Full Duplex Mode* can also be selected from the *Decode* menu. Audio
 input can be taken from a second local receiver or from a WebSDR on
 the internet. Duplex operation works for slow modes (FT8, FT4, Q65, …
 ) and fast modes like MSK144. Your own transmitted messages will be
