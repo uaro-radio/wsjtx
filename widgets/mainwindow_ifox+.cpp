@@ -1851,7 +1851,7 @@ void MainWindow::readSettings()
   ui->sbTR_FST4W->setValue (m_settings->value ("TRPeriod_FST4W", 15).toInt());
   m_lastMonitoredFrequency = m_settings->value ("DialFreq",
     QVariant::fromValue<Frequency> (default_frequency)).value<Frequency> ();
-  m_msk144basefreq=m_lastMonitoredFrequency;  // MSK144 QSY
+  if(m_mode=="MSK144") QTimer::singleShot (3000, [=] {m_msk144basefreq = m_lastMonitoredFrequency;});  // MSK144 QSY
   ui->WSPRfreqSpinBox->setValue(0); // ensure a change is signaled
   ui->WSPRfreqSpinBox->setValue(m_settings->value("WSPRfreq",1500).toInt());
   ui->TxFreqSpinBox->setValue(0); // ensure a change is signaled
