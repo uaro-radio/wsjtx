@@ -275,6 +275,7 @@ bool m_band_changed = false;
 bool m_muted = false;
 bool no_decodes_to_UDP = false;
 bool rigFailed = false;
+bool msk144qsy = false;
 bool programStart = true;
 QString txLog;
 QString ignoreList;
@@ -3198,6 +3199,13 @@ void MainWindow::fastSink(qint64 frames)
     // Ensure that Tx stops when "RR73" or "73" is received and repeat_Tx is enabled for MSK144
     if (m_config.repeat_Tx() && m_mode=="MSK144" && m_hisCall!="" && text.contains(m_baseCall)
         && text.contains(m_hisCall + " 73"))  cease_auto_Tx_after_QSO();
+
+    // Reset MSK144 QSY when "RR73" or "73" is received
+    if (m_mode=="MSK144" && msk144qsy && m_hisCall!="" && text.contains(m_baseCall) &&
+        (text.contains(m_hisCall + " 73") or text.contains(m_hisCall + " RR73"))) {
+         setRig(m_msk144oldfreq);  // reset MSK144 QSY
+         msk144qsy = false;
+       }
 
     // highlight orange and blue callsigns for MSK144
     if(m_config.highlight_orange() or (m_config.highlight_blue())) {
@@ -8642,6 +8650,10 @@ void MainWindow::on_txb6_clicked()
     set_dateTimeQSO(-1);
     ui->txrb6->setChecked(true);
     if(m_transmitting) m_restart=true;
+    if(m_mode=="MSK144" && msk144qsy && m_msk144oldfreq > 0) {
+      setRig(m_msk144oldfreq);  // reset MSK144 QSY
+      msk144qsy = false;
+    }
 }
 
 void MainWindow::doubleClickOnCall2(Qt::KeyboardModifiers modifiers)
@@ -8724,9 +8736,12 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     // MSK144 QSY: set RF freq so next received MSK144 signal is at 1500 Hz
     if(m_mode=="MSK144" && message.frequencyOffset() > 0 && (modifiers==Qt::ControlModifier or modifiers==(Qt::ControlModifier+Qt::AltModifier))) {
       Frequency dial_frequency = m_msk144basefreq + (message.frequencyOffset() - 1500);
+      m_msk144oldfreq = m_rigState.frequency();
+      if(m_msk144oldfreq == 0) m_msk144oldfreq = m_freqNominal;
       monitor (true);
       setRig(dial_frequency);
       ui->labDialFreq->setText (Radio::pretty_frequency_MHz_string (dial_frequency));
+      msk144qsy = true;
       if(modifiers==Qt::AltModifier or modifiers==(Qt::ControlModifier+Qt::AltModifier)) {
         m_bDoubleClicked = false;
         if (m_auto) auto_tx_mode (false);
@@ -11319,6 +11334,7 @@ void MainWindow::on_actionMSK144_triggered()
     on_contest_log_action_triggered();
   }
   if(m_rigState.frequency() > 0) m_msk144basefreq = m_rigState.frequency();  // MSK144 QSY
+  msk144qsy = false;  // MSK144 QSY
 }
 
 void MainWindow::on_actionWSPR_triggered()
