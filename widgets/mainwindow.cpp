@@ -8658,7 +8658,7 @@ void MainWindow::on_txb6_clicked()
     set_dateTimeQSO(-1);
     ui->txrb6->setChecked(true);
     if(m_transmitting) m_restart=true;
-    if(m_mode=="MSK144" && msk144qsy && m_msk144oldfreq > 0) {
+    if(m_mode=="MSK144" && msk144qsy && !keep_frequency && m_msk144oldfreq > 0) {
       setRig(m_msk144oldfreq);  // reset MSK144 QSY
       msk144qsy = false;
     }
@@ -8744,6 +8744,7 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     // MSK144 QSY: set RF freq so next received MSK144 signal is at 1500 Hz
     if(m_mode=="MSK144" && message.frequencyOffset() > 0 && (modifiers==Qt::ControlModifier or modifiers==(Qt::ControlModifier+Qt::AltModifier))) {
       Frequency dial_frequency = m_msk144basefreq + (message.frequencyOffset() - 1500);
+      keep_frequency = true;
       m_msk144oldfreq = m_rigState.frequency();
       if(m_msk144oldfreq == 0) m_msk144oldfreq = m_freqNominal;
       monitor (true);
@@ -8754,6 +8755,7 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
         m_bDoubleClicked = false;
         if (m_auto) auto_tx_mode (false);
       }
+      keep_frequency = false;
     }
     m_muted = false;
   }
