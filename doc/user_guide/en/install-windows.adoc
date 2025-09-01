@@ -23,10 +23,10 @@ TIP: Your computer may be configured so that this directory is
 * The built-in Windows facility for time synchronization is usually
   not adequate.  We recommend the program _Meinberg NTP Client_: see
   {ntpsetup} for downloading and installation instructions. Recent
-  versions of Windows 10 are now shipped with a more capable Internet
+  versions of Windows are now shipped with a more capable Internet
   time synchronization service that is suitable if configured
   appropriately. We do not recommend SNTP time setting tools or others
-  that make periodic correction steps, _WSJT-X_ requires that the PC
+  that make periodic correction steps; _WSJT-X_ requires that the PC
   clock be monotonically increasing and smoothly continuous.
 
 NOTE: Having a PC clock that appears to be synchronized to UTC is not
@@ -38,28 +38,27 @@ NOTE: Having a PC clock that appears to be synchronized to UTC is not
       synchronization errors gradually.
 
 [[OPENSSL]]
-
-image:LoTW_TLS_error.png[_WSJT-X_ LoTW download TLS error,
-  align="center"]
   
-* _WSJT-X_ requires installation of the _OpenSSL_ libraries. Suitable
-  libraries may already be installed on your system. If they are not,
-  you will see this error shortly after requesting a fetch of the
-  latest LoTW users database. To fix this, install the _OpenSSL_
-  libraries.
+* _WSJT-X_ uses the _OpenSSL_ libraries, and these are usually
+installed by defajult. If an incompatible OpenSSL version is already
+installed on your system. you will see the following error message
+shortly after requesting a fetch of the latest LoTW users database. To
+fix this problem, install the _OpenSSL_ libraries.
 
-** You can download a suitable _OpenSSL_ package for Windows from
-   {win_openssl_packages}; you need the latest *Windows Light*
-   version. For the 32-bit _WSJT-X_ build, use the latest Win32 v1.1.1
-   version of the _OpenSSL_ libraries, for the 64-bit _WSJT-X_ use the
-   latest Win64 v1.1.1 version of the _OpenSSL_ libraries (Note: it is
-   OK to install both versions on a 64-bit system) which, at the time
-   of writing, were {win32_openssl} and {win64_openssl} respectively.
+image::LoTW_TLS_error.png[align="center",alt="SSL/TLS"]
 
-** Install the package and accept the default options, including the
-   option to copy the _OpenSSL_ DLLs to the Windows system
-   directory. There is no obligation to donate to the _OpenSSL_
-   project. Un-check all the donation options if desired. +
+You can download a suitable _OpenSSL_ package for Windows from
+{win_openssl_packages}; you need the latest *Windows Light*
+version. For the 32-bit _WSJT-X_ build, use the latest Win32 v1.1.1
+version of the _OpenSSL_ libraries, for the 64-bit _WSJT-X_ use the
+latest Win64 v1.1.1 version of the _OpenSSL_ libraries (Note: it is OK
+to install both versions on a 64-bit system) which, at the time of
+writing, were {win32_openssl} and {win64_openssl} respectively.
+
+Install the package and accept the default options, including the
+option to copy the _OpenSSL_ DLLs to the Windows system
+directory. There is no obligation to donate to the _OpenSSL_
+project. Un-check all the donation options if desired. +
 
 NOTE: If you still get the same network error after installing the
       _OpenSSL_ libraries then you also need to install the
@@ -85,5 +84,6 @@ TIP: If you cannot install the _OpenSSL_ libraries or do not have an
   all audio enhancement features for these devices.
 
 * You can uninstall _WSJT-X_ by clicking its *Uninstall* link in the
-  Windows *Start* menu, or by using *Uninstall a Program* on the
-  *Windows Control Panel|Programs and Features* option or in *Settings|Apps* on Windows 10.
+Windows *Start* menu, or by using *Uninstall a Program* on the
+*Windows Control Panel | Programs and Features* option or in
+*File | Settings | Apps*.

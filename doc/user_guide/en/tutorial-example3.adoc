@@ -6,9 +6,10 @@
 
 .Open a Wave File:
 
-- Select *File | Open log directory* and navigate to
-+...\save\samples\FT8\210703_133430.wav+.  The waterfall and Band
-Activity/Rx Frequency windows should look something like the following screen shots:
+- Select *File | Open* and navigate to
++...\save\samples\FT8\210703_133430.wav+.  The waterfall and *Band
+Activity/Rx Frequency* windows should look something like the
+following screen shots:
 
 - You may want to pretend you are K1JT
 by entering that callsign temporarily as *My Call* on the 
@@ -17,8 +18,6 @@ those shown in the screen shot below. Don't forget to change *My Call*
 back to your own call when you are done!
 
 [[X15]]
-image::FT8_waterfall.png[align="left",alt="Wide Graph Decode 210703_133430"]
-
 image::ft8_decodes.png[align="left"]
 
 
@@ -26,8 +25,8 @@ image::ft8_decodes.png[align="left"]
 
 Decoding takes place at the end of a receive sequence. With *Decode* set
 to *Deep*, three decoding passes will be done and the *Decode* button on the 
-mainwindow will illuminate three times, once for each pass. 
-The first decoding attempt in each decoding pass is done at the selected Rx frequency,
+main window will illuminate three times, once for each pass. 
+The first decoding attempt in each pass is done at the selected Rx frequency,
 indicated by the U-shaped green marker on the waterfall frequency
 scale. All decodes appear in the left (*Band Activity*) window. The right
 (*Rx Frequency*) text window displays any decodes obtained at the current
@@ -36,12 +35,12 @@ The red marker on the waterfall scale indicates your
 Tx frequency.
 
 Twenty-one FT8 signals are decoded from the example file. The number
-of decodes is shown in a box at the bottom of the main window.
-When this file was recorded HA5WA was finishing a QSO with K1JT, and
-his 73 message is shown in red because it is addressed to *My Call* (in this case K1JT). 
-By default, lines containing `CQ`
-are highlighted in green, and lines with *My Call* (K1JT)
-in red. Notice that K1JT has two callers; HA0DU and EA3AGB.  
+of decodes is shown in a box at the bottom of the main window.  When
+this file was recorded HA5WA was finishing a QSO with K1JT, and his 73
+message is shown in red because it is addressed to *My Call* (in this
+case K1JT).  By default, lines containing CQ are highlighted in green,
+and lines with *My Call* (K1JT) in red. Notice that K1JT now has two
+additional callers; HA0DU and EA3AGB.
 
 [[X13]]
 .Decoding Controls
@@ -51,7 +50,7 @@ try double-clicking with the mouse on the decoded text lines and on the
 waterfall spectral display. You should be able to confirm the
 following behavior:
 
-- Double-click on one of the decoded *CQ* messages highlighted in
+- Double-click on one of the decoded CQ messages highlighted in
 green. These actions produce the following results:
 
 ** Callsign and locator of the station calling CQ are copied to the *DX
@@ -67,7 +66,7 @@ station.
 
 ** You can modify the double-click behavior by holding down the
 *Shift* key to move only the Tx frequency or the *Ctrl* key to move
-both Rx and Tx frequencies. (On a Mac computer, use the *command* key
+both Rx and Tx frequencies. (On a Mac computer, use the *Command* key
 instead of *Ctrl*). 
 
 ** In addition, if *Double-click on call sets Tx enable* is checked on the 
@@ -126,24 +125,3 @@ the spinner controls or use the mouse wheel.
 
 TIP: An online {ft8_tips} by ZL2IFB offers many additional tips on
 operating procedures.
-
-.FT8 DXpedition Mode:
-
-This special operating mode enables DXpeditions to make FT8 QSOs at
-very high rates.  Both stations must use _WSJT-X_ Version 1.9 or
-later.  Detailed operating instructions for {ft8_DXped} are available
-online.  Do not try to use DXpedition mode without reading these
-instructions carefully!
-
-IMPORTANT: FT8 DXpedition mode is intended for use by rare-entity
-DXpeditions and other unusual circumstances in which sustained QSO
-rates well above 100/hour are expected.  Do not use the multi-signal
-capability unless you satisfy this requirement, and do not use
-DXpedition Mode in the conventional FT8 sub-bands.  If you are
-contemplating operation as Fox using DXpedition Mode, find a suitable
-dial frequency consistent with regional band plans and publicize it
-for the operators you hope to work.  Remember that on-the-air signal
-frequencies will be higher than the dial frequency by up to 4 kHz.
-
-IMPORTANT: When finished with this Tutorial, don't forget to re-enter
-your own callsign as *My Call* on the *Settings | General* tab.

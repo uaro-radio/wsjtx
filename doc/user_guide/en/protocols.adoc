@@ -180,7 +180,7 @@ effective (63,13) code with a payload of k = 13 information symbols
 conveyed by n = 63 channel symbols.  The punctured symbols consist of
 a 12-bit CRC computed from the 13 information symbols.  The CRC is
 used to reduce the false-decode rate to a very low value.  A 22-symbol
-pseudorandom sequence spread throughout a transmission is sent as
+pseudo-random sequence spread throughout a transmission is sent as
 “tone 0” and used for synchronization.  The total number of channel
 symbols in a Q65 transmission is thus 63 + 22 = 85.  Q65 offers T/R
 sequence lengths of 15, 30, 60, 120, and 300 s, and submodes A - E

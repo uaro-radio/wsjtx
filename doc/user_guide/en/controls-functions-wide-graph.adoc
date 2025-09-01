@@ -7,10 +7,20 @@ process.
 
 image::wide-graph-controls.png[align="center",alt="Wide Graph Controls"]
 
+- Check *Bars* to display vertical lines showing the frequency ranges
+corresponding to your transmitted signal, the selected receive
+frequency, and the mouse pointer.
+
+- Check *Freq* to display the frequency corresponding to the mouse
+pointer.
+
 - *Bins/Pixel* controls the displayed frequency resolution.  Set this
 value to 1 for the highest possible resolution, or to higher numbers
 to compress the spectral display. Normal operation with a convenient
 window size works well at 2 to 8 bins per pixel.
+
+- *Time stamp* lets you control the location and status of a UTC label
+optionally inserted on the waterfall.
 
 - *Start nnn Hz* sets the low-frequency starting point of the
 waterfall frequency scale.
@@ -20,7 +30,7 @@ updating the display.  Values around 5 are suitable for normal JT9 and
 JT65 operation.  Adjust *N Avg* to make the waterfall move faster or
 slower, as desired.
 
-- A dropdown list below the *Palette* label lets you select from a
+- A drop-down list below the *Palette* label lets you select from a
 wide range of waterfall color palettes.  
 
 - Click *Adjust* to activate a window that allows you to import or export a
@@ -31,12 +41,16 @@ uneven response across the received passband.  For this feature to
 work properly, you should restrict the range of displayed frequencies
 so that only the active part of the spectrum is shown.
 
+- Check *Ref Spec* if you are using a pre-computed
+<<REFERENCE_SPECTRUM,Reference Spectrum>>.
+
 - Select *Current* or *Cumulative* for the spectrum displayed in the
 bottom one-third of the Wide Graph window.  *Current* is the average
 spectrum over the most recent *N Avg* FFT calculations.  *Cumulative*
 is the average spectrum since the start of the present UTC minute.
 *Linear Avg* is useful in JT4 mode, especially when short-form
-messages are used.
+messages are used. *Q65_Sync* displays the spectrum of possible Q65
+synchronizing patterns.
 
 - Four sliders control reference levels and scaling for waterfall
 colors and the spectrum plot.  Values around midscale are usually
@@ -77,6 +91,8 @@ to compress the spectral display.
 
 - *Gain* and *Zero* sliders control scaling and offset of plotted
 spectra.
+
+- Check *Baseline* to display a fitted basline for the Echo spectrum.
 
 - *Smooth* values greater than 0 apply running averages to the plotted
 spectra, thereby smoothing the curves over multiple bins.

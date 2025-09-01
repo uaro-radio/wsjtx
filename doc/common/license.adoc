@@ -32,6 +32,6 @@ FST4W, FT4, FT8, JT4, JT6M, JT9, JT44, JT65, JTMS, Q65, QRA64, ISCAT,
 and MSK144 are Copyright (C) 2001-2025 by one or more of the following
 authors: Joseph Taylor, K1JT; Bill Somerville, G4WJS; Steven Franke,
 K9AN; Nico Palermo, IV3NWV; Uwe Risse, DG2YCB; Brian Moran, N9ADG;
+John Nelson, G4KLA; Charles Suckling, DL3WDG; Roger Rehr, W3SZ; 
 Greg Beam, KI7MT; Michael Black, W9MDB; Edson Pereira, PY2SDR; Philip
-Karn, KA9Q; John Nelson, G4KLA; Charles Suckling, DL3WDG; and other
-members of the WSJT Development Group.*
+Karn, KA9Q; and other members of the WSJT Development Group.*

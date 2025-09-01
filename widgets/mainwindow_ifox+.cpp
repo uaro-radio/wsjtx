@@ -276,9 +276,12 @@ bool m_band_changed = false;
 bool m_muted = false;
 bool no_decodes_to_UDP = false;
 bool rigFailed = false;
+bool programStart = true;
 QString txLog;
 QString ignoreList;
+QString ALLCALL7 = "";
 QString m_hisCall0 = "";
+QString earlyDecodes = "";  //ft8md
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
 struct {
@@ -360,9 +363,13 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_tx_audio_buffer_frames {0},
   m_msErase {0},
   m_secBandChanged {0},
+  m_msDecStarted {0}, //ft8md
   m_freqNominal {0},
   m_freqNominalPeriod {0},
   m_freqTxNominal {0},
+  m_mslastTX {0},	  //ft8md
+  m_nlasttx {0},		//ft8md
+  m_lapmyc {0},		  //ft8md
   m_reverse_Doppler {"1" == env.value ("WSJT_REVERSE_DOPPLER", "0")},
   m_tRemaining {0.},
   m_TRperiod {60.0},
@@ -372,6 +379,14 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_gen_message_is_cq {false},
   m_send_RR73 {false},
   m_XIT {0},
+  m_ncandthin {100}, 	//ft8md
+  m_nFT8Cycles {3},     //ft8md
+  m_nFT8RXfSens {3}   , //ft8md
+  m_ft8threads {0},     //ft8md
+  m_ft8Sensitivity {3}, //ft8md
+  m_ft8DecoderStart {3}, //ft8md
+  m_nsecBandChanged {0},//ft8md
+  m_nFT4depth {3},		//ft8md
   m_sec0 {-1},
   m_RxLog {1},      //Write Date and Time to RxLog
   m_nutc0 {999999},
@@ -397,6 +412,16 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_auto {false},
   m_restart {false},
   m_startAnother {false},
+  m_skipTx1 {false}, //ft8md
+  m_filter {false}, //ft8md
+  m_agcc {false}, //ft8md
+  m_hint {true}, //ft8md
+  m_multithreadFT8 (false), //ft8md
+  m_houndMode {false},		//ft8md
+  m_commonFT8b {true},		//ft8md
+  m_manualDecode (false), //ft8md
+  m_modeChanged {false},  //ft8md
+  m_multInst {false}, //ft8md
   m_saveDecoded {false},
   m_saveAll {false},
   m_widebandDecode {false},
@@ -425,6 +450,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_bClearRefSpec {false},
   m_bTrain {false},
   m_bAutoReply {false},
+  m_lastloggedcall {""},
   m_QSOProgress {CALLING},
   m_ihsym {0},
   m_nzap {0},
@@ -441,6 +467,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_cqStr {""},
   m_palette {"Linrad"},
   m_mode {"FT8"},
+  m_modeTx {"FT8"},
   m_rpt {"-15"},
   m_pfx {
     "1A", "1S",
@@ -720,6 +747,43 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->actionQuickDecode->setActionGroup(DepthGroup);
   ui->actionMediumDecode->setActionGroup(DepthGroup);
   ui->actionDeepestDecode->setActionGroup(DepthGroup);
+
+  QActionGroup* FT8CyclesGroup = new QActionGroup(this);
+  ui->actionDecFT8cycles1->setActionGroup(FT8CyclesGroup);
+  ui->actionDecFT8cycles2->setActionGroup(FT8CyclesGroup);
+  ui->actionDecFT8cycles3->setActionGroup(FT8CyclesGroup);
+
+  QActionGroup* FT8RXfreqSensitivityGroup = new QActionGroup(this);
+  ui->actionRXfLow->setActionGroup(FT8RXfreqSensitivityGroup);
+  ui->actionRXfMedium->setActionGroup(FT8RXfreqSensitivityGroup);
+  ui->actionRXfHigh->setActionGroup(FT8RXfreqSensitivityGroup);
+
+  QActionGroup* FT8DecoderSensitivityGroup = new QActionGroup(this);
+  ui->actionFT8SensMin->setActionGroup(FT8DecoderSensitivityGroup);
+  ui->actionlowFT8thresholds->setActionGroup(FT8DecoderSensitivityGroup);
+  ui->actionFT8subpass->setActionGroup(FT8DecoderSensitivityGroup);
+
+  QActionGroup* FT8DecoderStartGroup = new QActionGroup(this);
+  ui->actionStartTwoStage->setActionGroup(FT8DecoderStartGroup);
+  ui->actionStartThreeStage->setActionGroup(FT8DecoderStartGroup);
+  ui->actionStartEarly->setActionGroup(FT8DecoderStartGroup);
+  ui->actionStartNormal->setActionGroup(FT8DecoderStartGroup);
+  ui->actionStartLate->setActionGroup(FT8DecoderStartGroup);
+
+  QActionGroup* FT8threadsGroup = new QActionGroup(this);
+  ui->actionMTAuto->setActionGroup(FT8threadsGroup);
+  ui->actionMT1->setActionGroup(FT8threadsGroup);
+  ui->actionMT2->setActionGroup(FT8threadsGroup);
+  ui->actionMT3->setActionGroup(FT8threadsGroup);
+  ui->actionMT4->setActionGroup(FT8threadsGroup);
+  ui->actionMT5->setActionGroup(FT8threadsGroup);
+  ui->actionMT6->setActionGroup(FT8threadsGroup);
+  ui->actionMT7->setActionGroup(FT8threadsGroup);
+  ui->actionMT8->setActionGroup(FT8threadsGroup);
+  ui->actionMT9->setActionGroup(FT8threadsGroup);
+  ui->actionMT10->setActionGroup(FT8threadsGroup);
+  ui->actionMT11->setActionGroup(FT8threadsGroup);
+  ui->actionMT12->setActionGroup(FT8threadsGroup);
 
   connect (ui->download_samples_action, &QAction::triggered, [this] () {
       if (!m_sampleDownloader)
@@ -1054,7 +1118,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
       , "-t", QDir::toNativeSeparators (m_config.temp_dir ().absolutePath ())
       };
   QProcessEnvironment new_env {m_env};
-  new_env.insert ("OMP_STACKSIZE", "4M");
+  new_env.insert ("OMP_STACKSIZE", "10M");
   proc_jt9.setProcessEnvironment (new_env);
   proc_jt9.start(QDir::toNativeSeparators (m_appDir) + QDir::separator () +
           "jt9", jt9_args, QIODevice::ReadWrite | QIODevice::Unbuffered);
@@ -1208,6 +1272,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 //    QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));
   }
 
+  m_bMyCallStd=stdCall(m_config.my_callsign ()); //ft8md
+  m_bHisCallStd=stdCall(m_hisCall); //ft8md
+
   m_specOp=m_config.special_op_id();
 
   // Starting in FT8 Hound mode needs this initialization
@@ -1224,6 +1291,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   check_button_color();
   read_txLog();
   read_ignoreList();
+  read_ALLCALL7();
   if (ui->actionRemove_after_30days->isChecked ()) {
     remove_old_files(m_config.save_directory().absolutePath(), 30); // remove saved audio files after 30 days
   }
@@ -1248,6 +1316,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 #endif
 
   ui->sbToneSpacing->values({10, 15, 20, 25, 30});
+  QTimer::singleShot (4000, [=] {programStart=false;});
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
@@ -1316,6 +1385,7 @@ void MainWindow::on_the_minute ()
   if ((!verified && ui->labDXped->isVisible()) or !ui->labDXped->text().contains("Hound"))
     ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   verified = false;
+  if(!m_transmitting && m_mode=="FT8" && (QDateTime::currentMSecsSinceEpoch()-m_mslastTX) > 120000) m_lapmyc=0;
 }
 
 //--------------------------------------------------- MainWindow destructor
@@ -1403,6 +1473,18 @@ void MainWindow::writeSettings()
   m_settings->setValue("SaveAll",ui->actionSave_all->isChecked());
   m_settings->setValue("RemoveAudioFiles",ui->actionRemove_after_30days->isChecked());
   m_settings->setValue("NDepth",m_ndepth);
+
+  //ft8md
+  m_settings->setValue ("MultithreadedFT8decoder",ui->actionUse_multithreaded_FT8_decoder->isChecked() );
+  m_settings->setValue("NFT8Cycles",m_nFT8Cycles);
+  m_settings->setValue("NFT8QSORXfreqSensitivity",m_nFT8RXfSens);
+  m_settings->setValue("FT8threads",m_ft8threads);
+  m_settings->setValue("FT8Sensitivity",m_ft8Sensitivity);
+  m_settings->setValue("FT8DecoderStart",m_ft8DecoderStart);
+  m_settings->setValue("FT8WideDXCallSearch",m_FT8WideDxCallSearch);
+  m_settings->setValue("HideFT8Dupes",ui->actionHide_FT8_dupe_messages->isChecked());
+  //ft8md
+
   m_settings->setValue("RxFreq",ui->RxFreqSpinBox->value());
   if(m_specOp!=SpecOp::FOX) m_settings->setValue("TxFreq",ui->TxFreqSpinBox->value());
   m_settings->setValue("TxFreqFox",m_TxFreqFox);
@@ -1422,7 +1504,11 @@ void MainWindow::writeSettings()
   m_settings->setValue ("RxAll", ui->cbRxAll->isChecked ());
 // m_settings->setValue("ShMsgs",m_bShMsgs);
   m_settings->setValue("SWL",ui->cbSWL->isChecked());
-  m_settings->setValue ("DialFreq", QVariant::fromValue(m_lastMonitoredFrequency));
+  if(m_mode=="MSK144" && m_msk144basefreq > 0) {
+    m_settings->setValue ("DialFreq", QVariant::fromValue(m_msk144basefreq));  // MSK144 QSY
+  } else {
+    m_settings->setValue ("DialFreq", QVariant::fromValue(m_lastMonitoredFrequency));
+  }
   m_settings->setValue("OutAttenuation", ui->outAttenuation->value ());
   m_settings->setValue("NoSuffix",m_noSuffix);
   m_settings->setValue("GUItab",ui->tabWidget->currentIndex());
@@ -1448,6 +1534,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("FT8AP", ui->actionEnable_AP_FT8->isChecked ());
   m_settings->setValue ("JT65AP", ui->actionEnable_AP_JT65->isChecked ());
   m_settings->setValue ("AutoClearAvg", ui->actionAuto_Clear_Avg->isChecked ());
+  m_settings->setValue ("DisableClicksOnWaterfall", ui->actionDisable_clicks_on_waterfall->isChecked ());
   m_settings->setValue("SplitterState",ui->decodes_splitter->saveState());
   m_settings->setValue("Blanker",ui->sbNB->value());
   m_settings->setValue("Score",m_score);
@@ -1510,6 +1597,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("DarkStyle", ui->actionUse_Dark_Style->isChecked() );
   m_settings->setValue ("BandButtons", ui->actionBand_Buttons->isChecked() );
   m_settings->setValue ("VHFUHFButtons", ui->actionVHF_UHF_Buttons->isChecked() );
+  m_settings->setValue ("tx1State", ui->tx1->isEnabled() );
   m_settings->setValue ("HighlightB4", ui->actionHighlightB4->isChecked() );
   m_settings->setValue ("HighlightToday", ui->actionHighlightToday->isChecked() );
   m_settings->setValue ("HighlightIgnored", ui->actionHighlightIgnored->isChecked() );
@@ -1709,6 +1797,7 @@ void MainWindow::readSettings()
   ui->actionUse_Dark_Style->setChecked(m_settings->value("DarkStyle", false).toBool());
   ui->actionBand_Buttons->setChecked(m_settings->value("BandButtons", true).toBool());
   ui->actionVHF_UHF_Buttons->setChecked(m_settings->value("VHFUHFButtons", false).toBool());
+  ui->tx1->setEnabled(m_settings->value("tx1State", true).toBool());
   ui->actionHighlightB4->setChecked(m_settings->value("HighlightB4", false).toBool());
   ui->actionHighlightToday->setChecked(m_settings->value("HighlightToday", false).toBool());
   ui->actionHighlightIgnored->setChecked(m_settings->value("HighlightIgnored", false).toBool());
@@ -1762,6 +1851,7 @@ void MainWindow::readSettings()
   ui->sbTR_FST4W->setValue (m_settings->value ("TRPeriod_FST4W", 15).toInt());
   m_lastMonitoredFrequency = m_settings->value ("DialFreq",
     QVariant::fromValue<Frequency> (default_frequency)).value<Frequency> ();
+  m_msk144basefreq=m_lastMonitoredFrequency;  // MSK144 QSY
   ui->WSPRfreqSpinBox->setValue(0); // ensure a change is signaled
   ui->WSPRfreqSpinBox->setValue(m_settings->value("WSPRfreq",1500).toInt());
   ui->TxFreqSpinBox->setValue(0); // ensure a change is signaled
@@ -1769,6 +1859,60 @@ void MainWindow::readSettings()
   m_TxFreqFox=m_settings->value("TxFreqFox",300).toInt();
   if(m_specOp==SpecOp::FOX && !m_config.superFox()) ui->TxFreqSpinBox->setValue(m_TxFreqFox);
   m_ndepth=m_settings->value("NDepth",3).toInt();
+
+  //ft8md
+  ui->actionUse_multithreaded_FT8_decoder->setChecked(m_settings->value("MultithreadedFT8decoder", false).toBool());
+  m_multithreadFT8 = ui->actionUse_multithreaded_FT8_decoder->isChecked();
+  dec_data.params.lmultift8 = m_multithreadFT8;
+
+  m_nFT8Cycles=m_settings->value("NFT8Cycles",3).toInt(); if(!(m_nFT8Cycles>=1 && m_nFT8Cycles<=3)) m_nFT8Cycles=3;
+  if(m_nFT8Cycles==1) ui->actionDecFT8cycles1->setChecked(true);
+  else if(m_nFT8Cycles==2) ui->actionDecFT8cycles2->setChecked(true);
+  else if(m_nFT8Cycles==3) ui->actionDecFT8cycles3->setChecked(true);
+
+  m_nFT8RXfSens=m_settings->value("NFT8QSORXfreqSensitivity",3).toInt(); if(!(m_nFT8RXfSens>=1 && m_nFT8RXfSens<=3)) m_nFT8RXfSens=3;
+  if(m_nFT8RXfSens==1) ui->actionRXfLow->setChecked(true);
+  else if(m_nFT8RXfSens==2) ui->actionRXfMedium->setChecked(true);
+  else if(m_nFT8RXfSens==3) ui->actionRXfHigh->setChecked(true);
+
+  m_ft8threads=m_settings->value("FT8threads",0).toInt();
+  if(!(m_ft8threads>=0 && m_ft8threads<25)) m_ft8threads=0;
+  if(m_ft8threads==0) ui->actionMTAuto->setChecked(true);
+  else if(m_ft8threads==1) ui->actionMT1->setChecked(true);
+  else if(m_ft8threads==2) ui->actionMT2->setChecked(true);
+  else if(m_ft8threads==3) ui->actionMT3->setChecked(true);
+  else if(m_ft8threads==4) ui->actionMT4->setChecked(true);
+  else if(m_ft8threads==5) ui->actionMT5->setChecked(true);
+  else if(m_ft8threads==6) ui->actionMT6->setChecked(true);
+  else if(m_ft8threads==7) ui->actionMT7->setChecked(true);
+  else if(m_ft8threads==8) ui->actionMT8->setChecked(true);
+  else if(m_ft8threads==9) ui->actionMT9->setChecked(true);
+  else if(m_ft8threads==10) ui->actionMT10->setChecked(true);
+  else if(m_ft8threads==11) ui->actionMT11->setChecked(true);
+  else if(m_ft8threads==12) ui->actionMT12->setChecked(true);
+  qDebug() << "m_ft8threads is " << m_ft8threads;
+  dec_data.params.nmt = m_ft8threads;
+
+  ui->actionHide_FT8_dupe_messages->setChecked(m_settings->value("HideFT8Dupes",true).toBool());
+
+  m_ft8Sensitivity=m_settings->value("FT8Sensitivity",3).toInt();
+  if(!(m_ft8Sensitivity>0 && m_ft8Sensitivity<=3)) m_ft8Sensitivity=3;
+  if(m_ft8Sensitivity==1) ui->actionFT8SensMin->setChecked(true);
+  else if(m_ft8Sensitivity==2) ui->actionlowFT8thresholds->setChecked(true);
+  else if(m_ft8Sensitivity==3) ui->actionFT8subpass->setChecked(true);
+
+  m_ft8DecoderStart=m_settings->value("FT8DecoderStart",3).toInt();
+  if(!(m_ft8DecoderStart>=0 && m_ft8DecoderStart<=4)) m_ft8DecoderStart=3;
+  if(m_ft8DecoderStart==0) ui->actionStartTwoStage->setChecked(true);
+  else if(m_ft8DecoderStart==1) ui->actionStartThreeStage->setChecked(true);
+  else if(m_ft8DecoderStart==2) ui->actionStartEarly->setChecked(true);
+  else if(m_ft8DecoderStart==3) ui->actionStartNormal->setChecked(true);
+  else if(m_ft8DecoderStart==4) ui->actionStartLate->setChecked(true);
+
+  m_FT8WideDxCallSearch=m_settings->value("FT8WideDXCallSearch",true).toBool();
+  ui->actionFT8WidebandDXCallSearch->setChecked(m_FT8WideDxCallSearch);
+  //ft8md
+
   ui->sbTxPercent->setValue (m_settings->value ("PctTx", 20).toInt ());
   on_sbTxPercent_valueChanged (ui->sbTxPercent->value ());
   ui->RoundRobin->setCurrentText(m_settings->value("RoundRobin",tr("Random")).toString());
@@ -1809,6 +1953,7 @@ void MainWindow::readSettings()
   ui->actionEnable_AP_FT8->setChecked (m_settings->value ("FT8AP", false).toBool());
   ui->actionEnable_AP_JT65->setChecked (m_settings->value ("JT65AP", false).toBool());
   ui->actionAuto_Clear_Avg->setChecked (m_settings->value ("AutoClearAvg", false).toBool());
+  ui->actionDisable_clicks_on_waterfall->setChecked (m_settings->value ("DisableClicksOnWaterfall", false).toBool());
   ui->decodes_splitter->restoreState(m_settings->value("SplitterState").toByteArray());
   ui->sbNB->setValue(m_settings->value("Blanker",0).toInt());
   ui->sbEchoAvg->setValue(m_settings->value("EchoAvg",10).toInt());
@@ -2025,7 +2170,19 @@ void MainWindow::fixStop()
   } else if (m_mode=="FreqCal"){
     m_hsymStop=((int(m_TRperiod/0.288))/8)*8;
   } else if (m_mode=="FT8") {
-    m_hsymStop=50;
+    if (m_multithreadFT8 && !(m_specOp==SpecOp::HOUND && m_config.superFox())) {
+      if (m_ft8DecoderStart==0) m_hsymStop=49;
+      else if (m_ft8DecoderStart==1) {
+        m_hsymStop=50;
+        m_earlyDecode2=46;
+      }
+      else if (m_ft8DecoderStart==2) m_hsymStop=48;
+      else if (m_ft8DecoderStart==3) m_hsymStop=49;
+      else if (m_ft8DecoderStart==4) m_hsymStop=50;
+    } else {
+      m_hsymStop=50;
+      m_earlyDecode2=47;
+    }
   } else if (m_mode=="FT4") {
   m_hsymStop=21;
   } else if(m_mode=="FST4" or m_mode=="FST4W") {
@@ -2146,12 +2303,46 @@ void MainWindow::dataSink(qint64 frames)
     }
   }
 
-  bool bCallDecoder=false;
-  if(m_ihsym==m_hsymStop) bCallDecoder=true;
-  if(m_mode=="FT8" and !m_diskData) {
-    if(m_ihsym==m_earlyDecode) bCallDecoder=true;
-    if(m_ihsym==m_earlyDecode2) bCallDecoder=true;
+  // ft8md
+  static QDateTime last {QDateTime::currentDateTimeUtc().addSecs(-300)}; // ft8md
+  static bool lastdelayed {false}; // ft8md
+
+  if (m_mode=="FT8" && m_multithreadFT8) {
+    if(m_diskData) m_delay=0;
+
+    int ihsymdelay=0;
+    if(m_delay > 0) {
+    float fdelta=float(m_delay)*0.345; // 1/(0.29*10)
+    if(fmod(fdelta,1.0)>0.49) ihsymdelay=qCeil(fdelta)+m_ihsym;
+    else ihsymdelay=qFloor(fdelta)+m_ihsym;
+    }
+  //cycling approximately once per 269..301 milliseconds
+    if((m_delay==0 && m_ihsym == m_hsymStop)
+       || (m_delay > 0 && ihsymdelay >= m_hsymStop)) {
+      QDateTime now = QDateTime::currentDateTimeUtc();
+  //prevent dupe decoding
+      if(lastdelayed && !m_modeChanged) {
+        if(last.secsTo(now)<12) {
+          lastdelayed=false;
+          return;
+        }
+        lastdelayed=false;
+      }
+      if(m_delay>0) lastdelayed=true;
+    }
   }
+  // end of ft8md
+  
+  bool bCallDecoder=false;
+
+  if(m_multithreadFT8 && m_ft8DecoderStart==1) m_earlyDecode2 = 46; // ft8md
+
+  if(m_ihsym==m_hsymStop) bCallDecoder=true;
+  if(m_mode=="FT8" && !m_diskData && !(m_multithreadFT8 && m_ft8DecoderStart>1)) {  //ft8md Try to call MTD two times when "Very early" has been selected
+    if(m_ihsym==m_earlyDecode) bCallDecoder=true;
+    if(m_ihsym==m_earlyDecode2 && !(m_multithreadFT8 && m_ft8DecoderStart!=1)) bCallDecoder=true;
+  }
+
   if(bCallDecoder) {
     if(m_mode=="Echo") {
       float dBerr=0.0;
@@ -2222,7 +2413,7 @@ void MainWindow::dataSink(qint64 frames)
         t = t.asprintf("%7.4f  %5.2f %7d %7.1f %5d %5d %6d %6.1f %7.1f %5.2f %3d",hour,xlevel,
                        nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr,xdt,ndf);
         t = t0 + t + "  " + rxcall;
-        if(!bEchoCall) t=t.left(72);
+        if(!bEchoCall) t=t.left(78);
         if(ui) ui->decodedTextBrowser->insertText(t);
         t=t1 + t;
         write_all("Rx",t);
@@ -2246,17 +2437,21 @@ void MainWindow::dataSink(qint64 frames)
     dec_data.params.npts8=(m_ihsym*m_nsps)/16;
     dec_data.params.newdat=1;
     dec_data.params.nagain=0;
+    dec_data.params.nagainfil=0;	
     dec_data.params.nzhsym=m_hsymStop;
-    if(m_mode=="FT8" and m_ihsym==m_earlyDecode and !m_diskData) dec_data.params.nzhsym=m_earlyDecode;
-    if(m_mode=="FT8" and m_ihsym==m_earlyDecode2 and !m_diskData) dec_data.params.nzhsym=m_earlyDecode2;
+    if(m_mode=="FT8" and m_ihsym==m_earlyDecode and !m_diskData && !(m_multithreadFT8 && m_ft8DecoderStart>1)) dec_data.params.nzhsym=m_earlyDecode;
+    if(m_mode=="FT8" and m_ihsym==m_earlyDecode2 and !m_diskData && !(m_multithreadFT8 && m_ft8DecoderStart!=1)) dec_data.params.nzhsym=m_earlyDecode2;
     QDateTime now {QDateTime::currentDateTimeUtc ()};
     m_dateTime = now.toString ("yyyy-MMM-dd hh:mm");
-    if(m_mode!="WSPR") decode(); //Start decoder
+    if(m_mode!="WSPR") {
+      if (m_mode=="FT8" && m_multithreadFT8 && m_ihsym>47) last=now;  // ft8md
+      decode(); //Start decoder
+    }
 
-    if(m_mode=="FT8" and !m_diskData and (m_ihsym==m_earlyDecode or m_ihsym==m_earlyDecode2)) return;
+    if(m_mode=="FT8" and !(m_diskData or (m_multithreadFT8 && m_ft8DecoderStart<2)) and (m_ihsym==m_earlyDecode or m_ihsym==m_earlyDecode2)) return;
     if (!m_diskData)
       {
-        Q_EMIT reset_audio_input_stream (true); // reports dropped samples
+        if (!(m_mode=="FT8" && m_multithreadFT8)) Q_EMIT reset_audio_input_stream (true); // reports dropped samples
       }
     if(!m_diskData and (m_saveAll or m_saveDecoded or m_mode=="WSPR")) {
       //Always save unless "Save None"; may delete later
@@ -2955,7 +3150,7 @@ void MainWindow::fastSink(qint64 frames)
 
         // insert blank line for MSK144
         int ntime=6;
-        if ((m_config.insert_blank() or m_config.alert_Enabled()) && !BlankLineInserted && (text.left(ntime) != m_tBlankLine) && text.left(4).contains(QRegularExpression {"\\d\\d\\d\\d"}) ) {
+        if ((m_config.insert_blank() or m_config.alert_Enabled()) && !BlankLineInserted && (text.left(ntime) != m_tBlankLine) && text.left(4).contains(QRegularExpression {"\\d\\d\\d\\d"}) && !m_diskData) {
           ui->decodedTextBrowser->new_period ();
           if (m_config.insert_blank () && (!filtered or m_config.filters_for_Wait_and_Pounce_only())) {
             QString band;
@@ -3390,6 +3585,9 @@ void MainWindow::on_actionSettings_triggered()           // Setup Dialog (Settin
       ui->actionEnable_AP_JT65->setVisible(false);
       ui->actionAuto_Clear_Avg->setVisible(false);
     }
+    if(!(m_config.enable_VHF_features() && m_mode=="Q65")) {
+      ui->actionDisable_clicks_on_waterfall->setVisible(false);
+    }
     m_specOp=m_config.special_op_id();
     if(m_specOp!=nContest0) {
       ui->tx1->setEnabled(true);
@@ -3462,15 +3660,19 @@ void MainWindow::monitor (bool state)
   if (state) {
     m_diskData = false;	// no longer reading WAV files
     if (!m_monitoring) {
+      float t_rxdelay=0.001*(QDateTime::currentMSecsSinceEpoch() - m_msEchoTxStart);
+      int ms=int(1000*(m_tEcho-t_rxdelay));
       if (m_tci_audio) {
         if (ui->bandComboBox->currentText()!="OOB") {
-          Q_EMIT m_config.transceiver_audio(true);
+          if(ms>=10) {
+            QTimer::singleShot (ms, [=] {Q_EMIT m_config.transceiver_audio(true);});
+          } else {
+            Q_EMIT m_config.transceiver_audio(true);
+          }
         } else {
           rigFailure("TCI audio cannot be started as frequency is OOB");
         }
       } else {
-        float t_rxdelay=0.001*(QDateTime::currentMSecsSinceEpoch() - m_msEchoTxStart);
-        int ms=int(1000*(m_tEcho-t_rxdelay));
         if(ms>=10) {
           QTimer::singleShot (ms, [=] {resumeAudioInputStream();});
         } else {
@@ -3483,7 +3685,7 @@ void MainWindow::monitor (bool state)
       if (ui->bandComboBox->currentText()!="OOB") {
         Q_EMIT m_config.transceiver_audio(false);
       } else {
-        rigFailure("TCI audio cannot be started as frequency is OOB");
+        rigFailure("TCI audio cannot be stopped as frequency is OOB");
       }
     } else {
       Q_EMIT suspendAudioInputStream ();
@@ -3990,6 +4192,11 @@ void MainWindow::statusChanged()
     ui->actionInclude_averaging->setVisible(false);
     ui->actionAuto_Clear_Avg->setVisible(false);
   }
+  if (m_config.enable_VHF_features() && m_mode=="Q65") {
+    ui->actionDisable_clicks_on_waterfall->setVisible(true);
+  } else {
+    ui->actionDisable_clicks_on_waterfall->setVisible(false);
+  }
   if (m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") {
     if (ui->actionInclude_averaging->isVisible() && ui->actionInclude_averaging->isChecked()) {
       ui->lh_decodes_title_label->setText(tr ("Single-Period Decodes"));
@@ -4269,16 +4476,18 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
   stopWCTimer.stop();           // Stop any Wait & Call timeout
   no_wait_and_call = false;
   m_specOp=m_config.special_op_id();
-  if (ui->respondComboBox->isVisible()) {
-      Dpoints=0;                          // reset points
-      maxDPoints=0;                       // reset points
-      dBpoints=-28;                       // reset points
-      dBpoints2=99;                       // reset points
-      maxdBPoints=-28;                    // reset points
-      mindBPoints=99;                     // reset points
-      if (!(m_mode=="Q65" or m_mode=="JT65")) clearDX();  // clear dxCallEntry
-      if (!(keepTx5 or m_mode=="Q65" or m_mode=="JT65")) ui->tx5->setCurrentText("");  // clear tx5
-      ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
+  if (ui->respondComboBox->isVisible() and ui->respondComboBox->currentIndex()!=0 and !m_diskData) {
+    Dpoints=0;                          // reset points
+    maxDPoints=0;                       // reset points
+    dBpoints=-28;                       // reset points
+    dBpoints2=99;                       // reset points
+    maxdBPoints=-28;                    // reset points
+    mindBPoints=99;                     // reset points
+    if (!(m_mode=="Q65" or m_mode=="JT65")) {
+      clearDX();                                   // clear dxCallEntry
+      ui->dxGridEntry->clear ();                   // clear dxGridEntry
+      if (!keepTx5) ui->tx5->setCurrentText("");   // clear tx5
+    }
   }
   pounce = false;
   ui->autoButton->setChecked(false);  // ensure auoButton is unchecked
@@ -4677,64 +4886,98 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
     QString baseName=fname.mid(i1+1);
     tx_status_label.setStyleSheet("QLabel{color: #000000; background-color: #99ffff}");
     tx_status_label.setText(" " + baseName + " ");
-    on_stopButton_clicked();
     m_diskData=true;
+    on_stopButton_clicked();
     read_wav_file (fname);
   }
 }
 
 void MainWindow::read_wav_file (QString const& fname)
 {
+  if (m_mode=="FT8" && m_multithreadFT8) {
+    m_nDecodes=0;                  // reset the decodes counter
+    ndecodes_label.setText("");
+    earlyDecodes = "";             // reset dupe check
+  }
   // call diskDat() when done
   int i0=fname.lastIndexOf("_");
   int i1=fname.indexOf(".wav");
+  int i3=fname.lastIndexOf("/");
+  QString baseName=fname.mid(i3+1);
+  int i4=baseName.indexOf(".wav");
   m_nutc0=m_UTCdisk;
-  m_UTCdisk=fname.mid(i0+1,i1-i0-1).toInt();
-  if (i0 > 6) {
-    m_UTCdiskDateTime = QDateTime::fromString("20" + fname.mid(i0 - 6, 13) + "Z", "yyyyMMdd_hhmmsst").toUTC();
-  } else
-    m_UTCdiskDateTime = QDateTime{};
+  if (i1-i3 > 13) {
+    m_UTCdisk=baseName.mid(7, 6).toInt();
+    if (i4-i3 > 6) {
+      m_UTCdiskDateTime = QDateTime::fromString("20" + baseName.mid(0, 13) + "Z", "yyyyMMdd_hhmmsst").toUTC();
+    } else {
+      m_UTCdiskDateTime = QDateTime{};
+    }
+  } else {
+    m_UTCdisk=fname.mid(i0+1,i1-i0-1).toInt();
+    if (i0 > 6) {
+      m_UTCdiskDateTime = QDateTime::fromString("20" + fname.mid(i0 - 6, 13) + "Z", "yyyyMMdd_hhmmsst").toUTC();
+    } else {
+      m_UTCdiskDateTime = QDateTime{};
+    }
+  }
+
+  if (m_config.insert_blank() && !(ui->actionInclude_averaging->isVisible() && ui->actionInclude_averaging->isChecked())) {   // insert blank line
+    if(!fname.isEmpty ()) {
+      if (ui->actionUse_Dark_Style->isChecked()) {
+        ui->decodedTextBrowser->insertText(("----- " + baseName + " -----"), "#a2a2a2", "#000000");
+      } else {
+        ui->decodedTextBrowser->insertLineSpacer("----- " + baseName + " -----");
+      }
+    }
+  }
 
   m_wav_future_watcher.setFuture (QtConcurrent::run ([this, fname] {
-        auto basename = fname.mid (fname.lastIndexOf ('/') + 1);
-        auto pos = fname.indexOf (".wav", 0, Qt::CaseInsensitive);
-        // global variables and threads do not mix well, this needs changing
-        dec_data.params.nutc = 0;
-        if (pos > 0) {
-          if (pos == fname.indexOf ('_', -11) + 7) {
-            dec_data.params.nutc = fname.mid (pos - 6, 6).toInt ();
-            m_fileDateTime=fname.mid(pos-13,13);
-          } else {
-            dec_data.params.nutc = 100 * fname.mid (pos - 4, 4).toInt ();
-            m_fileDateTime=fname.mid(pos-11,11);
-          }
-        }
-
-        BWFFile file {QAudioFormat {}, fname};
-        bool ok=file.open (BWFFile::ReadOnly);
-        if(ok) {
-          auto bytes_per_frame = file.format ().bytesPerFrame ();
-          int nsamples=m_TRperiod * RX_SAMPLE_RATE;
-          qint64 max_bytes = std::min (std::size_t (nsamples),
-              sizeof (dec_data.d2) / sizeof (dec_data.d2[0]))* bytes_per_frame;
-          auto n = file.read (reinterpret_cast<char *> (dec_data.d2),
-                            std::min (max_bytes, file.size ()));
-          int frames_read = n / bytes_per_frame;
-        // zero unfilled remaining sample space
-          std::memset(&dec_data.d2[frames_read],0,max_bytes - n);
-          if (11025 == file.format ().sampleRate ()) {
-            short sample_size = file.format ().sampleSize ();
-            wav12_ (dec_data.d2, dec_data.d2, &frames_read, &sample_size);
-          }
-          dec_data.params.kin = frames_read;
-          dec_data.params.newdat = 1;
+    auto basename = fname.mid (fname.lastIndexOf ('/') + 1);
+    auto pos = fname.indexOf (".wav", 0, Qt::CaseInsensitive);
+    int i1=fname.indexOf(".wav");
+    int i3=fname.lastIndexOf("/");
+    // global variables and threads do not mix well, this needs changing
+    dec_data.params.nutc = 0;
+    if (pos > 0) {
+      if (i1-i3 > 13) {
+        dec_data.params.nutc = basename.mid(7, 6).toInt();
+        m_fileDateTime=basename.mid(0, 13);
+      } else {
+        if (pos == fname.indexOf ('_', -11) + 7) {
+          dec_data.params.nutc = fname.mid (pos - 6, 6).toInt ();
+          m_fileDateTime=fname.mid(pos-13,13);
         } else {
-          dec_data.params.kin = 0;
-          dec_data.params.newdat = 0;
+          dec_data.params.nutc = 100 * fname.mid (pos - 4, 4).toInt ();
+          m_fileDateTime=fname.mid(pos-11,11);
         }
+      }
+    }
+    BWFFile file {QAudioFormat {}, fname};
+    bool ok=file.open (BWFFile::ReadOnly);
+    if(ok) {
+      auto bytes_per_frame = file.format ().bytesPerFrame ();
+      int nsamples=m_TRperiod * RX_SAMPLE_RATE;
+      qint64 max_bytes = std::min (std::size_t (nsamples),
+          sizeof (dec_data.d2) / sizeof (dec_data.d2[0]))* bytes_per_frame;
+      auto n = file.read (reinterpret_cast<char *> (dec_data.d2),
+                        std::min (max_bytes, file.size ()));
+      int frames_read = n / bytes_per_frame;
+    // zero unfilled remaining sample space
+      std::memset(&dec_data.d2[frames_read],0,max_bytes - n);
+      if (11025 == file.format ().sampleRate ()) {
+        short sample_size = file.format ().sampleSize ();
+        wav12_ (dec_data.d2, dec_data.d2, &frames_read, &sample_size);
+      }
+      dec_data.params.kin = frames_read;
+      dec_data.params.newdat = 1;
+    } else {
+      dec_data.params.kin = 0;
+      dec_data.params.newdat = 0;
+    }
 
-        dec_data.params.yymmdd=basename.left(6).toInt();
-      }));
+    dec_data.params.yymmdd=basename.left(6).toInt();
+  }));
 }
 
 void MainWindow::on_actionOpen_next_in_directory_triggered()   //Open Next
@@ -5023,6 +5266,7 @@ void MainWindow::on_DecodeButton_clicked (bool /* checked */) //Decode request
     ui->DecodeButton->setChecked(false);
   } else {
     if(m_mode!="WSPR" && !m_decoderBusy) {
+      m_manualDecode=true;
       dec_data.params.newdat=0;
       dec_data.params.nagain=1;
       decode();
@@ -5183,17 +5427,95 @@ void MainWindow::decode()                                       //decode()
   if(m_config.enable_VHF_features()) dec_data.params.nexp_decode += 64;
   if(m_mode.startsWith("FST4")) dec_data.params.nexp_decode += 256*(ui->sbNB->value()+3);
   dec_data.params.max_drift=ui->sbMaxDrift->value();
-
+  QString hisGrid;
+  hisGrid=ui->dxGridEntry->text ();
+  QString hisCall;
+  hisCall=ui->dxCallEntry->text ();
+    
+  if(m_mode=="FT8" && m_multithreadFT8)
+  {
+    //FT8 block of parameters for multithreaded FT8 decoder
+    dec_data.params.nstophint = 0;  // stophint should be false to avoid truncating decode process
+    dec_data.params.nQSOProgress = m_QSOProgress;
+    dec_data.params.nftx = ui->TxFreqSpinBox->value ();
+    if(m_freqNominal < 30000000) dec_data.params.napwid=5; // FT8AP decoding bandwidth for 'mycall hiscall ???' and RRR,RR73,73 messages
+    else if(m_freqNominal < 100000000) dec_data.params.napwid=15;
+    else dec_data.params.napwid=50;
+    dec_data.params.nmt=m_ft8threads;
+    dec_data.params.ncandthin=m_ncandthin;
+    dec_data.params.ndtcenter=0;  // ft8mod was 100 * ui->DTCenterSpinBox->value();
+    if (m_ihsym==m_earlyDecode or m_ihsym==m_earlyDecode2) {
+      dec_data.params.nft8cycles=2;
+    } else {
+      dec_data.params.nft8cycles=m_nFT8Cycles;
+    }
+    if(m_houndMode) { dec_data.params.nft8rxfsens=1; } else { dec_data.params.nft8rxfsens=m_nFT8RXfSens; }
+    dec_data.params.nft4depth=m_nFT4depth;
+    if(m_ft8Sensitivity==1) dec_data.params.lft8lowth=false;
+    else  dec_data.params.lft8lowth=true;
+    if(m_ft8Sensitivity==3) dec_data.params.lft8subpass=true;
+    else dec_data.params.lft8subpass=false;
+    dec_data.params.ltxing=(m_auto && (QDateTime::currentMSecsSinceEpoch()-m_mslastTX) < 26000) ? 1 : 0;  // ft8mdwas ( m_enableTx and jtdxTime etc.
+    dec_data.params.lhideft8dupes=ui->actionHide_FT8_dupe_messages->isChecked() ? 1 : 0; //ft8md ui->actionHide_FT8_dupe_messages->isChecked() ? 1 : 0;
+    dec_data.params.lhound=m_houndMode ? 1 : 0;
+    dec_data.params.lcommonft8b=m_commonFT8b;    
+    m_bMyCallStd=stdCall(m_config.my_callsign ()); //ft8md
+    m_bHisCallStd=stdCall(m_hisCall); //ft8md
+    dec_data.params.lmycallstd=m_bMyCallStd;
+    dec_data.params.lhiscallstd=m_bHisCallStd;
+    dec_data.params.lapmyc=m_lapmyc;
+    dec_data.params.lmodechanged=false; // m_modeChanged ? 1 : 0; m_modeChanged=false;
+    dec_data.params.lbandchanged=m_band_changed ? 1 : 0; // m_band_changed=false;
+    dec_data.params.lmultinst=m_multInst ? 1 : 0;
+    dec_data.params.lskiptx1=m_skipTx1 ? 1 : 0;
+    dec_data.params.nlasttx=m_nlasttx;
+    //ft8md dec_data.params.lforcesync=ui->syncButton->isChecked() && m_mode=="FT8";
+    dec_data.params.ndecoderstart=m_ft8DecoderStart;
+    dec_data.params.nsecbandchanged=m_nsecBandChanged; m_nsecBandChanged=0;
+    dec_data.params.nhint=m_hint ? 1 : 0;
+    dec_data.params.ndelay=m_delay;
+    dec_data.params.nfqso=m_wideGraph->rxFreq();
+    dec_data.params.ndepth=m_ndepth;
+    dec_data.params.nranera=m_config.ntrials();
+    dec_data.params.lmultift8=m_multithreadFT8; //ft8md
+    dec_data.params.ntrials10=0; //ft8md was =m_config.ntrials10();
+    dec_data.params.ntrialsrxf10=0; //ft8md was m_config.ntrialsrxf10();
+    dec_data.params.nprepass=4; //ft8md was m_config.npreampass();
+    dec_data.params.naggressive=1; //ft8md was m_config.aggressive();
+    dec_data.params.nharmonicsdepth=0;  //ft8md was m_config.harmonicsdepth();
+    dec_data.params.ntopfreq65=3000; //ft8md was m_config.ntopfreq65();
+    dec_data.params.nsdecatt=1; //ft8md was m_config.nsingdecatt();
+    dec_data.params.fmaskact=true; //ft8md was m_config.fmaskact();
+    if (m_ihsym==m_earlyDecode or m_ihsym==m_earlyDecode2 or (m_specOp==SpecOp::HOUND && m_config.superFox())) {
+      dec_data.params.lmultift8 = false; // use the standard FT8 decoder for early decoding step
+      if (m_ihsym==m_earlyDecode2) dec_data.params.ndepth=2;
+    }
+    qDebug() << "dec_data.params.lmultift8 is" << dec_data.params.lmultift8; //ft8md
+    dec_data.params.ndiskdat=0;
+    if(m_diskData) dec_data.params.ndiskdat=1;
+    dec_data.params.nfa=m_wideGraph->nStartFreq();
+    dec_data.params.nfSplit=m_wideGraph->Fmin();
+    dec_data.params.nfb=m_wideGraph->Fmax();
+    dec_data.params.ntol=50; // this value is not being used
+    dec_data.params.ntrperiod=int(m_TRperiod);
+    dec_data.params.lwidedxcsearch=m_FT8WideDxCallSearch ? 1 : 0;
+  }
   ::memcpy(dec_data.params.datetime, m_dateTime.toLatin1()+"    ", sizeof dec_data.params.datetime);
-  ::memcpy(dec_data.params.mycall, (m_config.my_callsign()+"            ").toLatin1(), sizeof dec_data.params.mycall);
-  ::memcpy(dec_data.params.mygrid, (m_config.my_grid()+"      ").toLatin1(), sizeof dec_data.params.mygrid);
-  QString hisCall {ui->dxCallEntry->text ()};
-  QString hisGrid {ui->dxGridEntry->text ()};
-  memcpy(dec_data.params.hiscall,(hisCall + "            ").toLatin1 ().constData (), sizeof dec_data.params.hiscall);
-  memcpy(dec_data.params.hisgrid,(hisGrid + "      ").toLatin1 ().constData (), sizeof dec_data.params.hisgrid);
-
-  //newdat=1  ==> this is new data, must do the big FFT
-  //nagain=1  ==> decode only at fQSO +/- Tol
+  ::memcpy(dec_data.params.mycall, (m_config.my_callsign()+"            ").toLatin1(),12);
+  
+  ::memcpy(dec_data.params.mybcall, (Radio::base_callsign(m_config.my_callsign())+"            ").toLatin1(),12);
+  ::memcpy(dec_data.params.hiscall,(hisCall+"            ").toLatin1(),12);
+  if(hisCall.length()<3) { 
+    hisCall.clear();
+    ::memcpy(dec_data.params.hisbcall,(hisCall+"            ").toLatin1(),12); 
+  } else {
+    ::memcpy(dec_data.params.hisbcall,(Radio::base_callsign(hisCall)+"            ").toLatin1(),12);
+  }
+  ::memcpy(dec_data.params.hisgrid,(hisGrid+"      ").toLatin1(),6);    
+  ::memcpy(dec_data.params.mygrid, (m_config.my_grid()+"      ").toLatin1(),6);
+  
+  if(!hisCall.isEmpty() && !m_auto && hisCall != m_lastloggedcall) dec_data.params.lenabledxcsearch=true;  //ft8md was && !m_enableTx
+  else dec_data.params.lenabledxcsearch=false;
 
   if (auto * to = reinterpret_cast<char *> (mem_jt9->data()))
     {
@@ -5364,7 +5686,8 @@ void MainWindow::decodeDone ()
     }
     ARRL_Digi_Display();  // Update the ARRL_DIGI display
   }
-  if(m_mode!="FT8" or dec_data.params.nzhsym==50) m_nDecodes=0;
+
+  if(m_mode!="FT8" or dec_data.params.nzhsym==50 or (m_mode=="FT8" and m_multithreadFT8 and (m_hsymStop==dec_data.params.nzhsym))) m_nDecodes=0; //ft8md
 
   if(m_mode=="Q65" and (m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI
                         or m_specOp==SpecOp::WW_DIGI or m_specOp==SpecOp::Q65_PILEUP)
@@ -5682,6 +6005,7 @@ void MainWindow::callSandP2(int n)
   if(w[3].right(1)=="C") ui->sbSubmode->setValue(2);
   if(w[3].right(1)=="D") ui->sbSubmode->setValue(3);
   if(w[3].right(1)=="E") ui->sbSubmode->setValue(4);
+  if(w[3].right(1)=="F") ui->sbSubmode->setValue(5);
 
   m_bDoubleClicked=true;               //### needed?
   ui->dxCallEntry->setText(m_deCall);
@@ -5780,15 +6104,18 @@ void MainWindow::readFromStdout()                             //readFromStdout
       }
 
     QString message0 {QString::fromUtf8(line_read.constData())};
+    DecodedText decodedtext0 {QString::fromUtf8(line_read.constData())};
+    DecodedText decodedtext {QString::fromUtf8(line_read.constData()).remove("TU; ")};
 
   // Don't allow a7 decodes during the first period and for non-contest messages when in any contest mode
-  if ((!((no_a7_decodes && line_read.contains("a7")) or (line_read.contains("a7") && SpecOp::NONE!=m_specOp
-          && !(line_read.contains(" R ") or line_read.contains("RR73") or line_read.contains("CQ ")))))
+  if ((!((no_a7_decodes && line_read.contains("a7") && !m_diskData) or (line_read.contains("a7") && SpecOp::NONE!=m_specOp
+          && !m_diskData && !(line_read.contains(" R ") or line_read.contains("RR73") or line_read.contains("CQ ")))))
 
   // Filtering out some false decodes, and don't write all.txt for such
       // FDR step 1
-      and (!(SpecOp::NONE==m_specOp &&
-           (message0.contains("> <")                                           // don't allow two hashes
+      and (!((SpecOp::NONE==m_specOp or (m_multithreadFT8 && m_ft8DecoderStart<2)) &&
+           ((message0.contains("> <") && SpecOp::EU_VHF!=m_specOp)             // don't allow two hashes
+           || (m_mode=="FT8" && m_multithreadFT8 && m_ft8DecoderStart<2 && earlyDecodes.contains(line_read.mid(23,19)))   // MTD dupes
            || message0.contains(QRegularExpression {"(\\w+)/P (\\w+)/P "})     // don't allow two /P calls
            || message0.contains(QRegularExpression {"(\\w+)/R (\\w+)/R "})     // don't allow two /R calls
            || (message0.contains("/R ") && message0.contains("?"))             // insecure /R decodes
@@ -5804,12 +6131,12 @@ void MainWindow::readFromStdout()                             //readFromStdout
            || message0.contains(QRegularExpression {"\\w\\w\\w\\w\\w\\w\\w\\w"})       // likely invalid callsigns
            || message0.contains(QRegularExpression {"\\d\\d\\d \\d\\d\\d"})            // contest messages
            || message0.contains("3.") || message0.contains("2."))                      // -1.9 < dt <  1.9
-           && (message0.contains("-1") || message0.contains("-2")))            // for such SNRmin = -09
-           or ((message0.contains("/R ") or message0.contains(" R ")) && message0.contains("-2"))  // for /R or contest calls SNRmin = -19
+           && (decodedtext.snr() < -15))                                       // for such SNRmin = -15
+           or ((message0.contains("/R ") or message0.contains(" R ")) && decodedtext.snr() < -18)  // for /R or contest calls SNRmin = -18
            or (((message0.contains("<...>") || message0.contains(";")                  // unresolved hash and F/H messages
                || message0.contains("? a")                                             // ap decodes of low confidence
                || message0.contains("/R ") || message0.contains(" R ")                 // rover and contest callsigns
-               || message0.contains("-24") || message0.contains("-25"))                // SNR < -23
+               || decodedtext.snr() < -20)                                             // SNR < -20
                && (message0.contains("3.") || message0.contains("2.")))))))    // for such -1.9 < dt < 1.9
       )
     {
@@ -5829,7 +6156,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       if(m_mode=="Q65") {
         ndecodes_label.setText(QString {"%1  %2"}.arg (n0).arg (n1));
       } else {
-        if(m_nDecodes==0) ndecodes_label.setText("0");
+        if(m_nDecodes==0 && !(m_multithreadFT8 && m_diskData)) ndecodes_label.setText("0");
       }
       decodeDone ();
       return;
@@ -5870,8 +6197,52 @@ void MainWindow::readFromStdout()                             //readFromStdout
         {
           uploadWSPRSpots (true, line_read);
         }
-      DecodedText decodedtext0 {QString::fromUtf8(line_read.constData())};
-      DecodedText decodedtext {QString::fromUtf8(line_read.constData()).remove("TU; ")};
+
+      // Check validity of callsigns if "Reduce false decodes" is checked   // EXPERIMENTAL FOR NOW
+      if (m_mode=="FT8" && !m_multithreadFT8 && ui->actionReduce_false_decodes->isChecked() && decodedtext.snr() < -20) {
+        bool notInALLCALL7 = false;
+        QString deCall;
+        QString deGrid;
+        decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
+        QStringList word;
+        word=decodedtext.string().mid(24).replace("<","").replace(">","").replace("/P","").replace("/R","").replace("/QRP","").replace("/5W","").split(" ",SkipEmptyParts);
+
+        // check file ALLCALL7.TXT
+        if (deCall!="TNX" && deCall!="73" && deCall!="GL" && deCall!="HNY" && deCall!="TU" && !deCall.left(4).contains("/")
+            && !decodedtext.string().contains("<...>") && !ALLCALL7.contains(deCall)) {
+          notInALLCALL7 = true;
+//          ui->decodedTextBrowser->insertText("deCall not in ALLCALL7.TXT");
+        }
+        if (!ALLCALL7.contains(word[0]) && !(decodedtext.string().contains(" CQ ") or decodedtext.string().contains("TNX")
+            or decodedtext.string().contains("...") or decodedtext.string().contains("HNY") or decodedtext.string().contains("QSY")
+            or decodedtext.string().contains("73 ") or decodedtext.string().contains("GL ") or decodedtext.string().contains("PSE")
+            or decodedtext.string().contains("/") or decodedtext.string().contains("<...>"))) {
+          notInALLCALL7 = true;
+//          ui->decodedTextBrowser->insertText("word0 not in ALLCALL7.TXT");
+        }
+
+        // check syntax of the two callsigns before we hide such messages
+        if (notInALLCALL7) {
+          deCall=deCall.replace("<","").replace(">","").replace("/P","").replace("/R","").replace("/QRP","").replace("/5W","");
+          if (deCall!="TNX" && deCall!="73" && deCall!="GL" && deCall!="HNY" &&
+              !(deCall.left(3).contains(QRegularExpression {"\\w\\d\\w"}) or
+                deCall.left(3).contains(QRegularExpression {"\\d\\w\\d"}) or
+                deCall.left(3).contains(QRegularExpression {"\\w\\w\\d"}) or
+                deCall.left(4).contains("/") or decodedtext.string().contains("<...>"))) {
+//            ui->decodedTextBrowser->insertText("deCall has false syntax");
+            filtered = true;
+          }
+          if (word[0]!="CQ" && word[0]!="TNX" && word[0]!="73 " && word[0]!="HNY" && word[0]!="QSY" && word[0]!="PSE" &&
+              !(word[0].left(3).contains(QRegularExpression {"\\w\\d\\w"}) or
+                word[0].left(3).contains(QRegularExpression {"\\d\\w\\d"}) or
+                word[0].left(3).contains(QRegularExpression {"\\w\\w\\d"}) or
+                decodedtext.string().contains("/")or decodedtext.string().contains("<...>"))) {
+//            ui->decodedTextBrowser->insertText("word0 has false syntax");
+            filtered = true;
+          }
+        }
+        notInALLCALL7 = false;
+      }
 
       if(m_mode=="FT8" and SpecOp::FOX == m_specOp and
          (decodedtext.string().contains("R+") or decodedtext.string().contains("R-"))) {
@@ -6388,7 +6759,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         // insert blank line, but only if not filtered and no decodes
         int ntime=6;
         if (m_TRperiod>=60) ntime=4;
-        if ((m_config.insert_blank () or m_config.alert_Enabled()) && (line_read.left(ntime) != m_tBlankLine) && message0.left(4).contains(QRegularExpression {"\\d\\d\\d\\d"})) {
+        if ((m_config.insert_blank () or m_config.alert_Enabled()) && (line_read.left(ntime) != m_tBlankLine) && message0.left(4).contains(QRegularExpression {"\\d\\d\\d\\d"}) && !m_diskData) {
           ui->decodedTextBrowser->new_period ();
           if (m_specOp == SpecOp::FOX and m_ActiveStationsWidget != NULL && m_config.insert_blank ()) { // clear the ActiveStations window
             m_ActiveStationsWidget->clearStations();
@@ -6481,6 +6852,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                                                           haveFSpread, fSpread, bDisplayPoints, m_points, distance, m_muted);
           }
           if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
+          if (m_mode=="FT8" && m_multithreadFT8 && m_ft8DecoderStart<2) earlyDecodes.append(line_read); //ft8md
         }
 
         // highlight callsigns worked B4 on band or worked today
@@ -7753,6 +8125,19 @@ void MainWindow::guiUpdate()
 //Once per second (onesec)
   if(nsec != m_sec0) {
 
+    // reset earlyDecodes for 2-stage or 3-stage decoding
+    if (m_mode=="FT8" && !m_diskData && m_multithreadFT8 && m_ft8DecoderStart<2) {
+      QDateTime now = QDateTime::currentDateTimeUtc();
+      int s = now.time().toString("ss").toInt();
+      if (m_ft8DecoderStart<2) {
+        if ((s == 7 || s == 22 ||s == 37 || s == 52) && m_decoderBusy) {
+        to_jt9(m_ihsym,-1,-1);   //Allow jt9 to bail out early, if necessary
+        decodeDone();            //We better clear a hung decoder status at this point
+        }
+        if (s == 10 || s == 25 ||s == 40 || s == 55) earlyDecodes = "";
+      }
+    }
+
     // reset blank line for MSK144
     if (m_mode=="MSK144") {
       QDateTime now = QDateTime::currentDateTimeUtc();
@@ -8307,6 +8692,8 @@ void MainWindow::doubleClickOnCall2(Qt::KeyboardModifiers modifiers)
 
 void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
 {
+  m_bMyCallStd=stdCall(m_config.my_callsign()); //ft8md
+  m_bHisCallStd=stdCall(m_hisCall); //ft8md
   set_dateTimeQSO(-1); // reset our QSO start time
   QTextCursor cursor;
   if(m_mode=="FST4W") {
@@ -8351,18 +8738,6 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     }
     return;
   }
-
-  // inform users that a QSO with two compound callsigns won't work, but allow copying the callsign when Alt is pressed
-  QString hiscall;
-  QString hisgrid;
-  message.deCallAndGrid(/*out*/hiscall,hisgrid);
-  if (modifiers!=Qt::AltModifier && m_config.my_callsign().contains("/") && hiscall.contains("/")) {
-    auto const& msg = tr("A QSO between two stations with compound callsigns won't work.\n\n"
-                         "Auto Seq would get stuck in an endless loop.");
-    MessageBox::information_message (this, msg);
-    return;   // prevent starting such a QSO
-  }
-
   int nmod = fmod(double(message.timeInSeconds()),2.0*m_TRperiod);
   if(ui->txFirstCheckBox->isVisible() && !ui->txFirstCheckBox->isEnabled() && (
         (nmod!=0 && !ui->txFirstCheckBox->isChecked()) or
@@ -8375,16 +8750,27 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
       if(m_mode=="MSK144") MessageBox::warning_message (this, msg);
       return;    // don't allow a QSO when both stations Tx 1st or Tx 2nd, and the Tx 1st checkbox is frozen
   } else {
-      m_muted = true;  // Don't play alert sounds again
-      m_bDoubleClicked = true;
-      m_hisCall0 = m_hisCall;
-      processMessage (message, modifiers);
-      // pressing ALT while double-clicking on a call only adds the callsign to DX Call Box
-      if(SpecOp::FOX!=m_specOp && modifiers==Qt::AltModifier) {
-          m_bDoubleClicked = false;
-          if (m_auto) auto_tx_mode (false);
+    m_muted = true;  // Don't play alert sounds again
+    m_bDoubleClicked = true;
+    m_hisCall0 = m_hisCall;
+    processMessage (message, modifiers);
+    // pressing ALT while double-clicking on a call only adds the callsign to DX Call Box
+    if(SpecOp::FOX!=m_specOp && modifiers==Qt::AltModifier) {
+        m_bDoubleClicked = false;
+        if (m_auto) auto_tx_mode (false);
+    }
+    // MSK144 QSY: set RF freq so next received MSK144 signal is at 1500 Hz
+    if(m_mode=="MSK144" && message.frequencyOffset() > 0 && (modifiers==Qt::ControlModifier or modifiers==(Qt::ControlModifier+Qt::AltModifier))) {
+      Frequency dial_frequency = m_msk144basefreq + (message.frequencyOffset() - 1500);
+      monitor (true);
+      setRig(dial_frequency);
+      ui->labDialFreq->setText (Radio::pretty_frequency_MHz_string (dial_frequency));
+      if(modifiers==Qt::AltModifier or modifiers==(Qt::ControlModifier+Qt::AltModifier)) {
+        m_bDoubleClicked = false;
+        if (m_auto) auto_tx_mode (false);
       }
-      m_muted = false;
+    }
+    m_muted = false;
   }
 }
 
@@ -8429,6 +8815,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
       // QSY Freq for answering CQ nnn
       setRig (m_freqNominal / 1000000 * 1000000 + 1000 * kHz);
       ui->decodedTextBrowser2->displayQSY (QString {"QSY %1"}.arg (m_freqNominal / 1e6, 7, 'f', 3));
+      if(m_mode=="MSK144") m_msk144basefreq = m_freqNominal / 1000000 * 1000000 + 1000 * kHz;  // MSK144 QSY
     }
   }
 
@@ -9725,17 +10112,16 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       }
       ui->autoButton->clearFocus();
   }
-  if(ui->DecodeButton->hasFocus() && (event->button() & Qt::RightButton)) {   // Reset a hung decoder
-    decodeDone();  // Clear a hung decoder status
+  if(ui->DecodeButton->hasFocus() && (event->button() & Qt::RightButton)) {   // Decode button
+    if(m_decoderBusy) {
+      to_jt9(m_ihsym,-1,-1);   //Allow jt9 to bail out early, if necessary
+      decodeDone();            //Clear a hung decoder status
+    }
     ui->DecodeButton->clearFocus();
   }
-  if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {      // Toggle last used specOp on/off
-    keep_frequency = true;
-    not_erase = true;
-      QTimer::singleShot (350, [=] {
-        keep_frequency = false;
-        not_erase = false;
-      });
+  if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {     // Switch contest mode on/off
+      not_erase = true;  // prevent erasing the decodedTextBrowser
+      QTimer::singleShot (350, [=] {not_erase = false;});
       m_specOp=m_config.special_op_id();
       if (!m_config.bSpecialOp()) {
         m_config.setSpecial_On();
@@ -9750,6 +10136,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         if (m_specOp==SpecOp::HOUND) {
         ui->houndButton->setChecked(false);
         m_config.setSpecial_None();
+        keep_frequency = true;
+        QTimer::singleShot (250, [=] {keep_frequency = false;});
         }
       }
       m_specOp=m_config.special_op_id();
@@ -9781,7 +10169,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       ui->ft8Button->clearFocus();
       statusChanged();
   }
-  if(ui->txb5->hasFocus() && (event->button() & Qt::RightButton)) {           // freeze the Tx5 text
+  // freeze the Tx5 text
+  if(ui->txb5->hasFocus() && (event->button() & Qt::RightButton)) {
       if (!keepTx5) {
         keepTx5 = true;
         ui->tx5->setStyleSheet("color: #000000; background-color: #ffff00");
@@ -9791,7 +10180,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       }
       ui->txb5->clearFocus();
   }
-  // band buttons
+  // Toggle FT8 DXp frequencies
   if(ui->pb80->hasFocus() && (event->button() & Qt::RightButton) && (m_mode=="FT8" || m_mode=="FT4")) {
     keep_frequency = true;
     setRig(3567000);
@@ -9887,9 +10276,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
     setXIT (ui->TxFreqSpinBox->value ());
     ui->pb70->clearFocus();
   }
-// Testing the default audio device
+  if (ui->pbBandHopping->hasFocus() && event->button() & Qt::RightButton) {  // Band Hopping button
+    if(ui->pbBandHopping->isChecked()) {
+      bandHopping();  // Force band hopping to switch to the next selected frequency
+    } else {
+      // Testing the default audio device
 #ifdef WIN32
-  if (ui->pbBandHopping->hasFocus() && event->button() & Qt::RightButton) {
       QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
       QString binPath = QCoreApplication::applicationDirPath();
       QAudioFormat format;
@@ -9904,14 +10296,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       effect->setFileName(QString("%1/%2").arg(binPath, "/sounds/Testing_long.wav"));
       effect->open(QIODevice::ReadOnly);
       audio->start(effect);
-  }
 #else
-  if (ui->pbBandHopping->hasFocus() && event->button() & Qt::RightButton) {
       QString binPath = QCoreApplication::applicationDirPath();
       QSound::play(binPath + "/sounds/Testing_long.wav");  // for Linux and macOS
-  }
 #endif
-  ui->pbBandHopping->clearFocus();
+    }
+    ui->pbBandHopping->clearFocus();
+  }
 }
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
@@ -9988,6 +10379,9 @@ void MainWindow::on_genStdMsgsPushButton_clicked()          //genStdMsgs button
       } else {
           QTimer::singleShot (0, ui->txrb2, SLOT (click ()));   // Go to Tx2 if Tx1 is disabled
       }
+      m_bMyCallStd=stdCall(m_config.my_callsign()); //ft8md
+      m_bHisCallStd=stdCall(m_hisCall); //ft8md
+      
   }
 }
 
@@ -10104,6 +10498,7 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
                             , QString const& freqRx, QByteArray const& ADIF)
 {
   QString date = QSO_date_on.toString("yyyyMMdd");
+  m_lastloggedcall=call; //ft8md
   if (!m_logBook.add (call, grid, m_config.bands()->find(dial_freq), mode, ADIF))
     {
       MessageBox::warning_message (this, tr ("Log file error"),
@@ -10445,7 +10840,19 @@ void MainWindow::on_actionFT8_triggered()
   m_FFTSize = m_nsps / 2;
   if (m_tci_audio) Q_EMIT m_config.transceiver_blocksize (m_FFTSize);
   else Q_EMIT FFTSize (m_FFTSize);
-  m_hsymStop=50;
+  if (m_multithreadFT8 && !(m_specOp==SpecOp::HOUND && m_config.superFox())) {
+    if (m_ft8DecoderStart==0) m_hsymStop=49;
+    else if (m_ft8DecoderStart==1) {
+      m_hsymStop=50;
+      m_earlyDecode2=46;
+    }
+    else if (m_ft8DecoderStart==2) m_hsymStop=48;
+    else if (m_ft8DecoderStart==3) m_hsymStop=49;
+    else if (m_ft8DecoderStart==4) m_hsymStop=50;
+  } else {
+    m_hsymStop=50;
+    m_earlyDecode2=47;
+  }
   setup_status_bar (bVHF);
   m_toneSpacing=0.0;                   //???
   ui->actionFT8->setChecked(true);     //???
@@ -10883,6 +11290,8 @@ void MainWindow::on_actionQ65_triggered()
 
 void MainWindow::on_actionMSK144_triggered()
 {
+  m_hsymStop=105;
+  m_TRperiod=ui->sbTR->value();
   if(SpecOp::EU_VHF < m_specOp) {
 // We are rejecting the requested mode change, so re-check the old mode
     if("FT8"==m_mode) ui->actionFT8->setChecked(true);
@@ -10968,6 +11377,7 @@ void MainWindow::on_actionMSK144_triggered()
     ui->labDXped->setText(t0);
     on_contest_log_action_triggered();
   }
+  if(m_rigState.frequency() > 0) m_msk144basefreq = m_rigState.frequency();  // MSK144 QSY
 }
 
 void MainWindow::on_actionWSPR_triggered()
@@ -11212,7 +11622,7 @@ void MainWindow::on_TxFreqSpinBox_valueChanged(int n)
   }
 
   if(m_mode=="Q65") {
-    if(((m_nSubMode==4 && m_TRperiod==60.0) || (m_nSubMode==3 && m_TRperiod==30.0) ||
+    if(((m_nSubMode==5 && m_TRperiod==120.0) || (m_nSubMode==4 && m_TRperiod==60.0) || (m_nSubMode==3 && m_TRperiod==30.0) ||
        (m_nSubMode==2 && m_TRperiod==15.0)) && abs(ui->TxFreqSpinBox->value() - 700) > 15) {
       ui->TxFreqSpinBox->setStyleSheet("QSpinBox{background-color:red; color:white}");
     } else {
@@ -11284,6 +11694,60 @@ void MainWindow::chk_FST4_freq_range()
     ui->sbF_High->setStyleSheet("");
   }
 }
+
+//ft8md
+void MainWindow::on_actionDecFT8cycles1_triggered() { m_nFT8Cycles=1; ui->actionDecFT8cycles1->setChecked(true); }
+void MainWindow::on_actionDecFT8cycles2_triggered() { m_nFT8Cycles=2; ui->actionDecFT8cycles2->setChecked(true); }
+void MainWindow::on_actionDecFT8cycles3_triggered() { m_nFT8Cycles=3; ui->actionDecFT8cycles3->setChecked(true); }
+
+void MainWindow::on_actionRXfLow_triggered() { m_nFT8RXfSens=1; ui->actionRXfLow->setChecked(true); }
+void MainWindow::on_actionRXfMedium_triggered() { m_nFT8RXfSens=2; ui->actionRXfMedium->setChecked(true); }
+void MainWindow::on_actionRXfHigh_triggered() { m_nFT8RXfSens=3; ui->actionRXfHigh->setChecked(true); }
+
+void MainWindow::on_actionMTAuto_triggered() { m_ft8threads=0; }
+void MainWindow::on_actionMT1_triggered() { m_ft8threads=1; }
+void MainWindow::on_actionMT2_triggered() { m_ft8threads=2; }
+void MainWindow::on_actionMT3_triggered() { m_ft8threads=3; }
+void MainWindow::on_actionMT4_triggered() { m_ft8threads=4; }
+void MainWindow::on_actionMT5_triggered() { m_ft8threads=5; }
+void MainWindow::on_actionMT6_triggered() { m_ft8threads=6; }
+void MainWindow::on_actionMT7_triggered() { m_ft8threads=7; }
+void MainWindow::on_actionMT8_triggered() { m_ft8threads=8; }
+void MainWindow::on_actionMT9_triggered() { m_ft8threads=9; }
+void MainWindow::on_actionMT10_triggered() { m_ft8threads=10; }
+void MainWindow::on_actionMT11_triggered() { m_ft8threads=11; }
+void MainWindow::on_actionMT12_triggered() { m_ft8threads=12; }
+
+void MainWindow::on_actionFT8SensMin_toggled(bool checked) { if(checked) m_ft8Sensitivity=1; }
+void MainWindow::on_actionlowFT8thresholds_toggled(bool checked) { if(checked) m_ft8Sensitivity=2; }
+void MainWindow::on_actionFT8subpass_toggled(bool checked) { if(checked) m_ft8Sensitivity=3; }
+void MainWindow::on_actionStartTwoStage_toggled(bool checked) { if(checked) m_ft8DecoderStart=0; }
+void MainWindow::on_actionStartThreeStage_toggled(bool checked) { if(checked) m_ft8DecoderStart=1; }
+void MainWindow::on_actionStartEarly_toggled(bool checked) { if(checked) m_ft8DecoderStart=2; }
+void MainWindow::on_actionStartNormal_toggled(bool checked) { if(checked) m_ft8DecoderStart=3; }
+void MainWindow::on_actionStartLate_toggled(bool checked) { if(checked) m_ft8DecoderStart=4; }
+void MainWindow::on_actionFT8WidebandDXCallSearch_toggled(bool checked) { m_FT8WideDxCallSearch=checked; }
+void MainWindow::on_actionUse_multithreaded_FT8_decoder_triggered(bool checked)
+{
+  m_multithreadFT8 = checked;
+  dec_data.params.lmultift8 = m_multithreadFT8;
+  qDebug() << "m_multithreadFT8 is" << m_multithreadFT8;
+  qDebug() << "dec_data.params.lmultift8 is" << dec_data.params.lmultift8;
+  if (checked && !(m_specOp==SpecOp::HOUND && m_config.superFox())) {
+    if (m_ft8DecoderStart==0) m_hsymStop=49;
+    else if (m_ft8DecoderStart==1) {
+      m_hsymStop=50;
+      m_earlyDecode2=46;
+    }
+    else if (m_ft8DecoderStart==2) m_hsymStop=48;
+    else if (m_ft8DecoderStart==3) m_hsymStop=49;
+    else if (m_ft8DecoderStart==4) m_hsymStop=50;
+  } else {
+    m_hsymStop=50;
+    m_earlyDecode2=47;
+  }
+}
+//ft8md
 
 void MainWindow::on_actionQuickDecode_toggled (bool checked)
 {
@@ -11444,7 +11908,7 @@ void MainWindow::on_bandComboBox_activated (int index)
 
 void MainWindow::band_changed (Frequency f)
 {
-  QTimer::singleShot (1000, [=] {
+  QTimer::singleShot (900, [=] {
       if (m_mode=="MSK144" && (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m")))
           ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 30).toInt());
       if (m_mode=="MSK144" && (m_currentBand=="6m" or m_currentBand=="4m"))
@@ -11499,13 +11963,28 @@ void MainWindow::band_changed (Frequency f)
     setXIT (ui->TxFreqSpinBox->value ());
     m_specOp=m_config.special_op_id();
     if (m_specOp==SpecOp::FOX) FoxReset("BandChange");  // when changing bands, don't preserve the Fox queues
+    m_lastloggedcall.clear();  //ft8md
   }
+
+  if(m_mode=="MSK144" && m_rigState.frequency() > 0) m_msk144basefreq = m_rigState.frequency();  // MSK144 QSY
 
   // Erase the decodedTextBrowsers only if the band really changed
   static QString band_save;
   if (m_config.bands()->find(f) == band_save) return; // band didn't change
   band_save = m_config.bands()->find(f);
   m_band_changed = true;
+/*
+  //ft8md
+  qint64 ms = QDateTime::currentMSecsSinceEpoch() % 86400000; 
+  int nsec=ms/1000;
+  double TRperiod=60.0; // TR period is the only reliable way in this point of code at the mode change 
+  if(m_mode=="FT8") TRperiod=15.0;
+  else if(m_mode=="FT4") TRperiod=7.5;
+  int nseqmod = fmod(double(nsec),TRperiod);
+  m_nsecBandChanged=nseqmod;
+  dec_data.params.nsecbandchanged=m_nsecBandChanged;
+  //ft8md end
+*/
   if (m_config.erase_BandActivity () && !not_erase) {
     ui->decodedTextBrowser->erase ();   // Mod for WD5DHK
     ui->decodedTextBrowser2->erase ();
@@ -11755,6 +12234,8 @@ void MainWindow::setXIT(int n, Frequency base)
 
 void MainWindow::setFreq4(int rxFreq, int txFreq)
 {
+  if (m_mode=="Q65" && ui->actionDisable_clicks_on_waterfall->isVisible() && ui->actionDisable_clicks_on_waterfall->isChecked()
+      && !(Qt::AltModifier & QApplication::keyboardModifiers ())) return;
   if (m_mode=="ECHO") return; // we do not adjust rx/tx for echo mode -- always 1500Hz
   if (ui->RxFreqSpinBox->isEnabled () && !(SpecOp::HOUND==m_specOp && m_config.superFox() &&
       (rxFreq < 700 or rxFreq > 800))) ui->RxFreqSpinBox->setValue(rxFreq);
@@ -12428,6 +12909,7 @@ void MainWindow::on_sbTR_valueChanged(int value)
              {
               case 15: ui->sbSubmode->setMaximum (2); break;
               case 30: ui->sbSubmode->setMaximum (3); break;
+              case 120: ui->sbSubmode->setMaximum (5); break;
               default: ui->sbSubmode->setMaximum (4); break;
               }
           }
@@ -12448,7 +12930,7 @@ void MainWindow::on_sbTR_valueChanged(int value)
   statusUpdate ();
   check_button_color();
   // save last used parameters
-  QTimer::singleShot (200, [=] {
+  if (!programStart) QTimer::singleShot (1000, [=] {
     if (m_mode=="Q65") m_settings->setValue ("TRPeriod_Q65", ui->sbTR->value ());
     if (m_mode=="MSK144" && (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m"))) {
       m_settings->setValue ("TRPeriod_MSK144", ui->sbTR->value ());
@@ -12493,7 +12975,7 @@ void MainWindow::on_sbSubmode_valueChanged(int n)
     mode_label.setText (m_mode);
   }
   if(m_mode=="Q65") {
-    if(((m_nSubMode==4 && m_TRperiod==60.0) || (m_nSubMode==3 && m_TRperiod==30.0) ||
+    if(((m_nSubMode==5 && m_TRperiod==120.0) || (m_nSubMode==4 && m_TRperiod==60.0) || (m_nSubMode==3 && m_TRperiod==30.0) ||
         (m_nSubMode==2 && m_TRperiod==15.0)) && abs(ui->TxFreqSpinBox->value() - 700) > 15) {
       ui->TxFreqSpinBox->setStyleSheet("QSpinBox{background-color:red; color:white}");
     } else {
@@ -15717,6 +16199,15 @@ void MainWindow::check_button_color()
              ui->pb60E->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
           }
       }
+      if (m_mode=="Q65" && m_config.enable_VHF_features() && m_TRperiod==120 && m_nSubMode==5) {
+          ui->pb60E->setStyleSheet("QPushButton {background-color: #00ff00; color: #000000; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none;}");
+      } else {
+          if (m_useDarkStyle) {
+             ui->pb60E->setStyleSheet("QPushButton {background-color: #505F69; border: 1px solid #32414B; color: #F0F0F0; border-radius: 4px; padding: 3px; outline: none;}");
+          } else {
+             ui->pb60E->setStyleSheet("QPushButton {background-color: #e1e1e1; border: 1px solid #adadad; border-radius: 0px; padding: 3px; outline: none;}");
+          }
+      }
       if (ui->houndButton->isChecked()) {
           ui->houndButton->setStyleSheet("QPushButton {background-color: #ff0000; color: #ffffff; border: 1px solid #32414B; border-radius: 5px; padding: 3px; outline: none; min-width: 3em;}");
       } else {
@@ -16585,6 +17076,19 @@ void MainWindow::on_actionErase_Ignore_List_triggered()
     static QFile ignoreFile {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("ignore.list")};
     ignoreFile.remove();
     ignoreList = "";
+  }
+}
+
+void MainWindow::read_ALLCALL7()
+{
+  static QFile AllCall7File {"ALLCALL7.TXT"};
+  QTextStream AllCall7Stream(&AllCall7File);
+  if(AllCall7File.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    while (!AllCall7Stream.atEnd()) {
+      ALLCALL7 = AllCall7Stream.readAll();
+    }
+      AllCall7Stream.flush();
+      AllCall7File.close();
   }
 }
 

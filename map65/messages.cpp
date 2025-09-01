@@ -98,38 +98,33 @@ void Messages::sendLiveCQData(QStringList decodeList) {
         if(thePostLine.at(7).contains(".")) {
           dT =thePostLine.at(7).trimmed();
           modeChar = thePostLine.at(8).trimmed(); 
-          if(modeChar=="0" || modeChar=="1" || modeChar=="2" || modeChar=="3" || modeChar=="4") {
-            modeChar = thePostLine.at(9).trimmed();
-            if(modeChar.contains("#")) mode = "JT65" + modeChar.back();
-          } else if(modeChar.contains(":")) {
-          	  mode = "Q65-60" + modeChar.back();          
-              if(m_xpol) {
-                rpol = thePostLine.at(2).trimmed();
-              } else {
-                rpol = "--";
-              }
+          if(modeChar.contains("#")) mode = "JT65" + modeChar.back();
+          else if(modeChar.contains(":")) mode = "Q65-60" + modeChar.back();          
+          if(m_xpol) {
+            rpol = thePostLine.at(2).trimmed();
+          } else {
+            rpol = "--";
           }
           txpol = "--";    
         } else {
           grid = thePostLine.at(7).trimmed();
           dT =thePostLine.at(8).trimmed();
           modeChar = thePostLine.at(9).trimmed();
-          if(modeChar=="0" || modeChar=="1" || modeChar=="2" || modeChar=="3" || modeChar=="4") {
-            modeChar = thePostLine.at(10).trimmed();
-            if(modeChar.contains("#")) mode = "JT65" + modeChar.back();            
+          if(modeChar.contains("#")) 
+          {  
+            mode = "JT65" + modeChar.back();            
             if (m_xpol) {
-						  rpol = thePostLine.at(2).trimmed();
-						  if(thePostLine.at(11).contains("H")) txpol = "H";
-						  else if(thePostLine.at(11).contains("V")) txpol = "V";
-					  } else txpol="--"; 
-            
+              rpol = thePostLine.at(2).trimmed();
+              if(thePostLine.at(10).contains("H")) txpol = "H";
+              else if(thePostLine.at(10).contains("V")) txpol = "V";
+            } else txpol="--";
           } else if(modeChar.contains(":")) {
-              mode = "Q65-60" + modeChar.back();            
-              if (m_xpol) {
-                rpol = thePostLine.at(2).trimmed();
-                if(thePostLine.at(10).contains("H")) txpol = "H";
-                else if(thePostLine.at(10).contains("V")) txpol = "V";
-              } else txpol="--";
+            mode = "Q65-60" + modeChar.back();            
+            if (m_xpol) {
+              rpol = thePostLine.at(2).trimmed();
+              if(thePostLine.at(10).contains("H")) txpol = "H";
+              else if(thePostLine.at(10).contains("V")) txpol = "V";
+            } else txpol="--";
           }
         }
         if(mode.contains("JT65") || mode.contains("Q65")) {
@@ -167,6 +162,7 @@ void Messages::setText(QString t, QString t2)
   QString cfreq,cfreq0;
   m_t=t;
   m_t2=t2;
+  //bool firstTime = true;
 
   QStringList cqliveText;  //liveCQ
   doLiveCQ = true;         //liveCQ
@@ -177,7 +173,7 @@ void Messages::setText(QString t, QString t2)
   ui->messagesTextBrowser->clear();
   QStringList lines = t.split( "\n", SkipEmptyParts );
   foreach( QString line, lines ) {
-    QString t1=line.mid(0,75);     //liveCQ
+    QString t1=line.mid(0,81); //was 0,75
     int ncq=t1.indexOf(" CQ ");
     if((m_cqOnly or m_cqStarOnly) and  ncq< 0) continue;
     if(m_cqStarOnly) {
@@ -187,21 +183,25 @@ void Messages::setText(QString t, QString t2)
       int i=t2.indexOf(caller);
       if(t2.mid(i-1,1)==" ") continue;
     }
-    int n=line.mid(55,2).toInt();
+    int n=line.mid(61,2).toInt();  //was 55,2
 //    if(line.indexOf(":")>0) n=-1;
 //    if(n==-1) ui->messagesTextBrowser->setTextColor("#ffffff");  // white
     if(n==0) ui->messagesTextBrowser->setTextColor(m_color0);
     if(n==1) ui->messagesTextBrowser->setTextColor(m_color1);
     if(n==2) ui->messagesTextBrowser->setTextColor(m_color2);
     if(n>=3) ui->messagesTextBrowser->setTextColor(m_color3);
-    QString livecqStr = t1.mid(0,53) + t1.mid(56,t1.length()-56) + " " + t1.mid(54,2); 
-    if(cqliveText.filter(livecqStr.mid(0,53)).length()==0) cqliveText.append(livecqStr);
+    QString livecqStr = t1.mid(0,59) + t1.mid(62,t1.length()-62) + " " + t1.mid(60,2); // was 53,56,56,54
+  //   QMessageBox msgBox;
+  //   msgBox.setText(livecqStr);
+  //   if(firstTime) msgBox.exec();
+  //   firstTime = false;
+    if(cqliveText.filter(livecqStr.mid(0,59)).length()==0) cqliveText.append(livecqStr); // was 0,53
     cfreq=t1.mid(5,3);
     if(cfreq == cfreq0) {
       t1="        " + t1.mid(8,-1);
     }
     cfreq0=cfreq;
-    ui->messagesTextBrowser->append(t1.mid(5,61));
+    ui->messagesTextBrowser->append(t1.mid(5,67)); //was 5,61
   }
 
   if(doLiveCQ) {                      //liveCQ

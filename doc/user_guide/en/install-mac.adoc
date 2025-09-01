@@ -1,6 +1,6 @@
 // These instructions are up-to-date for WSJT-X v2.2
 
-*macOS10.13* and later: Download the file {osx} to your desktop,
+For *macOS10.13* and later, download the file {osx} to your desktop,
 double-click it and consult its `ReadMe` file for important
 installation notes.  
 

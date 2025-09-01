@@ -45,7 +45,7 @@ if (POLICY CMP0075)
 endif ()
 
 project (wsjtx
-  VERSION 2.8.0.0
+  VERSION 3.0.0.0
   LANGUAGES C CXX Fortran
   )
 set (PROJECT_DESCRIPTION "WSJT-X: Digital Modes for Weak Signal Communications in Amateur Radio")
@@ -349,6 +349,7 @@ set (wsjt_FSRCS
   lib/jt4_decode.f90
   lib/jt65_decode.f90
   lib/jt65_mod.f90
+  lib/jt65_mod6.f90 #ft8md
   lib/ft8_decode.f90
   lib/ft4_decode.f90
   lib/fst4_decode.f90
@@ -370,6 +371,8 @@ set (wsjt_FSRCS
   lib/superfox/julian.f90
   lib/superfox/popen_module.f90
   lib/superfox/qpc/qpc_mod.f90
+  lib/ft8var/ft8_decodevar.f90
+  lib/ft8var/packjt77var.f90
 
   # remaining non-module sources
   lib/addit.f90
@@ -618,7 +621,52 @@ set (wsjt_FSRCS
   lib/fst4/get_crc24.f90
   lib/fst4/fst4_baseline.f90
   lib/77bit/hash22calc.f90
-
+  lib/ft8var/agccft8.f90
+  lib/ft8var/baddatavar.f90
+  lib/ft8var/bpdecode174_91var.f90
+  lib/ft8var/chkfalse8var.f90
+  lib/ft8var/chkflscallvar.f90
+  lib/ft8var/chkgridvar.f90
+  lib/ft8var/chklong8.f90
+  lib/ft8var/chkspecial8var.f90
+  lib/ft8var/cwfilter.f90
+  lib/ft8var/datacor.f90
+  lib/ft8var/encode174_91var.f90
+  lib/ft8var/extract_callvar.f90
+  lib/ft8var/filbigvar.f90
+  lib/ft8var/fillhashvar.f90
+  lib/ft8var/filtersfreevar.f90
+  lib/ft8var/four2avar.f90
+  lib/ft8var/ft4_mod1.f90
+  lib/ft8var/ft8apsetvar.f90
+  lib/ft8var/ft8bvar.f90
+  lib/ft8var/ft8_downsamplevar.f90
+  lib/ft8var/ft8_mod1.f90
+  lib/ft8var/ft8mf1var.f90
+  lib/ft8var/ft8mfcqvar.f90  
+  lib/ft8var/ft8svar.f90
+  lib/ft8var/ft8sdvar.f90
+  lib/ft8var/ft8sd1var.f90
+  lib/ft8var/genft8var.f90
+  lib/ft8var/gen_ft8wavevar.f90
+  lib/ft8var/genft8sdvar.f90
+  lib/ft8var/jt65_mod2var.f90
+  lib/ft8var/jt65_mod5.f90
+  lib/ft8var/jt65_mod9.f90
+  lib/ft8var/msgparservar.f90
+  lib/ft8var/osd174_91var.f90
+  lib/ft8var/packjt77sdvar.f90
+  lib/ft8var/partint.f90
+  lib/ft8var/partintft8.f90
+  lib/ft8var/rms_augapvar.f90
+  lib/ft8var/searchcallsvar.f90
+  lib/ft8var/subtractft8var.f90
+  lib/ft8var/sync8var.f90
+  lib/ft8var/sync8dvar.f90
+  lib/ft8var/tone8.f90
+  lib/ft8var/tone8myc.f90
+  lib/ft8var/tonesdvar.f90
+  lib/ft8var/twkfreq1var.f90  
   lib/superfox/foxgen2.f90
   lib/superfox/qpc_decode2.f90
   lib/superfox/qpc_likelihoods2.f90
@@ -1049,7 +1097,7 @@ if (Fortran_COMPILER_NAME MATCHES "gfortran.*")
 
   set (CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -fbounds-check -funroll-all-loops -fno-f2c -ffpe-summary=invalid,zero,overflow,underflow ${General_FFLAGS}")
 
-set (CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} -g -fbacktrace -fbounds-check -fno-f2c -ffpe-summary=invalid,zero,overflow,underflow ${General_FFLAGS}")
+  set (CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} -ggdb -O0 -fbacktrace -fcheck=all -fbounds-check -fno-f2c -ffpe-summary=invalid,zero,overflow,underflow ${General_FFLAGS}")
   
   # FPE traps currently disabled in Debug configuration builds until
   # we decide if they are meaningful, without these FP instructions
@@ -1069,7 +1117,7 @@ else (Fortran_COMPILER_NAME MATCHES "gfortran.*")
   message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
   message ("No optimized Fortran compiler flags are known, we just try -O3...")
   set (CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -O3 ${General_FFLAGS}")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} -fbounds-check ${General_FFLAGS}")
+  set (CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} -g -fbacktrace -fcheck=all -fbounds-check ${General_FFLAGS}")
 endif (Fortran_COMPILER_NAME MATCHES "gfortran.*")
 
 
@@ -1689,7 +1737,7 @@ install (TARGETS jt9 wsprd fmtave fcal fmeasure
 
 if(WSJT_BUILD_UTILS)
 install (TARGETS ft8code jt65code jt9code jt4code msk144code 
-  q65code fst4sim q65sim EchoCallSim testEchoCall echosim hash22calc cablog
+  q65code fst4sim ft8sim q65sim EchoCallSim testEchoCall echosim hash22calc cablog
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   )
@@ -1735,6 +1783,12 @@ install (FILES
   contrib/Ephemeris/JPLEPH
   eclipse.txt
   DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME}
+  #COMPONENT runtime
+  )
+
+install (FILES
+  ALLCALL7.TXT
+  DESTINATION ${CMAKE_INSTALL_BINDIR}
   #COMPONENT runtime
   )
 

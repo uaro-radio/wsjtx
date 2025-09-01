@@ -26,7 +26,7 @@ if (WIN32)
   endif ()
 endif ()
 libfind_pkg_detect (Usb usb-1.0
-  FIND_PATH libusb.h PATH_SUFFIXES libusb-1.0
+  FIND_PATH libusb.h PATH_SUFFIXES include/libusb-1.0
   FIND_LIBRARY usb-1.0 ${_library_options}
   )
 

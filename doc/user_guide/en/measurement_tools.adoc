@@ -99,23 +99,25 @@ For a quick visual check of the resulting calibration, stay in
 the adjusted results directly on the waterfall and the displayed
 records.
 
+[[REFERENCE_SPECTRUM]]
 === Reference Spectrum
 
 _WSJT-X_ provides a tool that can be used to determine the detailed
-shape of your receiver's passband.  Disconnect your antenna or tune to
-a quiet frequency with no signals.  With _WSJT-X_ running in one of
-the slow modes, select *Measure reference spectrum* from the *Tools*
-menu.  Wait for about a minute and then click *Stop*.  A file
-named `refspec.dat` appears in your log directory.   When you check
-*Ref Spec* on the *Wide Graph*, the recorded reference spectrum will
-then be used to flatten your overall effective passband.
+shape of your receiver's passband. Tune to a quiet frequency with no
+signals or birdies. With _WSJT-X_ running in one of the slow modes and
+*Monitor* active, make sure that *Flatten* is checked on the *Wide
+Graph* and then select *Measure reference spectrum* from the *Tools*
+menu.  Wait for about a minute and then click *Stop*.  A file named
+`refspec.dat` will appear in your log directory.  When you check *Ref
+Spec* on the *Wide Graph*, the recorded reference spectrum will then
+be used to flatten your overall effective passband.
 
 === Phase Equalization
 
 *Measure phase response* under the *Tools* menu is for advanced MSK144
 users. Phase equalization is used to compensate for group-delay
 variation across your receiver passband. Careful application of this
-facility can reduce intersymbol interference, resulting in improved
+facility can reduce inter-symbol interference, resulting in improved
 decoding sensitivity.  If you use a software-defined receiver with
 linear-phase filters there is no need to apply phase equalization.
 

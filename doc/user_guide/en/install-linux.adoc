@@ -2,7 +2,7 @@
 
 Debian, Ubuntu, and other Debian-based systems including Raspberry Pi OS:
 
-NOTE: The project team release binary installer packages targeted for
+NOTE: Our binary installer packages are targeted for
 one contemporary version of a Linux distribution. Although these may
 work on newer Linux versions or even different distributions, it is
 unlikely that they work on older versions. Check the notes provided

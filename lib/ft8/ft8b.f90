@@ -177,7 +177,8 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
   nsync=is1+is2+is3
   syncmin=6
   if(imetric.eq.2) syncmin=7
-  if(nsync .le. syncmin) then ! bail out
+  if(ndepth.le.2) syncmin=8
+  if(nsync.le.syncmin) then ! bail out
     nbadcrc=1
     return
   endif
@@ -440,7 +441,7 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
 
      msg37='                                     '
      nbadcrc=1
-     if(nharderrors.lt.0 .or. nharderrors.gt.39) cycle
+     if(nharderrors.lt.0 .or. nharderrors.gt.36) cycle
      if(count(cw.eq.0).eq.174) cycle           !Reject the all-zero codeword
      write(c77,'(77i1)') message77
      read(c77(72:74),'(b3)') n3
@@ -448,9 +449,13 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
      if(i3.gt.5 .or. (i3.eq.0.and.n3.gt.6)) cycle
      if(i3.eq.0 .and. n3.eq.2) cycle
      call unpack77(c77,1,msg37,unpk77_success)
+     if(.not.unpk77_success .or. index(msg37,'/R').gt.0 .or.     &
+          msg37(1:4).eq.'TU; ') then
+        if(i3.ge.1 .and. i3.le.3 .and. ncontest.eq.0) cycle
+     endif
      if(.not.unpk77_success) cycle
-!write(21,*) nzhsym,ipass,imetric,iaptype,nharderrors,dmin,msg37
-     nbadcrc=0  ! If we get this far: valid codeword, valid (i3,n3), nonquirky message.
+! If we get this far: valid codeword, valid (i3,n3), nonquirky message.
+     nbadcrc=0
      call get_ft8_tones_from_77bits(message77,itone)
      if(lsubtract) then
         call timer('sub_ft8a',0)

@@ -1,6 +1,6 @@
 image::settings-advanced.png[align="center",alt="Settings Advanced"]
 
-_JT65 VHF/UHF/Microwave decoding parameters_ 
+.JT65 VHF/UHF/Microwave decoding parameters
 
 - *Random erasure patterns* logarithmically scales the number of
 pseudo-random trials used by the Franke-Taylor JT65 decoder.  Larger
@@ -15,7 +15,7 @@ with lower confidence levels.
 signals producing first-pass decodes have been subtracted from the
 received data stream.
 
-_Miscellaneous_
+.Miscellaneous
 
 - Set a positive number in *Degrade S/N of .wav file* to add known
 amounts of pseudo-random noise to data read from a .wav file.  To
@@ -48,6 +48,9 @@ Use “DX” for section or state if you are not in the US or Canada.  In
 the FT Roundup, Stations in Alaska and Hawaii should enter “DX”.
 
 - Check *Fox* if you are a DXpedition station operating in FT8
-DXpedition Mode.  Check *Hound* if you wish to make QSOs with such a
-Fox.  Be sure to read the operating instructions for {ft8_DXped}.
+DXpedition Mode, and *SuperFox mode* if you are using that variation.
+Check *Hound* if you wish to make QSOs with such a DXpedition.  Be
+sure to read the FT8 DXpedition Mode User Guide and the SuperFox User
+Guide, as appropriate. Both guides are available directly from the
+*Help* menu.
 

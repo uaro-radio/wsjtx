@@ -22,6 +22,7 @@ typedef struct dec_data {
   float savg[NSMAX];
   float sred[5760];
   short int d2[NTMAX*RX_SAMPLE_RATE];
+  float dd2[NTMAX*RX_SAMPLE_RATE];
   struct
   {
     int nutc;                   //UTC as integer, HHMM
@@ -68,6 +69,45 @@ typedef struct dec_data {
     bool b_even_seq;
     bool b_superfox;
     int yymmdd;
+	//below ft8mod
+    char mybcall[12];
+    char hisbcall[12];
+    int ncandthin;         //=m_ncandthin; (mainwindow.cpp)
+    int ndtcenter;         //=100 * ui->DTCenterSpinBox->value(); (mainwindow.cpp)
+    int nft8cycles;        //=m_nFT8Cycles; (mainwindow.cpp)
+    int ntrials10;         //=m_config.ntrials10(); (mainwindow.cpp)
+    int ntrialsrxf10;      //=m_config.ntrialsrxf10(); ; (mainwindow.cpp)
+    int nharmonicsdepth;   //=m_config.harmonicsdepth(); (mainwindow.cpp)
+    int ntopfreq65;        //=m_config.ntopfreq65(); (mainwindow.cpp)
+    int nprepass;          //=m_config.npreampass(); (mainwindow.cpp)
+    int nsdecatt;          //=m_config.nsingdecatt(); (mainwindow.cpp)
+    int nlasttx;           //=m_nlasttx; (mainwindow.cpp)
+    int ndelay;            //=m_delay; (mainwindow.cpp)
+    int nmt;               //=m_ft8threads; (mainwindow.cpp)
+    int nft8rxfsens;       //=m_nFT8RXfSens; unless hound mode (mainwindow.cpp)
+    int nft4depth;         //=m_nFT4depth; (mainwindow.cpp)
+    int nsecbandchanged;   //=m_nsecBandChanged; (mainwindow.cpp)
+    bool nagainfil;        //=0; (mainwindow.cpp)
+    bool nstophint;        //=1;  (mainwindow.cpp)
+    bool nhint;            //=m_hint ? 1 : 0;  (mainwindow.cpp)
+    bool fmaskact;         //=m_config.fmaskact();  (mainwindow.cpp))
+    bool lmultift8;        //=m_multithreadFT8;
+    bool lft8lowth;        //if(m_ft8Sensitivity==0) dec_data.params.lft8lowth=false; (mainwindow.cpp)
+    bool lft8subpass;      //if(m_ft8Sensitivity==2) dec_data.params.lft8subpass=true; (mainwindow.cpp)
+    bool ltxing;           //=(m_enableTx &&  ... (mainwindow.cpp)
+    bool lhideft8dupes;    //=ui->actionHide_FT8_dupe_messages->isChecked() ? 1 : 0; (mainwindow.cpp)
+    bool lhound;           //=m_houndMode ? 1 : 0; (mainwindow.cpp)
+    bool lcommonft8b;      //=m_commonFT8b; (mainwindow.cpp)
+    bool lmycallstd;       //=m_bMyCallStd; (mainwindow.cpp)
+    bool lhiscallstd;      //=m_bHisCallStd; (mainwindow.cpp)
+    bool lapmyc;           //=m_lapmyc; (mainwindow.cpp)
+    bool lmodechanged;     //=m_modeChanged ? 1 : 0; m_modeChanged=false; (mainwindow.cpp)
+    bool lbandchanged;     //=m_bandChanged ? 1 : 0; m_bandChanged=false; (mainwindow.cpp)
+    bool lenabledxcsearch; //if(!hisCall.isEmpty() && !m_enableTx && hisCall != m_lastloggedcall) dec_data.params.lenabledxcsearch=true; (mainwindow.cpp)
+    bool lwidedxcsearch;   //=m_FT8WideDxCallSearch ? 1 : 0;  (mainwindow.cpp)
+    bool lmultinst;        //=m_multInst ? 1 : 0; (mainwindow.cpp)
+    bool lskiptx1;         //=m_skipTx1 ? 1 : 0; (mainwindow.cpp)
+    int ndecoderstart;      //=m_FT8DecoderStart; (mainwindow.cpp)
   } params;
 } dec_data_t;
 

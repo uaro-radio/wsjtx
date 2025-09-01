@@ -1,18 +1,18 @@
 === Help with Setup
 
 The best source of help in setting up your station or configuring
-_WSJT-X_ is the {wsjtx_group} at email address
-wsjtgroup@groups.io.  The chances are good that someone with
-similar interests and equipment has already solved your problem and
-will be happy to help.  To post messages here you will need to
-{wsjtx_group2}.
+_WSJT-X_ will be one of these email lists: {wsjt-devel},
+{wsjtx_group}, {wsjt_group}, or {wsjt-x-improved-community}. The
+chances are good that someone with similar interests and equipment has
+already solved your problem and will be happy to help.  To post
+messages in any of these forums you will need to join the group.
 
 === Bug Reports
 
 One of your responsibilities as a _WSJT-X_ user is to help the
 volunteer programmers to make the program better.  Bugs may be
-reported preferably to the wsjt-x-improved-community email list 
-(wsjt-x-improved-community@lists.sourceforge.net).  You will need to {wsjt-devel2}. 
+reported to one of the email lists mentioned above. Again, you will
+need to subscribe to the list.
 
 To be useful, bug reports should include at least the following
 information:

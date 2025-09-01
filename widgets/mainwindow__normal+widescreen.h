@@ -292,6 +292,7 @@ private slots:
   void read_ignoreList();
   void addCallsignToignoreList();
   void on_actionErase_Ignore_List_triggered();
+  void read_ALLCALL7();
   void remove_old_files(const QString &directoryPath, int daysOld);
   void on_actionJT9_triggered();
   void on_actionJT65_triggered();
@@ -305,6 +306,39 @@ private slots:
   void on_actionQuickDecode_toggled (bool);
   void on_actionMediumDecode_toggled (bool);
   void on_actionDeepestDecode_toggled (bool);
+
+  //ft8md
+  void on_actionDecFT8cycles1_triggered();
+  void on_actionDecFT8cycles2_triggered();
+  void on_actionDecFT8cycles3_triggered();
+  void on_actionRXfLow_triggered();
+  void on_actionRXfMedium_triggered();
+  void on_actionRXfHigh_triggered();
+  void on_actionMTAuto_triggered();
+  void on_actionMT1_triggered();
+  void on_actionMT2_triggered();
+  void on_actionMT3_triggered();
+  void on_actionMT4_triggered();
+  void on_actionMT5_triggered();
+  void on_actionMT6_triggered();
+  void on_actionMT7_triggered();
+  void on_actionMT8_triggered();
+  void on_actionMT9_triggered();
+  void on_actionMT10_triggered();
+  void on_actionMT11_triggered();
+  void on_actionMT12_triggered();
+  void on_actionFT8SensMin_toggled(bool checked);
+  void on_actionlowFT8thresholds_toggled(bool checked);
+  void on_actionFT8subpass_toggled(bool checked);
+  void on_actionStartTwoStage_toggled(bool checked);
+  void on_actionStartThreeStage_toggled(bool checked);
+  void on_actionStartEarly_toggled(bool checked);
+  void on_actionStartNormal_toggled(bool checked);
+  void on_actionStartLate_toggled(bool checked);
+  void on_actionFT8WidebandDXCallSearch_toggled(bool checked);
+  void on_actionUse_multithreaded_FT8_decoder_triggered(bool checked);
+  //ft8md
+
   void bumpFqso(int n);
   void on_actionErase_ALL_TXT_triggered();
   void on_reset_cabrillo_log_action_triggered ();
@@ -528,6 +562,7 @@ private:
 
   qint64  m_msErase;
   qint64  m_secBandChanged;
+  qint64  m_msDecStarted; //ft8md
   qint64  m_freqMoon;
   qint64  m_fullFoxCallTime;
   qint64  m_msEchoTxStart=0;
@@ -535,6 +570,10 @@ private:
   Frequency m_freqNominal;
   Frequency m_freqNominalPeriod;
   Frequency m_freqTxNominal;
+  quint64 m_msk144basefreq;
+  quint64  m_mslastTX;   //ft8md
+  qint32  m_nlasttx;     //ft8md
+  qint32  m_lapmyc;      //ft8md
   Astro::Correction m_astroCorrection;
   bool m_reverse_Doppler;
 
@@ -561,6 +600,19 @@ private:
   qint32  m_XIT;
   qint32  m_setftx;
   qint32  m_ndepth;
+  qint32  m_ncandthin; //ft8md
+
+  //ft8md
+  qint32  m_nFT8Cycles;
+  qint32  m_nFT8SWLCycles;
+  qint32  m_nFT8RXfSens;
+  qint32  m_ft8threads;
+  qint32  m_ft8Sensitivity;
+  qint32  m_ft8DecoderStart;
+  qint32  m_nsecBandChanged;
+  qint32  m_nFT4depth;
+  //ft8md
+
   qint32  m_sec0;
   qint32  m_RxLog;
   qint32  m_nutc0;
@@ -628,6 +680,27 @@ private:
   bool    m_auto;
   bool    m_restart;
   bool    m_startAnother;
+
+  // start ft8md
+  bool    m_FT8EarlyStart;   
+  bool    m_FT8WideDxCallSearch; 
+  bool    m_skipTx1;
+  bool    m_swl; 
+  bool    m_filter;
+  bool    m_agcc;
+  bool    m_hint;
+  bool	  m_multithreadFT8; 
+  bool 	  m_houndMode;
+  bool    m_commonFT8b;
+  bool	  m_manualDecode;   
+  bool	  m_modeChanged;   
+  bool    m_bMyCallStd;
+  bool    m_bHisCallStd;
+  bool    m_multInst;
+  bool    m_bandChanged;
+  bool 	  m_lasthint; 
+  // end ft8md
+
   bool    m_saveDecoded;
   bool    m_saveAll;
   bool    m_widebandDecode;
@@ -671,6 +744,7 @@ private:
   bool    m_bDoubleClicked;
   bool    m_bCallingCQ;
   bool    m_bAutoReply;
+  QString m_lastloggedcall; //ft8md
   bool    m_bCheckedContest;
   bool    m_bWarnedSplit=false;
   bool    m_bTUmsg;
@@ -757,6 +831,7 @@ private:
   QString m_palette;
   QString m_dateTime;
   QString m_mode;
+  QString m_modeTx;//ft8md
   QString m_fnameWE;            // save path without extension
   QString m_rpt;
   QString m_nextRpt;

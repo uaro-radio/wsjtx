@@ -782,6 +782,7 @@ void TCITransceiver::onMessageReceived(const QString &str)
           stream_audio_ = false;
           if (tci_Ready) {
             printf ("cmdaudiostop done1\n");
+            tci_done7(); //was tci_done1 (do_frequency)
           }
         }
         break;

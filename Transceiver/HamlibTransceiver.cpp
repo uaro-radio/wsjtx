@@ -333,7 +333,7 @@ QByteArray HamlibTransceiver::impl::get_conf (char const * item)
   QByteArray value {128, '\0'};
   if (RIG_CONF_END != token)	// only get if valid for rig model
     {
-      error_check (rig_get_conf (rig_.data (), token, value.data ()), tr ("getting a configuration item"));
+      error_check (rig_get_conf2 (rig_.data (), token, value.data (),value.length()), tr ("getting a configuration item")); //changed to conf2, added parameter for buffer length
     }
   return value;
 }

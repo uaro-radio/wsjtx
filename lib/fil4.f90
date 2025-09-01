@@ -1,4 +1,4 @@
-subroutine fil4(id1,n1,id2,n2)
+subroutine fil4(id1,n1,id2,n2,dd2)
 
 ! FIR lowpass filter designed using ScopeFIR
 
@@ -14,6 +14,7 @@ subroutine fil4(id1,n1,id2,n2)
   parameter (NDOWN=4)             !Downsample ratio
   integer*2 id1(n1)
   integer*2 id2(*)
+  real dd2(*)
   real t(NTAPS)
   data t/NTAPS*0.0/
 
@@ -42,7 +43,8 @@ subroutine fil4(id1,n1,id2,n2)
      k=k+NDOWN
      t(1:NTAPS-NDOWN)=t(1+NDOWN:NTAPS)          !Shift old data down in array t
      t(1+NTAPS-NDOWN:NTAPS)=id1(k:k+NDOWN-1)    !Insert new data at end of t
-     id2(i)=nint(dot_product(w,t))
+     dd2(i)=dot_product(w,t)
+     id2(i)=nint(dd2(i))
   enddo
 
   return

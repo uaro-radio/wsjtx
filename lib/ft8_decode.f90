@@ -69,7 +69,6 @@ contains
 
     save dd,dd1,nutc0,ndec_early,itone_save,f1_save,xdt_save,lsubtracted,  &
          allmessages
-    
     this%callback => callback
     write(datetime,1001) nutc        !### TEMPORARY ###
 1001 format("000000_",i6.6)
@@ -103,9 +102,7 @@ contains
     if(ndepth.eq.1 .and. nzhsym.eq.50) then
        dd=iwave
     endif
-
     call ft8apset(mycall12,hiscall12,ncontest,apsym2,aph10)
-
     if(nzhsym.le.47) then
        dd=iwave
        dd1=dd
@@ -176,25 +173,22 @@ contains
     if(ndepth.eq.1) npass=2
     do ipass=1,npass
       newdat=.true.
-      syncmin=1.6
-      if(nzhsym.eq.41) syncmin=2.0
+	  syncmin=1.3
+	  if(ndepth.le.2) syncmin=2.1
+!      if(nzhsym.eq.41) syncmin=2.0
       if(ipass.eq.1) then
         lsubtract=.true.
-        ndeep=ndepth
         imetric=1
       elseif(ipass.eq.2) then
         n2=ndecodes
 	    imetric=2
 !        if(ndecodes.eq.0) imetric=2 
         lsubtract=.true.
-        ndeep=ndepth
       elseif(ipass.eq.3) then
-        syncmin=1.3
         imetric=2
 !        if((ndecodes-n2).eq.0) cycle
         if(ndecodes.eq.0) cycle
         lsubtract=.true. 
-        ndeep=ndepth
       endif 
       call timer('sync8   ',0)
       maxc=MAXCAND
@@ -207,7 +201,7 @@ contains
         xbase=10.0**(0.1*(sbase(nint(f1/3.125))-40.0))
         msg37='                                     '
         call timer('ft8b    ',0)
-        call ft8b(dd,newdat,nQSOProgress,nfqso,nftx,ndeep,nzhsym,lft8apon,  &
+        call ft8b(dd,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lft8apon,  &
              lapcqonly,napwid,lsubtract,nagain,ncontest,imetric,iaptype,mycall12,   &
              hiscall12,f1,xdt,xbase,apsym2,aph10,nharderrors,dmin,          &
              nbadcrc,iappass,msg37,xsnr,itone)
@@ -282,7 +276,6 @@ contains
          endif
       enddo
    endif
-
    return
 end subroutine decode
 

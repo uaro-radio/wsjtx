@@ -27,7 +27,7 @@ monitoring.
 
 - Select your Tx power (in dBm) from the drop-down list.
 
-=== Band Hopping
+.Band Hopping
 WSPR mode allows those with CAT-controlled radios to investigate
 propagation on many bands without user intervention.  Coordinated
 hopping enables a sizable group of stations around the world to move
@@ -65,7 +65,7 @@ starts. This feature can be used to activate an automatic antenna
 tuner (ATU) to tune a multi-band antenna to the newly selected band.
 
 - Depending on your station and antenna setup, band changes might
-require other switching besides retuning your radio.  To make this
+require other switching besides re-tuning your radio.  To make this
 possible in an automated way, whenever _WSJT-X_ executes a successful
 band-change command to a CAT-controlled radio, it looks for an
 executable file or script named `user_hardware`. This is done using

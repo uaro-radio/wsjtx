@@ -33,7 +33,7 @@ its own logbook.  It fetches contact information from _WSJT-X_ and
 provides visual alerts for new DXCC entities and grid squares on the
 current band, as well as other options.
 
-* {jtbridge}, by SM0THU, is available for OS X. It works together with
+* {jtbridge}, by SM0THU, is available for macOS. It works together with
 logging applications Aether, MacLoggerDX, RUMlog or RUMlogNG.  It
 checks QSO and QSL status of the call and DXCC entity, as well as many
 other features.

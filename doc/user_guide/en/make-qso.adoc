@@ -24,20 +24,18 @@ prefer to send RR73 rather than RRR.  This is workable because RR73 is
 encoded as a valid grid locator, one unlikely ever to be occupied by
 an amateur station.
 
-*Signal reports* are specified as signal-to-noise ratio (S/N) in dB,
+*Signal reports* are specified as signal-to-noise ratio (S/N or SNR) in dB,
 using a standard reference noise bandwidth of 2500 Hz.  Thus, in the
 example message above, K1ABC is telling G0XYZ that his
-signal is 19 dB below the noise power in bandwidth 2500 Hz.  In the
-message at 0004, G0XYZ acknowledges receipt of that report and
+signal is 19 dB below the noise power in bandwidth 2500 Hz.  In his next
+transmission, G0XYZ acknowledges receipt of that report and
 responds with a –22 dB signal report.  JT65 reports are constrained to
 lie in the range –30 to –1 dB, and values are significantly compressed
 above about -10 dB.  JT9 supports the extended range –50 to +49 dB and
 assigns more reliable numbers to relatively strong signals.
 
 NOTE: Signals become visible on the waterfall around S/N = –26 dB and
-audible (to someone with very good hearing) around –15 dB. Thresholds
-for decodability are around -20 dB for FT8, -23 dB for JT4, –25 dB for
-JT65, and –27 dB for JT9.
+audible (to someone with very good hearing) around –15 dB. 
 
 NOTE: Several options are available for circumstances where fast QSOs
 are desirable.  Double-click the *Tx1* control under _Now_ or _Next_
@@ -49,46 +47,111 @@ required.
 
 === Free-Text Messages
 
-Users often add some friendly chit-chat at the end of a QSO.
+Users sometimes add friendly chit-chat at the end of a QSO.
 Free-format messages such as "`TNX ROBERT 73`" or "`5W VERT 73 GL`"
 are supported, up to a maximum of 13 characters, including spaces.  In
 general you should avoid the character / in free-text messages, as the
 program may then try to interpret your construction as part of a
-compound callsign.  It should be obvious that the JT4, JT9, and JT65
+compound callsign.  It should be obvious that the _WSJT-X_
 protocols are not designed or well suited for extensive conversations
 or rag-chewing.
 
 === Auto-Sequencing
 
 The T/R cycles of many _WSJT-X_ modes allow only a few seconds to
-inspect decoded messages and decide how to reply.  Often this is not
-enough time, so for FST4, FT4, FT8, MSK144, and Q65 the program
-offers a basic auto-sequencing feature.
+inspect decoded messages and decide how to reply.  Often this is
+hardly enough time, so the program offers a basic auto-sequencing
+feature.
 
 Check *Auto Seq* on the main window to enable this feature:
 
 image::auto-seq.png[align="center",alt="AutoSeq"]
 
 When calling CQ you may choose to select *CQ: First* to reply
-automatically to the first decoded responder, or *CQ: Max Dist*
-to reply to the most distant responder.
+automatically to the first decoded responder, or *CQ: Max Dist* to
+reply to the most distant responder, or the strongest or weakest
+responder.
 
 NOTE: When *Auto-Seq* is enabled, the program de-activates *Enable Tx*
-at the end of each QSO.  It is not intended that _WSJT-X_ should make
+at the end of each QSO. _WSJT-X_ will not make consecutive, 
 fully automated QSOs.  Auto-sequencing is an operator aid, not an
 operator replacement.
+
+[[WAIT_FEATURES]]
+=== Wait Features
+
+Three wait-to-transmit features are available: *Wait and Reply*, *Wait
+and Call* and *Wait and Pounce*. Enable these features through a checkbox near
+the bottom of the *File | Settings | General* menu. When they are
+enabled, the *DX Call* field and *Enable Tx* button turn yellow to
+warn you that an automatic transmission may occur when a specified
+condition is met. Be alert, and take any necessary precautions!
+
+image::wait1.png[align="center",alt="wait1"]
+
+.Wait and Reply
+
+If a callsign is present in the *DX Call* field, *Wait and Reply* will
+attempt to continue your QSO when that station sends you a
+message. For example, you may have called station K1ABC, received no reply
+and stopped transmitting when K1ABC replied to someone else. If K1ABC then
+calls you, your QSO will resume automatically. This feature also
+ensures that you will send a second RR73 if your first one is not
+answered. *Wait and Reply* is effective for all modes where
+auto-sequencing is available and a callsign is present in the *DX
+Call* field.
+
+NOTE: Especially if *Enable Wait features* is checked, it's good
+practice to clear the *DX Call* field after a QSO.  Use the *F4* key
+or right-click on the *DX Call* button.
+
+.Wait and Call
+
+*Wait and Call* is useful if the station you wish to work disappears
+for a time, perhaps in a deep fade. To enable the feature, click on the
+*DX Call* label, which will turn red if a callsign is present in the
+*DX Call* field. When the station is decoded again sending a message
+containing CQ, RR73, RRR or 73, you will call him automatically up to
+three times. Any manual intervention, such as pressing the *Halt Tx*
+or *Stop* buttons, will disable *Wait and Call* and give you the
+normal manual control over the QSO.
+
+.Wait and Pounce
+
+*Wait and Pounce* can be used to answer a CQ from another station with
+specific selection criteria.  To activate *Wait and Pounce*, ensure
+that the *DX Call* box is empty and select one of the applicable CQ
+categories from the drop-down list on main window.  Then right-click
+on the *Enable Tx* button, which will turn orange. In your next Tx
+sequence a reply will be sent automatically to a CQing station that
+satisfies your chosen selection rule.
+
+image::cqtype.png[align="center",alt="cqtype"]
+
+TIP: When using *Max Dist*, *Max dB*, or *Min dB* the program
+automatically prevents working dupes. Information for this
+worked-before decision is obtained from from file `wsjtx.log` in the
+log directory. Stations in this file will be ignored by *Wait and
+Pounce* and when you are calling CQ. To reset everything, click on
+*File | Erase wsjtx.log*. Do not accidentally erase the file
+`wsjtx_log.adi`, which contains your primary logbook!
+
+*Wait and Pounce* works in concert with the *Filters* feature. For
+example, you can wait for CQ messages containing a certain prefix,
+grid, callsign, or keyword.
 
 [[CONTEST_MSGS]]
 === Contest Messages
 
 The FT4, FT8, and MSK144 protocols support special messages optimized
 for *NA VHF* and *EU VHF* contests.  FT4 and FT8 also support messages
-for *ARRL Field Day*, *FT Roundup*, and the *WW Digi* contest.
-The decoders recognize and decode these messages at any time.
-Configure the program to automatically generate the required message
-types for contest exchanges and carry out suitable auto-sequencing by
-selecting a supported operating activity on the *Settings | Advanced*
-tab.  Model QSOs then proceed as follows, for each event type:
+for *ARRL Field Day*, *FT Roundup*, *WW Digi*, and *ARRL International
+Digital Contest*.  The decoders recognize and decode these messages at
+any time.  Configure the program to automatically generate the
+required message types for contest exchanges and carry out suitable
+auto-sequencing by selecting a supported operating activity on the
+*File | Settings | Advanced* tab.  Model QSOs then proceed as follows,
+for each event type:
 
 *NA VHF Contest* and *ARRL International Digital Contest*
 
@@ -112,11 +175,6 @@ optional.
  PA9XYZ G4ABC RR73
 
 Either callsign (or both) may have /P appended.
-
-IMPORTANT: Messages conveying signal reports, QSO serial numbers, and
-6-character locators have been changed in _WSJT-X v2.2_ and are *not
-compatible* with the formats used in earlier program versions.  Be sure
-to upgrade _WSJT-X_ if you will use *EU VHF Contest* messages.
 
 *ARRL Field Day*
 
@@ -146,7 +204,7 @@ station's log and not the supposed QSO partner's.  To avoid Not-in-Log
 guidelines for contest logging with FT4, FT8, and MSK144:
 
  - Activate and learn to use the *Alternate F1-F6 bindings* selectable
-   on the *Settings | General* tab.
+   on the *File | Settings | General* tab.
  
  - Always log a QSO when you have received RRR, RR73, or 73 from a
    station you are working.
@@ -174,8 +232,8 @@ contest-style messages.  Model QSOs look something like this:
  <W9XYZ> PJ4/K1ABC RRR
                        PJ4/K1ABC <W9XYZ> 73
 
-The compound or nonstandard callsigns are automatically recognized and
-handled using special message formats.  One such callsign and one
+Compound or nonstandard callsigns are automatically recognized and
+handled using special message types.  One such callsign and one
 standard callsign may appear in most messages, provided that one of
 them is enclosed in <  > angle brackets.  If the message includes a
 grid locator or numerical signal report, the brackets must enclose the
@@ -189,8 +247,8 @@ has been received in full in the recent past.  Otherwise it will be
 displayed as < . . . >.  These restrictions are honored automatically
 by the algorithm that generates default messages for minimal QSOs.
 Except for the special cases involving /P or /R used in VHF
-contesting, _WSJT-X {VERSION_MAJOR}.{VERSION_MINOR}_ offers no support
-for two nonstandard callsigns to work each other.
+contesting, _WSJT-X_ offers no support for two nonstandard callsigns
+to work each other.
 
 TIP: Using a nonstandard callsign has definite costs.  It restricts
 the types of information that can be included in a message.  It
@@ -234,7 +292,8 @@ might look like this:
 
 Notice that the full compound callsign is sent and received in the
 first two transmissions.  After that, the operators omit the add-on
-prefix or suffix and use the standard structured messages.
+prefix or suffix and use the base call and standard structured
+messages.
 
 .Type 2 Compound callsigns
 
@@ -260,7 +319,7 @@ that a second callsign is never permissible in these messages.
 
 NOTE: During a transmission your outgoing message is displayed in the
 first label on the *Status Bar* and shown exactly as another station
-receives it.  You can check to see that you are actually
+would receive it.  You can check to see that you are actually
 transmitting the message you wish to send.
 
 QSOs involving *Type 2* compound callsigns might look like either
@@ -293,7 +352,7 @@ will be generated that best suit your needs.
 
 === Pre-QSO Checklist
 
-Before attempting your first QSO with one of the WSJT modes, be sure
+Before attempting your first QSO with one of the _WSJT-X_ modes, be sure
 to go through the <<TUTORIAL,Basic Operating Tutorial>> above as well
 as the following checklist:
 
@@ -310,6 +369,6 @@ as the following checklist:
 
 - Radio filters centered and set to widest available passband (up to 5 kHz).
 
-TIP: Remember that in many circumstances FT4, FT8, JT4, JT9, JT65, and
-WSPR do not require high power. Under most HF propagation conditions,
-QRP is the norm.
+TIP: Remember that in many circumstances the _WSJT-X_ modes do not
+require high power. Under most HF propagation conditions, QRP is the
+norm.

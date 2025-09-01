@@ -1,5 +1,7 @@
 module packjt77
 
+use packjt77var, only : hash10var,hash12var,hash22var
+  
 ! These variables are accessible from outside via "use packjt77":
   parameter (MAXHASH=1000,MAXRECENT=10)
   character (len=13), dimension(0:1023) ::  calls10=''
@@ -319,6 +321,11 @@ subroutine unpack77(c77,nrx,msg,unpk77_success)
      call unpack28(n28b,call_2,unpk28_success)
      if(.not.unpk28_success .or. n28b.le.2) unpk77_success=.false.
      call hash10(n10,call_3)
+     if(call_3.eq.'<...>') then
+      ! print*,'pre std n10 ',n10,' call_3 ',call_3
+       call hash10var(n10,call_3,1)
+      ! print*,'std n10 ',n10,' call_3 ',call_3
+     endif
      if(nrx.eq.1     .and. &
         dxcall13_set .and. &
         len(trim(dxcall13)).ge.3 .and. &
@@ -561,6 +568,11 @@ subroutine unpack77(c77,nrx,msg,unpk77_success)
         n58=n58/38
      enddo
      call hash12(n12,call_3)
+     if(call_3.eq.'<...>') then
+      ! print*,'pre std n12 1 ',n12,' call_3 ',call_3
+       call hash12var(n12,call_3,1)
+      ! print*,'std n12 1 ',n12,' call_3 ',call_3
+     endif
      if(iflip.eq.0) then       ! 12 bit hash for TO call
         call_1=call_3          
         call_2=adjustl(c11)//'  '
@@ -602,8 +614,18 @@ subroutine unpack77(c77,nrx,msg,unpk77_success)
         return
      endif
      call hash12(n12,call_1)
+     if(call_1.eq.'<...>') then
+      ! print*,'pre std n12 1 ',n12,' call_1 ',call_1
+       call hash12var(n12,call_1,1)
+      ! print*,'std n12 2 ',n12,' call_1 ',call_1
+     endif
      if(n12.eq.hashmy12) call_1='<'//trim(mycall13)//'>'
      call hash22(n22,call_2)
+     if(call_2.eq.'<...>') then
+      ! print*,'pre std n22 ',n22,' call_2 ',call_2
+       call hash22var(n22,call_2,1)
+      ! print*,'std n22 ',n22,' call_2 ',call_2
+     endif
      nrs=52+irpt
      write(cexch,1022) nrs,iserial
 1022 format(i2,i4.4)
@@ -755,7 +777,7 @@ end subroutine pack28
 subroutine unpack28(n28_0,c13,success)
 
   parameter (NTOKENS=2063592,MAX22=4194304)
-  logical success
+  logical success,callok
   character*13 c13
   character*37 c1
   character*36 c2
@@ -799,6 +821,11 @@ subroutine unpack28(n28_0,c13,success)
 ! This is a 22-bit hash of a callsign
      n22=n28
      call hash22(n22,c13)     !Retrieve callsign from hash table
+     if(c13.eq.'<...>') then
+      ! print*,'pre std n22 ',n22,' c13 ',c13
+       call hash22var(n22,c13,1)
+      ! print*,'std n22 ',n22,' c13 ',c13
+     endif
      go to 900
   endif
   
@@ -818,11 +845,17 @@ subroutine unpack28(n28_0,c13,success)
        c4(i5+1:i5+1)//c4(i6+1:i6+1)
   c13=adjustl(c13)
 
+  if(.not.callok(trim(c13))) then
+     c13='QU1RK'
+     success=.false.
+  endif
+
 900 i0=index(c13,' ')
   if(i0.ne.0 .and. i0.lt.len(trim(c13))) then
      c13='QU1RK'
      success=.false.
   endif
+
   return
 end subroutine unpack28
 
@@ -1644,3 +1677,52 @@ subroutine to_grid(n,grid6,ok)
 end subroutine to_grid
 
 end module packjt77
+
+logical function callok(w)
+
+  character*(*) w
+  character*1 c1
+  character*2 pfx
+  character*3 sfx
+  logical isdig,islet
+
+  islet(c1)=(ichar(c1).ge.65 .and. ichar(c1).le.90) .or. &
+            (ichar(c1).ge.97 .and. ichar(c1).le.122)
+  isdig(c1)=(ichar(c1).ge.48 .and. ichar(c1).le.57)
+
+  callok=.false.
+  n=len(trim(w))
+  if(n.lt.3) return                 !Must be at lkeast three characters
+  if(w(1:1).eq.'Q') return          !Callsigns can't start with Q
+  
+  i0=0
+  do i=n,1,-1
+     if(isdig(w(i:i))) exit
+  enddo
+  i0=i                              !Call area position in word
+
+  if(i0.ne.2 .and. i0.ne.3) return
+
+  pfx=w(1:i0-1)                     !Prefix, without call area
+  sfx=w(i0+1:)                      !Suffix
+
+  nlp=0
+  ndp=0
+  np=len(trim(pfx))
+  do i=1,np
+     if(isdig(pfx(i:i))) ndp=ndp+1
+     if(islet(pfx(i:i))) nlp=nlp+1
+  enddo
+  if(nlp.eq.0) return              !Prefix must have at least one letter
+
+  nls=0
+  ns=len(trim(sfx))
+  do i=1,ns
+     if(islet(sfx(i:i))) nls=nls+1
+  enddo
+  if(nls.lt.ns) return             !Suffix must be all letters
+
+  callok=.true.  
+ 
+  return
+end function callok

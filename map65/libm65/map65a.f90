@@ -501,12 +501,12 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
            if(mode65.eq.2) cmode='#B'
            if(mode65.eq.4) cmode='#C'
            write(26,1014) f0,ndf,ndf0,ndf1,ndf2,dt,npol,nsync1,       &
-                nsync2,nutc,decoded,cp,cmode
-1014       format(f8.3,i5,3i3,f5.1,i4,i3,i4,i5.4,4x,a22,2x,a1,3x,a2)
+                nsync2,nutc,decoded,'#',cp,cmode ! was decoded,cp,
+1014       format(f8.3,i5,3i3,f5.1,i4,i3,i4,i5.4,4x,a22,7x,2a1,2x,a2) ! was a22,2x,a1,3x,a2
            ndecodes=ndecodes+1
-           write(21,1100) f0,ndf,dt,npol,nsync2,nutc,decoded,cp,          &
-                cmode(1:1),cmode(2:2)
-1100       format(f8.3,i5,f5.1,2i4,i5.4,2x,a22,2x,a1,3x,a1,1x,a1)
+           write(21,1100) f0,ndf,dt,npol,nsync2,nutc,decoded,'#',cp,          &
+                cmode(1:1),cmode(2:2)! was decoded,cp,
+1100       format(f8.3,i5,f5.1,2i4,i5.4,2x,a22,7x,2a1,3x,a1,1x,a1) ! was a22,2x,a1,1x,a1
         endif
 
      endif

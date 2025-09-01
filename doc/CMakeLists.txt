@@ -13,11 +13,11 @@ set (UG_SRCS
   docinfo.xml
   acknowledgements.adoc
   astro_data.adoc
+  band-activity-window.adoc
   config-details.adoc
   controls-functions-center.adoc
   controls-functions-left.adoc
   controls-functions-main-window.adoc
-  controls-functions-menus.adoc
   controls-functions-messages.adoc
   controls-functions-status-bar.adoc
   controls-functions-wide-graph.adoc
@@ -31,16 +31,20 @@ set (UG_SRCS
   install-windows.adoc
   introduction.adoc
   intro_subsections.adoc
+  keyboard_mouse.adoc
   logging.adoc
   make-qso.adoc
   measurement_tools.adoc
+  menus.adoc
   modes.adoc
   new_features.adoc
   platform-dependencies.adoc
   protocols.adoc
   settings-advanced.adoc
+  settings-alerts.adoc
   settings-audio.adoc
   settings-colors.adoc
+  settings-filters.adoc
   settings-frequencies.adoc
   settings-general.adoc
   settings-radio.adoc
@@ -57,7 +61,6 @@ set (UG_SRCS
   tutorial-download-samples.adoc
   tutorial-wide-graph-settings.adoc
   utilities.adoc
-  message-creator.adoc
   vhf-features.adoc
   wsjtx_improved.adoc
   wsjtx-main.adoc
@@ -66,9 +69,9 @@ set (UG_SRCS
 
 set (UG_IMGS
   images/active_stations.png
+  images/active_stations_QMAP.png
   images/Add_Frequency.png
   images/Add_station_info.png
-  images/alerts.png
   images/algui.png
   images/AstroData_2.png
   images/Astronomical_data.png
@@ -83,6 +86,7 @@ set (UG_IMGS
   images/colors.png
   images/config-menu.png
   images/cqchoice.png
+  images/CQoffset_cb.png
   images/cqtype.png
   images/dark.png
   images/decode-menu.png
@@ -91,6 +95,7 @@ set (UG_IMGS
   images/Echo_10GHz.png
   images/Echo_1296.png
   images/Echo_controls.png
+  images/echo-graph-controls.png
   images/EME_Deep_0.png
   images/EME_Deep_1.png
   images/EME_Deep_2.png
@@ -98,6 +103,7 @@ set (UG_IMGS
   images/filters1.png
   images/filters2.png
   images/filters3.png
+  images/filters-menu.png
   images/fox_mode_warning.png
   images/freemsg.png
   images/FreqCal.png
@@ -109,7 +115,6 @@ set (UG_IMGS
   images/ft4_decodes.png
   images/ft4_waterfall.png
   images/ft8_decodes.png
-  images/FT8_waterfall.png
   images/help-menu.png
   images/highlighting.png
   images/livecq.png
@@ -118,10 +123,8 @@ set (UG_IMGS
   images/jtalert.png
   images/keyboard-shortcuts.png
   images/letter-s.png
-  images/log_comments1.png
-  images/log_comments2.png
-  images/log_comments3.png
   images/log-qso.png
+  images/logging-options.png
   images/MacAppMenu.png
   images/main-ui.png
   images/main-ui-controls.png
@@ -138,6 +141,7 @@ set (UG_IMGS
   images/MSK144.png
   images/new-msg-box.png
   images/psk-reporter.png
+  images/Q65-60A_EME_6m.png
   images/Q65_6m_ionoscatter.png
   images/r3666-config-screen-80.png
   images/r3666-main-ui-80.png
@@ -148,7 +152,9 @@ set (UG_IMGS
   images/save-menu.png
   images/searchcalls.png
   images/settings-advanced.png
+  images/settings-alerts.png
   images/settings-audio.png
+  images/settings-filters.png
   images/settings-frequencies.png
   images/settings-general.png
   images/setup-menu.png
@@ -167,11 +173,11 @@ set (UG_IMGS
   images/USstates.png
   images/VHF_controls.png
   images/view-menu.png
+  images/view_SWL.png
   images/wait1.png
   images/wgfeatures1.png
   images/wgfeatures2.png
   images/wide-graph-controls.png
-  images/Windows_Dark.png
   images/WSPR_1a.png
   images/WSPR_2.png
   images/WSPR_WideGraphControls.png

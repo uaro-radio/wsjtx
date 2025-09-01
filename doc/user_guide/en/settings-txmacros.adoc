@@ -3,7 +3,7 @@
 [[FigTxMacros]]
 
 *Tx Macros* are an aid for sending brief, frequently used free-text
-messages such as the examples shown below.
+messages such as the example shown below.
 
 image::tx-macros.png[align="center",alt="Tx Macros Screen"]
 
@@ -24,4 +24,4 @@ new order will be preserved when _WSJT-X_ is restarted.
 
 - If the first word of a message is $DXCALL (or the shortened form
 $DX), that word will be replaced on transmission by the base callsign
-in the *DxCall* field.
+in the *DX Call* field.

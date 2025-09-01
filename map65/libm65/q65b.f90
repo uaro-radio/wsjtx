@@ -155,16 +155,16 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
         npol=npol-45
         if(npol.lt.0) npol=npol+180
      endif
-     call txpol(xpol,msg0(1:22),mygrid,npol,nxant,ntxpol,cp)
+     call txpol(xpol,msg0(1:28),mygrid,npol,nxant,ntxpol,cp) ! was 1:22
      ikhz1=ikhz
      ndf=nq65df
      if(ndf.gt.500) ikhz1=ikhz + (nq65df+500)/1000
      if(ndf.lt.-500) ikhz1=ikhz + (nq65df-500)/1000
      ndf=nq65df - 1000*(ikhz1-ikhz)
      if(nqd.eq.1 .and. abs(nq65df-mousedf).lt.ntol) then
-        write(line,1020) ikhz1,ndf,npol,nutc,xdt0,nsnr0,msg0(1:27),cq0,  &
+        write(line,1020) ikhz1,ndf,npol,nutc,xdt0,nsnr0,msg0(1:28),cq0,  &
              ntxpol,cp
-1020    format('!',i3.3,i5,i4,i6.4,f5.1,i5,' : ',a27,a3,i4,1x,a1)
+1020    format('!',i3.3,i5,i4,i6.4,f5.1,i5,' : ',a28,a3,i4,1x,a1)
         write(*,1100) trim(line)
 1100    format(a)
      endif
@@ -173,9 +173,9 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
      cmode=': '
      cmode(2:2)=char(ichar('A') + mode_q65-1)
      freq1=freq0 + 0.001d0*(ikhz1-ikhz)
-     write(26,1014) freq1,ndf,0,0,0,xdt0,npol,0,nsnr0,nutc,msg0(1:22),   &
-          ':',cp,cmode
-1014 format(f8.3,i5,3i3,f5.1,i4,i3,i4,i5.4,4x,a22,1x,2a1,2x,a2)
+     write(26,1014) freq1,ndf,0,0,0,xdt0,npol,0,nsnr0,nutc,msg0(1:28),   &
+          ':',cp,cmode ! was 1:22
+1014 format(f8.3,i5,3i3,f5.1,i4,i3,i4,i5.4,4x,a28,1x,2a1,2x,a2) ! was a22
 
 ! Suppress writing duplicates (same time, decoded message, and frequency)
 ! to map65_rx.log

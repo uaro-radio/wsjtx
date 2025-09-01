@@ -4,7 +4,7 @@ image::colors.png[align="center",alt="Colors Screen"]
 
 * _WSJT-X_ uses colors to highlight decoded CQ messages of particular
   interest.  Check the box *Show DXCC, grid, and worked-before status*
-  on the *Settings | General* tab, and any boxes of interest to you on
+  on the *File |Settings | General* tab, and any boxes of interest to you on
   the *Colors* tab.  You can drag any line up or down to raise or
   lower its logical priority.  Right-click any line to set a new
   foreground or background color.  Foreground and background colors
@@ -15,7 +15,7 @@ image::colors.png[align="center",alt="Colors Screen"]
 * Press the *Reset Highlighting* button to reset all of the color
   settings to default values.
 
-* Check *Highlight by Mode* if you wish worked before status to be per
+* Check *Highlight by Mode* if you wish worked-before status to be per
   <<INTRO,mode>>.
 
 * Check *Only grid Fields sought* if you are only interested in the
@@ -25,20 +25,11 @@ image::colors.png[align="center",alt="Colors Screen"]
 * Check *Include extra WAE entities* if you are interested in the
   extra entities defined for DARC WAE and CQ Marathon awards.
 
-* Worked before status is calculated from your _WSJT-X_ ADIF
-  <<LOGGING, Logging>> file, you may replace ADIF log file with one
-  exported from your station logging application, *Rescan ADIF Log*
-  rebuilds the _WSJT-X_ worked before indexes using the current ADIF
-  log file.
-
-+
-
-TIP: The _WSJT-X_ ADIF file records must contain the "CALL" field.
-     The "BAND", and "MODE", and "GRIDSQUARE" fields are optional
-     depending on your DXing objectives. DXCC entity, continent, CQ,
-     and ITU Zone data for call prefixes and certain well known
-     overrides are derived from the cty.dat database which is bundled
-     with _WSJT-X_ (See <<LOGGING,Logging>> for details).
+* Worked-before status is determined from file `wsjtx_log.adi` in your
+log directory. You can replace ADIF log file with one exported from
+your station logging application. Clicking *Rescan ADIF Log* will
+rebuild the _WSJT-X_ worked-before index from the current ADIF log
+file.
 
 .Logbook of The World User Validation
 
@@ -52,3 +43,22 @@ this is available online.
 * Adjust *Age of last upload less than* to set the period within
   which a station must have uploaded their log to LoTW to trigger
   highlighting.
+
+.Alternative Highlighting
+
+Some users find an alternative color scheme with pastel-like colors
+easier on the eyes and more suitable for the dark style. You can
+select either the original _WSJT-X_ or the alternative style.  With
+the alternative style, stations uploading their logbook to LoTW will
+have black foreground color, others red. Stations worked-before are
+displayed with grey background.
+
+image::highlighting.png[align="center",alt="Decode Highlighting"]
+
+It is still possible for you to customize the color scheme according
+to your own preferences. In addition, you can highlight individual
+callsigns or grids according to your specifications.  Callsigns and/or
+grids can be highlighted with orange or blue background
+color. Callsigns/grids must be separated by commas and can be mixed
+(e.g. "K1JT, DG2YCB, JO33, JN58,"). You must include a comma after
+each callsign or grid, and also at the end of the line.
