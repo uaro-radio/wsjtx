@@ -974,7 +974,10 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
       }
       statusUpdate ();
 #if defined(Q_OS_WIN)
-      QTimer::singleShot (250, [=] {setRig (m_lastMonitoredFrequency);});   // This is needed for Hamradio Deluxe
+      QTimer::singleShot (250, [=] {
+        setRig (m_lastMonitoredFrequency);            // This is needed for Hamradio Deluxe
+        m_msk144basefreq = m_lastMonitoredFrequency;  // This is needed for Hamradio Deluxe
+      });
 #endif
     });
   m_multi_settings->create_menu_actions (this, ui->menuConfig);
@@ -1852,7 +1855,7 @@ void MainWindow::readSettings()
   ui->sbTR_FST4W->setValue (m_settings->value ("TRPeriod_FST4W", 15).toInt());
   m_lastMonitoredFrequency = m_settings->value ("DialFreq",
     QVariant::fromValue<Frequency> (default_frequency)).value<Frequency> ();
-  if(m_mode=="MSK144") QTimer::singleShot (5000, [=] {m_msk144basefreq = m_lastMonitoredFrequency;});  // MSK144 QSY
+  if(m_mode=="MSK144") m_msk144basefreq = m_lastMonitoredFrequency;  // MSK144 QSY
   ui->WSPRfreqSpinBox->setValue(0); // ensure a change is signaled
   ui->WSPRfreqSpinBox->setValue(m_settings->value("WSPRfreq",1500).toInt());
   ui->TxFreqSpinBox->setValue(0); // ensure a change is signaled
@@ -8782,8 +8785,7 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     if(m_mode=="MSK144" && message.frequencyOffset() > 0 && (modifiers==Qt::ControlModifier or modifiers==(Qt::ControlModifier+Qt::AltModifier))) {
       Frequency dial_frequency = m_msk144basefreq + (message.frequencyOffset() - 1500);
       keep_frequency = true;
-      m_msk144oldfreq = m_rigState.frequency();
-      if(m_msk144oldfreq == 0) m_msk144oldfreq = m_freqNominal;
+      m_msk144oldfreq = m_freqNominal;
       monitor (true);
       setRig(dial_frequency);
       ui->labDialFreq->setText (Radio::pretty_frequency_MHz_string (dial_frequency));
@@ -11401,7 +11403,7 @@ void MainWindow::on_actionMSK144_triggered()
     ui->labDXped->setText(t0);
     on_contest_log_action_triggered();
   }
-  if(!(programStart or m_rigState.frequency() == 0)) m_msk144basefreq = m_rigState.frequency();  // MSK144 QSY
+  if(!(programStart or m_freqNominal == 0)) m_msk144basefreq = m_freqNominal;  // MSK144 QSY
   msk144qsy = false;  // MSK144 QSY
 }
 
@@ -11989,9 +11991,8 @@ void MainWindow::band_changed (Frequency f)
     m_specOp=m_config.special_op_id();
     if (m_specOp==SpecOp::FOX) FoxReset("BandChange");  // when changing bands, don't preserve the Fox queues
     m_lastloggedcall.clear();  //ft8md
+    if(m_mode=="MSK144" && !(programStart or m_freqNominal == 0)) m_msk144basefreq = m_freqNominal;  // MSK144 QSY
   }
-
-  if(m_mode=="MSK144" && m_rigState.frequency() > 0) m_msk144basefreq = m_rigState.frequency();  // MSK144 QSY
 
   // Erase the decodedTextBrowsers only if the band really changed
   static QString band_save;
