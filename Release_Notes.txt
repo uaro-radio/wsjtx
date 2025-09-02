@@ -11,6 +11,111 @@
                                                          
 Copyright 2001 - 2025 by Joe Taylor, K1JT, and the WSJT Development Team
 
+                        Release: WSJT-X 3.0.0-rc1
+                          September 15, 2025
+                      -------------------------
+
+WSJT-X 3.0.0 introduces a number of new features and
+capabilities. Release Candidates give advanced users an opportunity to
+exercise new features and provide feedback to developers. If you use
+this Release Candidate 1, please send related comments or questions to
+one of our user forums.
+
+The following features will be already familiar to those using one of
+the WSJT-X Improved 2.8.0 i+ editions, but new to users of WSJT-X
+2.7.0 and all earlier versions:
+
+ - Single-click Band Buttons can be enabled from the View menu.
+
+ - Filters can be used to suppress the display of various categories
+   of decoded messages.
+
+ - Options to Wait and Reply, Wait and Call, and Wait and Pounce can
+   help you make QSOs under difficult propagation conditions while
+   minimizing transmitted QRM. These features, Filters, and
+   Auto-Sequencing are now available for all WSJT-X modes.
+
+ - Optional Audible Alerts can play a sound alerting you to reception
+   of a message with speficied content.
+
+ - Full Duplex Mode allows WSJT-X to transmit and receive at the same
+   time.
+
+ - Transceiver Control Interface (TCI) is supported for rig control
+   and audio input/output.
+
+ - SuperHound operators can activate Wait and Call for a SuperFox
+   callsign, even if SuperFox has not yet been decoded. Fox operators
+   receive a warning message if another Fox appears to be on the same
+   frequency.
+
+ - Transmitted Power and SWR can be displayed (as reported by the
+   radio) in a Status Bar label. Transmission can be stopped
+   automatically if SWR exceeds 2.5.  These features work with most
+   modern radios controlled via Hamlib or FLRig.
+
+ - Band Hopping checkboxes for FT8, FT4 and MSK144 can activate
+   sequential reception intervals on up to eight specified dial
+   frequencies. 
+
+ - Saved Audio Files can be scheduled for automatic deletion after 30
+   days.
+
+ - CALL3.TXT files for either terrestrial or EME use can be downloaded
+   by clicking a button on the File | Settings | Colors tab.
+
+ - Logging now supports field type for satellite QSOs, and the "Log
+   Automatically" option is available when not in contest mode. New
+   checkboxes on the File | Settings | Reporting tab provide support
+   for certain contests.
+
+ - The OpenSSL library is now installed automatically with
+   WSJT-X. 
+
+ - High Resolution Monitors are supported with better scaling of fonts
+   and widget sizes.
+
+ - New EME Features include easier ways to select dial frequencies
+   within an EME sub-band and to offset your Tx frequency by an
+   integer number of MHz from the Rx frequency. New buttons are
+   provided for quick access to Echo mode and six popular Q65
+   sub-modes.
+
+ - QMAP version 0.5 and MAP65 version 3.1 offer CQLive spotting and
+   some other improvements.
+
+The following features are new for everyone:
+
+ - FT8 Decoding includes an option for parallel processing in
+   concurrent threads, and other changes to yield improved
+   performance.
+
+- Echo mode allows you to transmit your callsign (or any other
+   6-character group) to the Moon and decode its echo.
+
+ - Quick Filter categories can highlight decoded transmissions
+   from specified territories.
+
+ - Right-click on the Band Hopping button to move you to the next
+   specified band hopping frequency.
+
+ - MSK144 operation: "73" messages addressed to MyCall are now also
+   displayed in the right pane. A bank line is inserted between
+   decodes for different TR periods.
+
+ - Q65 operation at VHF: A new option on the Decode menu disables
+   mouse clicks on the waterfall unless ALT key is held down.
+
+ - "Highlight orange" and "Highlight blue" features on the File |
+   Settings | Colors tab can now be used to highlight directional
+   calls (DX, SOTA, POTA, YOTA, etc.).
+ 
+ - QMAP and MAP65: Improved handling of long compound messages in Q65
+   mode. Corrected a bug that could cause a crash when receiving a CQ
+   message not containing a grid.
+
+ - A variety of other minor improvements and bug fixes.
+
 
                         Release: WSJT-X 2.7.0
                           February 17, 2025
