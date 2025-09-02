@@ -3204,20 +3204,6 @@ void MainWindow::fastSink(qint64 frames)
     if (m_config.repeat_Tx() && m_mode=="MSK144" && m_hisCall!="" && text.contains(m_baseCall)
         && text.contains(m_hisCall + " 73"))  cease_auto_Tx_after_QSO();
 
-    // Reset MSK144 QSY when "RR73" or "73" is received
-    if (m_mode=="MSK144" && msk144qsy && m_hisCall!="" && text.contains(m_baseCall) && text.contains(m_hisCall + " 73")) {
-      QTimer::singleShot (int(1000.0*m_TRperiod), [=] {
-        setRig(m_msk144oldfreq);  // reset MSK144 QSY
-        msk144qsy = false;
-      });
-    }
-    if (m_mode=="MSK144" && msk144qsy && m_hisCall!="" && text.contains(m_baseCall) && text.contains(m_hisCall + " RR73")) {
-      QTimer::singleShot (int(2000.0*m_TRperiod), [=] {
-        setRig(m_msk144oldfreq);  // reset MSK144 QSY
-        msk144qsy = false;
-      });
-    }
-
     // highlight orange and blue callsigns for MSK144
     if(m_config.highlight_orange() or (m_config.highlight_blue())) {
         QString deCall;
