@@ -15,8 +15,8 @@ CAboutDlg::CAboutDlg(QWidget *parent) :
 
   ui->labelTxt->setText ("<h2>" + QString {"WSJT-X v"
                                              + QCoreApplication::applicationVersion ()
-                                             + " " + revision ()}.simplified ()
-                                             + "</h2>"
+                                             + " " + revision ()}.simplified () + "<br />"
+                                             + "improved PLUS</h2>"
 
     "Improved PLUS edition based on WSJT-X by K1JT et al.<br />"
     "&copy; 2020-2025 by Uwe Risse, DG2YCB.  <br /><br />"
