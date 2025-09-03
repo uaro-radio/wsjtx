@@ -11495,8 +11495,8 @@ void MainWindow::on_actionFreqCal_triggered()
 
 void MainWindow::switch_mode (Mode mode)
 {
-  // Don't allow a7 decodes during the first period because they can be leftovers from the previous mode
-  no_a7_decodes = true;
+  no_a7_decodes = true;  // Don't allow a7 decodes during the first period because they can be leftovers from the previous mode
+  msk144qsy = false;     // MSK144 QSY
   QTimer::singleShot ((int(1500.0*m_TRperiod)), [=] {no_a7_decodes = false;});
   if (m_mode != "Q65" && m_specOp==SpecOp::Q65_PILEUP) {
       m_config.setSpecial_None();
@@ -11891,6 +11891,7 @@ void MainWindow::on_bandComboBox_activated (int index)
 
 void MainWindow::band_changed (Frequency f)
 {
+  msk144qsy = false;  // MSK144 QSY
   QTimer::singleShot (900, [=] {
       if (m_mode=="MSK144" && (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m")))
           ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 30).toInt());
