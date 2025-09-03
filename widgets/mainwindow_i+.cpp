@@ -8683,11 +8683,6 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     cursor=ui->decodedTextBrowser2->textCursor();
   }
   DecodedText message {cursor.block().text().trimmed().left(61).remove("TU; ")};
-  if(m_mode=="MSK144" && msk144qsy && m_msk144oldfreq > 0) {
-    monitor (true);
-    setRig(m_msk144oldfreq);  // reset MSK144 QSY
-    msk144qsy = false;
-  }
   if(SpecOp::HOUND==m_specOp && (message.string().mid(4,2).contains("15") or message.string().mid(4,2).contains("45"))) return;  // ignore stations calling in the wrong time slot
 //  if(message.string().contains(";") && message.string().contains("<")) {
 //    QVector<qint32> Freq = {1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000,3575000,7047500,10140000,14080000,18104000,21140000,24919000,28180000,50318000};
@@ -8744,7 +8739,13 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     if(m_mode=="MSK144" && message.frequencyOffset() > 0 && (modifiers==Qt::ControlModifier or modifiers==(Qt::ControlModifier+Qt::AltModifier))) {
       Frequency dial_frequency = m_msk144basefreq + (message.frequencyOffset() - 1500);
       keep_msk144_frequency = true;
-      m_msk144oldfreq = m_freqNominal;
+      if (msk144qsy && m_msk144oldfreq > 0) {
+        m_msk144oldfreq = m_freqNominal + m_msk144oldfreq - m_msk144oldDialFreq;
+        m_msk144oldDialFreq = dial_frequency;
+      } else {
+        m_msk144oldfreq = m_freqNominal;
+        m_msk144oldDialFreq = dial_frequency;
+      }
       monitor (true);
       setRig(dial_frequency);
       ui->labDialFreq->setText (Radio::pretty_frequency_MHz_string (dial_frequency));
