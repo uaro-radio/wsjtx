@@ -249,6 +249,7 @@ bool wait_and_call = false;
 bool no_wait_and_call = false;
 bool no_a7_decodes = false;
 bool keep_frequency = false;
+bool keep_msk144_frequency = false;
 bool keep_last_tx_label = false;
 int m_Nslots0 {1};
 int m_TxFreqFox {300};
@@ -3204,20 +3205,6 @@ void MainWindow::fastSink(qint64 frames)
     // Ensure that Tx stops when "RR73" or "73" is received and repeat_Tx is enabled for MSK144
     if (m_config.repeat_Tx() && m_mode=="MSK144" && m_hisCall!="" && text.contains(m_baseCall)
         && text.contains(m_hisCall + " 73"))  cease_auto_Tx_after_QSO();
-
-    // Reset MSK144 QSY when "RR73" or "73" is received
-    if (m_mode=="MSK144" && msk144qsy && m_hisCall!="" && text.contains(m_baseCall) && text.contains(m_hisCall + " 73")) {
-      QTimer::singleShot (int(1000.0*m_TRperiod), [=] {
-        setRig(m_msk144oldfreq);  // reset MSK144 QSY
-        msk144qsy = false;
-      });
-    }
-    if (m_mode=="MSK144" && msk144qsy && m_hisCall!="" && text.contains(m_baseCall) && text.contains(m_hisCall + " RR73")) {
-      QTimer::singleShot (int(2000.0*m_TRperiod), [=] {
-        setRig(m_msk144oldfreq);  // reset MSK144 QSY
-        msk144qsy = false;
-      });
-    }
 
     // highlight orange and blue callsigns for MSK144
     if(m_config.highlight_orange() or (m_config.highlight_blue())) {
@@ -8588,7 +8575,7 @@ void MainWindow::on_txrb6_toggled(bool status)
     m_ntx=6;
     if (ui->txrb6->text().contains (QRegularExpression {"^(CQ|QRZ) "})) set_dateTimeQSO(-1);
   }
-  if(m_mode=="MSK144" && msk144qsy && !keep_frequency && m_msk144oldfreq > 0) {
+  if(m_mode=="MSK144" && msk144qsy && !keep_msk144_frequency && m_msk144oldfreq > 0) {
     setRig(m_msk144oldfreq);  // reset MSK144 QSY
     msk144qsy = false;
   }
@@ -8666,7 +8653,7 @@ void MainWindow::on_txb6_clicked()
     set_dateTimeQSO(-1);
     ui->txrb6->setChecked(true);
     if(m_transmitting) m_restart=true;
-    if(m_mode=="MSK144" && msk144qsy && !keep_frequency && m_msk144oldfreq > 0) {
+    if(m_mode=="MSK144" && msk144qsy && !keep_msk144_frequency && m_msk144oldfreq > 0) {
       setRig(m_msk144oldfreq);  // reset MSK144 QSY
       msk144qsy = false;
     }
@@ -8752,8 +8739,14 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     // MSK144 QSY: set RF freq so next received MSK144 signal is at 1500 Hz
     if(m_mode=="MSK144" && message.frequencyOffset() > 0 && (modifiers==Qt::ControlModifier or modifiers==(Qt::ControlModifier+Qt::AltModifier))) {
       Frequency dial_frequency = m_msk144basefreq + (message.frequencyOffset() - 1500);
-      keep_frequency = true;
-      m_msk144oldfreq = m_freqNominal;
+      keep_msk144_frequency = true;
+      if (msk144qsy && m_msk144oldfreq > 0) {
+        m_msk144oldfreq = m_freqNominal + m_msk144oldfreq - m_msk144oldDialFreq;
+        m_msk144oldDialFreq = dial_frequency;
+      } else {
+        m_msk144oldfreq = m_freqNominal;
+        m_msk144oldDialFreq = dial_frequency;
+      }
       monitor (true);
       setRig(dial_frequency);
       ui->labDialFreq->setText (Radio::pretty_frequency_MHz_string (dial_frequency));
@@ -8762,7 +8755,7 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
         m_bDoubleClicked = false;
         if (m_auto) auto_tx_mode (false);
       }
-      keep_frequency = false;
+      keep_msk144_frequency = false;
     }
     m_muted = false;
   }
@@ -11485,8 +11478,8 @@ void MainWindow::on_actionFreqCal_triggered()
 
 void MainWindow::switch_mode (Mode mode)
 {
-  // Don't allow a7 decodes during the first period because they can be leftovers from the previous mode
-  no_a7_decodes = true;
+  no_a7_decodes = true;  // Don't allow a7 decodes during the first period because they can be leftovers from the previous mode
+  msk144qsy = false;     // MSK144 QSY
   QTimer::singleShot ((int(1500.0*m_TRperiod)), [=] {no_a7_decodes = false;});
   if (m_mode != "Q65" && m_specOp==SpecOp::Q65_PILEUP) {
       m_config.setSpecial_None();
@@ -11881,6 +11874,7 @@ void MainWindow::on_bandComboBox_activated (int index)
 
 void MainWindow::band_changed (Frequency f)
 {
+  msk144qsy = false;  // MSK144 QSY
   QTimer::singleShot (900, [=] {
       if (m_mode=="MSK144" && (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m")))
           ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 30).toInt());
