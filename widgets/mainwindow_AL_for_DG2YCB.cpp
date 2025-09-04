@@ -250,6 +250,7 @@ bool no_wait_and_call = false;
 bool no_a7_decodes = false;
 bool keep_frequency = false;
 bool keep_msk144_frequency = false;
+bool msk144qsy = false;
 bool keep_last_tx_label = false;
 int m_Nslots0 {1};
 int m_TxFreqFox {300};
@@ -4114,6 +4115,7 @@ void MainWindow::displayDialFrequency ()
 
   update_dynamic_property (ui->labDialFreq, "OOB", !valid);
   ui->labDialFreq->setText (Radio::pretty_frequency_MHz_string (dial_frequency));
+  if(m_mode=="MSK144" && !msk144qsy) m_msk144basefreq = dial_frequency;  // MSK144 QSY
 
   if (ui->actionBand_Buttons->isChecked()) check_button_color();  // update band buttons when dialling the VFO
 }
@@ -8591,7 +8593,10 @@ void MainWindow::on_txrb6_toggled(bool status)
     m_ntx=6;
     if (ui->txrb6->text().contains (QRegularExpression {"^(CQ|QRZ) "})) set_dateTimeQSO(-1);
   }
-  if(m_mode=="MSK144" && !keep_msk144_frequency && m_msk144basefreq > 0) setRig(m_msk144basefreq);  // reset MSK144 QSY
+  if(m_mode=="MSK144" && !keep_msk144_frequency && m_msk144basefreq > 0) {
+    setRig(m_msk144basefreq);  // reset MSK144 QSY
+    msk144qsy = false;
+  }
 }
 
 void MainWindow::on_txb1_clicked()
@@ -8666,7 +8671,10 @@ void MainWindow::on_txb6_clicked()
     set_dateTimeQSO(-1);
     ui->txrb6->setChecked(true);
     if(m_transmitting) m_restart=true;
-    if(m_mode=="MSK144" && !keep_msk144_frequency && m_msk144basefreq > 0) setRig(m_msk144basefreq);  // reset MSK144 QSY
+    if(m_mode=="MSK144" && !keep_msk144_frequency && m_msk144basefreq > 0) {
+      setRig(m_msk144basefreq);  // reset MSK144 QSY
+      msk144qsy = false;
+    }
 }
 
 void MainWindow::doubleClickOnCall2(Qt::KeyboardModifiers modifiers)
@@ -8753,6 +8761,7 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
       monitor (true);
       setRig(dial_frequency);
       ui->labDialFreq->setText (Radio::pretty_frequency_MHz_string (dial_frequency));
+      msk144qsy = true;
       if(modifiers==Qt::AltModifier or modifiers==(Qt::ControlModifier+Qt::AltModifier)) {
         m_bDoubleClicked = false;
         if (m_auto) auto_tx_mode (false);
@@ -11479,8 +11488,8 @@ void MainWindow::on_actionFreqCal_triggered()
 
 void MainWindow::switch_mode (Mode mode)
 {
-  // Don't allow a7 decodes during the first period because they can be leftovers from the previous mode
-  no_a7_decodes = true;
+  no_a7_decodes = true;  // Don't allow a7 decodes during the first period because they can be leftovers from the previous mode
+  msk144qsy = false;     // MSK144 QSY
   QTimer::singleShot ((int(1500.0*m_TRperiod)), [=] {no_a7_decodes = false;});
   if (m_mode != "Q65" && m_specOp==SpecOp::Q65_PILEUP) {
       m_config.setSpecial_None();
@@ -11875,6 +11884,7 @@ void MainWindow::on_bandComboBox_activated (int index)
 
 void MainWindow::band_changed (Frequency f)
 {
+  msk144qsy = false;  // MSK144 QSY
   QTimer::singleShot (900, [=] {
       if (m_mode=="MSK144" && (!(m_currentBand=="6m" or m_currentBand=="4m" or m_currentBand=="2m")))
           ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 30).toInt());
