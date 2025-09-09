@@ -22,7 +22,6 @@ typedef struct dec_data {
   float savg[NSMAX];
   float sred[5760];
   short int d2[NTMAX*RX_SAMPLE_RATE];
-  float dd2[NTMAX*RX_SAMPLE_RATE];
   struct
   {
     int nutc;                   //UTC as integer, HHMM

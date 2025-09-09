@@ -120,17 +120,21 @@ subroutine jt9a()
      endif
   elseif (local_params%nmode.eq.8 .and. local_params%lmultift8 .and. .not. &
        local_params%ndiskdat) then
-     rms=sum(abs(shared_data%dd2(1:10)))+sum(abs(shared_data%dd2(76001:76010)))+ &
-          sum(abs(shared_data%dd2(151670:151680)))
-     if(rms.gt.0.001) then
-        dd(1:npts1)=shared_data%dd2(1:npts1)
-        dd8(1:npts1)=dd(1:npts1)
+     dd(1:npts1)=shared_data%id2(1:npts1)
+     rms=sum(abs(dd(1:10))) + sum(abs(dd(76001:76010))) + sum(abs(dd(151670:151680)))
+     dd8(1:npts1)=dd(1:npts1)
+
+!### WHY WAS THIS STUFF HERE ??? ###
+!     if(rms.gt.0.001) then
+!        dd(1:npts1)=shared_data%dd2(1:npts1)
+!        dd8(1:npts1)=dd(1:npts1)
 !print *,'win7',rms
-     else ! workaround for zero data values of dd2 array under WinXP
-        dd(1:npts1)=shared_data%id2(1:npts1)
-        dd8(1:npts1)=dd(1:npts1)
+!     else ! workaround for zero data values of dd2 array under WinXP
+!        dd(1:npts1)=shared_data%id2(1:npts1)
+!        dd8(1:npts1)=dd(1:npts1)
 !print *, 'winxp',rms
-     endif
+!     endif
+!###
   endif
   !end ft8md
 

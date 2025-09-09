@@ -97,6 +97,5 @@
      real(c_float) :: savg(NSMAX)
      real(c_float) :: sred(5760)
      integer(c_short) :: id2(NMAX)
-     real(c_float) :: dd2(NMAX)
      type(params_block) :: params
   end type dec_data

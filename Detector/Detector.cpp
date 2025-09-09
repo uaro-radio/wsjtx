@@ -8,7 +8,7 @@
 #include "moc_Detector.cpp"
 
 extern "C" {
-  void   fil4_(qint16*, qint32*, qint16*, qint32*, float*); //ft8md added float*
+  void   fil4_(qint16*, qint32*, qint16*, qint32*);
 }
 
 extern dec_data_t dec_data;
@@ -94,7 +94,7 @@ qint64 Detector::writeData (char const * data, qint64 maxSize)
           if(m_downSampleFactor > 1 && dec_data.params.kin>=0 &&
              dec_data.params.kin < (NTMAX*12000 - framesAfterDownSample)) {
             fil4_(&m_buffer[0], &framesToProcess, &dec_data.d2[dec_data.params.kin],
-                &framesAfterDownSample, &dec_data.dd2[dec_data.params.kin]);  //ft8md added  &dec_data.dd2[dec_data.params.kin]
+                &framesAfterDownSample);
             dec_data.params.kin += framesAfterDownSample;
           } else {
             // qDebug() << "framesToProcess     = " << framesToProcess;
