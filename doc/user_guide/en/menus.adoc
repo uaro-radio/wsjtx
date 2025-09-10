@@ -174,11 +174,16 @@ image::mode-menu.png[align="left",alt="Mode Menu"]
 === Decode Menu
 
 All _WSJT-X_ modes offer *Fast*, *Normal*, and *Deep* decoding
-options. *Deep* usually provides the best sensitivity, but at the cost
+options. *Deep* usually provides the best sensitivity, at the cost
 of slower processing and a slightly higher probability of false
-decodes. In FT8 mode you can select a multithreaded decoder with
-additional options that are tunable for best overall performance
-in your setup.
+decodes. 
+
+In FT8 mode you can select a multithreaded decoder with many additional
+options. You may wish to experiment with the various possibilities
+to obtain best overall performance in your setup. In general we find
+the multithreaded decoder yields a greater number of decodes on a busy
+band, while the single-threaded *Deep* setting is best for extreme
+weak signal work.
 
 image::decode-menu.png[align="left",alt="Decode Menu"]
 
