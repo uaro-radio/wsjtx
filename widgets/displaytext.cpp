@@ -961,14 +961,12 @@ void DisplayText::AudioAlerts()
         switch (startIndex) {
         case 0:
             if (play_MyCall) {
-
 #ifdef WIN32
                 effect2->open(QIODevice::ReadOnly);
                 audio->start(effect2);
 #else
                 QSound::play(binPath + "/sounds/MyCall.wav");  // for Linux and macOS
 #endif
-
                 play_MyCall = false;
                 alertsTimer.start (1000);
                 startIndex = nextStartIndex;
@@ -979,14 +977,12 @@ void DisplayText::AudioAlerts()
             Q_FALLTHROUGH();
         case 1:
             if (play_DXCC) {
-
 #ifdef WIN32
                 effect3->open(QIODevice::ReadOnly);
                 audio->start(effect3);
 #else
                 QSound::play(binPath + "/sounds/DXCC.wav");  // for Linux and macOS
 #endif
-
                 play_DXCC = false;
                 play_DXCCOB = false;
                 alertsTimer.start (1200);
@@ -1004,7 +1000,6 @@ void DisplayText::AudioAlerts()
 #else
                 QSound::play(binPath + "/sounds/DXCCOnBand.wav");  // for Linux and macOS
 #endif
-
                 play_DXCCOB = false;
                 alertsTimer.start (1800);
                 startIndex = nextStartIndex;
@@ -1015,7 +1010,6 @@ void DisplayText::AudioAlerts()
             Q_FALLTHROUGH();
         case 3:
             if (play_Continent) {
-
 #ifdef WIN32
                 effect5->open(QIODevice::ReadOnly);
                 audio->start(effect5);
@@ -1171,6 +1165,22 @@ void DisplayText::AudioAlerts()
             }
             Q_FALLTHROUGH();
         case 12:
+            if (play_MyCall) {
+#ifdef WIN32
+              effect2->open(QIODevice::ReadOnly);
+              audio->start(effect2);
+#else
+              QSound::play(binPath + "/sounds/MyCall.wav");  // for Linux and macOS
+#endif
+              play_MyCall = false;
+              alertsTimer.start (1000);
+              startIndex = nextStartIndex;
+              return;
+            } else {
+              nextStartIndex++;
+            }
+            Q_FALLTHROUGH();
+        case 13:
             // stop any running alerts timer, clear temp data, and restart alerts timer
             alertsTimer.stop ();
 #ifdef WIN32
