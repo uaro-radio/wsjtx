@@ -3200,9 +3200,9 @@ void MainWindow::fastSink(qint64 frames)
         }
     }
 
-    // Ensure that Tx stops when "RR73" or "73" is received and repeat_Tx is enabled for MSK144
-    if (m_config.repeat_Tx() && m_mode=="MSK144" && m_hisCall!="" && text.contains(m_baseCall)
-        && text.contains(m_hisCall + " 73"))  cease_auto_Tx_after_QSO();
+    // Ensure that Tx stops when "73" is received and repeat_Tx is enabled for MSK144
+    if (m_config.repeat_Tx() && m_mode=="MSK144" && m_hisCall!="" && text.contains(m_baseCall) && text.contains(m_hisCall + " 73") && m_send_RR73)
+      QTimer::singleShot (int(750*m_TRperiod), [=] {cease_auto_Tx_after_QSO();});
 
     // highlight orange and blue callsigns for MSK144
     if(m_config.highlight_orange() or (m_config.highlight_blue())) {
@@ -9059,8 +9059,13 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
                 else {
                   cease_auto_Tx_after_QSO ();
                 }
-                m_ntx=6;
-                ui->txrb6->setChecked(true);
+                if ((m_mode=="MSK144" or (m_mode=="Q65" && m_config.repeat_Tx())) && !m_send_RR73) {  // ensure that 73 is sent when using RRR
+                  ui->txrb5->click();
+                  QTimer::singleShot (int(1000*m_TRperiod), [=] {m_auto=false;});
+                } else {
+                  m_ntx=6;
+                  ui->txrb6->setChecked(true);
+                }
               }
             else
               {
@@ -10356,7 +10361,7 @@ void MainWindow::cease_auto_Tx_after_QSO ()
 
 void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
 {
-  if (!(m_config.repeat_Tx() && (m_mode=="MSK144" or m_mode=="Q65"))) {
+  if (!((m_config.repeat_Tx() or !m_send_RR73) && (m_mode=="MSK144" or m_mode=="Q65"))) {
     if (SpecOp::NA_VHF==m_specOp && m_mode=="FT4" && m_config.NCCC_Sprint()) {
       QTimer::singleShot (int(850.0*m_TRperiod), [=] {cease_auto_Tx_after_QSO ();});
     } else {
