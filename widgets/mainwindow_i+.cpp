@@ -10045,6 +10045,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       on_actionFT8_triggered();
       ui->houndButton->clearFocus();
       ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
+      QTimer::singleShot (250, [=] {keep_frequency = false;});
   }
   // Search callsign on qrz.com, qrzcq.com or hamqth.com
   if(ui->lookupButton->hasFocus() && (event->button() & Qt::RightButton)) {   // search callsign on QRZ.com

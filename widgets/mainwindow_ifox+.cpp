@@ -10082,6 +10082,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       on_actionFT8_triggered();
       ui->houndButton->clearFocus();
       ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
+      QTimer::singleShot (250, [=] {keep_frequency = false;});
   }
   if(ui->foxButton->hasFocus() && (event->button() & Qt::RightButton)) {     // toggle SuperFox mode (Fox button)
       keep_frequency = true;
