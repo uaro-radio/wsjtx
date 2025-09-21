@@ -10082,6 +10082,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
     ui->DecodeButton->clearFocus();
   }
   if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {     // Switch contest mode on/off
+      keep_frequency = true;
       not_erase = true;  // prevent erasing the decodedTextBrowser
       QTimer::singleShot (350, [=] {not_erase = false;});
       m_specOp=m_config.special_op_id();
@@ -10098,8 +10099,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
         if (m_specOp==SpecOp::HOUND) {
         ui->houndButton->setChecked(false);
         m_config.setSpecial_None();
-        keep_frequency = true;
-        QTimer::singleShot (250, [=] {keep_frequency = false;});
         }
       }
       m_specOp=m_config.special_op_id();
@@ -10130,6 +10129,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)    // mouse press events
       check_button_color();
       ui->ft8Button->clearFocus();
       statusChanged();
+      QTimer::singleShot (250, [=] {keep_frequency = false;});
   }
   // freeze the Tx5 text
   if(ui->txb5->hasFocus() && (event->button() & Qt::RightButton)) {
