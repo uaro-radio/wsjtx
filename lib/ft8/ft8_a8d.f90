@@ -142,6 +142,7 @@ subroutine ft8_a8d(dd,mycall,dxcall,dxgrid,f1a,xdt,fbest,xsnr,plog,msgbest)
   enddo
   sig=sig/nsig
   xsnr=db(sig)-35.0
+  if(xsnr.lt.-30) xsnr=-30                   !Set min SNR for 'a8' decodes
 
   if(msgbest.ne.'') then
 ! Compute probability of successful decode.
