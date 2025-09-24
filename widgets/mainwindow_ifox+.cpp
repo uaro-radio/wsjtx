@@ -8612,7 +8612,7 @@ void MainWindow::on_txrb6_toggled(bool status)
     m_ntx=6;
     if (ui->txrb6->text().contains (QRegularExpression {"^(CQ|QRZ) "})) set_dateTimeQSO(-1);
   }
-  if(m_mode=="MSK144" && !keep_msk144_frequency && m_msk144basefreq > 0 && !programStart) {
+  if(m_mode=="MSK144" && !keep_msk144_frequency && m_msk144basefreq > 0 && !programStart && !m_band_changed) {
     setRig(m_msk144basefreq);  // reset MSK144 QSY
     msk144qsy = false;
   }
@@ -8690,7 +8690,7 @@ void MainWindow::on_txb6_clicked()
     set_dateTimeQSO(-1);
     ui->txrb6->setChecked(true);
     if(m_transmitting) m_restart=true;
-    if(m_mode=="MSK144" && !keep_msk144_frequency && m_msk144basefreq > 0 && !programStart) {
+    if(m_mode=="MSK144" && !keep_msk144_frequency && m_msk144basefreq > 0 && !programStart && !m_band_changed) {
       setRig(m_msk144basefreq);  // reset MSK144 QSY
       msk144qsy = false;
     }
