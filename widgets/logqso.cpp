@@ -171,7 +171,7 @@ void LogQSO::loadSettings ()
   QString comments_location;  // load the content of comments.txt file to the comments combo box
   QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
   comments_location = dataPath.exists("comments.txt") ? dataPath.absoluteFilePath("comments.txt") : m_config->data_dir ().absoluteFilePath ("comments.txt");
-  QFile file2 = {comments_location};
+  QFile file2 {comments_location};
   QTextStream stream2(&file2);
   if(file2.open (QIODevice::ReadOnly | QIODevice::Text)) {
       while (!stream2.atEnd()) {
@@ -533,7 +533,7 @@ void LogQSO::on_addButton_clicked()
   if (m_comments_temp != "") {
       QString comments_location = m_config->writeable_data_dir().absoluteFilePath("comments.txt");
       if(QFileInfo::exists(m_config->writeable_data_dir().absoluteFilePath("comments.txt"))) {
-      QFile file2 = {comments_location};
+      QFile file2 {comments_location};
         if (file2.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
             QTextStream out(&file2);
             out << m_comments_temp              // append new line to comments.txt
@@ -550,7 +550,7 @@ void LogQSO::on_addButton_clicked()
                                            "\"comments.txt\" from your log directory");
         }
       } else {
-          QFile file2 = {comments_location};
+          QFile file2 {comments_location};
          if (file2.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
              QTextStream out(&file2);
              out << ("\n" + m_comments_temp)    // create file "comments.txt" and add a blank line
@@ -568,7 +568,7 @@ void LogQSO::on_addButton_clicked()
          }
       }
       ui->comments->clear();               // clear the comments combo box and reload updated content
-      QFile file2 = {comments_location};
+      QFile file2 {comments_location};
       QTextStream stream2(&file2);
       if(file2.open (QIODevice::ReadOnly | QIODevice::Text)) {
           while (!stream2.atEnd()) {
