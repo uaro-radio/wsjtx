@@ -2799,7 +2799,7 @@ Right click for insert and delete options.</string>
             <item>
              <widget class="QPushButton" name="reset_highlighting_to_defaults2_push_button">
               <property name="text">
-               <string>Reset Highlighting to wsjt-x_improved default</string>
+               <string>Reset Highlighting to WSJT-X Improved default</string>
               </property>
              </widget>
             </item>
@@ -4092,7 +4092,7 @@ Right click for insert and delete options.</string>
        <item row="0" column="0">
         <widget class="QLabel" name="label_16">
          <property name="text">
-          <string>WARNING: THIS FEATURE IS FOR EXPERIENCED USERS ONLY !!!</string>
+          <string>THIS FEATURE IS FOR EXPERIENCED USERS ONLY</string>
          </property>
         </widget>
        </item>
@@ -4106,7 +4106,7 @@ Right click for insert and delete options.</string>
        <item row="2" column="0">
         <widget class="QLabel" name="label_19">
          <property name="text">
-          <string>Ensure that your rig is NOT connected via &quot;Default Device&quot; !!!</string>
+          <string>Ensure that your rig is NOT connected via &quot;Default Device&quot;.</string>
          </property>
         </widget>
        </item>
@@ -4334,7 +4334,7 @@ Right click for insert and delete options.</string>
        <item row="3" column="0">
         <widget class="QLabel" name="label_20">
          <property name="text">
-          <string>This requirement is fulfilled when your rig is connected via USB audio (FT-991, IC-7300, etc.).</string>
+          <string>This requirement is fulfilled when your rig is connected via USB audio.</string>
          </property>
         </widget>
        </item>
@@ -4888,13 +4888,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="CAT_stop_bits_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
-  <buttongroup name="TX_audio_source_button_group"/>
   <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="special_op_activity_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="CAT_stop_bits_button_group"/>
+  <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
  </buttongroups>
 </ui>

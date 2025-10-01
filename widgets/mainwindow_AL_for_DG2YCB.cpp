@@ -3225,21 +3225,33 @@ void MainWindow::fastSink(qint64 frames)
         QStringList tw;
         tw=text.mid(22).split(" ",SkipEmptyParts);
         if (m_config.highlight_orange() && (m_config.highlight_orange_callsigns().contains(deCall + ",")
-            or m_config.highlight_orange_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_orange_callsigns().contains(deCall.left(2) + ";")))
-            ui->decodedTextBrowser->highlight_callsign(deCall, QColor(225,75,0), QColor(255,255,255), true);
-        if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid))
-            ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(225,75,0), QColor(255,255,255), true);
+            or m_config.highlight_orange_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_orange_callsigns().contains(deCall.left(2) + ";"))) {
+          ui->decodedTextBrowser->highlight_callsign(deCall, QColor(225,75,0), QColor(255,255,255), true);
+          if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+        }
+        if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid)) {
+          ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(225,75,0), QColor(255,255,255), true);
+          if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+        }
         if (m_config.highlight_blue() && (m_config.highlight_blue_callsigns().contains(deCall + ",")
-            or m_config.highlight_blue_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_blue_callsigns().contains(deCall.left(2) + ";")))
-            ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
-        if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid))
-            ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
+            or m_config.highlight_blue_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_blue_callsigns().contains(deCall.left(2) + ";"))) {
+          ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
+          if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+        }
+        if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid)) {
+          ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
+          if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+        }
         // highlight directional calls
         if (tw.size () > 2) {
-          if (m_config.highlight_orange() && tw[0]=="CQ" && m_config.highlight_orange_callsigns().contains("," + tw[1] + ","))
-              ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(225,75,0), QColor(255,255,255), true);
-          if (m_config.highlight_blue() && tw[0]=="CQ" && m_config.highlight_blue_callsigns().contains("," + tw[1] + ","))
-              ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(0,100,255), QColor(255,255,255), true);
+          if (m_config.highlight_orange() && tw[0]=="CQ" && m_config.highlight_orange_callsigns().contains("," + tw[1] + ",")) {
+            ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(225,75,0), QColor(255,255,255), true);
+            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+          }
+          if (m_config.highlight_blue() && tw[0]=="CQ" && m_config.highlight_blue_callsigns().contains("," + tw[1] + ",")) {
+            ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(0,100,255), QColor(255,255,255), true);
+            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+          }
         }
     }
 
@@ -3311,7 +3323,7 @@ void MainWindow::fastSink(qint64 frames)
     // Highlight DX Call/Grid for MSK144
     if (!pounce && (m_config.highlight_DXcall () or m_config.alert_Enabled()) && (m_hisCall!="") && ((text.contains(QRegularExpression {"(\\w+) " + m_hisCall}))
         || (decodedtext.string().contains("<...> " + m_hisCall))))  {
-      if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
+      if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;
       if (m_config.highlight_DXcall()) {
         // repeated highlighting to override JTAlert
         ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
@@ -3322,10 +3334,10 @@ void MainWindow::fastSink(qint64 frames)
     }
     if (!pounce && (m_config.highlight_DXgrid () or m_config.alert_Enabled()) && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid.left(4))))  {
       if (m_config.highlight_DXgrid()) ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
-      if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
+      if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;
     }
     QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
-      if ((m_config.alert_Enabled()) && (m_config.alert_DXcall()) && (play_DXcall) && (m_hisCall!="")) {
+      if (m_config.alert_Enabled() && ((m_config.alert_DXcall() && play_DXcall && m_hisCall!="") or (m_config.alert_Wanted() && play_Wanted))) {
 #ifdef WIN32
         QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
         QString binPath = QCoreApplication::applicationDirPath();
@@ -3339,16 +3351,19 @@ void MainWindow::fastSink(qint64 frames)
         audio = new QAudioOutput(format, this);
         connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
         QFile *effect1 = new QFile(this);
-        effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXcall.wav"));
+        if (m_config.alert_DXcall() && play_DXcall) effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXcall.wav"));
+        else if (m_config.alert_Wanted() && play_Wanted) effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/Wanted.wav"));
         effect1->open(QIODevice::ReadOnly);
         audio->start(effect1);
 #else
         QString binPath = QCoreApplication::applicationDirPath();
-        QSound::play(binPath + "/sounds/DXcall.wav");  // for Linux and macOS
+        if (m_config.alert_DXcall() && play_DXcall) QSound::play(binPath + "/sounds/DXcall.wav");  // for Linux and macOS
+        else if (m_config.alert_DXcall() && play_Wanted) QSound::play(binPath + "/sounds/Wanted.wav");  // for Linux and macOS
 #endif
         play_DXcall = false;
+        play_Wanted = false;
       }
-    });                                                  // UR delete for versions without alerts
+    });
 
     m_bDecoded=true;
     auto_sequence (decodedtext, ui->sbFtol->value (), std::numeric_limits<unsigned>::max ());
@@ -7074,21 +7089,33 @@ void MainWindow::readFromStdout()                             //readFromStdout
           QString deGrid;
           decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
           if (m_config.highlight_orange() && (m_config.highlight_orange_callsigns().contains(deCall + ",")
-              or m_config.highlight_orange_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_orange_callsigns().contains(deCall.left(2) + ";")))
-              ui->decodedTextBrowser->highlight_callsign(deCall, QColor(225,75,0), QColor(255,255,255), true);
-          if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid))
-              ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(225,75,0), QColor(255,255,255), true);
+              or m_config.highlight_orange_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_orange_callsigns().contains(deCall.left(2) + ";"))) {
+            ui->decodedTextBrowser->highlight_callsign(deCall, QColor(225,75,0), QColor(255,255,255), true);
+            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+          }
+          if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid)) {
+            ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(225,75,0), QColor(255,255,255), true);
+            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+          }
           if (m_config.highlight_blue() && (m_config.highlight_blue_callsigns().contains(deCall + ",")
-              or m_config.highlight_blue_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_blue_callsigns().contains(deCall.left(2) + ";")))
-              ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
-          if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid))
-              ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
+              or m_config.highlight_blue_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_blue_callsigns().contains(deCall.left(2) + ";"))) {
+            ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
+            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+          }
+          if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid)) {
+            ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
+            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+          }
           // highlight directional calls
           if (tw.size () > 2) {
-            if (m_config.highlight_orange() && tw[0]=="CQ" && m_config.highlight_orange_callsigns().contains("," + tw[1] + ","))
-                ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(225,75,0), QColor(255,255,255), true);
-            if (m_config.highlight_blue() && tw[0]=="CQ" && m_config.highlight_blue_callsigns().contains("," + tw[1] + ","))
-                ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(0,100,255), QColor(255,255,255), true);
+            if (m_config.highlight_orange() && tw[0]=="CQ" && m_config.highlight_orange_callsigns().contains("," + tw[1] + ",")) {
+              ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(225,75,0), QColor(255,255,255), true);
+              if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+            }
+            if (m_config.highlight_blue() && tw[0]=="CQ" && m_config.highlight_blue_callsigns().contains("," + tw[1] + ",")) {
+              ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(0,100,255), QColor(255,255,255), true);
+              if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+            }
           }
         }
 
@@ -7098,7 +7125,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
              || (decodedtext.string().contains(QRegularExpression{"(\\w+) <" + m_hisCall + ">"}))
              || (decodedtext.string().contains(QRegularExpression{"<(\\w+)> " + m_hisCall}))
              || (decodedtext.string().contains(QRegularExpression{"<...> " + m_hisCall})))) {
-          if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
+          if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;
           if (m_config.highlight_DXcall()) {
             // repeated highlighting to override JTAlert
             ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
@@ -7110,10 +7137,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
         if (!pounce && (m_config.highlight_DXgrid () or m_config.alert_Enabled()) && (m_hisGrid!="") &&
             (decodedtext.string().contains(m_hisGrid.left(4))))  {
           if (m_config.highlight_DXgrid()) ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
-          if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;    // UR disable for versions without alerts
+          if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;
         }
         QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
-          if (m_config.alert_Enabled() && m_config.alert_DXcall() && play_DXcall && m_hisCall!="") {
+          if (m_config.alert_Enabled() && ((m_config.alert_DXcall() && play_DXcall && m_hisCall!="") or (m_config.alert_Wanted() && play_Wanted))) {
 #ifdef WIN32
             QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
             QString binPath = QCoreApplication::applicationDirPath();
@@ -7127,16 +7154,19 @@ void MainWindow::readFromStdout()                             //readFromStdout
             audio = new QAudioOutput(format, this);
             connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
             QFile *effect1 = new QFile(this);
-            effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXcall.wav"));
+            if (m_config.alert_DXcall() && play_DXcall) effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/DXcall.wav"));
+            else if (m_config.alert_Wanted() && play_Wanted) effect1->setFileName(QString("%1/%2").arg(binPath, "/sounds/Wanted.wav"));
             effect1->open(QIODevice::ReadOnly);
             audio->start(effect1);
 #else
             QString binPath = QCoreApplication::applicationDirPath();
-            QSound::play(binPath + "/sounds/DXcall.wav");  // for Linux and macOS
+            if (m_config.alert_DXcall() && play_DXcall) QSound::play(binPath + "/sounds/DXcall.wav");  // for Linux and macOS
+            else if (m_config.alert_DXcall() && play_Wanted) QSound::play(binPath + "/sounds/Wanted.wav");  // for Linux and macOS
 #endif
             play_DXcall = false;
+            play_Wanted = false;
           }
-        });                                                  // UR delete for versions without alerts
+        });
 
           if (m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress && !ignored && !filtered) {
             QString messagePriority=ui->decodedTextBrowser->CQPriority();

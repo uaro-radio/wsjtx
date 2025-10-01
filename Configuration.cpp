@@ -959,6 +959,7 @@ private:
   bool alert_ITUZ_;
   bool alert_ITUZOB_;
   bool alert_DXcall_;
+  bool alert_Wanted_;
   bool alert_QSYmessage_;
   bool alert_Enabled_;
 
@@ -1147,6 +1148,7 @@ bool Configuration::alert_CQZOB () const {return m_->alert_CQZOB_;}
 bool Configuration::alert_ITUZ () const {return m_->alert_ITUZ_;}
 bool Configuration::alert_ITUZOB () const {return m_->alert_ITUZOB_;}
 bool Configuration::alert_DXcall () const {return m_->alert_DXcall_;}
+bool Configuration::alert_Wanted () const {return m_->alert_Wanted_;}
 bool Configuration::alert_QSYmessage () const {return m_->alert_QSYmessage_;}
 bool Configuration::alert_Enabled () const {return m_->alert_Enabled_;}
 
@@ -2285,6 +2287,7 @@ void Configuration::impl::initialize_models ()
   ui_->cbITUZ->setChecked(alert_ITUZ_);
   ui_->cbITUZOB->setChecked(alert_ITUZOB_);
   ui_->cbDXcall->setChecked(alert_DXcall_);
+  ui_->cbWanted->setChecked(alert_Wanted_);
   ui_->cbQSYmessage->setChecked(alert_QSYmessage_);
   ui_->pbAlerts->setChecked(alert_Enabled_);
 
@@ -2660,6 +2663,7 @@ void Configuration::impl::read_settings ()
   alert_ITUZ_ = settings_->value("alert_ITUZ",false).toBool ();
   alert_ITUZOB_ = settings_->value("alert_ITUZOB",false).toBool ();
   alert_DXcall_ = settings_->value("alert_DXcall",false).toBool ();
+  alert_Wanted_ = settings_->value("alert_Wanted",false).toBool ();
   alert_QSYmessage_ = settings_->value("alert_QSYmessage",false).toBool ();
   alert_Enabled_ = settings_->value("alert_Enabled",false).toBool ();
   // Reset Rig to None if TCI was selected but no IP address was specified
@@ -2930,6 +2934,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("alert_ITUZ", alert_ITUZ_);
   settings_->setValue ("alert_ITUZOB", alert_ITUZOB_);
   settings_->setValue ("alert_DXcall", alert_DXcall_);
+  settings_->setValue ("alert_Wanted", alert_Wanted_);
   settings_->setValue ("alert_QSYmessage", alert_QSYmessage_);
   settings_->setValue ("alert_Enabled", alert_Enabled_);
   settings_->sync ();
@@ -3586,6 +3591,7 @@ void Configuration::impl::accept ()
   alert_ITUZ_ = ui_->cbITUZ->isChecked();
   alert_ITUZOB_ = ui_->cbITUZOB->isChecked();
   alert_DXcall_ = ui_->cbDXcall->isChecked();
+  alert_Wanted_ = ui_->cbWanted->isChecked();
   alert_QSYmessage_ = ui_->cbQSYmessage->isChecked();
   alert_Enabled_ = ui_->pbAlerts->isChecked();
 

@@ -506,6 +506,7 @@ private:
   void configActiveStations();
   void sfox_tx();
   bool play_DXcall = false;
+  bool play_Wanted = false;
   bool inSettings = false;
 
   QProcessEnvironment const& m_env;
