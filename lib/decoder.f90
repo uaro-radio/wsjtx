@@ -1641,7 +1641,11 @@ contains
     annot='  '
     if(nap.ne.0) then
       msglen = len_trim(decoded0)
-      write(annot,'(a1,i0)') 'a',nap
+      if(nap.ge.9) then 
+        write(annot,'(a1,i1)') 'a',9
+      else
+        write(annot,'(a1,i1)') 'a',nap
+      endif
       if(qual.lt.0.17) then
         if(msglen.lt.19) then
           decoded0(20:20) = '?'           
