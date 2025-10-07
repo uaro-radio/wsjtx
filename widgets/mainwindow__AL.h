@@ -243,6 +243,7 @@ private slots:
   void on_actionDefault_event_logging_triggered();
   void on_actionDiagnostic_mode_triggered();
   void on_actionDisable_event_logging_triggered();
+  void on_actionDownload_EME_Ephemeris_Chart_triggered();
   void on_actionKeyboard_shortcuts_triggered();
   void on_actionSpecial_mouse_commands_triggered();
   void on_actionSolve_FreqCal_triggered();

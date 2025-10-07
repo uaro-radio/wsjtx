@@ -5071,6 +5071,18 @@ void MainWindow::on_actionDelete_all_wav_files_in_SaveDir_triggered()
   }
 }
 
+void MainWindow::on_actionDownload_EME_Ephemeris_Chart_triggered()
+{
+  bool ok{false};
+  qint32 nyear = QInputDialog::getInt(this,tr("EME Chart"),
+       tr("Select Year"),QDate::currentDate().year(),2025,2040,1,&ok);
+  if(ok) {
+    QString URL="https://wsjt.sourceforge.io/EMEchart_2025.pdf";
+    URL.replace("2025",QString::number(nyear));
+    QDesktopServices::openUrl (QUrl {URL});
+  }
+}
+
 void MainWindow::on_actionNone_triggered()                    //Save None
 {
   m_saveDecoded=false;
