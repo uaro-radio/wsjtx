@@ -1593,6 +1593,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("QRG7", ui->sbQRG7->value ());
   m_settings->setValue ("QRG8", ui->sbQRG8->value ());
   m_settings->setValue ("reduceFalseDecodes", ui->actionReduce_false_decodes->isChecked() );
+  m_settings->setValue ("HideAPInfo", ui->actionHide_AP_info->isChecked() );
   m_settings->setValue ("FullDuplexMode", ui->actionFull_Duplex_Mode->isChecked() );
   m_settings->setValue ("actionDontSplitALLTXT", ui->actionDon_t_split_ALL_TXT->isChecked() );
   m_settings->setValue ("splitAllTxtYearly", ui->actionSplit_ALL_TXT_yearly->isChecked() );
@@ -1797,6 +1798,7 @@ void MainWindow::readSettings()
   ui->sbQRG7->setValue (m_settings->value ("QRG7", 24911).toInt ());
   ui->sbQRG8->setValue (m_settings->value ("QRG8", 28091).toInt ());
   ui->actionReduce_false_decodes->setChecked(m_settings->value("reduceFalseDecodes", false).toBool());
+  ui->actionHide_AP_info->setChecked(m_settings->value("HideAPInfo", false).toBool());
   ui->actionFull_Duplex_Mode->setChecked(m_settings->value("FullDuplexMode", false).toBool());
   ui->labDXped->setText(m_settings->value("labDXpedText",QString {}).toString ());
   ui->actionDon_t_split_ALL_TXT->setChecked(m_settings->value("actionDontSplitALLTXT", true).toBool());
@@ -6867,16 +6869,26 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
           // display country names for JT65 and JT9 like for FT8
           if ((m_mode == "JT65" or m_mode == "JT9" or m_mode == "JT4") && m_config.DXCC()) {
-              DecodedText decodedtextJT {((QString::fromUtf8(line_read.left(44).constData())) + (QString::fromUtf8(line_read.mid(62, 2).constData())))};
-              ui->decodedTextBrowser->displayDecodedText (decodedtextJT, m_config.my_callsign (), m_mode, m_config.DXCC (),
+            DecodedText decodedtextJT {((QString::fromUtf8(line_read.left(44).constData())) + (QString::fromUtf8(line_read.mid(62, 2).constData())))};
+            ui->decodedTextBrowser->displayDecodedText (decodedtextJT, m_config.my_callsign (), m_mode, m_config.DXCC (),
+                                                        m_logBook, m_currentBandPeriod, m_config.ppfx (),
+                                                        ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
+                                                        haveFSpread, fSpread, bDisplayPoints, m_points, distance, m_muted);
+          } else {
+            if (ui->actionHide_AP_info->isVisible() && ui->actionHide_AP_info->isChecked()) {
+              // Hide FT8 AP information
+              DecodedText decodedtext2 {(QString::fromUtf8(line_read.replace("a1","").replace("a2","").replace("a3","").replace("a4","")
+                                         .replace("a5","").replace("a6","").replace("a7","").replace("a8","").replace("a9","").replace("?","")))};
+              ui->decodedTextBrowser->displayDecodedText (decodedtext2, m_config.my_callsign (), m_mode, m_config.DXCC (),
                                                           m_logBook, m_currentBandPeriod, m_config.ppfx (),
                                                           ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
                                                           haveFSpread, fSpread, bDisplayPoints, m_points, distance, m_muted);
-          } else {
+            } else {
               ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
                                                           m_logBook, m_currentBandPeriod, m_config.ppfx (),
                                                           ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
                                                           haveFSpread, fSpread, bDisplayPoints, m_points, distance, m_muted);
+            }
           }
           if(m_position != 0) ui->decodedTextBrowser->horizontalScrollBar()->setValue(m_position);
         }
@@ -10659,6 +10671,7 @@ void MainWindow::displayWidgets(qint64 n)
     }
     if(i==23) ui->cbSWL->setVisible(b);
     if(i==24) ui->actionEnable_AP_FT8->setVisible (b);
+    if(i==24) ui->actionHide_AP_info->setVisible (b);
     if(i==25) ui->actionEnable_AP_JT65->setVisible (b);
     if(i==26) ui->actionEnable_AP_DXcall->setVisible (b);
     if(i==27) ui->respondComboBox->setVisible(b);

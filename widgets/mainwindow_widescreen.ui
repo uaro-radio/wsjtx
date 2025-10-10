@@ -4855,6 +4855,7 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionEnable_AP_FT8"/>
     <addaction name="actionEnable_AP_JT65"/>
     <addaction name="actionEnable_AP_DXcall"/>
+    <addaction name="actionHide_AP_info"/>
     <addaction name="actionAuto_Clear_Avg"/>
     <addaction name="actionDisable_clicks_on_waterfall"/>
     <addaction name="actionReduce_false_decodes"/>
@@ -6119,6 +6120,17 @@ QPushButton[state=&quot;ok&quot;] {
   <action name="actionDownload_EME_Ephemeris_Chart">
    <property name="text">
     <string>Download EME Ephemeris Chart</string>
+   </property>
+  </action>
+  <action name="actionHide_AP_info">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide AP information</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hide AP information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
  </widget>
