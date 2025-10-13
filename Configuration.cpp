@@ -2226,6 +2226,7 @@ void Configuration::impl::initialize_models ()
   ui_->CAT_handshake_button_group->button (rig_params_.handshake)->setChecked (true);
   ui_->cbSortAlphabetically->setChecked(sortAlphabetically_);
   ui_->cbHideCARD->setChecked(hideCARD_);
+  ui_->cbHideCARD->setEnabled(sortAlphabetically_);
   ui_->checkBoxAzElExtraLines->setChecked(AzElExtraLines_);
   ui_->checkBoxPwrBandTxMemory->setChecked(pwrBandTxMemory_);
   ui_->checkBoxPwrBandTuneMemory->setChecked(pwrBandTuneMemory_);
@@ -4754,6 +4755,7 @@ void Configuration::impl::on_Contest_Name_editingFinished ()
 void Configuration::impl::on_cbSortAlphabetically_clicked (bool)
 {
   sortAlphabetically_ = ui_->cbSortAlphabetically->isChecked();
+  ui_->cbHideCARD->setEnabled(sortAlphabetically_);
 }
 
 void Configuration::impl::on_cbHideCARD_clicked (bool)
@@ -5488,71 +5490,83 @@ QAudioDeviceInfo Configuration::impl::find_audio_device (QAudio::Mode mode, QCom
 // load the available audio devices into the selection combo box
 void Configuration::impl::load_audio_devices(QAudio::Mode mode, QComboBox * combo_box, QAudioDeviceInfo * device)
 {
-    using std::copy;
-    using std::back_inserter;
+  using std::copy;
+  using std::back_inserter;
 
-    QString selected_device_name = combo_box->currentText(); // Get the currently selected item text
-    combo_box->clear();
+  QString selected_device_name = combo_box->currentText(); // Get the currently selected item text
+  combo_box->clear();
 
-    Q_EMIT self_->enumerating_audio_devices();
+  Q_EMIT self_->enumerating_audio_devices();
+
+  if (sortAlphabetically_) {
     auto const& devices = QAudioDeviceInfo::availableDevices(mode);
-
     printf ("rig_active_ is: %d and tci_audio_ is %d\n", rig_active_, tci_audio_);
     qDebug () << "qDebug says rig_active_ is: " << rig_active_ << '\n';
     qDebug () << "qDebug says tci_audio_ is: " << tci_audio_ << '\n';
     int current_index = -1;
     if (is_tci_ && tci_audio_) {
-          QList<QVariant> channel_counts;
-          QList<int> scc({1});
-          copy (scc.cbegin (), scc.cend (), back_inserter (channel_counts));
-          combo_box->addItem ("TCI audio", channel_counts);
-          current_index = 0;
-          return;
+      QList<QVariant> channel_counts;
+      QList<int> scc({1});
+      copy (scc.cbegin (), scc.cend (), back_inserter (channel_counts));
+      combo_box->addItem ("TCI audio", channel_counts);
+      current_index = 0;
+      return;
     }
-
     // Use a vector to store device names and associated audio_info_type
     std::vector<std::pair<QString, audio_info_type>> device_items;
 
-    Q_FOREACH(auto const& p, devices)
-    {
-        // Check if the device supports the "audio/pcm" codec
-        if (!p.supportedCodecs().contains("audio/pcm")) {
-            continue; // Skip devices that do not support "audio/pcm"
-        }
+    Q_FOREACH(auto const& p, devices) {
+      // Check if the device supports the "audio/pcm" codec
+      if (!p.supportedCodecs().contains("audio/pcm")) {
+          continue; // Skip devices that do not support "audio/pcm"
+      }
 #ifndef WIN32
-        if (hideCARD_ && p.deviceName().contains("CARD=")) {
-            continue; // skip ALSA devices on Linux -- we never use them
-        }
+      if (hideCARD_ && p.deviceName().contains("CARD=")) {
+          continue; // skip ALSA devices on Linux -- we never use them
+      }
 #endif
-        // Convert supported channel counts into something we can store in the item model
-        QList<QVariant> channel_counts;
-        auto scc = p.supportedChannelCounts();
-        copy(scc.cbegin(), scc.cend(), back_inserter(channel_counts));
+      // Convert supported channel counts into something we can store in the item model
+      QList<QVariant> channel_counts;
+      auto scc = p.supportedChannelCounts();
+      copy(scc.cbegin(), scc.cend(), back_inserter(channel_counts));
 
-        audio_info_type info = qMakePair(p, channel_counts);
-        device_items.emplace_back(p.deviceName(), info);
+      audio_info_type info = qMakePair(p, channel_counts);
+      device_items.emplace_back(p.deviceName(), info);
     }
-
     // Sort the device items by device name
-    if (sortAlphabetically_) {
       std::sort(device_items.begin(), device_items.end(), [](const std::pair<QString, audio_info_type>& a, const std::pair<QString, audio_info_type>& b) {
           return a.first.toLower() < b.first.toLower();
       });
-    }
-
     // Add the sorted items back to the combo box
     for (int i = 0; i < static_cast<int>(device_items.size()); ++i)
     {
-        const auto& item = device_items[i];
-        combo_box->addItem(item.first, QVariant::fromValue(item.second));
-
-        // Match the device name with the currently selected combo box item
-        if (device->deviceName() == item.first)
-        {
-            current_index = i;
-            combo_box->setCurrentIndex(current_index);
-        }
+      const auto& item = device_items[i];
+      combo_box->addItem(item.first, QVariant::fromValue(item.second));
+      // Match the device name with the currently selected combo box item
+      if (device->deviceName() == item.first) {
+        current_index = i;
+        combo_box->setCurrentIndex(current_index);
+      }
     }
+  } else {
+    Q_EMIT self_->enumerating_audio_devices ();
+    int current_index = -1;
+    auto const& devices = QAudioDeviceInfo::availableDevices (mode);
+    Q_FOREACH (auto const& p, devices) {
+      // qDebug () << "Configuration::impl::load_audio_devices: input:" << (QAudio::AudioInput == mode) << "name:" << p.deviceName () << "preferred format:" << p.preferredFormat () << "endians:" << p.supportedByteOrders () << "codecs:" << p.supportedCodecs () << "channels:" << p.supportedChannelCounts () << "rates:" << p.supportedSampleRates () << "sizes:" << p.supportedSampleSizes () << "types:" << p.supportedSampleTypes ();
+
+      // convert supported channel counts into something we can store in the item model
+      QList<QVariant> channel_counts;
+      auto scc = p.supportedChannelCounts ();
+      copy (scc.cbegin (), scc.cend (), back_inserter (channel_counts));
+
+      combo_box->addItem (p.deviceName (), QVariant::fromValue (audio_info_type {p, channel_counts}));
+      if (p == *device) {
+          current_index = combo_box->count () - 1;
+      }
+    }
+    combo_box->setCurrentIndex (current_index);
+  }
 }
 
 
