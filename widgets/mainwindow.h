@@ -370,6 +370,7 @@ private slots:
   void on_bandComboBox_currentIndexChanged (int index);
   void on_bandComboBox_editTextChanged (QString const& text);
   void on_bandComboBox_activated (int index);
+  void on_sbDialFreq_valueChanged(double freqMHz);
   void on_readFreq_clicked();
   void on_RxFreqSpinBox_valueChanged(int n);
   void on_outAttenuation_valueChanged (int);
