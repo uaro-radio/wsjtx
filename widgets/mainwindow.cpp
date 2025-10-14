@@ -11961,7 +11961,6 @@ void MainWindow::on_sbDialFreq_valueChanged(double freqMHz)
   Frequency f=1000000.0*freqMHz;
   m_bandEdited = true;
   band_changed(f);
-//  qDebug() << "aa" << freqMHz << f << m_freqNominal;
 }
 
 void MainWindow::band_changed (Frequency f)

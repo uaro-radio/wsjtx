@@ -4407,6 +4407,9 @@ QPushButton[state=&quot;ok&quot;] {
            </item>
            <item row="1" column="0" colspan="2">
             <widget class="QDoubleSpinBox" name="sbDialFreq">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Adjust or edit this number to set dial frequency (MHz).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
              </property>
@@ -4711,7 +4714,7 @@ QPushButton[state=&quot;ok&quot;] {
      <x>0</x>
      <y>0</y>
      <width>880</width>
-     <height>17</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
