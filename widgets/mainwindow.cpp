@@ -11950,18 +11950,9 @@ void MainWindow::on_bandComboBox_activated (int index)
     }
   m_bandEdited = true;
   band_changed (frequency);
-  ui->sbDialFreq->setValue(0.000001*frequency);
   m_wideGraph->setRxBand (m_config.bands ()->find (frequency));
 //  m_specOp=m_config.special_op_id();
 //  if (m_specOp==SpecOp::HOUND) auto_tx_mode(false);  // only required if RETURN intiates TXing
-}
-
-void MainWindow::on_sbDialFreq_valueChanged(double freqMHz)
-{
-  Frequency f=1000000.0*freqMHz;
-  m_bandEdited = true;
-  band_changed(f);
-//  qDebug() << "aa" << freqMHz << f << m_freqNominal;
 }
 
 void MainWindow::band_changed (Frequency f)
