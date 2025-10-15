@@ -89,13 +89,17 @@ void Messages::sendLiveCQData(QStringList decodeList) {
         utcdatetimeUTCString = utcdatetimeUTCString + "Z";
         QString dB = thePostLine.at(4).trimmed();
         QString msgType = thePostLine.at(5).trimmed().toUpper();
-        QString callsign = thePostLine.at(6).trimmed().toUpper();
+        QString callsign = "";
         QString grid = "--";
         QString mode="";
         QString txpol = " ";
         QString dT = "";
         QString modeChar = "";
-        if(thePostLine.at(7).contains(".")) {
+        // Handle CQ CALL but NO GRID -- dot at 7
+      if(thePostLine.at(7).contains(".")) {
+          callsign = thePostLine.at(6).trimmed().toUpper();
+          bool isCall = testCall(callsign);
+          if(!isCall) continue;
           dT =thePostLine.at(7).trimmed();
           modeChar = thePostLine.at(8).trimmed(); 
           if(modeChar.contains("#")) mode = "JT65" + modeChar.back();
@@ -105,9 +109,21 @@ void Messages::sendLiveCQData(QStringList decodeList) {
           } else {
             rpol = "--";
           }
-          txpol = "--";    
-        } else {
-          grid = thePostLine.at(7).trimmed();
+          txpol = "--";  
+          
+        // Handle CQ CALL GRID or CQ XXX CALL -- dot at 8
+        } else if (thePostLine.at(8).contains(".")) {
+          // Test for callsign at thePostLine(6)
+          callsign = thePostLine.at(6).trimmed().toUpper();
+          bool isCall = testCall(callsign);
+          if(isCall) {
+            grid = thePostLine.at(7).trimmed();  
+            // Handle CQ XXX CALL
+          } else {
+            callsign = thePostLine.at(7).trimmed().toUpper();
+            bool isCall = testCall(callsign);
+            if(!isCall) continue;
+          }          
           dT =thePostLine.at(8).trimmed();
           modeChar = thePostLine.at(9).trimmed();
           if(modeChar.contains("#")) 
@@ -115,36 +131,136 @@ void Messages::sendLiveCQData(QStringList decodeList) {
             mode = "JT65" + modeChar.back();            
             if (m_xpol) {
               rpol = thePostLine.at(2).trimmed();
-              if(thePostLine.at(10).contains("H")) txpol = "H";
-              else if(thePostLine.at(10).contains("V")) txpol = "V";
-            } else txpol="--";
+              if(thePostLine.length()==11) {
+                if(thePostLine.at(10).contains("H")) txpol = "H";
+                else if(thePostLine.at(10).contains("V")) txpol = "V";
+                else txpol+"--";
+              } else txpol="--";
+            }
           } else if(modeChar.contains(":")) {
             mode = "Q65-60" + modeChar.back();            
             if (m_xpol) {
               rpol = thePostLine.at(2).trimmed();
+              if(thePostLine.length()==11) {
               if(thePostLine.at(10).contains("H")) txpol = "H";
               else if(thePostLine.at(10).contains("V")) txpol = "V";
+              else txpol="--";
             } else txpol="--";
           }
         }
+        // Handle CQ XXX CALL GRID
+        }  else if(thePostLine.at(9).contains(".")) {
+            callsign = thePostLine.at(7).trimmed().toUpper();
+            bool isCall = testCall(callsign);
+            if(!isCall) continue;
+            grid = thePostLine.at(8).trimmed();  
+             
+            dT =thePostLine.at(9).trimmed();
+            modeChar = thePostLine.at(10).trimmed();
+            if(modeChar.contains("#")) 
+            {  
+              mode = "JT65" + modeChar.back();            
+              if (m_xpol) {
+                rpol = thePostLine.at(2).trimmed();
+                if(thePostLine.length()==12) {
+                  if(thePostLine.at(11).contains("H")) txpol = "H";
+                  else if(thePostLine.at(11).contains("V")) txpol = "V";
+                  else txpol="--";
+                } else txpol="--";                
+              }
+            } else if(modeChar.contains(":")) {
+              mode = "Q65-60" + modeChar.back();            
+              if (m_xpol) {
+                rpol = thePostLine.at(2).trimmed();
+                if(thePostLine.length()==12) {
+                  if(thePostLine.at(11).contains("H")) txpol = "H";
+                  else if(thePostLine.at(11).contains("V")) txpol = "V";
+                  else txpol="--";
+                } else txpol="--";  
+              }                
+            } 
+        }
+        else {
+          continue; 
+        }
         if(mode.contains("JT65") || mode.contains("Q65")) {
           QString postString =  "skedfreq=" + freq + "&rxfreq=" + dF + "&rpol=" + rpol + "&dt="  +  dT + "&dB="  + dB + "&msgtype="  +  msgType.toUpper() + "&callsign="  +  callsign.toUpper() + "&grid="  +  grid.toUpper() + "&mode="  +  mode + "&utcdatetime="  +  utcdatetimeUTCString + "&spotter="  +  m_myCall.toUpper() + "&spottergrid="  + m_myGrid.toUpper() + "&txpol=" + txpol + "&apptype=MAP65";
-          //qDebug() << postString;
           QByteArray postByteArray = postString.toUtf8();
           request.setRawHeader("Content-Length",QByteArray::number(postByteArray.size()));
 
           try {
-			QNetworkReply *reply = manager->post(request,postByteArray);				
-			QObject::connect(reply, &QNetworkReply::finished, this, &Messages::handleReply);
+            QNetworkReply *reply = manager->post(request,postByteArray);				
+            QObject::connect(reply, &QNetworkReply::finished, this, &Messages::handleReply);
           }
-          catch(...)
-          {
+          catch (const std::exception& e) {
+              // Handle standard C++ exceptions
+              QMessageBox::critical(this, "Exception", "Exception at line 1165 MainWindow::sendLiveCQData " + QString::fromStdString(e.what()));   
+          }
+          catch (...) {
+              // Handle any other type of exception
+              QMessageBox::critical(this, "Exception", "Unknown Exception at line 1170 MainWindow::sendLiveCQData");   
           }
         }
       }
     }
   }
   // qDebug() << "Size of allDecodes = " << allDecodes.size() ;
+}
+
+bool Messages::testCall(QString w)
+{
+// Check "callsign" to see if it could be a valid standard callsign or a valid
+// compound callsign.
+// Return a logical "call ok" indicator.
+  if(w.indexOf('.') >= 0) return false;
+  if(w.indexOf('+') >= 0) return false;
+  if(w.indexOf('-') >= 0) return false;
+  if(w.indexOf('?') >= 0) return false;
+  w = w.replace('<',"");
+  w = w.replace('>',""); 
+  int n1=w.length();
+  if(n1 > 11) return false;
+  QString bc = QString();
+  QStringList wSplit = w.split("/");
+  if(wSplit.length() > 1) {
+    if(wSplit.at(0).length() > wSplit.at(1).length()) {
+      bc = wSplit.at(0);
+    }
+    else {
+      bc = wSplit.at(1);
+    }
+  }
+  else {
+    bc = w;
+  }
+  int nbc=bc.trimmed().length();
+  if(nbc > 8) return false;  //Base call should have no more than 8 characters  e.g. YW18FIFA
+
+// One of first two characters (c1 or c2) must be a letter
+  if((!bc[0].isLetter()) && (!bc[1].isLetter())) return false;
+// Real calls don't start with Q, but we'll allow the placeholder
+// callsign QU1RK to be considered a standard call:
+  if(bc[0]=='Q' && bc.mid(0,5) != "QU1RK") return false;
+
+// Must have a digit in 2nd or 3rd or 4th position
+  int i1=0;
+  if(bc[1].isDigit()) i1=1;
+  if(bc[2].isDigit()) i1=2;
+  if(bc[3].isDigit()) i1=3;
+  if(i1==0) return false;
+
+// Callsign must have a suffix of 1-4 letters e.g. YW18FIFA
+  if(i1==nbc) return false;
+  int n=0;
+  QChar j=QChar();
+  for (int i=i1+1; i<=nbc-1; ++i) {
+     j=bc[i];
+     if(j<QChar('A') || j > QChar('Z')) return false;
+     n=n+1;
+  }
+  if(n >= 1 && n <= 4) return true;
+  
+  return false;  
 }
 
 void Messages::handleReply()

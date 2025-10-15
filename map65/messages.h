@@ -44,6 +44,7 @@ private:
   bool doLiveCQ=true; //liveCQ
   void CreateLiveCQ(QStringList cqliveText);  //liveCQ
   void sendLiveCQData(QStringList decodeList);  //liveCQ
+  bool testCall(QString w);  //liveCQ
 
   QString w3szUrlAddr="https://w3sz.com/livecq_update.php"; //liveCQ
 
