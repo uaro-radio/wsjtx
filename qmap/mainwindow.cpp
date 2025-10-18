@@ -1040,82 +1040,206 @@ void MainWindow::CreateLiveCQ(QStringList cqliveText)
   QString bandFreq = bandInfo.at(0);
   QString theDate = ui->labUTC->text().trimmed().mid(0,12);
   QList<QStringList> decodeList;
+  bool strOK = false;
 
   for (const QString &item : cqliveText) {
     QString line = " ";
     QStringList thePostLine;
     line = line.repeated(100);  //.replace("<","").replace(">","");
     QStringList thePieces;
-
+    qDebug () << "item is: " << item;
     thePieces = item.split(" ",SkipEmptyParts);
-    if((thePieces.at(6) == "CQ" || thePieces.at(6) == "QRZ" || thePieces.at(6) == "CQV" ||  thePieces.at(6) == "CQH" ||  thePieces.at(6) == "QRT") && m_myCall.length() >=3 && m_myGrid.length()>=4) {
-      //extract Fsked freq and format to 3 digits no decimals
-      QString theMsg;
-      QStringList thekHz;
-      int nWords=thePieces.length();
-      if(nWords==9) {
-        // Handle CQ messages that do not include a locator
-      if(thePieces.at(6)==NULL or thePieces.at(7)==NULL or thePieces.at(8)==NULL) return;
-        theMsg = thePieces.at(6) + " " + thePieces.at(7);
-        thekHz = thePieces.at(8).split(".");
-      } else {
-      if(thePieces.at(6)==NULL or thePieces.at(7)==NULL or thePieces.at(8)==NULL or thePieces.at(9)==NULL) return;
-        theMsg = thePieces.at(6) + " " + thePieces.at(7) + " " + thePieces.at(8);
-        thekHz = thePieces.at(9).split(".");
-      }
-      int rxFreq = freqOffset + thekHz.at(1).toInt(&ok);
-      // int rxFreq = freqOffset + 100 * thekHz.at(1).toInt(&ok);
-      int skedFreq;
-      QString skedFreqString;
-      if (rxFreq <= freqOffset + 500) {
-        skedFreq = thekHz.at(0).toInt(&ok);
-      } else {
-        skedFreq = thekHz.at(0).toInt(&ok) + 1;
-        rxFreq=rxFreq - 1000;
-      }
-      skedFreqString = QString::number(skedFreq).rightJustified(3,'0');
-      QString mode = "0 Q65-" + thePieces.at(5);
-      line.insert(0,bandFreq + "." + skedFreqString);
-      line.insert(10,QString::number(rxFreq));
-      line.insert(15,"0");
-      line.insert(18,thePieces.at(0));
-      line.insert(26,thePieces.at(3));
-      line.insert(32,thePieces.at(4));
-      line.insert(36,theMsg);
-      line.insert(55,mode);
-      line.insert(67,m_myGrid.toUpper());
-      line.insert(74,"Q");
-      line.insert(76,theDate);
-      line.insert(88,m_myCall.toUpper());
-      cqliveFinalText << line.trimmed();
+    int rxFreq = 0.0;
+    if((thePieces.at(6) == "CQ" || thePieces.at(6) == "QRZ" || thePieces.at(6) == "CQV" ||  thePieces.at(6) == "CQH" ||  thePieces.at(6) == "QRT") && m_myCall.length() >=3 && m_myGrid.length()>=4  ) {
+      try {
+        //extract Fsked freq and format to 3 digits no decimals
+        qDebug() << "entered try";
+        QString theMsg;
+        QString theCall;
+        QString theGrid;
+        QStringList thekHz;
+        int nWords=thePieces.length();
+        if(nWords==9) {
+          // Handle CQ CALL messages that do not include a locator
+          if(thePieces.at(6)==NULL or thePieces.at(7)==NULL or thePieces.at(8)==NULL) continue;
+          theCall = thePieces.at(7);
+          bool isCall = testCall(theCall);
+          qDebug() << "theCall is: " << theCall << " and isCall is: " << isCall;
+          if(!isCall) continue;
+          theGrid = "--";
+          theMsg = thePieces.at(6) + " " + theCall;
+          thekHz = thePieces.at(8).split(".");
+          rxFreq = freqOffset + thekHz.at(1).toInt(&ok);
+        // int rxFreq = freqOffset + 100 * thekHz.at(1).toInt(&ok);
+          if (!ok) continue;
+        } else if(nWords==10) {
+          // Handle CQ CALL GRID --or-- CQ XXX CALL
+          if(thePieces.at(6)==NULL or thePieces.at(7)==NULL or thePieces.at(8)==NULL or thePieces.at(9)==NULL) continue;
+          // Test for callsign at thePieces.at(7)
+          theCall = thePieces.at(7);
+          bool isCall = testCall(theCall);
+          qDebug() << "theCall is: " << theCall << " and isCall is: " << isCall;
+          // Handle CQ CALL GRID
+          if(isCall) {
+            theGrid = thePieces.at(8);
+            theMsg = thePieces.at(6) + " " + theCall + " " + theGrid;
+          }
+          // Handle CQ XXX CALL
+          else {
+            theCall = thePieces.at(8);
+            isCall = testCall(theCall);
+          qDebug() << "theCall is: " << theCall << " and isCall is: " << isCall;
+            if(!isCall) continue;
+            theGrid = "--";
+            theMsg = thePieces.at(6) + " " + theCall;
+          }
+          thekHz = thePieces.at(9).split(".");
+          rxFreq = freqOffset + thekHz.at(1).toInt(&ok);
+        // int rxFreq = freqOffset + 100 * thekHz.at(1).toInt(&ok);
+          if (!ok) continue;
+          // Handle CQ XXX CALL GRID
+        } else if (nWords==11) {
+           if(thePieces.at(6)==NULL or thePieces.at(7)==NULL or thePieces.at(8)==NULL or thePieces.at(9)==NULL or thePieces.at(10)==NULL) continue;
+          theCall = thePieces.at(8);
+          bool isCall = testCall(theCall);
+          qDebug() << "theCall is: " << theCall << " and isCall is: " << isCall;
+          if(!isCall) continue;
+          theGrid = thePieces.at(9);
+          theMsg = thePieces.at(6) + " " + theCall + " " + theGrid;
+          thekHz = thePieces.at(10).split(".");
+          rxFreq = freqOffset + thekHz.at(1).toInt(&ok);
+        // int rxFreq = freqOffset + 100 * thekHz.at(1).toInt(&ok);
+          if (!ok) continue;
+        }
+        strOK = true;
+        int skedFreq;
+        QString skedFreqString;
+        if (rxFreq <= freqOffset + 500) {
+          skedFreq = thekHz.at(0).toInt(&ok);
+        } else {
+          skedFreq = thekHz.at(0).toInt(&ok) + 1;
+          rxFreq=rxFreq - 1000;
+        }
+        skedFreqString = QString::number(skedFreq).rightJustified(3,'0');
+        QString mode = "0 Q65-" + thePieces.at(5);
+        line.insert(0,bandFreq + "." + skedFreqString);
+        line.insert(10,QString::number(rxFreq));
+        line.insert(15,"0");
+        line.insert(18,thePieces.at(0));
+        line.insert(26,thePieces.at(3));
+        line.insert(32,thePieces.at(4));
+        line.insert(36,theMsg);
+        line.insert(55,mode);
+        line.insert(67,m_myGrid.toUpper());
+        line.insert(74,"Q");
+        line.insert(76,theDate);
+        line.insert(88,m_myCall.toUpper());
+        cqliveFinalText << line.trimmed();
+        //qDebug () << "cqliveFinalText is: " << cqliveFinalText;
 
-      thePostLine.insert(0, bandFreq + "." + skedFreqString);  //skedfreq
-      thePostLine.insert(1, QString::number(rxFreq)); //rxfreq
-      thePostLine.insert(2, "--"); //rpol
-      thePostLine.insert(3,thePieces.at(0)); //utc HHmmSS
-      thePostLine.insert(4,thePieces.at(3)); //dt
-      thePostLine.insert(5, thePieces.at(4)); //dB
-      thePostLine.insert(6, "Q65-" + thePieces.at(5)); //Q65 submode
-      thePostLine.insert(7, thePieces.at(6)); //msg type
-      thePostLine.insert(8, thePieces.at(7)); //dx call
-      if (thePieces.at(8).contains(".")) {
-        thePostLine.insert(9, "--"); //no dx grid
-      } else {
-        thePostLine.insert(9, thePieces.at(8)); //dx grid
+        thePostLine.insert(0, bandFreq + "." + skedFreqString);  //skedfreq
+        thePostLine.insert(1, QString::number(rxFreq)); //rxfreq
+        thePostLine.insert(2, "--"); //rpol
+        thePostLine.insert(3,thePieces.at(0)); //utc HHmmSS
+        thePostLine.insert(4,thePieces.at(3)); //dt
+        thePostLine.insert(5, thePieces.at(4)); //dB
+        thePostLine.insert(6, "Q65-" + thePieces.at(5)); //Q65 submode
+        thePostLine.insert(7, thePieces.at(6)); //msg type
+        thePostLine.insert(8, theCall); //dx call
+        thePostLine.insert(9, theGrid); //dx grid
+        thePostLine.insert(10, m_myGrid.toUpper()); //myGrid
+        thePostLine.insert(11, theDate);  //the date
+        thePostLine.insert(12, m_myCall.toUpper()); //myCall
+        thePostLine.insert(13, "--"); //txpol
+        decodeList.append(thePostLine);
+        qDebug () << "thePostLine is: " << thePostLine;
       }
-      thePostLine.insert(10, m_myGrid.toUpper()); //myGrid
-      thePostLine.insert(11, theDate);  //the date
-      thePostLine.insert(12, m_myCall.toUpper()); //myCall
-      thePostLine.insert(13, "--"); //txpol
-      decodeList.append(thePostLine);
+      catch (const std::exception& e) {
+          // Handle standard C++ exceptions
+          qDebug() << "Standard exception at line 1115 of MainWindow::CreateLiveCQ caught:" << e.what();
+          QMessageBox::critical(this, "Exception", "Exception at line 1116 MainWindow::CreateLiveCQ " + QString::fromStdString(e.what())); 
+      }
+      catch (...) {
+          // Handle any other type of exception
+          qDebug() << "Unknown exception caught line 1120 MainWindow::CreateLiveCQ.";
+          QMessageBox::critical(this, "Exception", "Unknown Exception at line 1121 MainWindow::CreateLiveCQ"); 
+      }
+  }
+}
+  if(strOK) {
+  sendLiveCQData(decodeList);
+  }
+}
+
+bool MainWindow::testCall(QString w)
+{
+// Check "callsign" to see if it could be a valid standard callsign or a valid
+// compound callsign.
+// Return a logical "call ok" indicator.
+  if(w.indexOf('.') >= 0) return false;
+  if(w.indexOf('+') >= 0) return false;
+  if(w.indexOf('-') >= 0) return false;
+  if(w.indexOf('?') >= 0) return false;
+  w = w.replace('<',"");
+  w = w.replace('>',"");  
+  int i0=w.indexOf('/');
+  int n1=w.length();
+  if(n1 > 11) return false;
+  qDebug() << "Line 1186 w is: " << w << " and i0 is: " << i0 << " and n1 is: " << n1 << " and call is: " << w;
+  QString bc = QString();
+  QStringList wSplit = w.split("/");
+  if(wSplit.length() > 1) {
+    if(wSplit.at(0).length() > wSplit.at(1).length()) {
+      bc = wSplit.at(0);
+    }
+    else {
+      bc = wSplit.at(1);
     }
   }
+  else {
+    bc = w;
+  }
+  int nbc=bc.trimmed().length();
+  if(nbc > 8) return false;  //Base call should have no more than 8 characters  e.g. YW18FIFA
+  qDebug() << "reached line 1201";
 
-  sendLiveCQData(decodeList);
+// One of first two characters (c1 or c2) must be a letter
+  if((!bc[0].isLetter()) && (!bc[1].isLetter())) return false;
+  qDebug() << "reached line 1206";
+// Real calls don't start with Q, but we'll allow the placeholder
+// callsign QU1RK to be considered a standard call:
+  if(bc[0]=='Q' && bc.mid(0,5) != "QU1RK") return false;
+  qDebug() << "reached line 1209";
+
+// Must have a digit in 2nd or 3rd or 4th position
+  int i1=0;
+  if(bc[1].isDigit()) i1=1;
+  if(bc[2].isDigit()) i1=2;
+  if(bc[3].isDigit()) i1=3;
+  if(i1==0) return false;
+  qDebug() << "reached line 1217";
+
+// Callsign must have a suffix of 1-4 letters e.g. YW18FIFA
+  if(i1==nbc) return false;
+  qDebug() << "reached line 1221";
+  int n=0;
+  QChar j=QChar();
+  for (int i=i1+1; i<=nbc-1; ++i) {
+     j=bc[i];
+     if(j<QChar('A') || j > QChar('Z')) return false;
+  qDebug() << "reached line 1227 and n = " << n ;
+     n=n+1;
+  }
+  qDebug() << "reached line 1230";
+  if(n >= 1 && n <= 4) return true;
+  qDebug() << "reached line 1232";
+  
+  return false;  
 }
 
 void MainWindow::sendLiveCQData(QList<QStringList>decodeList)
 {
+  if (decodeList.size() == 0) return;
   QString theUrl;
   if(m_w3szUrl) {
     theUrl = w3szUrlAddr;
@@ -1148,19 +1272,38 @@ void MainWindow::sendLiveCQData(QList<QStringList>decodeList)
 	  QNetworkReply *reply = manager->post(request,postByteArray);		
 	  QObject::connect(reply, &QNetworkReply::finished, this, &MainWindow::handleReply);
     }
-    catch(...)
-    {
+    catch (const std::exception& e) {
+        // Handle standard C++ exceptions
+        qDebug() << "Standard exception caught at line 1165 MainWindow::sendLiveCQData:" << e.what();
+        QMessageBox::critical(this, "Exception", "Exception at line 1165 MainWindow::sendLiveCQData " + QString::fromStdString(e.what()));   
+    }
+    catch (...) {
+        // Handle any other type of exception
+        qDebug() << "Unknown exception caught line 1166 MainWindow::sendLiveCQData.";
+        QMessageBox::critical(this, "Exception", "Unknown Exception at line 1170 MainWindow::sendLiveCQData");   
     }
   }
 }
 
 void MainWindow::handleReply()
 {
+  try {
     QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
     if (reply->error() == QNetworkReply::NoError) {
 		qDebug() << reply->readAll();
     } else {
 		qDebug() << reply->errorString();
+    }
+  }
+    catch (const std::exception& e) {
+        // Handle standard C++ exceptions
+        qDebug() << "Standard exception caught:" << e.what();
+        QMessageBox::critical(this, "Exception", "Exception at line 1188 MainWindow::handleReply " + QString::fromStdString(e.what()));   
+    }
+    catch (...) {
+        // Handle any other type of exception
+        qDebug() << "Unknown exception caught.";
+        QMessageBox::critical(this, "Exception", "Unknown Exception at line 1193 MainWindow::handleReply");   
     }
 }
 
