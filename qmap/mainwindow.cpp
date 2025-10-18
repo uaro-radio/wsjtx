@@ -1156,12 +1156,10 @@ void MainWindow::CreateLiveCQ(QStringList cqliveText)
       }
       catch (const std::exception& e) {
           // Handle standard C++ exceptions
-          qDebug() << "Standard exception at line 1115 of MainWindow::CreateLiveCQ caught:" << e.what();
           QMessageBox::critical(this, "Exception", "Exception at line 1116 MainWindow::CreateLiveCQ " + QString::fromStdString(e.what())); 
       }
       catch (...) {
           // Handle any other type of exception
-          qDebug() << "Unknown exception caught line 1120 MainWindow::CreateLiveCQ.";
           QMessageBox::critical(this, "Exception", "Unknown Exception at line 1121 MainWindow::CreateLiveCQ"); 
       }
   }
@@ -1274,12 +1272,10 @@ void MainWindow::sendLiveCQData(QList<QStringList>decodeList)
     }
     catch (const std::exception& e) {
         // Handle standard C++ exceptions
-        qDebug() << "Standard exception caught at line 1165 MainWindow::sendLiveCQData:" << e.what();
         QMessageBox::critical(this, "Exception", "Exception at line 1165 MainWindow::sendLiveCQData " + QString::fromStdString(e.what()));   
     }
     catch (...) {
         // Handle any other type of exception
-        qDebug() << "Unknown exception caught line 1166 MainWindow::sendLiveCQData.";
         QMessageBox::critical(this, "Exception", "Unknown Exception at line 1170 MainWindow::sendLiveCQData");   
     }
   }
@@ -1297,12 +1293,10 @@ void MainWindow::handleReply()
   }
     catch (const std::exception& e) {
         // Handle standard C++ exceptions
-        qDebug() << "Standard exception caught:" << e.what();
         QMessageBox::critical(this, "Exception", "Exception at line 1188 MainWindow::handleReply " + QString::fromStdString(e.what()));   
     }
     catch (...) {
         // Handle any other type of exception
-        qDebug() << "Unknown exception caught.";
         QMessageBox::critical(this, "Exception", "Unknown Exception at line 1193 MainWindow::handleReply");   
     }
 }
