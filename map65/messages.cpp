@@ -64,11 +64,11 @@ Messages::Messages (QString const& settings_filename, QWidget * parent) :
   connect (ui->messagesTextBrowser, &DisplayText::selectCallsign, this, &Messages::selectCallsign2);
   
     // Create the thread and your liveCQ object
-  QThread *livecqThread = new QThread(this);
+  livecqThread = new QThread(this);
   
-  connect(livecqThread, &QThread::started, this, [this, livecqThread, m_myCall, m_myGrid, theUrl]() {
+  connect(livecqThread, &QThread::started, this, [this, m_myCall, m_myGrid, theUrl]() {
     auto* reporter2 = new liveCQSender(m_myCall, m_myGrid, theUrl);
-    reporter2->moveToThread(livecqThread);      
+    reporter2->moveToThread(this->livecqThread);      
 
     connect(reporter2, &liveCQSender::destroyed, livecqThread, &QThread::quit);
     QMetaObject::invokeMethod(reporter2, "init", Qt::QueuedConnection);
@@ -81,14 +81,14 @@ Messages::Messages (QString const& settings_filename, QWidget * parent) :
   livecqThread->start();  
   
     // Create the thread and your PSKReporter object
-  QThread *pskThread = new QThread(this);
+  pskThread = new QThread(this);
   
-  connect(pskThread, &QThread::started, this, [this, pskThread, m_myCall,m_myGrid]() {
+  connect(pskThread, &QThread::started, this, [this, m_myCall,m_myGrid]() {
       auto* reporter = new PSKReporter(m_myCall, m_myGrid, QString {"MAP65 v"
               + QCoreApplication::applicationVersion ()
   + " " + revision ()}.simplified () + " improved PLUS");
 
-  reporter->moveToThread(pskThread);
+  reporter->moveToThread(this->pskThread);
   connect(reporter, &PSKReporter::destroyed, pskThread, &QThread::quit);
   QMetaObject::invokeMethod(reporter, "init", Qt::QueuedConnection);
   
@@ -106,11 +106,27 @@ Messages::Messages (QString const& settings_filename, QWidget * parent) :
  
 Messages::~Messages()
 {
+  //QSettings settings {m_settings_filename, QSettings::IniFormat};
+  //SettingsGroup g {&settings, "MainWindow"};
+  //settings.setValue ("MessagesGeom", geometry ());
+  delete ui;
+}
+
+void Messages::closeEvent(QCloseEvent *event)
+{
+  if (!m_closingForShutdown) {
+      hide();
+      event->ignore(); // Don't close, just hide
+      return;
+  }
+
+  // app shutdown
   QSettings settings {m_settings_filename, QSettings::IniFormat};
   SettingsGroup g {&settings, "MainWindow"};
   settings.setValue ("MessagesGeom", geometry ());
-  delete ui;
-}
+  settings.sync(); // Ensure data is written to disk 
+  event->accept(); // Allow destruction 
+}   
 
 void Messages::initializePSKReporting()
 {  

@@ -1044,7 +1044,10 @@ void MainWindow::closeEvent (QCloseEvent * e)
   mem_m65.detach();
   if (m_astro_window) m_astro_window->close ();
   if (m_band_map_window) m_band_map_window->close ();
-  if (m_messages_window) m_messages_window->close ();
+  if (m_messages_window) {
+    m_messages_window->setClosingForShutdown(true);
+    m_messages_window->close(); // Now closeEvent runs fully
+  }
   if (m_wide_graph_window) m_wide_graph_window->close ();
   QMainWindow::closeEvent (e);
 }
@@ -1113,8 +1116,8 @@ void MainWindow::on_actionBand_Map_triggered()              //Display BandMap
 
 void MainWindow::on_actionMessages_triggered()              //Display Messages
 {
-  m_messages_window->show();
-}
+    m_messages_window->show();
+}   
 
 void MainWindow::on_actionOpen_triggered()                     //Open File
 {
