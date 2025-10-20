@@ -22,6 +22,7 @@
 #include <QSettings>
 #include <QDebug>
 #include <QMetaType>
+#include <QUrl>
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
 #include <QRandomGenerator>
 #endif
@@ -62,9 +63,14 @@ liveCQSender::liveCQSender(QString const& myCall, QString const& myGrid, QString
     connect(socket.data(), static_cast<void(QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
         this, &liveCQSender::handle_socket_error);  
 #endif
-
+    QString host = "";
+    if (m_theUrl.contains("https://")) {
+        QUrl parsed(m_theUrl);
+        host = parsed.host();
+    }
+    else return;
     // Start connection (non-blocking
-    socket->connectToHostEncrypted("w3sz.com", SERVICE_PORT);
+    socket->connectToHostEncrypted(host, SERVICE_PORT);
   }
   
   void liveCQSender::onConnected() {
@@ -76,8 +82,7 @@ liveCQSender::liveCQSender(QString const& myCall, QString const& myGrid, QString
       socket->write(ba); 
     }
     onConnectedRequests.clear();
-  }
-  
+  }  
   
   void liveCQSender::onReadyRead() {
     QByteArray data = socket->readAll();
@@ -93,8 +98,7 @@ liveCQSender::liveCQSender(QString const& myCall, QString const& myGrid, QString
     }
       qDebug() << "liveCQSender Response:" <<   data;
 }   
-  
-  
+   
   void liveCQSender::handle_socket_error(QAbstractSocket::SocketError error)
   {
     qDebug() << "liveCQSender Socket error:" << error << socket->errorString();
@@ -109,12 +113,21 @@ liveCQSender::liveCQSender(QString const& myCall, QString const& myGrid, QString
   void liveCQSender::sendData(const QByteArray &payload1) {
     QByteArray request;
     QByteArray body;
+    QString host = "";
+    QString webpage = "";
     if(!payload1.isEmpty())
     {
       body.append(payload1); // Your data here
     }
-    request.append("POST /livecq_update.php HTTP/1.1\r\n");
-    request.append("Host: w3sz.com\r\n");
+    qDebug() << "m_theUrl is: " << m_theUrl;
+    if (m_theUrl.contains("https://")) {
+        QUrl parsed(m_theUrl);
+        host = parsed.host();
+        webpage = parsed.path();
+    }
+    else return;
+    request.append("POST " + webpage + " HTTP/1.1\r\n");
+    request.append("Host: " + host + "\r\n");
     request.append("Content-Type: application/x-www-form-urlencoded\r\n");
     request.append("Connection: keep-alive\r\n");
     request.append("Content-Length: " + QByteArray::number(body.size()) + "\r\n\r\n");
@@ -130,7 +143,7 @@ liveCQSender::liveCQSender(QString const& myCall, QString const& myGrid, QString
     else {
       onConnectedRequests.append(request);
       request.clear();
-      socket->connectToHostEncrypted("w3sz.com", SERVICE_PORT);
+      socket->connectToHostEncrypted(host, SERVICE_PORT);
       // Data will be sent in onConnected()
     }
   }

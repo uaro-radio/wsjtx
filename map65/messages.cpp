@@ -54,7 +54,6 @@ Messages::Messages (QString const& settings_filename, QWidget * parent) :
   } else {
     theUrl = m_otherUrl;
   }
-  theUrl = "w3sz.com";
   
   m_cqOnly=false;
   m_cqStarOnly=false;
@@ -149,11 +148,12 @@ void Messages::sendLiveCQData(QStringList decodeList) {
   QString rpol = "--";
   QString theUrl;
 
-  if(m_w3szUrl) {
+  if(w3szUrlAddr.contains("https://") && m_w3szUrl) {
     theUrl = w3szUrlAddr;
-  } else {
+  } else if (m_otherUrl.contains("https://") && !m_w3szUrl) { 
     theUrl = m_otherUrl;
   }
+  else return;
   for (const QString &theLine : decodeList) {
     QStringList thePostLine = theLine.split(" ",SkipEmptyParts);
     if((thePostLine.at(5) == "CQ" || thePostLine.at(5) == "QRZ" || thePostLine.at(5) == "CQV" ||  thePostLine.at(5) == "CQH" || thePostLine.at(5) == "QRT") && m_myCall.length() >=3 && m_myGrid.length()>=4) {
@@ -266,8 +266,7 @@ void Messages::sendLiveCQData(QStringList decodeList) {
           QString postString =  "skedfreq=" + freq + "&rxfreq=" + dF + "&rpol=" + rpol + "&dt="  +  dT + "&dB="  + dB + "&msgtype="  +  msgType.toUpper() + "&callsign="  +  callsign.toUpper() + "&grid="  +  grid.toUpper() + "&mode="  +  mode + "&utcdatetime="  +  utcdatetimeUTCString + "&spotter="  +  m_myCall.toUpper() + "&spottergrid="  + m_myGrid.toUpper() + "&txpol=" + txpol + "&apptype=MAP65";
           QByteArray postByteArray = postString.toUtf8();
           
-        emit sendRemoteStationData2(postByteArray, theUrl);        
-         
+        emit sendRemoteStationData2(postByteArray, theUrl);
         }
       }
     }
@@ -334,9 +333,9 @@ bool Messages::testCall(QString w)
 void Messages::onFinished(QNetworkReply *reply)
 {
     if (reply->error() == QNetworkReply::NoError) {
-		qDebug() << reply->readAll();
+		qDebug() << "Reply in messages::inFinished is: " << reply->readAll();
     } else {
-		qDebug() << reply->errorString();
+		qDebug() << "Error message in messages::inFinished is: " <<  reply->errorString();
     }
     reply->deleteLater();
 }
