@@ -1519,6 +1519,7 @@ void MainWindow::writeSettings()
   } else {
     m_settings->setValue ("DialFreq", QVariant::fromValue(m_lastMonitoredFrequency));
   }
+  m_settings->setValue("SkedFreq",m_skedFreq);
   m_settings->setValue("OutAttenuation", ui->outAttenuation->value ());
   m_settings->setValue("NoSuffix",m_noSuffix);
   m_settings->setValue("GUItab",ui->tabWidget->currentIndex());
@@ -1868,6 +1869,8 @@ void MainWindow::readSettings()
   ui->sbTR_FST4W->setValue (m_settings->value ("TRPeriod_FST4W", 15).toInt());
   m_lastMonitoredFrequency = m_settings->value ("DialFreq",
     QVariant::fromValue<Frequency> (default_frequency)).value<Frequency> ();
+  m_skedFreq=m_settings->value("SkedFreq",1296.065).toDouble();
+  QTimer::singleShot (1000, [=] {if (m_astroWidget) m_astroWidget->setSkedFreq(m_skedFreq);});
   if(m_mode=="MSK144") m_msk144basefreq = m_lastMonitoredFrequency;  // MSK144 QSY
   ui->WSPRfreqSpinBox->setValue(0); // ensure a change is signaled
   ui->WSPRfreqSpinBox->setValue(m_settings->value("WSPRfreq",1500).toInt());
@@ -4771,15 +4774,25 @@ void MainWindow::on_actionAstronomical_data_toggled (bool checked)
           setXIT (ui->TxFreqSpinBox->value ());
           displayDialFrequency ();
         });
+      connect (m_astroWidget.data (), &Astro::skedFreq, this, &MainWindow::skedFreq);
+
       m_astroWidget->showNormal();
       m_astroWidget->raise ();
       m_astroWidget->activateWindow ();
       m_astroWidget->nominal_frequency (m_freqNominal, m_freqTxNominal);
-    }
-  else
+      if (!programStart) m_astroWidget->setSkedFreq(m_skedFreq);
+  } else
     {
       m_astroWidget.reset ();
     }
+}
+
+void MainWindow::skedFreq(double freqMHz)
+{
+  m_skedFreq=freqMHz;
+  m_bandEdited=true;
+  Frequency f=qRound64(1000000.0*freqMHz);
+  band_changed(f);
 }
 
 void MainWindow::on_actionQSYMessage_Creator_triggered()
@@ -12023,6 +12036,11 @@ void MainWindow::band_changed (Frequency f)
   if (m_config.bands()->find(f) == band_save) return; // band didn't change
   band_save = m_config.bands()->find(f);
   m_band_changed = true;
+  if (m_astroWidget && !programStart) {
+    m_astroWidget->setSkedFreq(0.000001*f);
+    m_skedFreq=0.000001*f;
+  }
+
 /*
   //ft8md
   qint64 ms = QDateTime::currentMSecsSinceEpoch() % 86400000; 
@@ -12035,6 +12053,7 @@ void MainWindow::band_changed (Frequency f)
   dec_data.params.nsecbandchanged=m_nsecBandChanged;
   //ft8md end
 */
+
   if (m_config.erase_BandActivity () && !not_erase) {
     ui->decodedTextBrowser->erase ();   // Mod for WD5DHK
     ui->decodedTextBrowser2->erase ();

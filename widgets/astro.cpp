@@ -18,6 +18,7 @@
 #include "Configuration.hpp"
 #include "SettingsGroup.hpp"
 #include "qt_helpers.hpp"
+#include "mycustomspinbox.h"
 
 #include "ui_astro.h"
 #include "moc_astro.cpp"
@@ -76,6 +77,8 @@ void Astro::read_settings ()
   m_DopplerMethod=settings_->value("DopplerMethod",0).toInt();
   int shVal=settings_->value("ShiftValue",0).toInt();
   ui_->sbibShift->setValue(shVal);
+  bool c=settings_->value("LockSkedFreq",false).toBool();
+  ui_->cbLockSkedFreq->setChecked(c);
  
   switch (m_DopplerMethod)
     {
@@ -98,6 +101,7 @@ void Astro::write_settings ()
   settings_->setValue ("window/pos", pos ());
   settings_->setValue ("EnableShift", ui_->cbEnableShift->isChecked());
   settings_->setValue ("ShiftValue",ui_->sbibShift->value());
+  settings_->setValue ("LockSkedFreq",ui_->cbLockSkedFreq->isChecked());
 }
 
 auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const& hisgrid, Frequency freq,
@@ -375,9 +379,12 @@ void Astro::on_cbDopplerTracking_toggled(bool)
 
 void Astro::nominal_frequency (Frequency rx, Frequency tx)
 {
-  ui_->sked_frequency_label->setText (Radio::pretty_frequency_MHz_string (rx));
-  ui_->sked_tx_frequency_label->setText (Radio::pretty_frequency_MHz_string (tx));
-  if (ui_->cbEnableShift->isChecked()) ui_->sked_tx_frequency_label->setText ("N/A Tx Shift!");
+  if (!ui_->cbLockSkedFreq->isChecked() or astroStart or QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier)) {
+    ui_->sked_frequency_label->setText (Radio::pretty_frequency_MHz_string (rx));
+    ui_->sked_tx_frequency_label->setText (Radio::pretty_frequency_MHz_string (tx));
+    if (ui_->cbEnableShift->isChecked()) ui_->sked_tx_frequency_label->setText ("N/A Tx Shift!");
+    if (rx > 450000) astroStart = false;
+  }
 }
 
 void Astro::hideEvent (QHideEvent * e)
@@ -413,4 +420,19 @@ qint32 Astro::nfRIT()
 qint32 Astro::DopplerMethod()
 {
   return m_DopplerMethod;
+}
+
+void Astro::on_pbSet_clicked()
+{
+  double freqMHz=int(m_skedFreq) + 0.001*ui_->sbSked_kHz->value();
+  if (ui_->pbSet->hasFocus()) emit skedFreq(freqMHz);
+  ui_->pbSet->clearFocus();
+}
+
+void Astro::setSkedFreq(double freqMHz)
+{
+  m_skedFreq=freqMHz;
+  int MHz=m_skedFreq;
+  int kHz=qRound(1000*(m_skedFreq - MHz));
+  ui_->sbSked_kHz->setValue(kHz);
 }

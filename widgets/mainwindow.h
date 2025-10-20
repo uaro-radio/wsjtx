@@ -146,6 +146,7 @@ public slots:
   void setFreq4(int rxFreq, int txFreq);
   void msgAvgDecode2();
   void fastPick(int x0, int x1, int y);
+  void skedFreq(double sf);
 
 private:
   void change_layout (std::size_t) override;
@@ -587,6 +588,7 @@ private:
   double  m_s6;
   double  m_fDither;
   double  m_fAudioShift;
+  double  m_skedFreq;
 
   float   m_DTtol;
   float   m_t0;

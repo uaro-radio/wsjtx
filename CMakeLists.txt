@@ -231,6 +231,7 @@ set (wsjt_qt_CXXSRCS
   EqualizationToolsDialog.cpp
   widgets/DoubleClickablePushButton.cpp
   widgets/DoubleClickableRadioButton.cpp
+  mycustomspinbox.cpp
   Network/LotWUsers.cpp
   Network/FileDownload.cpp
   Network/FoxVerifier.cpp
