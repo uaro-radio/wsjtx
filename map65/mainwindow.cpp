@@ -323,6 +323,7 @@ MainWindow::MainWindow(QWidget *parent) :
   
   //default freq at startup for Doppler and Tsky  
   datcom_.fcenter = m_wide_graph_window->m_dForceCenterFreq;
+  if(datcom_.fcenter == 0) datcom_.fcenter = 144.125;
   
   // only start the guiUpdate timer after this constructor has finished
   QTimer::singleShot (0, [=] {
