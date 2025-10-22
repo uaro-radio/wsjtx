@@ -1792,6 +1792,7 @@ void MainWindow::guiUpdate()
 
     QDateTime t = QDateTime::currentDateTimeUtc();
     int fQSO=m_wide_graph_window->QSOfreq();
+    if (m_wide_graph_window->m_bLockTxRx) m_txFreq=fQSO;
     m_astro_window->astroUpdate(t, m_myGrid, m_hisGrid, fQSO, m_setftx,
                           m_txFreq, m_azelDir, m_xavg);
     m_setftx=0;

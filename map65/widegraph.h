@@ -70,7 +70,6 @@ private:
   QString m_settings_filename;
 public:
   bool   m_bForceCenterFreq;
-private:
   bool   m_bLockTxRx;
 public:
   qint32 m_mult570;

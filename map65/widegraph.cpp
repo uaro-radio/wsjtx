@@ -46,7 +46,6 @@ WideGraph::WideGraph (QString const& settings_filename, QWidget * parent)
   m_bForceCenterFreq=settings.value("ForceCenterFreqBool",false).toBool();
   m_dForceCenterFreq=settings.value("ForceCenterFreqMHz",144.125).toDouble();
   ui->cbFcenter->setChecked(m_bForceCenterFreq);
-  ui->cbLockTxRx->setChecked(m_bLockTxRx);
   ui->fCenterLineEdit->setText(QString::number(m_dForceCenterFreq));
   m_bLockTxRx=settings.value("LockTxRx",false).toBool();
   ui->cbLockTxRx->setChecked(m_bLockTxRx);
