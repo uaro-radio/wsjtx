@@ -5542,7 +5542,11 @@ void MainWindow::decode()                                       //decode()
     if(m_diskData) dec_data.params.ndiskdat=1;
     dec_data.params.nfa=m_wideGraph->nStartFreq();
     dec_data.params.nfSplit=m_wideGraph->Fmin();
-    dec_data.params.nfb=m_wideGraph->Fmax();
+    if(m_specOp==SpecOp::HOUND && !m_config.superFox() && !ui->cbRxAll->isChecked()) {
+      dec_data.params.nfb=1000;
+    } else {
+      dec_data.params.nfb=m_wideGraph->Fmax();
+    }
     dec_data.params.ntol=50; // this value is not being used
     dec_data.params.ntrperiod=int(m_TRperiod);
     dec_data.params.lwidedxcsearch=m_FT8WideDxCallSearch ? 1 : 0;
