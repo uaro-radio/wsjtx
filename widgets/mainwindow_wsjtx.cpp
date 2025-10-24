@@ -3232,21 +3232,21 @@ void MainWindow::fastSink(qint64 frames)
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
         QStringList tw;
         tw=text.mid(22).split(" ",SkipEmptyParts);
-        if (m_config.highlight_orange() && (m_config.highlight_orange_callsigns().contains(deCall + ",")
+        if (m_config.highlight_orange() && deCall!="" && (m_config.highlight_orange_callsigns().contains(deCall + ",")
             or m_config.highlight_orange_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_orange_callsigns().contains(deCall.left(2) + ";"))) {
           ui->decodedTextBrowser->highlight_callsign(deCall, QColor(225,75,0), QColor(255,255,255), true);
           if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
         }
-        if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid)) {
+        if (m_config.highlight_orange() && deGrid!="" && m_config.highlight_orange_callsigns().contains(deGrid)) {
           ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(225,75,0), QColor(255,255,255), true);
           if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
         }
-        if (m_config.highlight_blue() && (m_config.highlight_blue_callsigns().contains(deCall + ",")
+        if (m_config.highlight_blue() && deCall!="" && (m_config.highlight_blue_callsigns().contains(deCall + ",")
             or m_config.highlight_blue_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_blue_callsigns().contains(deCall.left(2) + ";"))) {
           ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
           if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
         }
-        if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid)) {
+        if (m_config.highlight_blue() && deGrid!="" && m_config.highlight_blue_callsigns().contains(deGrid)) {
           ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
           if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
         }
@@ -3254,11 +3254,11 @@ void MainWindow::fastSink(qint64 frames)
         if (tw.size () > 2) {
           if (m_config.highlight_orange() && tw[0]=="CQ" && m_config.highlight_orange_callsigns().contains("," + tw[1] + ",")) {
             ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(225,75,0), QColor(255,255,255), true);
-            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted && tw[1]!="") play_Wanted = true;
           }
           if (m_config.highlight_blue() && tw[0]=="CQ" && m_config.highlight_blue_callsigns().contains("," + tw[1] + ",")) {
             ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(0,100,255), QColor(255,255,255), true);
-            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted && tw[1]!="") play_Wanted = true;
           }
         }
     }
@@ -3344,7 +3344,7 @@ void MainWindow::fastSink(qint64 frames)
       if (m_config.highlight_DXgrid()) ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
       if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;
     }
-    QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
+    QTimer::singleShot (100, [=] {
       if (m_config.alert_Enabled() && ((m_config.alert_DXcall() && play_DXcall && m_hisCall!="") or (m_config.alert_Wanted() && play_Wanted))) {
 #ifdef WIN32
         QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
@@ -7116,21 +7116,21 @@ void MainWindow::readFromStdout()                             //readFromStdout
           QString deCall;
           QString deGrid;
           decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-          if (m_config.highlight_orange() && (m_config.highlight_orange_callsigns().contains(deCall + ",")
+          if (m_config.highlight_orange() && deCall!="" && (m_config.highlight_orange_callsigns().contains(deCall + ",")
               or m_config.highlight_orange_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_orange_callsigns().contains(deCall.left(2) + ";"))) {
             ui->decodedTextBrowser->highlight_callsign(deCall, QColor(225,75,0), QColor(255,255,255), true);
             if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
           }
-          if (m_config.highlight_orange() && m_config.highlight_orange_callsigns().contains(deGrid)) {
+          if (m_config.highlight_orange() && deGrid!="" && m_config.highlight_orange_callsigns().contains(deGrid)) {
             ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(225,75,0), QColor(255,255,255), true);
             if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
           }
-          if (m_config.highlight_blue() && (m_config.highlight_blue_callsigns().contains(deCall + ",")
+          if (m_config.highlight_blue() && deCall!="" && (m_config.highlight_blue_callsigns().contains(deCall + ",")
               or m_config.highlight_blue_callsigns().contains(deCall.left(3) + ";") or m_config.highlight_blue_callsigns().contains(deCall.left(2) + ";"))) {
             ui->decodedTextBrowser->highlight_callsign(deCall, QColor(0,100,255), QColor(255,255,255), true);
             if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
           }
-          if (m_config.highlight_blue() && m_config.highlight_blue_callsigns().contains(deGrid)) {
+          if (m_config.highlight_blue() && deGrid!="" && m_config.highlight_blue_callsigns().contains(deGrid)) {
             ui->decodedTextBrowser->highlight_callsign(deGrid, QColor(0,100,255), QColor(255,255,255), true);
             if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
           }
@@ -7138,11 +7138,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
           if (tw.size () > 2) {
             if (m_config.highlight_orange() && tw[0]=="CQ" && m_config.highlight_orange_callsigns().contains("," + tw[1] + ",")) {
               ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(225,75,0), QColor(255,255,255), true);
-              if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+              if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted && tw[1]!="") play_Wanted = true;
             }
             if (m_config.highlight_blue() && tw[0]=="CQ" && m_config.highlight_blue_callsigns().contains("," + tw[1] + ",")) {
               ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(0,100,255), QColor(255,255,255), true);
-              if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
+              if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted && tw[1]!="") play_Wanted = true;
             }
           }
         }
@@ -7167,7 +7167,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
           if (m_config.highlight_DXgrid()) ui->decodedTextBrowser->highlight_callsign(m_hisGrid.left(4), QColor(0,0,200), QColor(255,255,255), true);
           if (m_config.alert_Enabled() && m_config.alert_DXcall() && !m_muted) play_DXcall = true;
         }
-        QTimer::singleShot (100, [=] {                       // UR delete for versions without alerts
+        QTimer::singleShot (100, [=] {
           if (m_config.alert_Enabled() && ((m_config.alert_DXcall() && play_DXcall && m_hisCall!="") or (m_config.alert_Wanted() && play_Wanted))) {
 #ifdef WIN32
             QAudioOutput info(QAudioDeviceInfo::defaultOutputDevice());
