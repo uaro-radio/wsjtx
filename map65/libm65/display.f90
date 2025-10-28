@@ -14,14 +14,22 @@ subroutine display(nkeep,ftol)
   character(len=83) :: livecq2
   character(len=83) :: livecq3
 
+
+  integer :: io_status
+  integer :: ndf, nh, nm
+
   out0=' '
   rewind(26)
 
   do i=1,MAXLINES
      read(26,1010,end=10) line(i)
 1010 format(a83) ! was a77
-     read(line(i),1020) f0,ndf,nh,nm
+     read(line(i), 1020, iostat=io_status) f0, ndf, nh, nm
 1020 format(f8.3,i5,25x,i3,i2)
+     if (io_status /= 0) then
+        ! Handle error: skip
+        continue
+     end if            
      utc(i)=60*nh + nm
      freqkHz(i)=1000.d0*(f0-144.d0) + 0.001d0*ndf
   enddo
