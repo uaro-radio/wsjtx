@@ -8322,11 +8322,27 @@ void MainWindow::guiUpdate()
 #endif
           }
       } else {
-          progressBar.setStyleSheet("");
-          progressBar.setFormat ("%v/%m");			  
+#ifdef __APPLE__
+        if (m_useDarkStyle) {
+          progressBar.setStyleSheet(QString("QProgressBar {color: #ffffff; text-align: center;} QProgressBar::chunk {background-color: #1464A0;}"));   // for macOS
+        } else {
+          progressBar.setStyleSheet(QString("QProgressBar {color: #000000; text-align: center;} QProgressBar::chunk {background-color: #96C9F6;}"));   // for macOS
+        }
+#else
+        progressBar.setStyleSheet("");
+#endif
+        progressBar.setFormat ("%v/%m");
       }
     } else {
+#ifdef __APPLE__
+      if (m_useDarkStyle) {
+        progressBar.setStyleSheet(QString("QProgressBar {color: #ffffff; text-align: center;} QProgressBar::chunk {background-color: #1464A0;}"));   // for macOS
+      } else {
+        progressBar.setStyleSheet(QString("QProgressBar {color: #000000; text-align: center;} QProgressBar::chunk {background-color: #96C9F6;}"));   // for macOS
+      }
+#else
       progressBar.setStyleSheet("");
+#endif
       progressBar.setFormat ("%v/%m");
     }
     if(m_mode=="Echo") {
