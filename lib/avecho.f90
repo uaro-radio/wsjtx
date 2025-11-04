@@ -117,11 +117,8 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,ndf,navg,nqual,f1,xlevel,  &
         nsum=nsum+1
      endif
  
-     call echo_snr(sa,sb,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
+     call echo_snr(sa,sb,bDiskData,0,xdt,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
 
-!     nqual=snr_detect-2
-!     if(nqual.lt.0) nqual=0
-!     if(nqual.gt.10) nqual=10
      if(searching) then
         if(snrdb.gt.snrbest .and. (ndf.eq.0 .or. dfreq.le.0.5*ndf)) then
            snrbest=snrdb
@@ -156,7 +153,7 @@ subroutine avecho(id2_0,ndop,nfrit,nauto,ndf,navg,nqual,f1,xlevel,  &
      sa(i)=sum(sax(1:navg,i))
      sb(i)=sum(sbx(1:navg,i))
   enddo
-  call echo_snr(sa,sb,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
+  call echo_snr(sa,sb,bDiskData,1,xdt,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
   nqual=snr_detect-2
   if(nqual.lt.0) nqual=0
   if(nqual.gt.10) nqual=10
