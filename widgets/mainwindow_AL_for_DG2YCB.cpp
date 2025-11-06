@@ -1600,6 +1600,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("QRG8", ui->sbQRG8->value ());
   m_settings->setValue ("reduceFalseDecodes", ui->actionReduce_false_decodes->isChecked() );
   m_settings->setValue ("HideAPInfo", ui->actionHide_AP_info->isChecked() );
+  m_settings->setValue ("HideA8Decodes", ui->actionHide_a8_decodes->isChecked() );
   m_settings->setValue ("FullDuplexMode", ui->actionFull_Duplex_Mode->isChecked() );
   m_settings->setValue ("actionDontSplitALLTXT", ui->actionDon_t_split_ALL_TXT->isChecked() );
   m_settings->setValue ("splitAllTxtYearly", ui->actionSplit_ALL_TXT_yearly->isChecked() );
@@ -1806,6 +1807,7 @@ void MainWindow::readSettings()
   ui->sbQRG8->setValue (m_settings->value ("QRG8", 28091).toInt ());
   ui->actionReduce_false_decodes->setChecked(m_settings->value("reduceFalseDecodes", false).toBool());
   ui->actionHide_AP_info->setChecked(m_settings->value("HideAPInfo", false).toBool());
+  ui->actionHide_a8_decodes->setChecked(m_settings->value("HideA8Decodes", false).toBool());
   ui->actionFull_Duplex_Mode->setChecked(m_settings->value("FullDuplexMode", false).toBool());
   ui->labDXped->setText(m_settings->value("labDXpedText",QString {}).toString ());
   ui->actionDon_t_split_ALL_TXT->setChecked(m_settings->value("actionDontSplitALLTXT", true).toBool());
@@ -6159,6 +6161,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
     QString message0 {QString::fromUtf8(line_read.constData())};
     DecodedText decodedtext0 {QString::fromUtf8(line_read.constData())};
     DecodedText decodedtext {QString::fromUtf8(line_read.constData()).remove("TU; ")};
+
+  // Hide a8 decodes (DG2YCB only)
+  if (ui->actionHide_a8_decodes->isVisible() && ui->actionHide_a8_decodes->isChecked() && line_read.contains("a8")) return;
 
   // Don't allow a7 decodes during the first period and for non-contest messages when in any contest mode
   if ((!((no_a7_decodes && line_read.contains("a7") && !m_diskData) or (line_read.contains("a7") && SpecOp::NONE!=m_specOp
@@ -10731,6 +10736,7 @@ void MainWindow::displayWidgets(qint64 n)
     if(i==23) ui->cbSWL->setVisible(b);
     if(i==24) ui->actionEnable_AP_FT8->setVisible (b);
     if(i==24) ui->actionHide_AP_info->setVisible (b);
+    if(i==24) ui->actionHide_a8_decodes->setVisible (b);
     if(i==25) ui->actionEnable_AP_JT65->setVisible (b);
     if(i==26) ui->actionEnable_AP_DXcall->setVisible (b);
     if(i==27) ui->respondComboBox->setVisible(b);
