@@ -5224,7 +5224,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="separator"/>
     <addaction name="actionFull_Duplex_Mode"/>
     <addaction name="separator"/>
-    <addaction name="actionHide_a8_decodes"/>
+    <addaction name="actionNo_MTD_a8_decodes"/>
    </widget>
    <widget class="QMenu" name="menuSave">
     <property name="title">
@@ -6555,12 +6555,12 @@ Double-click to reset to the standard 73 message</string>
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hide AP information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
-  <action name="actionHide_a8_decodes">
+  <action name="actionNo_MTD_a8_decodes">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide a8 decodes</string>
+    <string>No MTD a8 decodes</string>
    </property>
   </action>
  </widget>
