@@ -1853,8 +1853,8 @@ void MainWindow::readSettings()
   ui->sbFST4W_FTol->setValue(m_settings->value("FST4W_FTol",100).toInt());
   ui->sbToneSpacing->setValue(m_settings->value("EchoToneSpacing",10).toInt());
   ui->rbFixedTone->setChecked(m_settings->value("EchoFixedTone",true).toBool());
-  ui->rbEchoMessage->setChecked(m_settings->value("EchoMessageRB",true).toBool());
-  ui->rbEchoCW->setChecked(m_settings->value("EchoCW",true).toBool());
+  ui->rbEchoMessage->setChecked(m_settings->value("EchoMessageRB",false).toBool());
+  ui->rbEchoCW->setChecked(m_settings->value("EchoCW",false).toBool());
   ui->leEchoMessage->setText(m_settings->value("EchoMessage",QString {}).toString());
   m_minSync=m_settings->value("MinSync",0).toInt();
   ui->syncSpinBox->setValue(m_minSync);
