@@ -1097,10 +1097,15 @@ if (Fortran_COMPILER_NAME MATCHES "gfortran.*")
     set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
   endif (CMAKE_OSX_SYSROOT)
 
+  # Add assembler flag to disable executable stack
+  if (UNIX AND Fortran_COMPILER_NAME MATCHES "gfortran.*")
+     set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wa,--noexecstack")
+  endif()
+
   set (CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -fbounds-check -funroll-all-loops -fno-f2c -ffpe-summary=invalid,zero,overflow,underflow ${General_FFLAGS}")
 
   set (CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} -ggdb -O0 -fbacktrace -fcheck=all -fbounds-check -fno-f2c -ffpe-summary=invalid,zero,overflow,underflow ${General_FFLAGS}")
-  
+
   # FPE traps currently disabled in Debug configuration builds until
   # we decide if they are meaningful, without these FP instructions
   # run in nonstop mode and do not trap
@@ -1114,14 +1119,14 @@ elseif (Fortran_COMPILER_NAME MATCHES "g77")
   # g77
   set (CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -funroll-all-loops -fno-f2c -m32 ${General_FFLAGS}")
   set (CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} -fbounds-check -fno-f2c -m32 ${General_FFLAGS}")
-else (Fortran_COMPILER_NAME MATCHES "gfortran.*")
-  message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
-  message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
+
+else()
+  message ("CMAKE_Fortran_COMPILER full path: ${CMAKE_Fortran_COMPILER}")
+  message ("Fortran compiler: ${Fortran_COMPILER_NAME}")
   message ("No optimized Fortran compiler flags are known, we just try -O3...")
   set (CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -O3 ${General_FFLAGS}")
   set (CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} -g -fbacktrace -fcheck=all -fbounds-check ${General_FFLAGS}")
-endif (Fortran_COMPILER_NAME MATCHES "gfortran.*")
-
+endif()
 
 #
 # Linker setup
