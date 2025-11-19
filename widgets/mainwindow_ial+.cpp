@@ -1634,6 +1634,7 @@ void MainWindow::writeSettings()
   m_settings->setValue ("HideAF", ui->actionHideAF->isChecked() );
   m_settings->setValue ("HideOC", ui->actionHideOC->isChecked() );
   m_settings->setValue ("HideAN", ui->actionHideAN->isChecked() );
+  m_settings->setValue ("HighlightWhitelistEntries", ui->actionHighlight_Whitelist_entries->isChecked() );
   m_settings->endGroup();
 }
 
@@ -1840,6 +1841,7 @@ void MainWindow::readSettings()
   ui->actionHideAF->setChecked(m_settings->value("HideAF", false).toBool());
   ui->actionHideOC->setChecked(m_settings->value("HideOC", false).toBool());
   ui->actionHideAN->setChecked(m_settings->value("HideAN", false).toBool());
+  ui->actionHighlight_Whitelist_entries->setChecked(m_settings->value("HighlightWhitelistEntries", false).toBool());
 //  m_mode=m_settings->value("Mode","FT8").toString();
   ui->actionNone->setChecked(m_settings->value("SaveNone",true).toBool());
   ui->actionSave_decoded->setChecked(m_settings->value("SaveDecoded",false).toBool());
@@ -3225,7 +3227,7 @@ void MainWindow::fastSink(qint64 frames)
       QTimer::singleShot (int(750*m_TRperiod), [=] {cease_auto_Tx_after_QSO();});
 
     // highlight orange and blue callsigns for MSK144
-    if(m_config.highlight_orange() or (m_config.highlight_blue())) {
+    if(m_config.highlight_orange() or (m_config.highlight_blue()) or ui->actionHighlight_Whitelist_entries->isChecked()) {
         QString deCall;
         QString deGrid;
         decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -3259,6 +3261,23 @@ void MainWindow::fastSink(qint64 frames)
             ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(0,100,255), QColor(255,255,255), true);
             if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted && tw[1]!="") play_Wanted = true;
           }
+        }
+        // highlight Whitelist entries
+        if (ui->actionHighlight_Whitelist_entries->isChecked() && deCall.size()>2 &&
+            ((deCall.contains(m_config.Whitelist1()) && m_config.Whitelist1() != "")
+             or (deCall.contains(m_config.Whitelist2()) && m_config.Whitelist2() != "")
+             or (deCall.contains(m_config.Whitelist3()) && m_config.Whitelist3() != "")
+             or (deCall.contains(m_config.Whitelist4()) && m_config.Whitelist4() != "")
+             or (deCall.contains(m_config.Whitelist5()) && m_config.Whitelist5() != "")
+             or (deCall.contains(m_config.Whitelist6()) && m_config.Whitelist6() != "")
+             or (deCall.contains(m_config.Whitelist7()) && m_config.Whitelist7() != "")
+             or (deCall.contains(m_config.Whitelist8()) && m_config.Whitelist8() != "")
+             or (deCall.contains(m_config.Whitelist9()) && m_config.Whitelist9() != "")
+             or (deCall.contains(m_config.Whitelist10()) && m_config.Whitelist10() != "")
+             or (deCall.contains(m_config.Whitelist11()) && m_config.Whitelist11() != "")
+             or (deCall.contains(m_config.Whitelist12()) && m_config.Whitelist12() != ""))) {
+          ui->decodedTextBrowser->highlight_callsign(deCall, QColor(170,0,127), QColor(255,255,255), true);
+          if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
         }
     }
 
@@ -7111,7 +7130,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
 
         // highlight orange and blue callsigns
-        if (m_config.highlight_orange() or (m_config.highlight_blue())) {
+        if (m_config.highlight_orange() or (m_config.highlight_blue()) or ui->actionHighlight_Whitelist_entries->isChecked()) {
           QString deCall;
           QString deGrid;
           decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
@@ -7143,6 +7162,23 @@ void MainWindow::readFromStdout()                             //readFromStdout
               ui->decodedTextBrowser->highlight_callsign(tw[1], QColor(0,100,255), QColor(255,255,255), true);
               if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted && tw[1]!="") play_Wanted = true;
             }
+          }
+          // highlight Whitelist entries
+          if (ui->actionHighlight_Whitelist_entries->isChecked() && deCall.size()>2 &&
+              ((deCall.contains(m_config.Whitelist1()) && m_config.Whitelist1() != "")
+               or (deCall.contains(m_config.Whitelist2()) && m_config.Whitelist2() != "")
+               or (deCall.contains(m_config.Whitelist3()) && m_config.Whitelist3() != "")
+               or (deCall.contains(m_config.Whitelist4()) && m_config.Whitelist4() != "")
+               or (deCall.contains(m_config.Whitelist5()) && m_config.Whitelist5() != "")
+               or (deCall.contains(m_config.Whitelist6()) && m_config.Whitelist6() != "")
+               or (deCall.contains(m_config.Whitelist7()) && m_config.Whitelist7() != "")
+               or (deCall.contains(m_config.Whitelist8()) && m_config.Whitelist8() != "")
+               or (deCall.contains(m_config.Whitelist9()) && m_config.Whitelist9() != "")
+               or (deCall.contains(m_config.Whitelist10()) && m_config.Whitelist10() != "")
+               or (deCall.contains(m_config.Whitelist11()) && m_config.Whitelist11() != "")
+               or (deCall.contains(m_config.Whitelist12()) && m_config.Whitelist12() != ""))) {
+            ui->decodedTextBrowser->highlight_callsign(deCall, QColor(170,0,127), QColor(255,255,255), true);
+            if (m_config.alert_Enabled() && m_config.alert_Wanted() && !m_muted) play_Wanted = true;
           }
         }
 

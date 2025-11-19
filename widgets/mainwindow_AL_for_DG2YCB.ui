@@ -5130,11 +5130,13 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionHighlightToday"/>
     <addaction name="actionHighlightIgnored"/>
     <addaction name="separator"/>
-    <addaction name="actionactionHighlightCallsigns"/>
     <addaction name="actionHighlightTerritory1"/>
     <addaction name="actionHighlightTerritory2"/>
     <addaction name="actionHighlightTerritory3"/>
     <addaction name="actionHighlightTerritory4"/>
+    <addaction name="separator"/>
+    <addaction name="actionHighlight_Whitelist_entries"/>
+    <addaction name="actionactionHighlightCallsigns"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -6561,6 +6563,14 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>No MTD a8 decodes</string>
+   </property>
+  </action>
+  <action name="actionHighlight_Whitelist_entries">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Highlight Whitelist entries</string>
    </property>
   </action>
  </widget>

@@ -5134,6 +5134,8 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionHighlightTerritory2"/>
     <addaction name="actionHighlightTerritory3"/>
     <addaction name="actionHighlightTerritory4"/>
+    <addaction name="separator"/>
+    <addaction name="actionHighlight_Whitelist_entries"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -5255,7 +5257,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionQSG_X250_M3"/>
     <addaction name="actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP"/>
     <addaction name="download_samples_action"/>
-	<addaction name="actionDownload_EME_Ephemeris_Chart"/>
+    <addaction name="actionDownload_EME_Ephemeris_Chart"/>
     <addaction name="separator"/>
     <addaction name="actionWSJT_X_improved_Home_Page"/>
     <addaction name="actionThe_additional_features_of_wsjt_x_improved"/>
@@ -6550,6 +6552,14 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hide AP information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionHighlight_Whitelist_entries">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Highlight Whitelist entries</string>
    </property>
   </action>
  </widget>
