@@ -5136,7 +5136,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionHighlightTerritory4"/>
     <addaction name="separator"/>
     <addaction name="actionHighlight_Whitelist_entries"/>
-    <addaction name="actionactionHighlightCallsigns"/>
+    <addaction name="actionHighlightCallsigns"/>
    </widget>
    <widget class="QMenu" name="menuDecode">
     <property name="title">
@@ -6477,20 +6477,6 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>Hide FT8 dupe messages</string>
-   </property>
-  </action>
-  <action name="actionactionHighlightCallsigns">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Highlight DX callsigns on VHF and 160m</string>
-   </property>
-   <property name="iconText">
-    <string>Highlight DX callsigns on VHF and 160m</string>
-   </property>
-   <property name="toolTip">
-    <string>Highlight DX callsigns on VHF and 160m</string>
    </property>
   </action>
   <action name="actionHighlightTerritory1">
