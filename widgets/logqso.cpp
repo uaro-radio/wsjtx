@@ -199,7 +199,11 @@ void LogQSO::storeSettings () const
   m_settings->setValue ("SaveSatMode", ui->cbSatMode->isChecked ());
   m_settings->setValue ("SaveFreqRx", ui->cbFreqRx->isChecked ());
   m_settings->setValue ("TxPower", m_txPower);
-  m_settings->setValue ("LogComments", m_comments);
+  if (ui->cbComments->isChecked ()) {
+    m_settings->setValue ("LogComments", m_comments);
+  } else {
+    m_settings->setValue ("LogComments", "");
+  }
   m_settings->setValue ("PropMode", ui->comboBoxPropMode->currentData ());
   m_settings->setValue ("Satellite", ui->comboBoxSatellite->currentData ());
   m_settings->setValue ("SatMode", ui->comboBoxSatMode->currentData ());
