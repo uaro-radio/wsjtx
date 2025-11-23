@@ -33,11 +33,17 @@ void CQDataSender::send(QString theUrl, const QString &data)
   QNetworkReply *reply = m_networkManager->post(request, payload);
   qDebug() << "Current thread for CQDataSender::send:" << QThread::currentThread();
    // Use the OLD signal name: 'error' instead of 'errorOccurred'
+#if QT_VERSION >= QT_VERSION_CHECK (5, 15, 0)
+  connect(reply, &QNetworkReply::errorOccurred, this, [this, reply](QNetworkReply::NetworkError) {
+      emit errorOccurred(reply->errorString());
+  });
+#else
   connect(reply, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),
           this, [this, reply](QNetworkReply::NetworkError error) {
       Q_UNUSED(error)
       emit errorOccurred(reply->errorString());
   });
+#endif
 
   // Connect to sslErrors without QOverload
   connect(reply, &QNetworkReply::sslErrors, this, [this](const QList<QSslError> &errors) {
