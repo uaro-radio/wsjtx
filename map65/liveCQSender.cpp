@@ -126,13 +126,8 @@ liveCQSender::liveCQSender(QString const& myCall, QString const& myGrid, QString
         webpage = parsed.path();
     }
     else return;
-#if QT_VERSION >= QT_VERSION_CHECK (5, 15, 0)
     request.append(("POST " + webpage + " HTTP/1.1\r\n").toUtf8());
     request.append(("Host: " + host + "\r\n").toUtf8());
-#else
-    request.append("POST " + webpage + " HTTP/1.1\r\n");
-    request.append("Host: " + host + "\r\n");
-#endif
     request.append("Content-Type: application/x-www-form-urlencoded\r\n");
     request.append("Connection: keep-alive\r\n");
     request.append("Content-Length: " + QByteArray::number(body.size()) + "\r\n\r\n");
