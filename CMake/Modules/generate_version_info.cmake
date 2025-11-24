@@ -152,16 +152,32 @@ function(generate_version_info outfiles)
     set(PRODUCT_FILE_DESCRIPTION "${PRODUCT_COMMENTS}")
   endif()
 
-  set (_VersionInfoFile VersionInfo_${PRODUCT_NAME}.h)
-  set (_VersionResourceFile VersionResource_${PRODUCT_NAME}.rc)
-  configure_file(
-    ${_THIS_MODULE_BASE_DIR}/VersionInfo.h.in
-    ${_VersionInfoFile}
-    @ONLY)
+# Force resource files into the top-level build directory
+  set(_VersionInfoFile VersionInfo_${PRODUCT_NAME}.h)
+  set(_VersionResourceFile VersionResource_${PRODUCT_NAME}.rc)
+
+# Always generate the header
+configure_file(
+  ${_THIS_MODULE_BASE_DIR}/VersionInfo.h.in
+  ${CMAKE_BINARY_DIR}/${_VersionInfoFile}
+  @ONLY
+)
+
+set_source_files_properties("${CMAKE_BINARY_DIR}/${_VersionInfoFile}" PROPERTIES GENERATED TRUE)
+
+# generate_version_info.cmake
+if(WIN32)
+  # Emit a short, unambiguous name in the current target's binary dir
+  set(_RC_SHORT "wsprd.rc")
   configure_file(
     ${_THIS_MODULE_BASE_DIR}/VersionResource.rc.in
-    ${_VersionResourceFile}
-    @ONLY)
-  list(APPEND ${outfiles} ${CMAKE_CURRENT_BINARY_DIR}/${_VersionInfoFile} ${CMAKE_CURRENT_BINARY_DIR}/${_VersionResourceFile})
-  set (${outfiles} ${${outfiles}} PARENT_SCOPE)
+    ${CMAKE_CURRENT_BINARY_DIR}/${_RC_SHORT}
+    @ONLY
+  )
+  file(TO_CMAKE_PATH "${CMAKE_CURRENT_BINARY_DIR}/${_RC_SHORT}" _RC_FWD)
+  set(${outfiles} "${_RC_FWD}" PARENT_SCOPE)
+else()
+  set(${outfiles} "" PARENT_SCOPE)
+endif()
+  
 endfunction()

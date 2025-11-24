@@ -12,6 +12,51 @@
 #include <QMetaType>
 #include <QMetaEnum>
 
+#pragma once
+#include <QtGlobal>
+#include <QOperatingSystemVersion>
+
+// ----------------------
+// Windows version macros
+// ----------------------
+#define IS_WINDOWS_VISTA_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::Windows, 6))
+
+#define IS_WINDOWS_7_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::Windows, 6, 1))
+
+#define IS_WINDOWS_10_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::Windows, 10))
+
+// Windows 11 is identified by build number >= 22000
+#define IS_WINDOWS_11_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::Windows, 10, 0, 22000))
+
+// ----------------------
+// macOS version macros
+// ----------------------
+#define IS_MACOS_CATALINA_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::MacOS, 10, 15))
+
+#define IS_MACOS_BIGSUR_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::MacOS, 11))
+
+#define IS_MACOS_MONTEREY_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::MacOS, 12))
+
+#define IS_MACOS_VENTURA_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::MacOS, 13))
+
+#define IS_MACOS_SONOMA_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::MacOS, 14))
+
+#define IS_MACOS_SEQUOIA_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::MacOS, 15))
+
+// macOS Tahoe (officially version 26, released Sept 15, 2025)
+#define IS_MACOS_TAHOE_OR_LATER \
+    (QOperatingSystemVersion::current() >= QOperatingSystemVersion(QOperatingSystemVersion::MacOS, 26))
+
 #define ENUM_QDATASTREAM_OPS_DECL(CLASS, ENUM)				\
   QDataStream& operator << (QDataStream&, CLASS::ENUM const&);			\
   QDataStream& operator >> (QDataStream&, CLASS::ENUM&);

@@ -423,15 +423,19 @@ int main(int argc, char *argv[])
 
             // deal with Windows Vista and earlier input audio rate
             // converter problems
-            downSampleFactor = multi_settings.settings ()->value ("Audio/DisableInputResampling",
+            downSampleFactor = multi_settings.settings()->value(
+                "Audio/DisableInputResampling",
 #if defined (Q_OS_WIN)
                                                                   // default to true for
-                                                                  // Windows Vista and older
-                                                                  QSysInfo::WV_VISTA >= QSysInfo::WindowsVersion ? true : false
+                (QOperatingSystemVersion::current() <
+                 QOperatingSystemVersion(QOperatingSystemVersion::Windows, 6))
+                    ? true
+                    : false
 #else
                                                                   false
 #endif
                                                                   ).toBool () ? 1u : 4u;
+
           }
 
           QDir::setCurrent(qApp->applicationDirPath()); //This helps to find the SF executables
