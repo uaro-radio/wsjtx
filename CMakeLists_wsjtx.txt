@@ -52,6 +52,26 @@ set (PROJECT_DESCRIPTION "WSJT-X: Digital Modes for Weak Signal Communications i
 set (CMAKE_PROJECT_DESCRIPTION ${PROJECT_DESCRIPTION})
 set (CMAKE_AUTOUIC ON)
 
+# Align windres with the active MinGW gcc to prevent MSYS path mangling
+if(MINGW)
+  # Derive windres.exe from the C compiler's directory (Qt MinGW toolchain)
+  get_filename_component(_CC_DIR "${CMAKE_C_COMPILER}" DIRECTORY)
+  find_program(WINDRES_EXECUTABLE NAMES windres.exe windres PATHS "${_CC_DIR}" NO_DEFAULT_PATH)
+  if(NOT WINDRES_EXECUTABLE)
+    # Fallback to normal PATH if not found beside gcc
+    find_program(WINDRES_EXECUTABLE NAMES windres.exe windres)
+  endif()
+  if(NOT WINDRES_EXECUTABLE)
+    message(FATAL_ERROR "windres not found; ensure MinGW bin dir is on PATH")
+  endif()
+
+  # Use MinGW windres directly; feed it forward-slash paths; avoid bash and MSYS gcc
+  set(CMAKE_RC_COMPILER "${WINDRES_EXECUTABLE}")
+  set(CMAKE_RC_COMPILE_OBJECT
+    "<CMAKE_COMMAND> -E env MSYS2_ARG_CONV_EXCL='*' \"<CMAKE_RC_COMPILER>\" -O coff <DEFINES> <INCLUDES> <FLAGS> \"<SOURCE>\" \"<OBJECT>\""
+  )
+endif()
+
 #
 # Local CMake modules and support files
 #
@@ -98,6 +118,8 @@ if (CMAKE_BUILD_TYPE MATCHES "[Dd][Ee][Bb][Uu][Gg]")
   set (is_debug_build 1)
 endif ()
 
+#uncomment line below to test for Qt 5.15.2 and later deprecations
+#add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050F00)
 
 #
 # Options & features
@@ -1098,7 +1120,7 @@ if (Fortran_COMPILER_NAME MATCHES "gfortran.*")
   endif (CMAKE_OSX_SYSROOT)
 
   # Add assembler flag to disable executable stack
-  if (UNIX AND Fortran_COMPILER_NAME MATCHES "gfortran.*")
+  if (UNIX AND NOT APPLE AND Fortran_COMPILER_NAME MATCHES "gfortran.*")
      set (CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wa,--noexecstack")
   endif()
 
@@ -1386,8 +1408,23 @@ generate_version_info (wsprd_VERSION_RESOURCES
   BUNDLE ${PROJECT_BUNDLE_NAME}
   ICON ${WSJTX_ICON_FILE}
   FILE_DESCRIPTION "WSPR mode decoder"
-  )
-add_executable (wsprd ${wsprd_CSRCS} lib/indexx.f90 lib/wsprd/osdwspr.f90 ${wsprd_VERSION_RESOURCES})
+)
+# message(STATUS "RC compiler: ${CMAKE_RC_COMPILER}")
+#  message(STATUS "RC rule: ${CMAKE_RC_COMPILE_OBJECT}")
+#  message(STATUS "wsprd_VERSION_RESOURCES: ${wsprd_VERSION_RESOURCES}")
+
+add_executable(wsprd
+  ${wsprd_CSRCS}
+  lib/indexx.f90
+  lib/wsprd/osdwspr.f90
+)
+
+if(WIN32)
+  # Attach the generated rc file; the RC rule above will compile it
+  target_sources(wsprd PRIVATE ${wsprd_VERSION_RESOURCES})
+endif()
+
+
 target_include_directories (wsprd PRIVATE ${FFTW3_INCLUDE_DIRS})
 target_link_libraries (wsprd ${FFTW3_LIBRARIES} ${LIBM_LIBRARIES})
 
