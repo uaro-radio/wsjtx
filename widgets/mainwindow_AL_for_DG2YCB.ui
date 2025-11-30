@@ -5227,6 +5227,7 @@ Double-click to reset to the standard 73 message</string>
     <addaction name="actionFull_Duplex_Mode"/>
     <addaction name="separator"/>
     <addaction name="actionNo_MTD_a8_decodes"/>
+    <addaction name="actionBand_Hopping_every_minute"/>
    </widget>
    <widget class="QMenu" name="menuSave">
     <property name="title">
@@ -6557,6 +6558,14 @@ Double-click to reset to the standard 73 message</string>
    </property>
    <property name="text">
     <string>Highlight Whitelist entries</string>
+   </property>
+  </action>
+  <action name="actionBand_Hopping_every_minute">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Band Hopping every minute</string>
    </property>
   </action>
  </widget>

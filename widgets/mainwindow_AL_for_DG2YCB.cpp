@@ -1535,6 +1535,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("UploadSpots",m_uploadWSPRSpots);
   m_settings->setValue("NoOwnCall",ui->cbNoOwnCall->isChecked());
   m_settings->setValue ("BandHopping", ui->band_hopping_group_box->isChecked ());
+  m_settings->setValue ("BandHoppingEveryMinute", ui->actionBand_Hopping_every_minute->isChecked ());
   m_settings->setValue ("MaxDrift", ui->sbMaxDrift->value());
   m_settings->setValue ("TRPeriod_FST4W", ui->sbTR_FST4W->value ());
   m_settings->setValue("FastMode",m_bFastMode);
@@ -1953,6 +1954,7 @@ void MainWindow::readSettings()
   m_uploadWSPRSpots=m_settings->value("UploadSpots",false).toBool();
   ui->cbNoOwnCall->setChecked(m_settings->value("NoOwnCall",false).toBool());
   ui->band_hopping_group_box->setChecked (m_settings->value ("BandHopping", false).toBool());
+  ui->actionBand_Hopping_every_minute->setChecked (m_settings->value ("BandHoppingEveryMinute", false).toBool());
   // setup initial value of tx attenuator
   m_block_pwr_tooltip = true;
   ui->outAttenuation->setValue (m_settings->value ("OutAttenuation", 0).toInt ());
@@ -15586,13 +15588,20 @@ void MainWindow::bandHoppingTimer()
     int nextStartIndex = startIndex +1;
     switch (startIndex){
     case 0:
-            startIndex = nextStartIndex;  // band hopping every other minute
-            return;
+      if (ui->actionBand_Hopping_every_minute->isChecked()) {
+          m_displayBand = false;
+          bandHopping();
+          startIndex = 0;
+          return;
+      } else {
+          startIndex = nextStartIndex;  // band hopping every other minute
+          return;
+      }
     case 1:
-            m_displayBand = false;
-            bandHopping();
-            startIndex = 0;
-            return;
+          m_displayBand = false;
+          bandHopping();
+          startIndex = 0;
+          return;
      }
    }
 }
