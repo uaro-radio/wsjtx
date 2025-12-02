@@ -7556,7 +7556,18 @@ void MainWindow::pskPost (DecodedText const& decodedtext)
 {
   if (m_diskData || !m_config.spot_to_psk_reporter() || decodedtext.isLowConfidence ()
       || (decodedtext.string().contains(m_baseCall) && decodedtext.string().contains(m_config.my_grid().left(4)))) return; // prevent self-spotting when running multiple instances
-
+  int h=decodedtext.string().mid(0,2).toInt();
+  int m=decodedtext.string().mid(2,2).toInt();
+  int s=decodedtext.string().mid(4,2).toInt();
+  int sTimeString = decodedtext.string().mid(0,6).toInt();
+  QTime time2(h, m, s);
+  QDateTime qSpotTime;
+  if (sTimeString + m_TRperiod >= 236000) {
+    qSpotTime = QDateTime((QDateTime::currentDateTimeUtc().addDays(-1)).date(), time2, Qt::UTC); 
+  }
+  else {
+    qSpotTime = QDateTime(QDateTime::currentDateTimeUtc().date(), time2, Qt::UTC); 
+  }    
   QString msgmode=m_mode;
   QString deCall;
   QString grid;
@@ -7569,7 +7580,7 @@ void MainWindow::pskPost (DecodedText const& decodedtext)
   Frequency frequency = m_freqNominalPeriod + audioFrequency;   // prevent spotting wrong band
   if(grid.contains (grid_regexp)  || decodedtext.string().contains(" CQ ")) {
 //    qDebug() << "To PSKreporter:" << deCall << grid << frequency << msgmode << snr;
-    if (!m_psk_Reporter.addRemoteStation (deCall, grid, frequency, msgmode, snr))
+    if (!m_psk_Reporter.addRemoteStation (deCall, grid, frequency, msgmode, snr, qSpotTime))
       {
         showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));
       }
@@ -14085,6 +14096,15 @@ void MainWindow::readWidebandDecodes()
     nhr=line.mid(0,2).toInt();
     nmin=line.mid(2,2).toInt();
     nsec=line.mid(4,2).toInt();
+    int sTimeString = line.mid(0,6).toInt();
+    QTime time2(nhr, nmin, nsec);
+    QDateTime qSpotTime;
+    if (sTimeString + m_TRperiod >= 236000) {
+      qSpotTime = QDateTime((QDateTime::currentDateTimeUtc().addDays(-1)).date(), time2, Qt::UTC); 
+    }
+    else {
+      qSpotTime = QDateTime(QDateTime::currentDateTimeUtc().date(), time2, Qt::UTC); 
+    }        
     double frx=line.mid(6,9).toDouble();
     double fsked=line.mid(16,7).toDouble();
     QString submode=line.mid(36,3);
@@ -14108,7 +14128,7 @@ void MainWindow::readWidebandDecodes()
       bool bFromDisk=qmapcom.nQDecoderDone==2;
       if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
         qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
-        if (!m_psk_Reporter.addRemoteStation (dxcall, m_EMECall[dxcall].grid4, frequency, m_mode, nsnr)) {
+        if (!m_psk_Reporter.addRemoteStation (dxcall, m_EMECall[dxcall].grid4, frequency, m_mode, nsnr, qSpotTime)) {
           showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));
         }
       }
