@@ -436,11 +436,11 @@ void Messages::sendPSKReporterData(QStringList decodeList) {
         int s=sTimeString.mid(4,2).toInt();
         QTime time2(h, m, s);
         QDateTime qSpotTime;
-        if (sTime + m_TRperiod >= 236000) {
-          qSpotTime = QDateTime((QDateTime::currentDateTimeUtc().addDays(-1)).date(), time2, Qt::UTC); 
+        if (sTime + m_TRperiod < 236000) {
+          qSpotTime = QDateTime(QDateTime::currentDateTimeUtc().date(), time2, Qt::UTC); 
         }
         else {
-          qSpotTime = QDateTime(QDateTime::currentDateTimeUtc().date(), time2, Qt::UTC); 
+          qSpotTime = QDateTime((QDateTime::currentDateTimeUtc().addDays(-1)).date(), time2, Qt::UTC); 
         }            
         
         // Handle CQ CALL but NO GRID -- dot at 7
