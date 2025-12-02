@@ -144,7 +144,6 @@ void Messages::sendLiveCQData(QStringList decodeList) {
   QString m_myCall=settings.value("MyCall","").toString();
   QString m_myGrid=settings.value("MyGrid","").toString();
   bool m_xpol = settings.value("Xpol",false).toBool();
-  QString theDate = guiDate;
   QString rpol = "--";
   QString theUrl;
 
@@ -427,7 +426,22 @@ void Messages::sendPSKReporterData(QStringList decodeList) {
         senderLocator = "--";
         mode="";
         sNR=-10;
-        QString modeChar = "";        
+        QString modeChar = "";     
+
+        int m_TRperiod = 60;
+        QString sTimeString = (thePostLine.at(3).trimmed() + "00");
+        int sTime = sTimeString.toInt();
+        int h=sTimeString.mid(0,2).toInt();
+        int m=sTimeString.mid(2,2).toInt();
+        int s=sTimeString.mid(4,2).toInt();
+        QTime time2(h, m, s);
+        QDateTime qSpotTime;
+        if (sTime + m_TRperiod >= 236000) {
+          qSpotTime = QDateTime((QDateTime::currentDateTimeUtc().addDays(-1)).date(), time2, Qt::UTC); 
+        }
+        else {
+          qSpotTime = QDateTime(QDateTime::currentDateTimeUtc().date(), time2, Qt::UTC); 
+        }            
         
         // Handle CQ CALL but NO GRID -- dot at 7
       if(thePostLine.at(7).contains(".")) {
@@ -477,7 +491,7 @@ void Messages::sendPSKReporterData(QStringList decodeList) {
           continue; 
         }             
                 
-        emit sendRemoteStationData(senderCallsign, senderLocator, frequency, mode, sNR);        
+        emit sendRemoteStationData(senderCallsign, senderLocator, frequency, mode, sNR, qSpotTime);        
       }
     }
   }

@@ -63,7 +63,7 @@ public:
     QDateTime time_;
   };
   
-  void addRemoteStation (QString const& call, QString const& grid, Radio::Frequency freq, QString const& mode, int snr);
+  void addRemoteStation (QString const& call, QString const& grid, Radio::Frequency freq, QString const& mode, int snr, QDateTime spotTime);
 
   //
   // Flush any pending spots to PSK Reporter

@@ -24,7 +24,7 @@ public:
   //
   // Returns false if PSK Reporter connection is not available
   //
-  bool addRemoteStation (QString const& call, QString const& grid, Radio::Frequency freq, QString const& mode, int snr);
+  bool addRemoteStation (QString const& call, QString const& grid, Radio::Frequency freq, QString const& mode, int snr, QDateTime spotTime);
 
   //
   // Flush any pending spots to PSK Reporter

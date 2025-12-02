@@ -6,6 +6,7 @@
 #include "PSKReporter.hpp"
 #include <memory>
 #include <QNetworkReply>
+#include <QDateTime>
 
 namespace Ui {
   class Messages;
@@ -30,7 +31,7 @@ signals:
   void click2OnCallsign(QString hiscall, QString t2, bool ctrl);
   void errorOccurred(const QString &error);  // Emitted on error
   void sendLocalStationData(QString const& call, QString const& grid, QString const& antenna, QString const& rigInformation);
-  void sendRemoteStationData (QString const& call, QString const& grid, quint64 freq, QString const& mode, int snr);
+  void sendRemoteStationData (QString const& call, QString const& grid, quint64 freq, QString const& mode, int snr, QDateTime qSpotTime);
   void sendLocalStationData2(QString const& call, QString const& grid, QString const& theUrl);
   void sendRemoteStationData2 (QByteArray const& postByteArray, QString const& theUrl);
 
