@@ -13593,7 +13593,28 @@ void MainWindow::p1ReadFromStdout()                        //p1readFromStdout
           QString band;
           Frequency f=1000000.0*rxFields.at(3).toDouble()+0.5;
           band = ' ' + m_config.bands ()->find (f);
-          ui->decodedTextBrowser->insertText(band.rightJustified (71, '-'));
+          m_dateTimeSeqStart = qt_truncate_date_time_to (QDateTime::currentDateTimeUtc (), m_TRperiod * 1.e3);
+          if (ui->actionUse_Dark_Style->isChecked()) {
+            if (m_config.detailed_blank()) {
+              if (m_config.DXCC()) {
+                ui->decodedTextBrowser->insertText(("------------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + band + " - " + m_mode + " --------------"), "#a2a2a2", "#000000");
+              } else {
+                ui->decodedTextBrowser->insertText(("------------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + band + " - " + m_mode), "#a2a2a2", "#000000");
+              }
+            } else {
+              ui->decodedTextBrowser->insertText(band.rightJustified(71, '-'), "#a2a2a2", "#000000");
+            }
+          } else {
+            if (m_config.detailed_blank()) {
+              if (m_config.DXCC()) {
+                ui->decodedTextBrowser->insertLineSpacer ("------------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + band + " - " + m_mode + " --------------");
+              } else {
+                ui->decodedTextBrowser->insertLineSpacer ("------------ " + m_dateTimeSeqStart.toString("yyyy-MM-dd - hh:mm:ss' UTC - '") + band + " - " + m_mode);
+              }
+            } else {
+              ui->decodedTextBrowser->insertLineSpacer (band.rightJustified  (71, '-'));
+            }
+          }
         }
         m_tBlankLine = rxLine.left(4);
       }
