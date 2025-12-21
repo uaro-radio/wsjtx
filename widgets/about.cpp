@@ -16,10 +16,7 @@ CAboutDlg::CAboutDlg(QWidget *parent) :
   ui->labelTxt->setText ("<h2>" + QString {"WSJT-X v"
                                              + QCoreApplication::applicationVersion ()
                                              + " " + revision ()}.simplified () + "<br />"
-                                             + "improved PLUS</h2>"
 
-    "Improved PLUS edition based on WSJT-X by K1JT et al.<br />"
-    "&copy; 2020-2025 by Uwe Risse, DG2YCB.  <br /><br />"
     "WSJT-X implements a number of digital modes designed for <br />"
     "weak-signal Amateur Radio communication.  <br /><br />"
     "&copy; 2001-2025 by Joe Taylor, K1JT, Bill Somerville, G4WJS, <br />"
