@@ -32,7 +32,7 @@ WSJT-X 3.0.0-rc1. Among the more important enhancements since WSJT-X
  - Options to Wait and Reply, Wait and Call, and Wait and Pounce.
 
  - Audible Alerts can play a sound alerting you to reception of a
-   message with speficied content.
+   message with specified content.
 
  - Transmitted Power and SWR can be displayed (as reported by the
    radio) in a Status Bar label. Transmission can be stopped
@@ -51,7 +51,7 @@ WSJT-X 3.0.0-rc1. Among the more important enhancements since WSJT-X
    calls (DX, SOTA, POTA, YOTA, etc.).
  
  - MSK144 operation: "73" messages addressed to MyCall are now also
-   displayed in the right pane. A bank line is inserted between
+   displayed in the right pane. A blank line is inserted between
    decodes for different TR periods.
 
  - Moon ephemeris charts can be downloaded from the Help menu.
