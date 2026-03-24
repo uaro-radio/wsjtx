@@ -3689,7 +3689,7 @@ void Configuration::impl::on_reset_highlighting_to_defaults_push_button_clicked 
 {
   if (MessageBox::Yes == MessageBox::query_message (this
                                                     , tr ("Reset Decode Highlighting")
-                                                    , tr ("Reset all decode highlighting and priorities to default values")))
+                                                    , tr ("Reset all decode highlighting and priorities to Default 1 values")))
     {
       next_decode_highlighing_model_.items (DecodeHighlightingModel::default_items ());
     }
@@ -3699,7 +3699,7 @@ void Configuration::impl::on_reset_highlighting_to_defaults2_push_button_clicked
 {
     if (MessageBox::Yes == MessageBox::query_message (this
                              , tr ("Reset Decode Highlighting")
-                             , tr ("Reset all decode highlighting and priorities to default values")))
+                             , tr ("Reset all decode highlighting and priorities to Default 2 values")))
     {
       next_decode_highlighing_model_.items (DecodeHighlightingModel::default_items2 ());
     }
