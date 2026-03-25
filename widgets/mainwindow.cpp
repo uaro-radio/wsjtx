@@ -2547,6 +2547,16 @@ QString MainWindow::save_wave_file (QString const& name, short const * data, int
   // members that may be changed in the GUI thread or any other thread
   // without suitable synchronization.
   //
+  //added for Bob KA1GT
+  double dgrd_value;
+  QString dgrd;
+  if(m_astroWidget) {
+    dgrd_value = m_astroWidget->getDgrd();
+    dgrd = QString("%1").arg(dgrd_value, 0, 'f', 1);
+  } else {
+    dgrd = "NoVal";
+  }  
+  //end of added for Bob KA1GT
   QAudioFormat format;
   format.setCodec ("audio/pcm");
   format.setSampleRate (12000);
@@ -2570,6 +2580,7 @@ QString MainWindow::save_wave_file (QString const& name, short const * data, int
       {{{'I','C','R','D'}}, QDateTime::currentDateTimeUtc ()
                           .toString ("yyyy-MM-ddTHH:mm:ss.zzzZ").toLocal8Bit ()},
       {{{'I','C','M','T'}}, comment.toLocal8Bit ()},
+      {{{'D','G','R','D'}}, dgrd.toLocal8Bit()},  //added for Bob KA1GT
         };
   auto file_name = name + ".wav";
   BWFFile wav {format, file_name, list_info};
