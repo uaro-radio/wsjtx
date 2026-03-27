@@ -12,26 +12,26 @@
 Copyright 2001 - 2026 by Joe Taylor, K1JT, and the WSJT Development Team
 
                         Release: WSJT-X 3.0.0
-                            April 15, 2026
+                            April 8, 2026
                       -------------------------
 
 WSJT-X 3.0.0 introduces a number of new features and capabilities,
 many of which are already familiar to users of Release Candidate
-WSJT-X 3.0.0-rc1. Among the more important enhancements since WSJT-X
+WSJT-X 3.0.0-rc1. Among the more important enhancements since version
 2.7.0 are the following:
 
  - Single-click Band Buttons, enabled from the View menu.
 
- - FT8 Decoding includes an option for parallel processing in
-   concurrent threads, and other changes to yield improved speed and
+ - FT8 Decoding option for parallel processing in concurrent threads,
+   and other changes that yield improved decoding speed and
    performance.
 
- - Optional filters can suppress display of various categories of
+ - Optional filters to suppress display of various categories of
    decoded messages.
 
  - Options to Wait and Reply, Wait and Call, and Wait and Pounce.
 
- - Audible Alerts can play a sound alerting you to reception of a
+ - Audible Alerts to play a sound alerting you to reception of a
    message with specified content.
 
  - Transmitted Power and SWR can be displayed (as reported by the
