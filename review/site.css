@@ -180,6 +180,13 @@ p { margin: 0; }
 /* ---------------------------- card grids --------------------------- */
 .grid { display: grid; gap: 1.1rem; }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* outcomes strip ("what operators do with it") */
+.outcome { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--sig, var(--cyan));
+  border-radius: var(--radius); padding: 1.3rem; box-shadow: var(--shadow); }
+.outcome h3 { font-size: 1.05rem; }
+.outcome p { color: var(--muted); margin-top: .5rem; font-size: .95rem; }
 .card {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 1.5rem; box-shadow: var(--shadow); transition: transform .14s ease, box-shadow .2s ease;
@@ -239,7 +246,11 @@ p { margin: 0; }
 @media (max-width: 860px) {
   .hero-grid { grid-template-columns: 1fr; }
   .grid-3 { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .nav { gap: 1rem; }
+}
+@media (max-width: 560px) {
+  .grid-4 { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .site-header .container { flex-wrap: wrap; min-height: 0; padding-top: .7rem; padding-bottom: .7rem; }

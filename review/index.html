@@ -53,7 +53,7 @@
               <a class="btn btn-ghost" href="release_notes.html">Read the release notes</a>
             </div>
             <!-- STUB: bump version + date each release -->
-            <p class="release-meta">Latest: <b class="ver">WSJT-X 3.0.2</b> &middot; 18 Jun 2026 &middot; Windows, macOS &amp; Linux</p>
+            <p class="release-meta">Latest: <b class="ver js-latest-version">WSJT-X 3.0.2</b> &middot; <span class="js-latest-date">18 Jun 2026</span> &middot; Windows, macOS &amp; Linux</p>
           </div>
 
           <!-- signature: a real WSJT-X "Wide Graph" waterfall (FST4, 630 m; high-
@@ -78,16 +78,44 @@
       </div>
     </section>
 
-    <!-- ============================ official strip ============================ -->
+    <!-- ===================== official + authority strip ===================== -->
     <section class="section--tight">
       <div class="container">
         <div class="official">
-          <p class="eyebrow">One official source</p>
-          <h2>This is the official WSJT-X distribution.</h2>
-          <p>Releases and support live only here, on GitHub. Other &ldquo;improved&rdquo; builds and
-            forks are independent community projects — not part of official WSJT-X, and not
-            supported by the WSJT Development Team.</p>
+          <p class="eyebrow">The official project</p>
+          <h2>Home of FT8 &mdash; and the reference implementation for weak-signal digital communication.</h2>
+          <p>WSJT-X is created and maintained by Joe Taylor, K1JT, and the WSJT Development Team.
+            Official releases and support live only here, on GitHub &mdash; other &ldquo;improved&rdquo;
+            builds and forks are independent community projects, not part of official WSJT-X.</p>
           <p class="verified">github.com/WSJTX/wsjtx</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================== outcomes ============================== -->
+    <section class="section--tight">
+      <div class="container">
+        <div class="section-head">
+          <h2>What operators do with it</h2>
+          <p>Weak-signal modes turn modest stations into capable ones.</p>
+        </div>
+        <div class="grid grid-4">
+          <div class="outcome" style="--sig:#28d3ec">
+            <h3>Chase DX</h3>
+            <p>Work the world on the HF bands with a few watts and a simple antenna.</p>
+          </div>
+          <div class="outcome" style="--sig:#46e08a">
+            <h3>Meteor scatter</h3>
+            <p>Complete VHF contacts off the ionized trails of meteors, in seconds.</p>
+          </div>
+          <div class="outcome" style="--sig:#f6b53f">
+            <h3>Moonbounce (EME)</h3>
+            <p>Bounce signals off the Moon on the VHF, UHF, and microwave bands.</p>
+          </div>
+          <div class="outcome" style="--sig:#f0604d">
+            <h3>Probe propagation</h3>
+            <p>Map worldwide band openings with low-power WSPR beacons.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -183,5 +211,6 @@
         &copy;2001&ndash;2026 Joe Taylor, K1JT, and contributors · Free software under the GNU GPL.</p>
     </div>
   </footer>
+  <script src="site.js" defer></script>
 </body>
 </html>
