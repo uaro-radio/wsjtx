@@ -36,7 +36,8 @@ CAboutDlg::CAboutDlg(QWidget *parent) :
     // whom. It is also the honest thing to put in front of anyone about to
     // report a bug — the countries filter and the uahamaward.com connection
     // are not Joe Taylor's work and should not become his correspondence.
-    "<b>Modified build.</b> This is not an official WSJT-X release.<br />"
+    "<b>Modified build by Petro Ostapuk, UR3PKI.</b><br />"
+    "This is not an official WSJT-X release.<br />"
     "It adds a DXCC country filter for the decode windows and a<br />"
     "direct connection to uahamaward.com for logged contacts.<br />"
     "Report problems with those to the fork, not to the WSJT-X team:<br />"

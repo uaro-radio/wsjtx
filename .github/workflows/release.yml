@@ -302,8 +302,22 @@ jobs:
           if [[ "$TAG" == *-* && ! "$TAG" =~ -uaham[0-9]+$ ]]; then
             PRERELEASE_FLAG="--prerelease"
           fi
+          # The description says what this build is and what was added to it.
+          # Generated notes alone are a list of commit subjects, which answers
+          # "what changed since last time" for somebody who already knows the
+          # project — and nothing at all for the operator who arrived here to
+          # download a program. The text lives in the repository so it can be
+          # edited without touching this workflow.
+          NOTES=$(mktemp)
+          if [ -f .uaham/release-notes.md ]; then
+            cat .uaham/release-notes.md > "$NOTES"
+          else
+            echo "::warning::.uaham/release-notes.md is missing — publishing with generated notes only"
+          fi
+
           gh release create "$TAG" \
             --title "WSJT-X ${{ needs.prepare.outputs.version }} (UaHamAward)" \
+            --notes-file "$NOTES" \
             --generate-notes \
             $PRERELEASE_FLAG \
             "${files[@]}"

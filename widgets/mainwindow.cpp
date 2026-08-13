@@ -846,7 +846,11 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
       setDecodedTextFont (font);
     });
 
-  setWindowTitle (program_title ());
+  // Naming the build in the title is the honest place for it: somebody
+  // reporting a problem with the country filter or the uahamaward.com
+  // connection should be able to see whose work that is without opening a
+  // dialog, and it keeps this build from being mistaken for an official one.
+  setWindowTitle (program_title () + " (UaHamAward by UR3PKI)");
 
   connect(&proc_jt9, &QProcess::readyReadStandardOutput, this, &MainWindow::readFromStdout);
 #if QT_VERSION < QT_VERSION_CHECK (5, 6, 0)
