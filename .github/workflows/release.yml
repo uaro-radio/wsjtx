@@ -28,9 +28,26 @@ jobs:
           elif [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc([1-9][0-9]*)$ ]]; then
             RELEASE_CHANNEL=RC
             RC_NUMBER="${BASH_REMATCH[1]}"
+          # A finished release of this fork: upstream's version plus the fork
+          # marker that CMakeLists.txt carries in WSJT_FORK_TAG. Built on the
+          # GA channel because it is a finished build and should not nag the
+          # operator about being a development one — the marker in the version
+          # is what says whose build it is.
+          elif [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-(uaham[0-9]+)$ ]]; then
+            RELEASE_CHANNEL=GA
+            RC_NUMBER=""
+            FORK_TAG="${BASH_REMATCH[1]}"
+            CMAKE_FORK_TAG=$(sed -nE 's/^[[:space:]]*set \(WSJT_FORK_TAG "([^"]*)".*/\1/p' CMakeLists.txt | head -1)
+            # The tag names the artifacts; CMakeLists.txt names what is inside
+            # them. Letting those two disagree ships a file called uaham2
+            # containing a binary that reports uaham1.
+            if [ "$FORK_TAG" != "$CMAKE_FORK_TAG" ]; then
+              echo "::error::Tag fork marker ($FORK_TAG) != CMakeLists.txt WSJT_FORK_TAG ($CMAKE_FORK_TAG)."
+              exit 1
+            fi
           else
             echo "::error::Unsupported release tag version: $VERSION"
-            echo "::error::Supported release tags are build/vX.Y.Z and build/vX.Y.Z-rcN."
+            echo "::error::Supported release tags are build/vX.Y.Z, build/vX.Y.Z-rcN and build/vX.Y.Z-uahamN."
             exit 1
           fi
 

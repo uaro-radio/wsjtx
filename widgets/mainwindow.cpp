@@ -1350,10 +1350,11 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->sbToneSpacing->values({10, 15, 20, 25, 30});
   QTimer::singleShot (4000, [=] {programStart=false;});
 
-  // UaHamAward. The version reported to the site identifies the WSJT-X the
-  // contact came from, and is deliberately shaped so that the site's "your
-  // bridge is out of date" notice can never mistake it for an old bridge.
-  m_uahamSite.reset (new UaHam::SiteServer {version () + "-uaham1", this});
+  // UaHamAward. The version reported to the site is the application's own,
+  // which already carries the fork marker from WSJT_FORK_TAG — one source of
+  // truth, so the string the site displays cannot drift from the one in the
+  // title bar.
+  m_uahamSite.reset (new UaHam::SiteServer {version (), this});
   connect (m_uahamSite.data (), &UaHam::SiteServer::clients_changed
            , this, [this] (int) {uahamUpdateStatus ();});
 
