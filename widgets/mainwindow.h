@@ -43,6 +43,8 @@
 #include "Network/PSKReporter.hpp"
 #include "Network/Cloudlog.hpp"
 #include "logbook/logbook.h"
+#include "UaHam/CountryFilter.hpp"
+#include "UaHam/SiteServer.hpp"
 #include "astro.h"
 #include "widgets/QSYMessageCreator.h"
 #include "widgets/QSYMessage.h"
@@ -796,6 +798,20 @@ private:
   QProgressBar progressBar;
   QLabel watchdog_label;
 
+  // UaHamAward. Two indicators in the status bar, so that "the filter is on"
+  // and "the site is connected" are answerable at a glance rather than by
+  // opening a dialog.
+  QLabel uaham_filter_label;
+  QLabel uaham_site_label;
+  UaHam::CountryFilter m_uahamFilter;
+  QScopedPointer<UaHam::SiteServer> m_uahamSite;
+  // What the settings asked for, which is not always what the server got: a
+  // busy port makes it step to the next free one. Comparing against the
+  // request is what stops every visit to the settings dialog from rebinding a
+  // server that is working perfectly well.
+  quint16 m_uahamRequestedPort {0};
+  unsigned m_uahamQsosSent {0};
+
   QFuture<void> m_wav_future;
   QFutureWatcher<void> m_wav_future_watcher;
   QFutureWatcher<void> watcher3;
@@ -1005,6 +1021,12 @@ private:
   void locationChange(QString const& location);
   void replayDecodes ();
   void postDecode (bool is_new, QString const& message);
+
+  // UaHamAward
+  void uahamApplySettings ();
+  void uahamUpdateStatus ();
+  bool uahamHiddenByCountry (DecodedText const&);
+  void uahamPublishQso (QByteArray const& ADIF);
   void postWSPRDecode (bool is_new, QStringList message_parts);
   void enable_DXCC_entity (bool on);
   void switch_mode (Mode);
