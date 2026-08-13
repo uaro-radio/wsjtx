@@ -298,6 +298,7 @@ set (wsjt_qt_CXXSRCS
   # UaHamAward integration, kept in a directory of its own so that merging a
   # new release of WSJT-X touches as little of it as possible.
   UaHam/QsoPayload.cpp
+  UaHam/SettingsTabs.cpp
   UaHam/SiteServer.cpp
   Network/NetworkAccessManager.cpp
   widgets/LazyFillComboBox.cpp
