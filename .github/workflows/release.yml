@@ -260,6 +260,7 @@ jobs:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           TAG="${GITHUB_REF_NAME}"
           # Filter to user-facing release assets. `find artifacts -type f`
@@ -268,9 +269,27 @@ jobs:
           # that collide on basename across architectures — `gh release
           # create` uses basenames as asset names and duplicates cause
           # upload failures.
+          #
+          # Extension alone is not enough of a filter. It also matched every
+          # utility built alongside WSJT-X — ft8code, jt65sim, wsprd and some
+          # thirty more as *.tar.gz, plus bare wsjtx.exe and jt9.exe — which
+          # left the download page carrying 46 files, nine of them the ones
+          # anybody came for. Those utilities are developer tools; somebody
+          # who needs them is building from source anyway.
+          #
+          # Requiring the release name prefix as well keeps exactly the
+          # installers and the source tarball, all of which are named
+          # wsjtx-<version>-..., and drops everything else.
           mapfile -t files < <(find artifacts -maxdepth 2 -type f \
+            -name "wsjtx-${VERSION}*" \
             \( -name "*.pkg" -o -name "*.AppImage" -o -name "*.deb" \
                -o -name "*.exe" -o -name "*.tar.gz" -o -name "*.rpm" \))
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "::error::Asset filter matched nothing — refusing to publish an empty release."
+            exit 1
+          fi
+          printf 'attaching %d assets:\n' "${#files[@]}"
+          printf '  %s\n' "${files[@]}"
           # SemVer pre-release tags contain a hyphen after the version
           # (e.g., v3.0.1-rc1, v3.0.1-rc2, v3.0.1-beta1). Flag those as
           # GitHub pre-releases so they don't appear as the latest stable.
