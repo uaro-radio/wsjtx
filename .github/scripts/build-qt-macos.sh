@@ -77,7 +77,21 @@ archive="${build_root}/qt-everywhere-opensource-src-${QT_VERSION}.tar.xz"
 mkdir -p "$build_root" "$prefix"
 
 echo "Downloading Qt ${QT_VERSION} from ${QT_SOURCE_URL}"
-curl -L --fail --retry 5 --retry-delay 10 -o "$archive" "$QT_SOURCE_URL"
+# --retry alone does not cover this download. curl only retries the errors it
+# considers transient, and a connection that breaks part way through a
+# transfer is not among them: a 633 MB archive that died at 96% exits 92 and
+# the build fails on the spot, which is exactly what happened on the first
+# cold-cache run of this fork.
+#
+# --retry-all-errors makes those attempts count, and -C - resumes from what
+# already arrived instead of starting the 633 MB again. --http1.1 avoids the
+# specific failure seen, an HTTP/2 PROTOCOL_ERROR; nothing here needs HTTP/2,
+# and a long single-stream download is where it has least to offer.
+#
+# The archive is checked against a known SHA-256 immediately below, so a
+# resumed download cannot quietly produce a corrupt one.
+curl -L --fail --http1.1 --retry 5 --retry-delay 10 --retry-all-errors \
+     -C - -o "$archive" "$QT_SOURCE_URL"
 
 actual_sha256="$(macos_qt_sha256_file "$archive")"
 if [ "$actual_sha256" != "$QT_SOURCE_SHA256" ]; then
