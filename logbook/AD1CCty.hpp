@@ -3,9 +3,10 @@
 
 #include <QObject>
 #include <QDebug>
+#include <QList>
+#include <QString>
 #include "pimpl_h.hpp"
 
-class QString;
 class Configuration;
 
 //
@@ -41,10 +42,32 @@ public:
     QString primary_prefix;
   };
 
+  //
+  // One DXCC entity, for callers that need the whole table rather than
+  // the answer for a single call. The country filter's picker is the
+  // only such caller today.
+  //
+  // The identity here is the primary prefix, not the internal id: ids are
+  // handed out in the order cty.dat happens to list its entities, so every
+  // update of that file renumbers them. A setting that remembered an id
+  // would quietly start naming a different country.
+  //
+  struct Entity
+  {
+    QString primary_prefix;
+    QString name;
+    Continent continent;
+    bool WAE_only;
+  };
+
   explicit AD1CCty (Configuration const *);
   void reload(Configuration const * configuration);
   ~AD1CCty ();
   Record lookup (QString const& call) const;
+
+  // Every entity cty.dat defines, ordered by name.
+  QList<Entity> entities () const;
+
   QString version () const;
   Q_SIGNAL void cty_loaded (QString const& version) const;
 

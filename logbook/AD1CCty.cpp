@@ -536,6 +536,26 @@ auto AD1CCty::lookup (QString const& call) const -> Record
   return Record {};
 }
 
+auto AD1CCty::entities () const -> QList<Entity>
+{
+  QList<Entity> result;
+  auto const& all = m_->entities_;
+  result.reserve (static_cast<int> (all.size ()));
+  for (auto const& e : all)
+    {
+      result.push_back (Entity {e.primary_prefix_, e.name_, e.continent_, e.WAE_only_});
+    }
+  std::sort (result.begin (), result.end ()
+             , [] (Entity const& lhs, Entity const& rhs)
+               {
+                 auto const by_name = QString::localeAwareCompare (lhs.name, rhs.name);
+                 // Ties are impossible in a well formed cty.dat, but sorting
+                 // has to be a strict weak ordering whatever the file says.
+                 return by_name ? by_name < 0 : lhs.primary_prefix < rhs.primary_prefix;
+               });
+  return result;
+}
+
 auto AD1CCty::version () const -> QString
 {
   return m_->cty_version_date_;

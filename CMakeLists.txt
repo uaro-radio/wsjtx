@@ -295,6 +295,10 @@ set (wsjt_qt_CXXSRCS
   logbook/AD1CCty.cpp
   logbook/WorkedBefore.cpp
   logbook/Multiplier.cpp
+  # UaHamAward integration, kept in a directory of its own so that merging a
+  # new release of WSJT-X touches as little of it as possible.
+  UaHam/QsoPayload.cpp
+  UaHam/SiteServer.cpp
   Network/NetworkAccessManager.cpp
   widgets/LazyFillComboBox.cpp
   widgets/CheckableItemComboBox.cpp
