@@ -25,6 +25,15 @@ jobs:
             echo "::error::Could not derive VERSION from CMakeLists.txt"
             exit 1
           fi
+          # The fork marker belongs in the artifact names too. Without it a CI
+          # build comes out as wsjtx-3.0.2-windows-x86_64-installer, which is
+          # indistinguishable by name from an official 3.0.2 while the binary
+          # inside reports 3.0.2-devel-uaham1. Whoever ends up holding the file
+          # should be able to tell what it is from the file.
+          FORK_TAG=$(sed -nE 's/^[[:space:]]*set \(WSJT_FORK_TAG "([^"]*)".*/\1/p' CMakeLists.txt | head -1)
+          if [ -n "$FORK_TAG" ]; then
+            VERSION="${VERSION}-${FORK_TAG}"
+          fi
           echo "Derived version from CMakeLists.txt: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
