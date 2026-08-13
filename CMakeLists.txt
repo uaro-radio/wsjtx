@@ -300,6 +300,7 @@ set (wsjt_qt_CXXSRCS
   UaHam/QsoPayload.cpp
   UaHam/SettingsTabs.cpp
   UaHam/SiteServer.cpp
+  UaHam/StatusWidget.cpp
   Network/NetworkAccessManager.cpp
   widgets/LazyFillComboBox.cpp
   widgets/CheckableItemComboBox.cpp

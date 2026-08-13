@@ -45,6 +45,7 @@
 #include "logbook/logbook.h"
 #include "UaHam/CountryFilter.hpp"
 #include "UaHam/SiteServer.hpp"
+#include "UaHam/StatusWidget.hpp"
 #include "astro.h"
 #include "widgets/QSYMessageCreator.h"
 #include "widgets/QSYMessage.h"
@@ -805,6 +806,8 @@ private:
   QLabel uaham_site_label;
   UaHam::CountryFilter m_uahamFilter;
   QScopedPointer<UaHam::SiteServer> m_uahamSite;
+  // Owned by the tab widget it is added to, not by this pointer.
+  UaHam::StatusWidget * m_uahamStatus {nullptr};
   // What the settings asked for, which is not always what the server got: a
   // busy port makes it step to the next free one. Comparing against the
   // request is what stops every visit to the settings dialog from rebinding a
