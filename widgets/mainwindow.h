@@ -46,6 +46,8 @@
 #include "UaHam/CountryFilter.hpp"
 #include "UaHam/SiteServer.hpp"
 #include "UaHam/StatusWidget.hpp"
+#include "UaHam/CallInfoWidget.hpp"
+#include "UaHam/QrzLookup.hpp"
 #include "astro.h"
 #include "widgets/QSYMessageCreator.h"
 #include "widgets/QSYMessage.h"
@@ -808,6 +810,12 @@ private:
   QScopedPointer<UaHam::SiteServer> m_uahamSite;
   // Owned by the tab widget it is added to, not by this pointer.
   UaHam::StatusWidget * m_uahamStatus {nullptr};
+  // Owned by the tab widget, like the status tab beside it.
+  UaHam::CallInfoWidget * m_uahamCallInfo {nullptr};
+  QScopedPointer<UaHam::QrzLookup> m_uahamQrz;
+  // What the Call info tab is showing, so an unchanged DX Call does not send
+  // the same question to QRZ on every keystroke.
+  QString m_uahamQrzLast;
   // What the settings asked for, which is not always what the server got: a
   // busy port makes it step to the next free one. Comparing against the
   // request is what stops every visit to the settings dialog from rebinding a
@@ -1030,6 +1038,7 @@ private:
   void uahamUpdateStatus ();
   bool uahamHiddenByCountry (DecodedText const&);
   void uahamPublishQso (QByteArray const& ADIF);
+  void uahamLookupDxCall ();
   void postWSPRDecode (bool is_new, QStringList message_parts);
   void enable_DXCC_entity (bool on);
   void switch_mode (Mode);

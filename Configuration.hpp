@@ -302,6 +302,10 @@ public:
   UaHam::CountryFilter::Mode country_filter_mode () const;
   // Empty means "follow the system locale", which is what WSJT-X always did.
   QString ui_language () const;
+  // QRZ.com callbook account, used for the Call info lookup.
+  QString qrz_username () const;
+  QString qrz_password () const;
+  void show_qrz_status (QString const&);
   QStringList country_filter_entities () const;
   bool uaham_site_enabled () const;
   quint16 uaham_site_port () const;

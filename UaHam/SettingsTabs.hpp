@@ -91,6 +91,36 @@ namespace UaHam
   };
 
   //
+  // Settings → «QRZ»: the account used for callsign lookups.
+  //
+  // QRZ.com's XML callbook service needs the operator's own account with an
+  // XML subscription. The password is stored in the settings file as typed —
+  // WSJT-X keeps every other password the same way, and pretending otherwise
+  // by obfuscating it would suggest a protection that is not there.
+  //
+  class QrzSettingsWidget final
+    : public QWidget
+  {
+    Q_OBJECT
+
+  public:
+    explicit QrzSettingsWidget (QWidget * parent = nullptr);
+
+    QString username () const;
+    QString password () const;
+    void set_credentials (QString const& username, QString const& password);
+
+    // What the last lookup did, so a wrong password is visible here rather
+    // than only in the main window.
+    void show_status (QString const&);
+
+  private:
+    QLineEdit * username_;
+    QLineEdit * password_;
+    QLabel * status_;
+  };
+
+  //
   // Settings → «Language»: which language the interface is in.
   //
   // WSJT-X picks its language from the system locale, and could otherwise only

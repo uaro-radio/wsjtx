@@ -244,6 +244,49 @@ namespace UaHam
     status_->setText (text);
   }
 
+  QrzSettingsWidget::QrzSettingsWidget (QWidget * parent)
+    : QWidget {parent}
+    , username_ {new QLineEdit {this}}
+    , password_ {new QLineEdit {this}}
+    , status_ {new QLabel {this}}
+  {
+    password_->setEchoMode (QLineEdit::Password);
+
+    auto * explanation = new QLabel {
+      tr ("Looks up the name and location of the station in the DX Call box, and shows them "
+          "on the «Call info» tab of the main window.\n"
+          "Needs your own QRZ.com account with an XML subscription; without one every lookup "
+          "answers with an error, which is shown here as QRZ words it.\n"
+          "The details are shown to you and go nowhere else — QRZ's member agreement does not "
+          "allow them to be collected for anything but the contact you are making."), this};
+    explanation->setWordWrap (true);
+    status_->setWordWrap (true);
+
+    auto * form = new QFormLayout;
+    form->addRow (tr ("QRZ.com user:"), username_);
+    form->addRow (tr ("Password:"), password_);
+
+    auto * layout = new QVBoxLayout {this};
+    layout->addLayout (form);
+    layout->addWidget (explanation);
+    layout->addWidget (status_);
+    layout->addStretch (1);
+  }
+
+  QString QrzSettingsWidget::username () const {return username_->text ().trimmed ();}
+  QString QrzSettingsWidget::password () const {return password_->text ();}
+
+  void QrzSettingsWidget::set_credentials (QString const& username, QString const& password)
+  {
+    username_->setText (username);
+    password_->setText (password);
+  }
+
+  void QrzSettingsWidget::show_status (QString const& text)
+  {
+    status_->setText (text);
+  }
+
   namespace
   {
     //

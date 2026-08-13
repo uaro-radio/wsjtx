@@ -314,6 +314,8 @@ set (wsjt_qt_CXXSRCS
   logbook/Multiplier.cpp
   # UaHamAward integration, kept in a directory of its own so that merging a
   # new release of WSJT-X touches as little of it as possible.
+  UaHam/CallInfoWidget.cpp
+  UaHam/QrzLookup.cpp
   UaHam/QsoPayload.cpp
   UaHam/SettingsTabs.cpp
   UaHam/SiteServer.cpp

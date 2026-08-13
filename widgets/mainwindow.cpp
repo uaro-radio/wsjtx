@@ -1364,6 +1364,35 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   m_uahamStatus = new UaHam::StatusWidget {this};
   ui->tabWidget->addTab (m_uahamStatus, tr ("UaHam"));
+
+  // QRZ.com callsign lookup, ported from WSJT-Z. Nothing happens without
+  // credentials, so an operator who has no QRZ subscription sees an empty tab
+  // and no network traffic at all.
+  m_uahamCallInfo = new UaHam::CallInfoWidget {this};
+  ui->tabWidget->addTab (m_uahamCallInfo, tr ("Call info"));
+  m_uahamQrz.reset (new UaHam::QrzLookup {this});
+  connect (m_uahamQrz.data (), &UaHam::QrzLookup::found, this
+           , [this] (UaHam::QrzLookup::Record const& record)
+             {
+               m_uahamCallInfo->show_record (record);
+               m_config.show_qrz_status (tr ("Last lookup: %1 — ok").arg (record.callsign));
+             });
+  connect (m_uahamQrz.data (), &UaHam::QrzLookup::failed, this
+           , [this] (QString const& reason)
+             {
+               m_uahamCallInfo->show_message (tr ("QRZ.com: %1").arg (reason));
+               m_config.show_qrz_status (tr ("QRZ.com: %1").arg (reason));
+             });
+  connect (m_uahamCallInfo, &UaHam::CallInfoWidget::open_requested, this
+           , [] (QString const& call)
+             {
+               QDesktopServices::openUrl (QUrl {"https://www.qrz.com/db/" + call
+                                                , QUrl::TolerantMode});
+             });
+  // The DX Call box is the one place that always holds the station being
+  // worked, however it got there — typed, double-clicked or set by
+  // auto-sequencing.
+  connect (ui->dxCallEntry, &QLineEdit::textChanged, this, [this] {uahamLookupDxCall ();});
   connect (m_uahamStatus, &UaHam::StatusWidget::counters_reset, this, [this]
            {
              m_uahamFilter.reset_hidden_count ();
@@ -13502,6 +13531,7 @@ void MainWindow::replayDecodes ()
 void MainWindow::uahamApplySettings ()
 {
   m_uahamFilter.configure (m_config.country_filter_mode (), m_config.country_filter_entities ());
+  if (m_uahamQrz) m_uahamQrz->configure (m_config.qrz_username (), m_config.qrz_password ());
 
   if (m_config.uaham_site_enabled ())
     {
@@ -13606,6 +13636,40 @@ bool MainWindow::uahamHiddenByCountry (DecodedText const& decodedtext)
 // nobody connected this does nothing at all, and logging has already happened
 // by the time it is called.
 //
+//
+// UaHamAward: ask QRZ.com about whoever is in the DX Call box.
+//
+// Called on every change to that box, so it has to be cheap when nothing has
+// changed — an operator typing a callsign character by character must not
+// produce six requests.
+//
+void MainWindow::uahamLookupDxCall ()
+{
+  if (!m_uahamQrz || !m_uahamCallInfo) return;
+
+  auto const call = ui->dxCallEntry->text ().trimmed ().toUpper ();
+  if (call == m_uahamQrzLast) return;
+  m_uahamQrzLast = call;
+
+  if (call.isEmpty ())
+    {
+      m_uahamCallInfo->show_message (tr ("Enter a callsign in DX Call, or double-click a decode."));
+      return;
+    }
+  if (!m_uahamQrz->configured ())
+    {
+      m_uahamCallInfo->awaiting (call);
+      m_uahamCallInfo->show_message (tr ("Add a QRZ.com account under Settings → QRZ to see who this is."));
+      return;
+    }
+  // Half a callsign is not a callsign; asking about it wastes a request and
+  // answers "not found" for something the operator is still typing.
+  if (call.size () < 3) return;
+
+  m_uahamCallInfo->awaiting (call);
+  m_uahamQrz->lookup (call);
+}
+
 void MainWindow::uahamPublishQso (QByteArray const& ADIF)
 {
   if (!m_config.uaham_site_enabled () || !m_uahamSite->listening ()) return;

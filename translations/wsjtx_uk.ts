@@ -19,7 +19,11 @@
     <message numerus="yes">
         <location filename="../widgets/AbstractLogWindow.cpp" line="66"/>
         <source>Are you sure you want to delete the %n selected QSO(s) from the log?</source>
-        <translation><numerusform>Ви впевнені, що хочете видалити %n позначених QSO з журналу?</numerusform><numerusform>Ви впевнені, що хочете видалити %n позначених QSO з журналу?</numerusform><numerusform>Ви впевнені, що хочете видалити %n позначених QSO з журналу?</numerusform></translation>
+        <translation>
+            <numerusform>Ви впевнені, що хочете видалити %n позначених QSO з журналу?</numerusform>
+            <numerusform>Ви впевнені, що хочете видалити %n позначених QSO з журналу?</numerusform>
+            <numerusform>Ви впевнені, що хочете видалити %n позначених QSO з журналу?</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -139,7 +143,7 @@
     <message>
         <location filename="../widgets/astro.ui" line="55"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;One station does all Doppler shift correction, their QSO partner receives and transmits on the sked frequency.&lt;/p&gt;&lt;p&gt;If the rig does not accept CAT QSY commands while transmitting a single correction is applied for the whole transmit period.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Одна станція виконує всю поправку на доплерівський зсув, і її сигнал чути на власній частоті зв'язку.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Одна станція виконує всю поправку на доплерівський зсув, і її сигнал чути на власній частоті зв&apos;язку.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/astro.ui" line="58"/>
@@ -430,12 +434,12 @@
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="90"/>
         <source>New DXCC</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нова країна</translation>
     </message>
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="97"/>
         <source>New Grid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Новий локатор</translation>
     </message>
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="104"/>
@@ -445,7 +449,7 @@
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="150"/>
         <source>New Call</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Новий позивний</translation>
     </message>
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="157"/>
@@ -496,233 +500,238 @@
 <context>
     <name>Configuration::impl</name>
     <message>
-        <location filename="../Configuration.cpp" line="1815"/>
-        <location filename="../Configuration.cpp" line="2030"/>
-        <location filename="../Configuration.cpp" line="2059"/>
+        <location filename="../Configuration.cpp" line="1821"/>
+        <location filename="../Configuration.cpp" line="2038"/>
+        <location filename="../Configuration.cpp" line="2067"/>
         <source>&amp;Delete</source>
         <translation>&amp;Видалити</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1816"/>
-        <location filename="../Configuration.cpp" line="2063"/>
+        <location filename="../Configuration.cpp" line="1822"/>
+        <location filename="../Configuration.cpp" line="2071"/>
         <source>&amp;Insert ...</source>
         <translation>&amp;Вставити ...</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1851"/>
+        <location filename="../Configuration.cpp" line="1857"/>
         <source>UaHam F&amp;ilter</source>
         <translation>Фільтр &amp;країн</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1852"/>
+        <location filename="../Configuration.cpp" line="1858"/>
         <source>UaHam &amp;Site</source>
         <translation>&amp;Сайт UaHam</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1854"/>
+        <location filename="../Configuration.cpp" line="1860"/>
         <source>&amp;Language</source>
         <translation>&amp;Мова</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1863"/>
+        <location filename="../Configuration.cpp" line="1862"/>
+        <source>&amp;QRZ</source>
+        <translation>&amp;QRZ</translation>
+    </message>
+    <message>
+        <location filename="../Configuration.cpp" line="1871"/>
         <source>Failed to create save directory</source>
         <translation>Не вдалося створити каталог збереження</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1864"/>
+        <location filename="../Configuration.cpp" line="1872"/>
         <source>path: &quot;%1%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1875"/>
+        <location filename="../Configuration.cpp" line="1883"/>
         <source>Failed to create samples directory</source>
         <translation>Не вдалося створити каталог зразків</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1876"/>
+        <location filename="../Configuration.cpp" line="1884"/>
         <source>path: &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1940"/>
+        <location filename="../Configuration.cpp" line="1948"/>
         <source>API key OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1944"/>
+        <location filename="../Configuration.cpp" line="1952"/>
         <source>API key read-only</source>
         <translation>Ключ API лише для читання</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="1948"/>
+        <location filename="../Configuration.cpp" line="1956"/>
         <source>API key invalid</source>
         <translation>Ключ API недійсний</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="2067"/>
+        <location filename="../Configuration.cpp" line="2075"/>
         <source>&amp;Load ...</source>
         <translation>&amp;Завантажити ...</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="2071"/>
+        <location filename="../Configuration.cpp" line="2079"/>
         <source>&amp;Save as ...</source>
         <translation>&amp;Зберегти як ...</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="2075"/>
+        <location filename="../Configuration.cpp" line="2083"/>
         <source>&amp;Merge ...</source>
-        <translation>&amp;Об'єднати ...</translation>
+        <translation>&amp;Об&apos;єднати ...</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="2079"/>
+        <location filename="../Configuration.cpp" line="2087"/>
         <source>&amp;Reset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3150"/>
+        <location filename="../Configuration.cpp" line="3163"/>
         <source>Serial Port:</source>
         <translation>Послідовний порт:</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3151"/>
+        <location filename="../Configuration.cpp" line="3164"/>
         <source>Serial port used for CAT control</source>
         <translation>Послідовний порт для керування CAT</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3158"/>
+        <location filename="../Configuration.cpp" line="3171"/>
         <source>TCI Server:</source>
         <translation>Сервер TCI:</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3159"/>
+        <location filename="../Configuration.cpp" line="3172"/>
         <source>Optional hostname and port of TCI service.
 Leave blank for a sensible default on this machine.
 Formats:
 	hostname:port
 	IPv4-address:port
 	[IPv6-address]:port</source>
-        <translation>Необов'язкові ім'я вузла й порт служби TCI.
+        <translation>Необов&apos;язкові ім&apos;я вузла й порт служби TCI.
 Лишіть порожнім, щоб узяти розумне значення для цієї машини.
 Формати:</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3171"/>
+        <location filename="../Configuration.cpp" line="3184"/>
         <source>Network Server:</source>
         <translation>Мережевий сервер:</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3172"/>
+        <location filename="../Configuration.cpp" line="3185"/>
         <source>Optional hostname and port of network service.
 Leave blank for a sensible default on this machine.
 Formats:
 	hostname:port
 	IPv4-address:port
 	[IPv6-address]:port</source>
-        <translation>Необов'язкові ім'я вузла й порт мережевої служби.
+        <translation>Необов&apos;язкові ім&apos;я вузла й порт мережевої служби.
 Лишіть порожнім, щоб узяти розумне значення для цієї машини.
 Формати:</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3184"/>
+        <location filename="../Configuration.cpp" line="3197"/>
         <source>USB Device:</source>
         <translation>Пристрій USB:</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3185"/>
+        <location filename="../Configuration.cpp" line="3198"/>
         <source>Optional device identification.
 Leave blank for a sensible default for the rig.
 Format:
 	[VID[:PID[:VENDOR[:PRODUCT]]]]</source>
-        <translation>Необов'язкове визначення пристрою.
+        <translation>Необов&apos;язкове визначення пристрою.
 Лишіть порожнім, щоб узяти розумне значення для трансивера.
 Формат:</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3221"/>
-        <location filename="../Configuration.cpp" line="3229"/>
+        <location filename="../Configuration.cpp" line="3234"/>
+        <location filename="../Configuration.cpp" line="3242"/>
         <source>Invalid audio input device</source>
         <translation>Хибний звуковий пристрій входу</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3237"/>
+        <location filename="../Configuration.cpp" line="3250"/>
         <source>Invalid audio output device</source>
         <translation>Хибний звуковий пристрій виходу</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3243"/>
+        <location filename="../Configuration.cpp" line="3256"/>
         <source>Invalid PTT method</source>
         <translation>Хибний спосіб керування передачею</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3253"/>
+        <location filename="../Configuration.cpp" line="3266"/>
         <source>Invalid PTT port</source>
         <translation>Хибний порт керування передачею</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3261"/>
-        <location filename="../Configuration.cpp" line="3270"/>
+        <location filename="../Configuration.cpp" line="3274"/>
+        <location filename="../Configuration.cpp" line="3283"/>
         <source>Invalid Contest Exchange</source>
         <translation>Хибний обмін для змагань</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3262"/>
+        <location filename="../Configuration.cpp" line="3275"/>
         <source>You must input a valid ARRL Field Day exchange</source>
         <translation>Потрібно ввести дійсний обмін ARRL Field Day</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3271"/>
+        <location filename="../Configuration.cpp" line="3284"/>
         <source>You must input a valid ARRL RTTY Roundup exchange</source>
         <translation>Потрібно ввести дійсний обмін ARRL RTTY Roundup</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3277"/>
+        <location filename="../Configuration.cpp" line="3290"/>
         <source>Pending DNS lookup, please try again later</source>
         <translation>Триває запит до DNS, спробуйте пізніше</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3771"/>
-        <location filename="../Configuration.cpp" line="3781"/>
+        <location filename="../Configuration.cpp" line="3786"/>
+        <location filename="../Configuration.cpp" line="3796"/>
         <source>Reset Decode Highlighting</source>
         <translation>Скинути виділення декодів</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3772"/>
+        <location filename="../Configuration.cpp" line="3787"/>
         <source>Reset all decode highlighting and priorities to Default 1 values</source>
         <translation>Повернути всім виділенням і пріоритетам значення «Типове 1»</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3782"/>
+        <location filename="../Configuration.cpp" line="3797"/>
         <source>Reset all decode highlighting and priorities to Default 2 values</source>
         <translation>Повернути всім виділенням і пріоритетам значення «Типове 2»</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3817"/>
+        <location filename="../Configuration.cpp" line="3832"/>
         <source>Error Loading CTY.DAT</source>
         <translation>Помилка завантаження CTY.DAT</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3872"/>
+        <location filename="../Configuration.cpp" line="3887"/>
         <source>Error Loading CALL3.TXT file</source>
         <translation>Помилка завантаження файлу CALL3.TXT</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3933"/>
+        <location filename="../Configuration.cpp" line="3948"/>
         <source>WSJT-X Decoded Text Font Chooser</source>
         <translation>Вибір шрифту декодованого тексту WSJT-X</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3970"/>
-        <location filename="../Configuration.cpp" line="4027"/>
+        <location filename="../Configuration.cpp" line="3985"/>
+        <location filename="../Configuration.cpp" line="4042"/>
         <source>Hamlib update only available on Windows.</source>
         <translation>Оновлення Hamlib доступне лише у Windows.</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="3977"/>
+        <location filename="../Configuration.cpp" line="3992"/>
         <source>Error Loading libhamlib-4.dll</source>
         <translation>Помилка завантаження libhamlib-4.dll</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4000"/>
+        <location filename="../Configuration.cpp" line="4015"/>
         <source>Hamlib Update successful 
 
 New Hamlib will be used after restart</source>
@@ -731,7 +740,7 @@ New Hamlib will be used after restart</source>
 Новий Hamlib буде задіяно після перезапуску</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4019"/>
+        <location filename="../Configuration.cpp" line="4034"/>
         <source>Hamlib successfully reverted 
 
 Reverted Hamlib will be used after restart</source>
@@ -740,131 +749,131 @@ Reverted Hamlib will be used after restart</source>
 Попередній Hamlib буде задіяно після перезапуску</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4024"/>
+        <location filename="../Configuration.cpp" line="4039"/>
         <source>No Hamlib update found that could be reverted</source>
         <translation>Не знайдено оновлення Hamlib, яке можна було б скасувати</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4328"/>
+        <location filename="../Configuration.cpp" line="4343"/>
         <source>Error in network address</source>
         <translation>Помилка в мережевій адресі</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4360"/>
+        <location filename="../Configuration.cpp" line="4375"/>
         <source>UDP server DNS lookup failed</source>
         <translation>Не вдалося визначити адресу сервера UDP через DNS</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4384"/>
+        <location filename="../Configuration.cpp" line="4399"/>
         <source>MAC-ambiguous multicast groups addresses not supported</source>
         <translation>Групові адреси з неоднозначним MAC не підтримуються</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4410"/>
+        <location filename="../Configuration.cpp" line="4425"/>
         <source>Load Working Frequencies</source>
         <translation>Завантажити робочі частоти</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4410"/>
-        <location filename="../Configuration.cpp" line="4430"/>
-        <location filename="../Configuration.cpp" line="4504"/>
+        <location filename="../Configuration.cpp" line="4425"/>
+        <location filename="../Configuration.cpp" line="4445"/>
+        <location filename="../Configuration.cpp" line="4519"/>
         <source>Frequency files (*.qrg *.qrg.json);;All files (*.*)</source>
         <translation>Файли частот (*.qrg *.qrg.json);;Усі файли (*.*)</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4417"/>
+        <location filename="../Configuration.cpp" line="4432"/>
         <source>Replace Working Frequencies</source>
         <translation>Замінити робочі частоти</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4418"/>
+        <location filename="../Configuration.cpp" line="4433"/>
         <source>Are you sure you want to discard your current working frequencies and replace them with the loaded ones?</source>
         <translation>Ви впевнені, що хочете відкинути поточні робочі частоти й замінити їх завантаженими?</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4430"/>
+        <location filename="../Configuration.cpp" line="4445"/>
         <source>Merge Working Frequencies</source>
-        <translation>Об'єднати робочі частоти</translation>
+        <translation>Об&apos;єднати робочі частоти</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4455"/>
+        <location filename="../Configuration.cpp" line="4470"/>
         <source>Error reading frequency file</source>
         <translation>Помилка читання файлу частот</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4464"/>
-        <location filename="../Configuration.cpp" line="4473"/>
-        <location filename="../Configuration.cpp" line="4495"/>
+        <location filename="../Configuration.cpp" line="4479"/>
+        <location filename="../Configuration.cpp" line="4488"/>
+        <location filename="../Configuration.cpp" line="4510"/>
         <source>Not a valid frequencies file</source>
         <translation>Це не файл частот</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4464"/>
+        <location filename="../Configuration.cpp" line="4479"/>
         <source>Incorrect file magic</source>
         <translation>Хибна сигнатура файлу</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4473"/>
+        <location filename="../Configuration.cpp" line="4488"/>
         <source>Version is too new</source>
         <translation>Версія занадто нова</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4495"/>
+        <location filename="../Configuration.cpp" line="4510"/>
         <source>Contents corrupt</source>
         <translation>Вміст пошкоджено</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4504"/>
+        <location filename="../Configuration.cpp" line="4519"/>
         <source>Save Working Frequencies</source>
         <translation>Зберегти робочі частоти</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4517"/>
+        <location filename="../Configuration.cpp" line="4532"/>
         <source>Only Save Selected  Working Frequencies</source>
         <translation>Зберегти лише позначені робочі частоти</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4518"/>
+        <location filename="../Configuration.cpp" line="4533"/>
         <source>Are you sure you want to save only the working frequencies that are currently selected? Click No to save all.</source>
         <translation>Ви впевнені, що хочете зберегти лише позначені робочі частоти? Натисніть «Ні», щоб зберегти всі.</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4551"/>
+        <location filename="../Configuration.cpp" line="4566"/>
         <source>Reset Working Frequencies</source>
         <translation>Скинути робочі частоти</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4552"/>
+        <location filename="../Configuration.cpp" line="4567"/>
         <source>Are you sure you want to discard your current working frequencies and replace them with default ones?</source>
         <translation>Ви впевнені, що хочете відкинути поточні робочі частоти й замінити їх типовими?</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4592"/>
+        <location filename="../Configuration.cpp" line="4607"/>
         <source>Save Directory</source>
         <translation>Каталог збереження</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="4606"/>
+        <location filename="../Configuration.cpp" line="4621"/>
         <source>AzEl Directory</source>
         <translation>Каталог AzEl</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="5115"/>
+        <location filename="../Configuration.cpp" line="5130"/>
         <source>Rig control error</source>
         <translation>Помилка керування трансивером</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="5116"/>
+        <location filename="../Configuration.cpp" line="5131"/>
         <source>Failed to open connection to rig</source>
-        <translation>Не вдалося встановити з'єднання з трансивером</translation>
+        <translation>Не вдалося встановити з&apos;єднання з трансивером</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="5505"/>
+        <location filename="../Configuration.cpp" line="5520"/>
         <source>Rig failure</source>
         <translation>Збій трансивера</translation>
     </message>
     <message>
-        <location filename="../Configuration.cpp" line="5562"/>
+        <location filename="../Configuration.cpp" line="5577"/>
         <source>Not found</source>
         <comment>audio device missing</comment>
         <translation type="unfinished"></translation>
@@ -1188,7 +1197,7 @@ Reverted Hamlib will be used after restart</source>
     <message>
         <location filename="../widgets/ExportCabrillo.ui" line="231"/>
         <source>Name:</source>
-        <translation>Ім'я:</translation>
+        <translation>Ім&apos;я:</translation>
     </message>
     <message>
         <location filename="../widgets/ExportCabrillo.ui" line="251"/>
@@ -1223,7 +1232,7 @@ Reverted Hamlib will be used after restart</source>
         <location filename="../widgets/fastgraph.ui" line="14"/>
         <location filename="../widgets/fastgraph.cpp" line="24"/>
         <source>Fast Graph</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Швидкий графік</translation>
     </message>
     <message>
         <location filename="../widgets/fastgraph.ui" line="103"/>
@@ -1290,7 +1299,7 @@ Reverted Hamlib will be used after restart</source>
     <message>
         <location filename="../models/FoxLog.cpp" line="149"/>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Локатор</translation>
     </message>
     <message>
         <location filename="../models/FoxLog.cpp" line="150"/>
@@ -1345,7 +1354,7 @@ Reverted Hamlib will be used after restart</source>
     <message>
         <location filename="../widgets/FoxLogWindow.ui" line="99"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Last 10: Average rate (QSOs/hour) for the last 10 QSOs.&lt;br/&gt;Last 100:  Average rate (QSOs/hour) for the last 100 QSOs. &lt;br/&gt;Last 60m: Average rate (QSOs/hour) for the last 60 minutes.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Останні 10: середній темп (QSO за годину) за останніми 10 зв'язками.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Останні 10: середній темп (QSO за годину) за останніми 10 зв&apos;язками.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/FoxLogWindow.cpp" line="55"/>
@@ -1575,7 +1584,7 @@ Reverted Hamlib will be used after restart</source>
     <message>
         <location filename="../widgets/logqso.ui" line="28"/>
         <source>Click OK to confirm the following QSO:</source>
-        <translation>Натисніть «Гаразд», щоб підтвердити зв'язок:</translation>
+        <translation>Натисніть «Гаразд», щоб підтвердити зв&apos;язок:</translation>
     </message>
     <message>
         <location filename="../widgets/logqso.ui" line="44"/>
@@ -1626,7 +1635,7 @@ Reverted Hamlib will be used after restart</source>
     <message>
         <location filename="../widgets/logqso.ui" line="312"/>
         <source>Name</source>
-        <translation>Ім'я</translation>
+        <translation>Ім&apos;я</translation>
     </message>
     <message>
         <location filename="../widgets/logqso.ui" line="338"/>
@@ -1878,7 +1887,7 @@ Reverted Hamlib will be used after restart</source>
         <location filename="../widgets/logqso.cpp" line="412"/>
         <location filename="../widgets/logqso.cpp" line="420"/>
         <source>Invalid QSO Data</source>
-        <translation>Хибні дані зв'язку</translation>
+        <translation>Хибні дані зв&apos;язку</translation>
     </message>
     <message>
         <location filename="../widgets/logqso.cpp" line="413"/>
@@ -1915,14 +1924,14 @@ Reverted Hamlib will be used after restart</source>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="52"/>
-        <location filename="../widgets/mainwindow.cpp" line="4315"/>
-        <location filename="../widgets/mainwindow.cpp" line="4318"/>
-        <location filename="../widgets/mainwindow.cpp" line="10924"/>
-        <location filename="../widgets/mainwindow.cpp" line="11036"/>
-        <location filename="../widgets/mainwindow.cpp" line="11117"/>
-        <location filename="../widgets/mainwindow.cpp" line="11364"/>
-        <location filename="../widgets/mainwindow.cpp" line="11429"/>
-        <location filename="../widgets/mainwindow.cpp" line="11599"/>
+        <location filename="../widgets/mainwindow.cpp" line="4348"/>
+        <location filename="../widgets/mainwindow.cpp" line="4351"/>
+        <location filename="../widgets/mainwindow.cpp" line="10957"/>
+        <location filename="../widgets/mainwindow.cpp" line="11069"/>
+        <location filename="../widgets/mainwindow.cpp" line="11150"/>
+        <location filename="../widgets/mainwindow.cpp" line="11397"/>
+        <location filename="../widgets/mainwindow.cpp" line="11462"/>
+        <location filename="../widgets/mainwindow.cpp" line="11632"/>
         <source>Band Activity</source>
         <translation>Активність на діапазоні</translation>
     </message>
@@ -1934,12 +1943,12 @@ Reverted Hamlib will be used after restart</source>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="195"/>
-        <location filename="../widgets/mainwindow.cpp" line="4319"/>
-        <location filename="../widgets/mainwindow.cpp" line="10925"/>
-        <location filename="../widgets/mainwindow.cpp" line="11035"/>
-        <location filename="../widgets/mainwindow.cpp" line="11112"/>
-        <location filename="../widgets/mainwindow.cpp" line="11365"/>
-        <location filename="../widgets/mainwindow.cpp" line="11430"/>
+        <location filename="../widgets/mainwindow.cpp" line="4352"/>
+        <location filename="../widgets/mainwindow.cpp" line="10958"/>
+        <location filename="../widgets/mainwindow.cpp" line="11068"/>
+        <location filename="../widgets/mainwindow.cpp" line="11145"/>
+        <location filename="../widgets/mainwindow.cpp" line="11398"/>
+        <location filename="../widgets/mainwindow.cpp" line="11463"/>
         <source>Rx Frequency</source>
         <translation>Частота прийому</translation>
     </message>
@@ -2162,12 +2171,12 @@ Reverted Hamlib will be used after restart</source>
     <message>
         <location filename="../widgets/mainwindow.ui" line="873"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decode most recent Rx period at QSO Frequency&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Декодувати останній період прийому на частоті зв'язку&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Декодувати останній період прийому на частоті зв&apos;язку&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="876"/>
         <source>Decode most recent Rx period at QSO Frequency</source>
-        <translation>Декодувати останній період прийому на частоті зв'язку</translation>
+        <translation>Декодувати останній період прийому на частоті зв&apos;язку</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="891"/>
@@ -2232,7 +2241,7 @@ Reverted Hamlib will be used after restart</source>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1068"/>
         <source>Callsign of station to be worked</source>
-        <translation>Позивний станції, з якою проводиться зв'язок</translation>
+        <translation>Позивний станції, з якою проводиться зв&apos;язок</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1154"/>
@@ -2242,7 +2251,7 @@ Reverted Hamlib will be used after restart</source>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1173"/>
         <source>Locator of station to be worked</source>
-        <translation>Локатор станції, з якою проводиться зв'язок</translation>
+        <translation>Локатор станції, з якою проводиться зв&apos;язок</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1197"/>
@@ -2359,7 +2368,7 @@ Not available to nonstandard callsign holders.</source>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1531"/>
-        <location filename="../widgets/mainwindow.cpp" line="11152"/>
+        <location filename="../widgets/mainwindow.cpp" line="11185"/>
         <source>Fox</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2573,7 +2582,7 @@ When not checked you can view the calibration results.</source>
         <location filename="../widgets/mainwindow.ui" line="1864"/>
         <location filename="../widgets/mainwindow.ui" line="3989"/>
         <source>  s</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">  с</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1867"/>
@@ -3081,10 +3090,10 @@ Double-click to reset to the standard 73 message</source>
         <location filename="../widgets/mainwindow.ui" line="2783"/>
         <location filename="../widgets/mainwindow.ui" line="2790"/>
         <location filename="../widgets/mainwindow.ui" line="3853"/>
-        <location filename="../widgets/mainwindow.cpp" line="1981"/>
-        <location filename="../widgets/mainwindow.cpp" line="10179"/>
-        <location filename="../widgets/mainwindow.cpp" line="11815"/>
-        <location filename="../widgets/mainwindow.cpp" line="13931"/>
+        <location filename="../widgets/mainwindow.cpp" line="2014"/>
+        <location filename="../widgets/mainwindow.cpp" line="10212"/>
+        <location filename="../widgets/mainwindow.cpp" line="11848"/>
+        <location filename="../widgets/mainwindow.cpp" line="13999"/>
         <source>Random</source>
         <translation>Випадково</translation>
     </message>
@@ -3616,25 +3625,25 @@ Double-click to reset to the standard 73 message</source>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="4219"/>
-        <location filename="../widgets/mainwindow.cpp" line="1071"/>
-        <location filename="../widgets/mainwindow.cpp" line="11027"/>
-        <location filename="../widgets/mainwindow.cpp" line="11037"/>
-        <location filename="../widgets/mainwindow.cpp" line="11104"/>
-        <location filename="../widgets/mainwindow.cpp" line="11118"/>
-        <location filename="../widgets/mainwindow.cpp" line="11271"/>
-        <location filename="../widgets/mainwindow.cpp" line="11272"/>
-        <location filename="../widgets/mainwindow.cpp" line="11346"/>
-        <location filename="../widgets/mainwindow.cpp" line="11347"/>
-        <location filename="../widgets/mainwindow.cpp" line="11353"/>
-        <location filename="../widgets/mainwindow.cpp" line="11354"/>
-        <location filename="../widgets/mainwindow.cpp" line="11496"/>
-        <location filename="../widgets/mainwindow.cpp" line="11497"/>
-        <location filename="../widgets/mainwindow.cpp" line="11590"/>
-        <location filename="../widgets/mainwindow.cpp" line="11591"/>
-        <location filename="../widgets/mainwindow.cpp" line="13154"/>
-        <location filename="../widgets/mainwindow.cpp" line="13157"/>
-        <location filename="../widgets/mainwindow.cpp" line="13162"/>
-        <location filename="../widgets/mainwindow.cpp" line="13165"/>
+        <location filename="../widgets/mainwindow.cpp" line="1075"/>
+        <location filename="../widgets/mainwindow.cpp" line="11060"/>
+        <location filename="../widgets/mainwindow.cpp" line="11070"/>
+        <location filename="../widgets/mainwindow.cpp" line="11137"/>
+        <location filename="../widgets/mainwindow.cpp" line="11151"/>
+        <location filename="../widgets/mainwindow.cpp" line="11304"/>
+        <location filename="../widgets/mainwindow.cpp" line="11305"/>
+        <location filename="../widgets/mainwindow.cpp" line="11379"/>
+        <location filename="../widgets/mainwindow.cpp" line="11380"/>
+        <location filename="../widgets/mainwindow.cpp" line="11386"/>
+        <location filename="../widgets/mainwindow.cpp" line="11387"/>
+        <location filename="../widgets/mainwindow.cpp" line="11529"/>
+        <location filename="../widgets/mainwindow.cpp" line="11530"/>
+        <location filename="../widgets/mainwindow.cpp" line="11623"/>
+        <location filename="../widgets/mainwindow.cpp" line="11624"/>
+        <location filename="../widgets/mainwindow.cpp" line="13187"/>
+        <location filename="../widgets/mainwindow.cpp" line="13190"/>
+        <location filename="../widgets/mainwindow.cpp" line="13195"/>
+        <location filename="../widgets/mainwindow.cpp" line="13198"/>
         <source>Message</source>
         <translation>Повідомлення</translation>
     </message>
@@ -3987,7 +3996,7 @@ Double-click to reset to the standard 73 message</source>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5156"/>
         <source>Local User Guide</source>
-        <translation>Посібник на цьому комп'ютері</translation>
+        <translation>Посібник на цьому комп&apos;ютері</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5161"/>
@@ -4308,12 +4317,12 @@ Double-click to reset to the standard 73 message</source>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5594"/>
         <source>Hide stations worked before on band</source>
-        <translation>Ховати станції, з якими вже був зв'язок на цьому діапазоні</translation>
+        <translation>Ховати станції, з якими вже був зв&apos;язок на цьому діапазоні</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5602"/>
         <source>Hide stations worked today or yesterday</source>
-        <translation>Ховати станції, з якими був зв'язок сьогодні або вчора</translation>
+        <translation>Ховати станції, з якими був зв&apos;язок сьогодні або вчора</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5610"/>
@@ -4323,7 +4332,7 @@ Double-click to reset to the standard 73 message</source>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5618"/>
         <source>Ignore stations worked today or yesterday</source>
-        <translation>Ігнорувати станції, з якими був зв'язок сьогодні або вчора</translation>
+        <translation>Ігнорувати станції, з якими був зв&apos;язок сьогодні або вчора</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5626"/>
@@ -4393,12 +4402,12 @@ Double-click to reset to the standard 73 message</source>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5730"/>
         <source>Highlight callsigns worked before on band</source>
-        <translation>Виділяти позивні, з якими вже був зв'язок на цьому діапазоні</translation>
+        <translation>Виділяти позивні, з якими вже був зв&apos;язок на цьому діапазоні</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5738"/>
         <source>Highlight callsigns worked today or yesterday</source>
-        <translation>Виділяти позивні, з якими був зв'язок сьогодні або вчора</translation>
+        <translation>Виділяти позивні, з якими був зв&apos;язок сьогодні або вчора</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5746"/>
@@ -4418,7 +4427,7 @@ Double-click to reset to the standard 73 message</source>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5773"/>
         <source>Ignore stations worked before on band</source>
-        <translation>Ігнорувати станції, з якими вже був зв'язок на цьому діапазоні</translation>
+        <translation>Ігнорувати станції, з якими вже був зв&apos;язок на цьому діапазоні</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="5781"/>
@@ -4565,15 +4574,15 @@ Double-click to reset to the standard 73 message</source>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="469"/>
-        <location filename="../widgets/mainwindow.cpp" line="8531"/>
-        <location filename="../widgets/mainwindow.cpp" line="13684"/>
+        <location filename="../widgets/mainwindow.cpp" line="8564"/>
+        <location filename="../widgets/mainwindow.cpp" line="13752"/>
         <source>Receiving</source>
         <translation>Прийом</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="587"/>
         <source>Do you want to reconfigure the radio interface?</source>
-        <translation>Бажаєте змінити налаштування з'єднання з трансивером?</translation>
+        <translation>Бажаєте змінити налаштування з&apos;єднання з трансивером?</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="657"/>
@@ -4583,7 +4592,7 @@ Double-click to reset to the standard 73 message</source>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="662"/>
         <source>Scanned ADIF log, %1 worked-before records created. CTY: %2</source>
-        <translation>Журнал ADIF прочитано, створено записів про попередні зв'язки: %1. CTY: %2</translation>
+        <translation>Журнал ADIF прочитано, створено записів про попередні зв&apos;язки: %1. CTY: %2</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="818"/>
@@ -4591,149 +4600,165 @@ Double-click to reset to the standard 73 message</source>
         <translation>Помилка завантаження даних про користувачів LotW</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="939"/>
+        <location filename="../widgets/mainwindow.cpp" line="943"/>
         <source>Error Writing WAV File</source>
         <translation>Помилка запису файлу WAV</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="971"/>
+        <location filename="../widgets/mainwindow.cpp" line="975"/>
         <source>Enumerating audio devices</source>
         <translation>Перелічування звукових пристроїв</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="996"/>
+        <location filename="../widgets/mainwindow.cpp" line="1000"/>
         <source>Configurations...</source>
         <translation>Конфігурації...</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="1089"/>
+        <location filename="../widgets/mainwindow.cpp" line="1093"/>
         <source>Error Killing jt9.exe Process</source>
         <translation>Помилка завершення процесу jt9.exe</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="1090"/>
+        <location filename="../widgets/mainwindow.cpp" line="1094"/>
         <source>KillByName return code: %1</source>
         <translation>Код повернення KillByName: %1</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="1105"/>
+        <location filename="../widgets/mainwindow.cpp" line="1109"/>
         <source>Error removing &quot;%1&quot;</source>
         <translation>Помилка видалення «%1»</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="1106"/>
+        <location filename="../widgets/mainwindow.cpp" line="1110"/>
         <source>Click OK to retry</source>
         <translation>Натисніть «Гаразд», щоб повторити</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="1362"/>
+        <location filename="../widgets/mainwindow.cpp" line="1366"/>
         <source>UaHam</source>
         <translation>UaHam</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="2075"/>
-        <location filename="../widgets/mainwindow.cpp" line="11549"/>
+        <location filename="../widgets/mainwindow.cpp" line="1372"/>
+        <source>Call info</source>
+        <translation>Дані позивного</translation>
+    </message>
+    <message>
+        <location filename="../widgets/mainwindow.cpp" line="1378"/>
+        <source>Last lookup: %1 — ok</source>
+        <translation>Останній запит: %1 — успішно</translation>
+    </message>
+    <message>
+        <location filename="../widgets/mainwindow.cpp" line="1383"/>
+        <location filename="../widgets/mainwindow.cpp" line="1384"/>
+        <source>QRZ.com: %1</source>
+        <translation>QRZ.com: %1</translation>
+    </message>
+    <message>
+        <location filename="../widgets/mainwindow.cpp" line="2108"/>
+        <location filename="../widgets/mainwindow.cpp" line="11582"/>
         <source>Improper mode</source>
         <translation>Невідповідний режим</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="2342"/>
-        <location filename="../widgets/mainwindow.cpp" line="15320"/>
+        <location filename="../widgets/mainwindow.cpp" line="2375"/>
+        <location filename="../widgets/mainwindow.cpp" line="15388"/>
         <source>File Open Error</source>
         <translation>Помилка відкриття файлу</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="2343"/>
-        <location filename="../widgets/mainwindow.cpp" line="13834"/>
-        <location filename="../widgets/mainwindow.cpp" line="14343"/>
-        <location filename="../widgets/mainwindow.cpp" line="15321"/>
-        <location filename="../widgets/mainwindow.cpp" line="15507"/>
+        <location filename="../widgets/mainwindow.cpp" line="2376"/>
+        <location filename="../widgets/mainwindow.cpp" line="13902"/>
+        <location filename="../widgets/mainwindow.cpp" line="14411"/>
+        <location filename="../widgets/mainwindow.cpp" line="15389"/>
+        <location filename="../widgets/mainwindow.cpp" line="15575"/>
         <source>Cannot open &quot;%1&quot; for append: %2</source>
         <translation>Не вдалося відкрити «%1» для дозапису: %2</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="2539"/>
+        <location filename="../widgets/mainwindow.cpp" line="2572"/>
         <source>Error saving c2 file</source>
         <translation>Помилка збереження файлу c2</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="3513"/>
+        <location filename="../widgets/mainwindow.cpp" line="3546"/>
         <source>Error in Sound Input</source>
         <translation>Помилка звукового входу</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="3519"/>
+        <location filename="../widgets/mainwindow.cpp" line="3552"/>
         <source>Error in Sound Output</source>
         <translation>Помилка звукового виходу</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="3686"/>
-        <location filename="../widgets/mainwindow.cpp" line="4311"/>
+        <location filename="../widgets/mainwindow.cpp" line="3719"/>
+        <location filename="../widgets/mainwindow.cpp" line="4344"/>
         <source>Single-Period Decodes</source>
         <translation>Декоди за один період</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="3687"/>
-        <location filename="../widgets/mainwindow.cpp" line="4312"/>
+        <location filename="../widgets/mainwindow.cpp" line="3720"/>
+        <location filename="../widgets/mainwindow.cpp" line="4345"/>
         <source>Average Decodes</source>
         <translation>Усереднені декоди</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4088"/>
+        <location filename="../widgets/mainwindow.cpp" line="4121"/>
         <source>Change Operator</source>
         <translation>Змінити оператора</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4088"/>
+        <location filename="../widgets/mainwindow.cpp" line="4121"/>
         <source>New operator:</source>
         <translation>Новий оператор:</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4278"/>
+        <location filename="../widgets/mainwindow.cpp" line="4311"/>
         <source>Status File Error</source>
         <translation>Помилка файлу стану</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4279"/>
-        <location filename="../widgets/mainwindow.cpp" line="10021"/>
+        <location filename="../widgets/mainwindow.cpp" line="4312"/>
+        <location filename="../widgets/mainwindow.cpp" line="10054"/>
         <source>Cannot open &quot;%1&quot; for writing: %2</source>
         <translation>Не вдалося відкрити «%1» для запису: %2</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4316"/>
+        <location filename="../widgets/mainwindow.cpp" line="4349"/>
         <source>Decodes containing My Call</source>
         <translation>Декоди з моїм позивним</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4517"/>
+        <location filename="../widgets/mainwindow.cpp" line="4550"/>
         <source>Subprocess Error</source>
         <translation>Помилка підпроцесу</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4518"/>
+        <location filename="../widgets/mainwindow.cpp" line="4551"/>
         <source>Subprocess failed with exit code %1</source>
         <translation>Підпроцес завершився з кодом %1</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4520"/>
-        <location filename="../widgets/mainwindow.cpp" line="4540"/>
+        <location filename="../widgets/mainwindow.cpp" line="4553"/>
+        <location filename="../widgets/mainwindow.cpp" line="4573"/>
         <source>Running: %1
 %2</source>
         <translation>Виконується: %1
 %2</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4539"/>
+        <location filename="../widgets/mainwindow.cpp" line="4572"/>
         <source>Subprocess error</source>
         <translation>Помилка підпроцесу</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4593"/>
+        <location filename="../widgets/mainwindow.cpp" line="4626"/>
         <source>Reference spectrum saved</source>
         <translation>Опорний спектр збережено</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4666"/>
+        <location filename="../widgets/mainwindow.cpp" line="4699"/>
         <source>It is very important to avoid audio harmonics and distorted audio signals.
 This is usually achieved by the following step-by-step approach:
 
@@ -4761,22 +4786,22 @@ to ensure the signal is clean and not distorted.</source>
 Зазвичай цього досягають правильним рівнем звуку.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4682"/>
+        <location filename="../widgets/mainwindow.cpp" line="4715"/>
         <source>&lt;b&gt;Recommended Audio Settings&lt;/b&gt;</source>
         <translation>&lt;b&gt;Рекомендовані налаштування звуку&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4723"/>
+        <location filename="../widgets/mainwindow.cpp" line="4756"/>
         <source>Invalid data in fmt.all at line %1</source>
         <translation>Хибні дані у fmt.all, рядок %1</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4729"/>
+        <location filename="../widgets/mainwindow.cpp" line="4762"/>
         <source>Good Calibration Solution</source>
         <translation>Калібрування вдале</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4730"/>
+        <location filename="../widgets/mainwindow.cpp" line="4763"/>
         <source>&lt;pre&gt;%1%L2 ±%L3 ppm
 %4%L5 ±%L6 Hz
 
@@ -4785,54 +4810,54 @@ to ensure the signal is clean and not distorted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4744"/>
+        <location filename="../widgets/mainwindow.cpp" line="4777"/>
         <source>Delete Calibration Measurements</source>
         <translation>Видалити виміри калібрування</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4745"/>
+        <location filename="../widgets/mainwindow.cpp" line="4778"/>
         <source>The &quot;fmt.all&quot; file will be renamed as &quot;fmt.bak&quot;</source>
         <translation>Файл «fmt.all» буде перейменовано на «fmt.bak»</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="4757"/>
+        <location filename="../widgets/mainwindow.cpp" line="4790"/>
         <source>If you make fair use of any part of WSJT-X under terms of the GNU General Public License, you must display the following copyright notice prominently in your derivative work:
 
 &quot;The algorithms, source code, look-and-feel of WSJT-X and related programs, and protocol specifications for the modes FSK441, FST4, FT8, JT4, JT6M, JT9, JT65, JTMS, QRA64, Q65, MSK144 are Copyright (C) 2001-2026 by one or more of the following authors: Joseph Taylor, K1JT; Bill Somerville, G4WJS; Steven Franke, K9AN; Nico Palermo, IV3NWV; Greg Beam, KI7MT; Michael Black, W9MDB; Edson Pereira, PY2SDR; Philip Karn, KA9Q; Uwe Risse, DG2YCB; Brian Moran, N9ADG; Roger Rehr, W3SZ; John Nelson, G4KLA; Charlie Suckling, DL3WDG; Terrell Deppe, KJ5HST; and other members of the WSJT Development Group.&quot;</source>
         <translation>Якщо ви користуєтеся будь-якою частиною WSJT-X на умовах GNU General Public License, ви маєте показувати відповідне повідомлення про авторські права.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="5149"/>
+        <location filename="../widgets/mainwindow.cpp" line="5182"/>
         <source>No data read from disk. Wrong file format?</source>
         <translation>З диска нічого не прочитано. Хибний формат файлу?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="5156"/>
+        <location filename="../widgets/mainwindow.cpp" line="5189"/>
         <source>Confirm Delete</source>
         <translation>Підтвердіть видалення</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="5157"/>
+        <location filename="../widgets/mainwindow.cpp" line="5190"/>
         <source>Are you sure you want to delete all *.wav and *.c2 files in &quot;%1&quot;?</source>
         <translation>Ви впевнені, що хочете видалити всі файли *.wav і *.c2 з «%1»?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="5170"/>
+        <location filename="../widgets/mainwindow.cpp" line="5203"/>
         <source>EME Chart</source>
         <translation>Графік EME</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="5171"/>
+        <location filename="../widgets/mainwindow.cpp" line="5204"/>
         <source>Select Year</source>
         <translation>Оберіть рік</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="5206"/>
+        <location filename="../widgets/mainwindow.cpp" line="5239"/>
         <source>Keyboard Shortcuts</source>
         <translation>Клавіатурні скорочення</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="5208"/>
+        <location filename="../widgets/mainwindow.cpp" line="5241"/>
         <source>&lt;table cellspacing=1&gt;
   &lt;tr&gt;&lt;td&gt;&lt;b&gt;Esc      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Stop Tx, abort QSO, clear next-call queue&lt;/td&gt;&lt;/tr&gt;
   &lt;tr&gt;&lt;td&gt;&lt;b&gt;F1       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Online User&apos;s Guide (Alt: transmit Tx6)&lt;/td&gt;&lt;/tr&gt;
@@ -4886,12 +4911,12 @@ to ensure the signal is clean and not distorted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="5268"/>
+        <location filename="../widgets/mainwindow.cpp" line="5301"/>
         <source>Special Mouse Commands</source>
         <translation>Особливі дії мишею</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="5270"/>
+        <location filename="../widgets/mainwindow.cpp" line="5303"/>
         <source>&lt;table cellpadding=5&gt;
   &lt;tr&gt;
     &lt;th align=&quot;right&quot;&gt;Click on&lt;/th&gt;
@@ -5007,28 +5032,28 @@ to ensure the signal is clean and not distorted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="5803"/>
+        <location filename="../widgets/mainwindow.cpp" line="5836"/>
         <source>No more files to open.</source>
         <translation>Більше файлів для відкриття немає.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="7683"/>
-        <location filename="../widgets/mainwindow.cpp" line="14398"/>
+        <location filename="../widgets/mainwindow.cpp" line="7716"/>
+        <location filename="../widgets/mainwindow.cpp" line="14466"/>
         <source>Spotting to PSK Reporter unavailable</source>
         <translation>Надсилання спотів на PSK Reporter недоступне</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="7829"/>
+        <location filename="../widgets/mainwindow.cpp" line="7862"/>
         <source>Please choose another Tx frequency. WSJT-X will not knowingly transmit another mode in the WSPR sub-band on 30m.</source>
         <translation>Оберіть іншу частоту передачі. WSJT-X свідомо не передаватиме в піддіапазоні WSPR іншим режимом.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="7833"/>
+        <location filename="../widgets/mainwindow.cpp" line="7866"/>
         <source>WSPR Guard Band</source>
         <translation>Захисна смуга WSPR</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="7847"/>
+        <location filename="../widgets/mainwindow.cpp" line="7880"/>
         <source>Please choose another dial frequency.
 Must be 3Khz away from %1.
 WSJT-X will not operate in Fox mode
@@ -5039,13 +5064,13 @@ WSJT-X не працюватиме в режимі експедиції
 з перекриттям піддіапазонів WSPR.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="7852"/>
-        <location filename="../widgets/mainwindow.cpp" line="7869"/>
+        <location filename="../widgets/mainwindow.cpp" line="7885"/>
+        <location filename="../widgets/mainwindow.cpp" line="7902"/>
         <source>Fox Mode warning</source>
         <translation>Попередження про режим експедиції</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="7865"/>
+        <location filename="../widgets/mainwindow.cpp" line="7898"/>
         <source>Please choose another dial frequency.
 WSJT-X will not operate in Fox mode
 overlapping the WSPR sub-bands.</source>
@@ -5054,12 +5079,12 @@ WSJT-X не працюватиме в режимі експедиції
 з перекриттям піддіапазонів WSPR.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="8693"/>
+        <location filename="../widgets/mainwindow.cpp" line="8726"/>
         <source>Last Tx: %1</source>
         <translation>Остання передача: %1</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="8971"/>
+        <location filename="../widgets/mainwindow.cpp" line="9004"/>
         <source>This station transmits in the same time slot as you do.
 
 You must not start a QSO if both stations Tx even/1st
@@ -5069,10 +5094,10 @@ Click the MSK144 mode button to re-enable the Tx even/1st
 checkbox, or choose another station.</source>
         <translation>Ця станція передає в тому самому часовому проміжку, що й ви.
 
-Починати зв'язок не можна, якщо обидві станції передають в однакові періоди.</translation>
+Починати зв&apos;язок не можна, якщо обидві станції передають в однакові періоди.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="9158"/>
+        <location filename="../widgets/mainwindow.cpp" line="9191"/>
         <source>Should you switch to EU VHF Contest mode?
 
 To do so, check &apos;Special operating activity&apos; and
@@ -5082,159 +5107,159 @@ To do so, check &apos;Special operating activity&apos; and
 Для цього позначте «Особлива активність» і оберіть відповідний варіант.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="9177"/>
+        <location filename="../widgets/mainwindow.cpp" line="9210"/>
         <source>Should you switch to ARRL Field Day mode?</source>
         <translation>Перемкнутися в режим ARRL Field Day?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="9182"/>
+        <location filename="../widgets/mainwindow.cpp" line="9215"/>
         <source>Should you switch to RTTY contest mode?</source>
         <translation>Перемкнутися в режим змагань RTTY?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="9983"/>
-        <location filename="../widgets/mainwindow.cpp" line="10002"/>
-        <location filename="../widgets/mainwindow.cpp" line="10020"/>
-        <location filename="../widgets/mainwindow.cpp" line="10047"/>
+        <location filename="../widgets/mainwindow.cpp" line="10016"/>
+        <location filename="../widgets/mainwindow.cpp" line="10035"/>
+        <location filename="../widgets/mainwindow.cpp" line="10053"/>
+        <location filename="../widgets/mainwindow.cpp" line="10080"/>
         <source>Add to CALL3.TXT</source>
         <translation>Додати до CALL3.TXT</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="9984"/>
+        <location filename="../widgets/mainwindow.cpp" line="10017"/>
         <source>Please enter a valid grid locator</source>
         <translation>Введіть дійсний локатор</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="10003"/>
+        <location filename="../widgets/mainwindow.cpp" line="10036"/>
         <source>Cannot open &quot;%1&quot; for read/write: %2</source>
         <translation>Не вдалося відкрити «%1» для читання та запису: %2</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="10045"/>
+        <location filename="../widgets/mainwindow.cpp" line="10078"/>
         <source>%1
 is already in CALL3.TXT, do you wish to replace it?</source>
         <translation>%1
 вже є в CALL3.TXT; замінити?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="10629"/>
+        <location filename="../widgets/mainwindow.cpp" line="10662"/>
         <source>Warning:  DX Call field is empty.</source>
         <translation>Увага: поле позивного DX порожнє.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="10722"/>
+        <location filename="../widgets/mainwindow.cpp" line="10755"/>
         <source>Log file error</source>
         <translation>Помилка файлу журналу</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="10723"/>
+        <location filename="../widgets/mainwindow.cpp" line="10756"/>
         <source>Cannot open &quot;%1&quot;</source>
         <translation>Не вдалося відкрити «%1»</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="10744"/>
+        <location filename="../widgets/mainwindow.cpp" line="10777"/>
         <source>Error sending log to N1MM</source>
         <translation>Помилка надсилання журналу в N1MM</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="10745"/>
+        <location filename="../widgets/mainwindow.cpp" line="10778"/>
         <source>Write returned &quot;%1&quot;</source>
         <translation>Запис повернув «%1»</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="11114"/>
+        <location filename="../widgets/mainwindow.cpp" line="11147"/>
         <source>Stations calling DXpedition %1</source>
         <translation>Станції, що викликають експедицію %1</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="11148"/>
+        <location filename="../widgets/mainwindow.cpp" line="11181"/>
         <source>Show Already Worked</source>
         <translation>Показувати вже опрацьованих</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="11150"/>
+        <location filename="../widgets/mainwindow.cpp" line="11183"/>
         <source>Super Fox</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="11168"/>
+        <location filename="../widgets/mainwindow.cpp" line="11201"/>
         <source>Super Hound</source>
         <translation>Супермисливець</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="11179"/>
+        <location filename="../widgets/mainwindow.cpp" line="11212"/>
         <source>Hound</source>
         <translation>Мисливець</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="11600"/>
+        <location filename="../widgets/mainwindow.cpp" line="11633"/>
         <source>Tx Messages</source>
         <translation>Повідомлення на передачу</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="11888"/>
-        <location filename="../widgets/mainwindow.cpp" line="12243"/>
+        <location filename="../widgets/mainwindow.cpp" line="11921"/>
+        <location filename="../widgets/mainwindow.cpp" line="12276"/>
         <source>UK stations must transmit below 5358 kHz on 60m.</source>
         <translation>Станції Великої Британії мають передавати нижче 5358 кГц на 60 м.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12045"/>
-        <location filename="../widgets/mainwindow.cpp" line="12056"/>
-        <location filename="../widgets/mainwindow.cpp" line="12095"/>
-        <location filename="../widgets/mainwindow.cpp" line="12105"/>
-        <location filename="../widgets/mainwindow.cpp" line="17537"/>
-        <location filename="../widgets/mainwindow.cpp" line="17583"/>
+        <location filename="../widgets/mainwindow.cpp" line="12078"/>
+        <location filename="../widgets/mainwindow.cpp" line="12089"/>
+        <location filename="../widgets/mainwindow.cpp" line="12128"/>
+        <location filename="../widgets/mainwindow.cpp" line="12138"/>
+        <location filename="../widgets/mainwindow.cpp" line="17605"/>
+        <location filename="../widgets/mainwindow.cpp" line="17651"/>
         <source>Confirm Erase</source>
         <translation>Підтвердіть очищення</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12046"/>
+        <location filename="../widgets/mainwindow.cpp" line="12079"/>
         <source>Are you sure you want to erase file ALL.TXT?</source>
         <translation>Ви впевнені, що хочете очистити файл ALL.TXT?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12057"/>
+        <location filename="../widgets/mainwindow.cpp" line="12090"/>
         <source>Are you sure you want to erase the list of Q65 callers?</source>
         <translation>Ви впевнені, що хочете очистити перелік станцій, які викликали в Q65?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12066"/>
-        <location filename="../widgets/mainwindow.cpp" line="14527"/>
+        <location filename="../widgets/mainwindow.cpp" line="12099"/>
+        <location filename="../widgets/mainwindow.cpp" line="14595"/>
         <source>Confirm Reset</source>
         <translation>Підтвердіть скидання</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12067"/>
+        <location filename="../widgets/mainwindow.cpp" line="12100"/>
         <source>Are you sure you want to erase your contest log?</source>
         <translation>Ви впевнені, що хочете очистити журнал змагань?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12068"/>
+        <location filename="../widgets/mainwindow.cpp" line="12101"/>
         <source>Doing this will remove all QSO records for the current contest. They will be kept in the ADIF log file but will not be available for export in your Cabrillo log.</source>
         <translation>Це прибере всі записи QSO поточних змагань. Вони лишаться у файлі журналу ADIF, але зникнуть із журналу змагань.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12088"/>
+        <location filename="../widgets/mainwindow.cpp" line="12121"/>
         <source>Cabrillo Log saved</source>
         <translation>Журнал Cabrillo збережено</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12096"/>
+        <location filename="../widgets/mainwindow.cpp" line="12129"/>
         <source>Are you sure you want to erase file wsjtx_log.adi?</source>
         <translation>Ви впевнені, що хочете очистити файл wsjtx_log.adi?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12106"/>
+        <location filename="../widgets/mainwindow.cpp" line="12139"/>
         <source>Are you sure you want to erase the WSPR hashtable?</source>
         <translation>Ви впевнені, що хочете очистити хеш-таблицю WSPR?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12552"/>
+        <location filename="../widgets/mainwindow.cpp" line="12585"/>
         <source>%1 W</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12571"/>
+        <location filename="../widgets/mainwindow.cpp" line="12604"/>
         <source>SWR &gt; 2.5 !!!
 
 Transmission was stopped
@@ -5247,164 +5272,174 @@ Check your antenna</source>
 Перевірте антену</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12977"/>
+        <location filename="../widgets/mainwindow.cpp" line="13010"/>
         <source>Tune digital gain </source>
         <translation>Цифрове підсилення при налаштуванні тоном</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="12979"/>
+        <location filename="../widgets/mainwindow.cpp" line="13012"/>
         <source>Transmit digital gain </source>
         <translation>Цифрове підсилення при передачі</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13003"/>
+        <location filename="../widgets/mainwindow.cpp" line="13036"/>
         <source>Prefixes</source>
         <translation>Префікси</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13515"/>
+        <location filename="../widgets/mainwindow.cpp" line="13549"/>
         <source>Could not listen on port %1: %2</source>
         <translation>Не вдалося зайняти порт %1: %2</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13536"/>
+        <location filename="../widgets/mainwindow.cpp" line="13570"/>
         <source>blocking</source>
         <translation>блокування</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13537"/>
+        <location filename="../widgets/mainwindow.cpp" line="13571"/>
         <source>showing only</source>
         <translation>лише обрані</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13538"/>
-        <location filename="../widgets/mainwindow.cpp" line="13550"/>
+        <location filename="../widgets/mainwindow.cpp" line="13572"/>
+        <location filename="../widgets/mainwindow.cpp" line="13584"/>
         <source>off</source>
         <translation>вимкнено</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13542"/>
+        <location filename="../widgets/mainwindow.cpp" line="13576"/>
         <source>Filter: %1 %2 (%3 hidden)</source>
         <translation>Фільтр: %1 %2 (приховано %3)</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13560"/>
+        <location filename="../widgets/mainwindow.cpp" line="13594"/>
         <source>connected on port %1</source>
         <translation>підключено на порту %1</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13561"/>
+        <location filename="../widgets/mainwindow.cpp" line="13595"/>
         <source>waiting for a browser on port %1</source>
         <translation>очікує на браузер на порту %1</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13563"/>
+        <location filename="../widgets/mainwindow.cpp" line="13597"/>
         <source>UaHam: connected, %1 sent</source>
         <translation>UaHam: підключено, надіслано %1</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13564"/>
+        <location filename="../widgets/mainwindow.cpp" line="13598"/>
         <source>UaHam: waiting on %1</source>
         <translation>UaHam: очікує на порту %1</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13651"/>
+        <location filename="../widgets/mainwindow.cpp" line="13656"/>
+        <source>Enter a callsign in DX Call, or double-click a decode.</source>
+        <translation>Введіть позивний у полі DX Call або двічі клікніть на декоді.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/mainwindow.cpp" line="13662"/>
+        <source>Add a QRZ.com account under Settings → QRZ to see who this is.</source>
+        <translation>Додайте обліковий запис QRZ.com у Налаштування → QRZ, щоб бачити, хто це.</translation>
+    </message>
+    <message>
+        <location filename="../widgets/mainwindow.cpp" line="13719"/>
         <source>Network Error</source>
         <translation>Помилка мережі</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13652"/>
+        <location filename="../widgets/mainwindow.cpp" line="13720"/>
         <source>Error: %1
 UDP server %2:%3</source>
         <translation>Помилка: %1
 Сервер UDP %2:%3</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="13833"/>
-        <location filename="../widgets/mainwindow.cpp" line="14132"/>
+        <location filename="../widgets/mainwindow.cpp" line="13901"/>
+        <location filename="../widgets/mainwindow.cpp" line="14200"/>
         <source>File Error</source>
         <translation>Помилка файлу</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14119"/>
+        <location filename="../widgets/mainwindow.cpp" line="14187"/>
         <source>Phase Training Disabled</source>
         <translation>Навчання фази вимкнено</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14122"/>
+        <location filename="../widgets/mainwindow.cpp" line="14190"/>
         <source>Phase Training Enabled</source>
         <translation>Навчання фази ввімкнено</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14133"/>
+        <location filename="../widgets/mainwindow.cpp" line="14201"/>
         <source>Cannot remove &quot;%1&quot;: %2</source>
         <translation>Не вдалося видалити «%1»: %2</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14264"/>
+        <location filename="../widgets/mainwindow.cpp" line="14332"/>
         <source> WD:0m </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14267"/>
+        <location filename="../widgets/mainwindow.cpp" line="14335"/>
         <source> Runaway Tx watchdog </source>
         <translation> Сторож передачі спрацював</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14284"/>
+        <location filename="../widgets/mainwindow.cpp" line="14352"/>
         <source> WD:%1m </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14346"/>
-        <location filename="../widgets/mainwindow.cpp" line="15510"/>
+        <location filename="../widgets/mainwindow.cpp" line="14414"/>
+        <location filename="../widgets/mainwindow.cpp" line="15578"/>
         <source>Log File Error</source>
         <translation>Помилка файлу журналу</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14528"/>
+        <location filename="../widgets/mainwindow.cpp" line="14596"/>
         <source>Are you sure you want to clear the QSO queues?</source>
         <translation>Ви впевнені, що хочете очистити черги QSO?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14538"/>
-        <location filename="../widgets/mainwindow.cpp" line="14541"/>
+        <location filename="../widgets/mainwindow.cpp" line="14606"/>
+        <location filename="../widgets/mainwindow.cpp" line="14609"/>
         <source>Free Text Message</source>
         <translation>Повідомлення довільним текстом</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14539"/>
-        <location filename="../widgets/mainwindow.cpp" line="14542"/>
+        <location filename="../widgets/mainwindow.cpp" line="14607"/>
+        <location filename="../widgets/mainwindow.cpp" line="14610"/>
         <source>Message:</source>
         <translation>Повідомлення:</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14560"/>
+        <location filename="../widgets/mainwindow.cpp" line="14628"/>
         <source>Directional calls not yet supported in SuperFox mode</source>
         <translation>Спрямовані виклики в режимі SuperFox поки не підтримуються</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="14579"/>
+        <location filename="../widgets/mainwindow.cpp" line="14647"/>
         <source>TOTP: No seed entered in fox configuration to generate verification code.</source>
         <translation>TOTP: у налаштуваннях експедиції не введено ключ для створення коду перевірки.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="15783"/>
+        <location filename="../widgets/mainwindow.cpp" line="15851"/>
         <source>TOTP SF: seed not long enough.</source>
         <translation>TOTP SF: ключ закороткий.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="17538"/>
+        <location filename="../widgets/mainwindow.cpp" line="17606"/>
         <source>Are you sure you want to erase the Tx Log?</source>
         <translation>Ви впевнені, що хочете очистити журнал передач?</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="17563"/>
+        <location filename="../widgets/mainwindow.cpp" line="17631"/>
         <source>&quot;%1&quot; added to Ignore List</source>
         <translation>«%1» додано до списку ігнорованих</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.cpp" line="17584"/>
+        <location filename="../widgets/mainwindow.cpp" line="17652"/>
         <source>Are you sure you want to erase the Ignore List?</source>
         <translation>Ви впевнені, що хочете очистити список ігнорованих?</translation>
     </message>
@@ -5463,7 +5498,7 @@ UDP server %2:%3</source>
     <message>
         <location filename="../widgets/QSYMessage.ui" line="44"/>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Напис</translation>
     </message>
     <message>
         <location filename="../widgets/QSYMessage.ui" line="72"/>
@@ -5836,7 +5871,7 @@ Message</source>
     <message>
         <location filename="../widgets/QSYMessageCreator.ui" line="2100"/>
         <source>Please check your PC Clock</source>
-        <translation>Перевірте годинник на комп'ютері</translation>
+        <translation>Перевірте годинник на комп&apos;ютері</translation>
     </message>
     <message>
         <location filename="../widgets/QSYMessageCreator.ui" line="2107"/>
@@ -5934,6 +5969,54 @@ Message</source>
     </message>
 </context>
 <context>
+    <name>UaHam::CallInfoWidget</name>
+    <message>
+        <location filename="../UaHam/CallInfoWidget.cpp" line="23"/>
+        <source>Open on qrz.com</source>
+        <translation>Відкрити на qrz.com</translation>
+    </message>
+    <message>
+        <location filename="../UaHam/CallInfoWidget.cpp" line="39"/>
+        <source>Callsign:</source>
+        <translation>Позивний:</translation>
+    </message>
+    <message>
+        <location filename="../UaHam/CallInfoWidget.cpp" line="40"/>
+        <source>Name:</source>
+        <translation>Ім'я:</translation>
+    </message>
+    <message>
+        <location filename="../UaHam/CallInfoWidget.cpp" line="41"/>
+        <source>Location:</source>
+        <translation>Розташування:</translation>
+    </message>
+    <message>
+        <location filename="../UaHam/CallInfoWidget.cpp" line="42"/>
+        <source>Country:</source>
+        <translation>Країна:</translation>
+    </message>
+    <message>
+        <location filename="../UaHam/CallInfoWidget.cpp" line="43"/>
+        <source>Grid:</source>
+        <translation>Локатор:</translation>
+    </message>
+    <message>
+        <location filename="../UaHam/CallInfoWidget.cpp" line="44"/>
+        <source>Email:</source>
+        <translation>Пошта:</translation>
+    </message>
+    <message>
+        <location filename="../UaHam/CallInfoWidget.cpp" line="61"/>
+        <source>Enter a callsign in DX Call, or double-click a decode.</source>
+        <translation>Введіть позивний у полі DX Call або двічі клікніть на декоді.</translation>
+    </message>
+    <message>
+        <location filename="../UaHam/CallInfoWidget.cpp" line="72"/>
+        <source>Looking up %1…</source>
+        <translation>Шукаю %1…</translation>
+    </message>
+</context>
+<context>
     <name>UaHam::FilterSettingsWidget</name>
     <message>
         <location filename="../UaHam/SettingsTabs.cpp" line="30"/>
@@ -5962,7 +6045,7 @@ A hidden station is hidden from Band Activity, from Rx Frequency and from Active
 ALL.TXT keeps every decode, and other programs reading WSJT-X over UDP still see them all.
 In &quot;show only&quot; mode a decode whose country cannot be established — free text, an unresolved &lt;...&gt; callsign — is hidden as well.</source>
         <translation>Вирішує за країною DXCC, а не за збігом тексту, хто потрапляє у вікна декодування.
-Прихована станція не з'являється ні в активності діапазону, ні у вікні частоти прийому, ні в переліку активних станцій, і автопослідовність не відповість їй навіть на прямий виклик.
+Прихована станція не з&apos;являється ні в активності діапазону, ні у вікні частоти прийому, ні в переліку активних станцій, і автопослідовність не відповість їй навіть на прямий виклик.
 ALL.TXT зберігає всі декоди, і програми, що читають WSJT-X по UDP, теж бачать усе.
 У режимі «лише обрані» декод, країну якого визначити не вдалося — довільний текст, нерозгаданий позивний &lt;...&gt; — теж приховується.</translation>
     </message>
@@ -5984,7 +6067,11 @@ ALL.TXT зберігає всі декоди, і програми, що чита
     <message numerus="yes">
         <location filename="../UaHam/SettingsTabs.cpp" line="176"/>
         <source>%n country(s) ticked. The filter is off, so nothing is hidden.</source>
-        <translation><numerusform>Позначено країн: %n. Фільтр вимкнено, тож нічого не приховано.</numerusform><numerusform>Позначено країн: %n. Фільтр вимкнено, тож нічого не приховано.</numerusform><numerusform>Позначено країн: %n. Фільтр вимкнено, тож нічого не приховано.</numerusform></translation>
+        <translation>
+            <numerusform>Позначено країн: %n. Фільтр вимкнено, тож нічого не приховано.</numerusform>
+            <numerusform>Позначено країн: %n. Фільтр вимкнено, тож нічого не приховано.</numerusform>
+            <numerusform>Позначено країн: %n. Фільтр вимкнено, тож нічого не приховано.</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../UaHam/SettingsTabs.cpp" line="183"/>
@@ -5994,33 +6081,71 @@ ALL.TXT зберігає всі декоди, і програми, що чита
     <message numerus="yes">
         <location filename="../UaHam/SettingsTabs.cpp" line="188"/>
         <source>Hiding %n country(s).</source>
-        <translation><numerusform>Приховано країн: %n.</numerusform><numerusform>Приховано країн: %n.</numerusform><numerusform>Приховано країн: %n.</numerusform></translation>
+        <translation>
+            <numerusform>Приховано країн: %n.</numerusform>
+            <numerusform>Приховано країн: %n.</numerusform>
+            <numerusform>Приховано країн: %n.</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <location filename="../UaHam/SettingsTabs.cpp" line="189"/>
         <source>Showing %n country(s) and nothing else.</source>
-        <translation><numerusform>Показано лише країн: %n.</numerusform><numerusform>Показано лише країн: %n.</numerusform><numerusform>Показано лише країн: %n.</numerusform></translation>
+        <translation>
+            <numerusform>Показано лише країн: %n.</numerusform>
+            <numerusform>Показано лише країн: %n.</numerusform>
+            <numerusform>Показано лише країн: %n.</numerusform>
+        </translation>
     </message>
 </context>
 <context>
     <name>UaHam::LanguageSettingsWidget</name>
     <message>
-        <location filename="../UaHam/SettingsTabs.cpp" line="265"/>
-        <location filename="../UaHam/SettingsTabs.cpp" line="287"/>
+        <location filename="../UaHam/SettingsTabs.cpp" line="308"/>
+        <location filename="../UaHam/SettingsTabs.cpp" line="330"/>
         <source>System default</source>
         <translation>Як у системі</translation>
     </message>
     <message>
-        <location filename="../UaHam/SettingsTabs.cpp" line="292"/>
+        <location filename="../UaHam/SettingsTabs.cpp" line="335"/>
         <source>Takes effect the next time WSJT-X starts: the interface language is chosen once, before any window exists.
 Anything not yet translated stays in English, and technical terms — mode names, units, the words on the air — are left alone on purpose.</source>
         <translation>Діє з наступного запуску WSJT-X: мова інтерфейсу обирається один раз, до створення вікон.
 Усе, що ще не перекладено, лишається англійською, а технічні позначення — назви режимів, одиниці, слова, які звучать в ефірі, — не перекладаються навмисно.</translation>
     </message>
     <message>
-        <location filename="../UaHam/SettingsTabs.cpp" line="299"/>
+        <location filename="../UaHam/SettingsTabs.cpp" line="342"/>
         <source>Interface language:</source>
         <translation>Мова інтерфейсу:</translation>
+    </message>
+</context>
+<context>
+    <name>UaHam::QrzLookup</name>
+    <message>
+        <location filename="../UaHam/QrzLookup.cpp" line="116"/>
+        <source>no session key returned</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UaHam::QrzSettingsWidget</name>
+    <message>
+        <location filename="../UaHam/SettingsTabs.cpp" line="256"/>
+        <source>Looks up the name and location of the station in the DX Call box, and shows them on the «Call info» tab of the main window.
+Needs your own QRZ.com account with an XML subscription; without one every lookup answers with an error, which is shown here as QRZ words it.
+The details are shown to you and go nowhere else — QRZ&apos;s member agreement does not allow them to be collected for anything but the contact you are making.</source>
+        <translation>Показує ім'я й розташування станції з поля DX Call на вкладці «Call info» головного вікна.
+Потрібен ваш власний обліковий запис QRZ.com з передплатою XML; без неї кожен запит повертає помилку, і вона показується тут так, як її сформулював QRZ.
+Дані показуються вам і нікуди не передаються — угода QRZ не дозволяє збирати їх ні для чого, крім зв'язку, який ви проводите.</translation>
+    </message>
+    <message>
+        <location filename="../UaHam/SettingsTabs.cpp" line="266"/>
+        <source>QRZ.com user:</source>
+        <translation>Користувач QRZ.com:</translation>
+    </message>
+    <message>
+        <location filename="../UaHam/SettingsTabs.cpp" line="267"/>
+        <source>Password:</source>
+        <translation>Пароль:</translation>
     </message>
 </context>
 <context>
@@ -6035,9 +6160,9 @@ Anything not yet translated stays in English, and technical terms — mode names
         <source>Lets the award pages on uahamaward.com receive a contact the moment it is logged, whether you logged it yourself or auto-sequencing did.
 This replaces the separate bridge program: there is nothing else to download, and nothing else to keep up to date.
 With no log page open in a browser nothing is sent, and logging works exactly as it always does — the connection is a copy for somebody watching, never a step in logging a contact.</source>
-        <translation>Дає сторінкам нагород на uahamaward.com отримувати зв'язок тієї ж миті, коли його записано — байдуже, записали ви його самі чи це зробила автопослідовність.
+        <translation>Дає сторінкам нагород на uahamaward.com отримувати зв&apos;язок тієї ж миті, коли його записано — байдуже, записали ви його самі чи це зробила автопослідовність.
 Це замінює окрему програму-місток: більше нема чого завантажувати й нема чого оновлювати.
-Якщо жодну сторінку журналу не відкрито в браузері, нічого не надсилається, і запис зв'язку працює точно так, як завжди — з'єднання це копія для того, хто дивиться, а не крок у записі зв'язку.</translation>
+Якщо жодну сторінку журналу не відкрито в браузері, нічого не надсилається, і запис зв&apos;язку працює точно так, як завжди — з&apos;єднання це копія для того, хто дивиться, а не крок у записі зв&apos;язку.</translation>
     </message>
     <message>
         <location filename="../UaHam/SettingsTabs.cpp" line="215"/>
@@ -6081,7 +6206,11 @@ With no log page open in a browser nothing is sent, and logging works exactly as
     <message numerus="yes">
         <location filename="../UaHam/StatusWidget.cpp" line="49"/>
         <source>%1 — %n country(s)</source>
-        <translation><numerusform>%1 — країн: %n</numerusform><numerusform>%1 — країн: %n</numerusform><numerusform>%1 — країн: %n</numerusform></translation>
+        <translation>
+            <numerusform>%1 — країн: %n</numerusform>
+            <numerusform>%1 — країн: %n</numerusform>
+            <numerusform>%1 — країн: %n</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -6114,7 +6243,7 @@ With no log page open in a browser nothing is sent, and logging works exactly as
     <message>
         <location filename="../widgets/widegraph.ui" line="159"/>
         <source>Number of FFTs averaged (controls waterfall scrolling rate)</source>
-        <translation>Скільки перетворень Фур'є усереднюється (задає швидкість прокрутки водоспаду)</translation>
+        <translation>Скільки перетворень Фур&apos;є усереднюється (задає швидкість прокрутки водоспаду)</translation>
     </message>
     <message>
         <location filename="../widgets/widegraph.ui" line="162"/>
@@ -6438,12 +6567,12 @@ With no log page open in a browser nothing is sent, and logging works exactly as
     <message>
         <location filename="../Configuration.ui" line="183"/>
         <source>Show if decoded stations are new DXCC entities or worked before.</source>
-        <translation>Показувати, чи є декодована станція новою країною DXCC, чи зв'язок з нею вже був.</translation>
+        <translation>Показувати, чи є декодована станція новою країною DXCC, чи зв&apos;язок з нею вже був.</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="186"/>
         <source>Show &amp;DXCC, grid, and worked-before status    </source>
-        <translation>Показувати &amp;країну, локатор і чи був зв'язок раніше</translation>
+        <translation>Показувати &amp;країну, локатор і чи був зв&apos;язок раніше</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="196"/>
@@ -6826,7 +6955,7 @@ quiet period when decoding is done.</source>
     <message>
         <location filename="../Configuration.ui" line="708"/>
         <source>Radio interface configuration settings.</source>
-        <translation>Налаштування з'єднання з трансивером.</translation>
+        <translation>Налаштування з&apos;єднання з трансивером.</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="727"/>
@@ -6983,7 +7112,7 @@ or bandwidth is selected).</source>
     <message>
         <location filename="../Configuration.ui" line="1009"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of data bits used to communicate with your radio&apos;s CAT interface (usually eight).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Кількість бітів даних для зв'язку з інтерфейсом CAT трансивера (зазвичай вісім).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Кількість бітів даних для зв&apos;язку з інтерфейсом CAT трансивера (зазвичай вісім).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1012"/>
@@ -7013,7 +7142,7 @@ or bandwidth is selected).</source>
     <message>
         <location filename="../Configuration.ui" line="1063"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of stop bits used when communicating with your radio&apos;s CAT interface&lt;/p&gt;&lt;p&gt;(consult you radio&apos;s manual for details).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Кількість стопових бітів для зв'язку з інтерфейсом CAT трансивера&lt;/p&gt;&lt;p&gt;(подробиці шукайте в посібнику до трансивера).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Кількість стопових бітів для зв&apos;язку з інтерфейсом CAT трансивера&lt;/p&gt;&lt;p&gt;(подробиці шукайте в посібнику до трансивера).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1066"/>
@@ -7044,7 +7173,7 @@ or bandwidth is selected).</source>
     <message>
         <location filename="../Configuration.ui" line="1114"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flow control protocol used between this computer and your radio&apos;s CAT interface (usually &amp;quot;None&amp;quot; but some require &amp;quot;Hardware&amp;quot;).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Протокол керування потоком між комп'ютером і інтерфейсом CAT трансивера (зазвичай «None», але деяким потрібен «Hardware»).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Протокол керування потоком між комп&apos;ютером і інтерфейсом CAT трансивера (зазвичай «None», але деяким потрібен «Hardware»).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1117"/>
@@ -7117,7 +7246,7 @@ a few, particularly some Kenwood rigs, require it).</source>
     <message>
         <location filename="../Configuration.ui" line="1282"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Attempt to connect to the radio with these settings.&lt;/p&gt;&lt;p&gt;The button will turn green if the connection is successful or red if there is a problem.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Спробувати з'єднатися з трансивером із цими налаштуваннями.&lt;/p&gt;&lt;p&gt;Кнопка позеленіє в разі успіху або почервоніє, якщо є проблема.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Спробувати з&apos;єднатися з трансивером із цими налаштуваннями.&lt;/p&gt;&lt;p&gt;Кнопка позеленіє в разі успіху або почервоніє, якщо є проблема.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1285"/>
@@ -7348,7 +7477,7 @@ Unless you have multiple radios connected on different
 channels; then you will usually want to select mono or
 both here.</source>
         <translation>Оберіть звуковий канал для передачі.
-Якщо у вас не під'єднано кілька трансиверів на різних
+Якщо у вас не під&apos;єднано кілька трансиверів на різних
 каналах, тут зазвичай варто обрати моно або обидва.</translation>
     </message>
     <message>
@@ -7514,17 +7643,17 @@ transmitting periods.</source>
     <message>
         <location filename="../Configuration.ui" line="2054"/>
         <source>Power Memory By Band</source>
-        <translation>Пам'ять потужності за діапазонами</translation>
+        <translation>Пам&apos;ять потужності за діапазонами</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2057"/>
         <source>Remember power settings by band</source>
-        <translation>Запам'ятовувати потужність для кожного діапазону</translation>
+        <translation>Запам&apos;ятовувати потужність для кожного діапазону</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2063"/>
         <source>Enable power memory during transmit</source>
-        <translation>Пам'ять потужності під час передачі</translation>
+        <translation>Пам&apos;ять потужності під час передачі</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2066"/>
@@ -7534,7 +7663,7 @@ transmitting periods.</source>
     <message>
         <location filename="../Configuration.ui" line="2073"/>
         <source>Enable power memory during tuning</source>
-        <translation>Пам'ять потужності під час налаштування тоном</translation>
+        <translation>Пам&apos;ять потужності під час налаштування тоном</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2076"/>
@@ -7644,7 +7773,7 @@ comments field.</source>
     <message>
         <location filename="../Configuration.ui" line="2272"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to have QSOs logged automatically, when complete.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Позначте, щоб зв'язки записувалися автоматично після завершення.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Позначте, щоб зв&apos;язки записувалися автоматично після завершення.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2275"/>
@@ -7699,12 +7828,12 @@ comments field.</source>
     <message>
         <location filename="../Configuration.ui" line="2353"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check this option if a reliable connection is needed&lt;/p&gt;&lt;p&gt;Most users do not need this, the default uses UDP which is more efficient. Only check this if you have evidence that UDP traffic from you to PSK Reporter is being lost.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Позначте, якщо потрібне надійне з'єднання.&lt;/p&gt;&lt;p&gt;Більшості це не потрібно: типово використовується UDP, і він ефективніший. Вмикайте лише тоді, коли маєте підстави вважати, що ваші споти не доходять.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Позначте, якщо потрібне надійне з&apos;єднання.&lt;/p&gt;&lt;p&gt;Більшості це не потрібно: типово використовується UDP, і він ефективніший. Вмикайте лише тоді, коли маєте підстави вважати, що ваші споти не доходять.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2356"/>
         <source>Use TCP/IP connection</source>
-        <translation>З'єднання через TCP/IP</translation>
+        <translation>З&apos;єднання через TCP/IP</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2366"/>
@@ -7719,7 +7848,7 @@ comments field.</source>
     <message>
         <location filename="../Configuration.ui" line="2387"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optional hostname of network service to receive decodes.&lt;/p&gt;&lt;p&gt;Formats:&lt;/p&gt;&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;hostname&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;IPv4 address&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;IPv6 address&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;IPv4 multicast group address&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;IPv6 multicast group address&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Clearing this field will disable the broadcasting of UDP status updates.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Необов'язкове ім'я вузла мережевої служби, яка прийматиме декоди.&lt;/p&gt;&lt;p&gt;Формати:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Необов&apos;язкове ім&apos;я вузла мережевої служби, яка прийматиме декоди.&lt;/p&gt;&lt;p&gt;Формати:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2397"/>
@@ -7789,22 +7918,22 @@ comments field.</source>
     <message>
         <location filename="../Configuration.ui" line="2502"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, WSJT-X will broadcast a logged contact in ADIF format to the configured hostname and port. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Якщо позначено, WSJT-X розсилатиме записаний зв'язок у форматі ADIF на вказані вузол і порт.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Якщо позначено, WSJT-X розсилатиме записаний зв&apos;язок у форматі ADIF на вказані вузол і порт.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2505"/>
         <source>Enable logged contact ADIF broadcast</source>
-        <translation>Розсилати ADIF записаних зв'язків</translation>
+        <translation>Розсилати ADIF записаних зв&apos;язків</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2512"/>
         <source>Server name or IP address:</source>
-        <translation>Ім'я або IP-адреса сервера:</translation>
+        <translation>Ім&apos;я або IP-адреса сервера:</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2522"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optional host name of N1MM Logger+ program to receive ADIF UDP broadcasts. This is usually &apos;localhost&apos; or ip address 127.0.0.1&lt;/p&gt;&lt;p&gt;Formats:&lt;/p&gt;&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;hostname&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;IPv4 address&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;IPv6 address&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;IPv4 multicast group address&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;IPv6 multicast group address&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Clearing this field will disable broadcasting of ADIF information via UDP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Необов'язкове ім'я вузла програми N1MM Logger+, яка прийматиме розсилку ADIF по UDP. Зазвичай це «localhost» або адреса 127.0.0.1.&lt;/p&gt;&lt;p&gt;Формати:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Необов&apos;язкове ім&apos;я вузла програми N1MM Logger+, яка прийматиме розсилку ADIF по UDP. Зазвичай це «localhost» або адреса 127.0.0.1.&lt;/p&gt;&lt;p&gt;Формати:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2529"/>
@@ -7906,7 +8035,7 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../Configuration.ui" line="2809"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click to scan the wsjtx_log.adi ADIF file again for worked before information&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Натисніть, щоб ще раз переглянути файл wsjtx_log.adi і оновити відомості про попередні зв'язки.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Натисніть, щоб ще раз переглянути файл wsjtx_log.adi і оновити відомості про попередні зв&apos;язки.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2812"/>
@@ -7931,7 +8060,7 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../Configuration.ui" line="2886"/>
         <source>Include extra WAE entities</source>
-        <translation>Враховувати додаткові суб'єкти WAE</translation>
+        <translation>Враховувати додаткові суб&apos;єкти WAE</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2893"/>
@@ -8063,7 +8192,7 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../Configuration.ui" line="3112"/>
         <source>Download CALL3.TXT for terrestrial use</source>
-        <translation>Завантажити CALL3.TXT для наземних зв'язків</translation>
+        <translation>Завантажити CALL3.TXT для наземних зв&apos;язків</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="3119"/>
@@ -8083,7 +8212,7 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../Configuration.ui" line="3151"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Upload logged QSOs to Cloudlog or Wavelog.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Вивантажувати записані зв'язки в Cloudlog або Wavelog.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Вивантажувати записані зв&apos;язки в Cloudlog або Wavelog.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="3154"/>
@@ -8234,7 +8363,7 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../Configuration.ui" line="3462"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of erasure patterns for stochastic soft-decision Reed Solomon decoder is 10^(n/2).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Найбільша кількість шаблонів стирання для стохастичного декодування Ріда — Соломона з м'якими рішеннями.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Найбільша кількість шаблонів стирання для стохастичного декодування Ріда — Соломона з м&apos;якими рішеннями.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="3478"/>
@@ -8254,7 +8383,7 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../Configuration.ui" line="3523"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Upload logged QSOs to eqsl.cc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Вивантажувати записані зв'язки на eqsl.cc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Вивантажувати записані зв&apos;язки на eqsl.cc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="3526"/>
@@ -8265,12 +8394,12 @@ Right click for insert and delete options.</source>
         <location filename="../Configuration.ui" line="3540"/>
         <location filename="../Configuration.ui" line="3584"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Your username.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ваше ім'я користувача.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ваше ім&apos;я користувача.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="3543"/>
         <source>Username:</source>
-        <translation>Ім'я користувача:</translation>
+        <translation>Ім&apos;я користувача:</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="3550"/>
@@ -8399,7 +8528,7 @@ Right click for insert and delete options.</source>
         <location filename="../Configuration.ui" line="3756"/>
         <location filename="../Configuration.ui" line="3759"/>
         <source>Hound</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Мисливець</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="3789"/>
@@ -8583,12 +8712,12 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../Configuration.ui" line="4245"/>
         <source>Ensure that your rig is NOT connected via &quot;Default Device&quot;.</source>
-        <translation>Переконайтеся, що ваш трансивер НЕ під'єднано через «Пристрій за замовчуванням».</translation>
+        <translation>Переконайтеся, що ваш трансивер НЕ під&apos;єднано через «Пристрій за замовчуванням».</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="4252"/>
         <source>Audio Alerts will be played on the default audio device (usually the loudspeaker of your PC).</source>
-        <translation>Звукові сповіщення відтворюватимуться на типовому звуковому пристрої (зазвичай це динамік комп'ютера).</translation>
+        <translation>Звукові сповіщення відтворюватимуться на типовому звуковому пристрої (зазвичай це динамік комп&apos;ютера).</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="4291"/>
@@ -8598,7 +8727,7 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../Configuration.ui" line="4298"/>
         <source>This requirement is fulfilled when your rig is connected via USB audio.</source>
-        <translation>Ця вимога виконується, якщо трансивер під'єднано через звук по USB.</translation>
+        <translation>Ця вимога виконується, якщо трансивер під&apos;єднано через звук по USB.</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="4311"/>
@@ -8670,13 +8799,13 @@ Right click for insert and delete options.</source>
         <location filename="../Configuration.ui" line="4419"/>
         <location filename="../Configuration.ui" line="4422"/>
         <source>New Grid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Новий локатор</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="4429"/>
         <location filename="../Configuration.ui" line="4432"/>
         <source>New DXCC</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Нова країна</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="4439"/>
@@ -8730,17 +8859,17 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../Configuration.ui" line="4558"/>
         <source>Use of this feature requires that your computer is equipped with two sound cards.</source>
-        <translation>Ця можливість потребує двох звукових карт у комп'ютері.</translation>
+        <translation>Ця можливість потребує двох звукових карт у комп&apos;ютері.</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="4565"/>
         <source>Alert categories above the line require to have the box &quot;Show DXCC, grid, and worked-before status&quot; on the General tab checked.</source>
-        <translation>Категорії сповіщень вище лінії потребують увімкненого параметра «Показувати країну, локатор і чи був зв'язок раніше» на вкладці загальних налаштувань.</translation>
+        <translation>Категорії сповіщень вище лінії потребують увімкненого параметра «Показувати країну, локатор і чи був зв&apos;язок раніше» на вкладці загальних налаштувань.</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="4599"/>
         <source>Toggle Audio Alerts on/off. Alerts will be played on &quot;DefaultAudioDevice&quot;. DON&apos;T ENABLE AUDIO ALERTS WHEN YOUR RIG IS CONNECTED VIA THIS SOUNDCARD !!!</source>
-        <translation>Увімкнути або вимкнути звукові сповіщення. Вони відтворюватимуться на типовому звуковому пристрої. НЕ ВМИКАЙТЕ ЗВУКОВІ СПОВІЩЕННЯ, якщо трансивер під'єднано саме до нього.</translation>
+        <translation>Увімкнути або вимкнути звукові сповіщення. Вони відтворюватимуться на типовому звуковому пристрої. НЕ ВМИКАЙТЕ ЗВУКОВІ СПОВІЩЕННЯ, якщо трансивер під&apos;єднано саме до нього.</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="4614"/>
@@ -8750,7 +8879,7 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../Configuration.ui" line="4640"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Фільтри</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="4669"/>
@@ -8864,12 +8993,12 @@ Right click for insert and delete options.</source>
     <message>
         <location filename="../main.cpp" line="415"/>
         <source>Shared memory error</source>
-        <translation>Помилка спільної пам'яті</translation>
+        <translation>Помилка спільної пам&apos;яті</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="416"/>
         <source>Unable to create shared memory segment</source>
-        <translation>Не вдалося створити сегмент спільної пам'яті</translation>
+        <translation>Не вдалося створити сегмент спільної пам&apos;яті</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="424"/>
@@ -8885,14 +9014,12 @@ Right click for insert and delete options.</source>
 <context>
     <name>wf_palette_design_dialog</name>
     <message>
-        <location filename="../wf_palette_design_dialog.ui" line="14"/>
         <source>Palette Designer</source>
-        <translation>Конструктор палітри</translation>
+        <translation type="vanished">Конструктор палітри</translation>
     </message>
     <message>
-        <location filename="../wf_palette_design_dialog.ui" line="23"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Double click a color to edit it.&lt;/p&gt;&lt;p&gt;Right click to insert or delete colors.&lt;/p&gt;&lt;p&gt;Colors at the top represent weak signals&lt;/p&gt;&lt;p&gt;and colors at the bottom represent strong&lt;/p&gt;&lt;p&gt;signals. You can have up to 256 colors.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Подвійний клік на кольорі — редагувати його.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Подвійний клік на кольорі — редагувати його.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 </TS>
