@@ -935,6 +935,8 @@ private:
   // the rest of the application reads.
   UaHam::FilterSettingsWidget * uaham_filter_tab_;
   UaHam::SiteSettingsWidget * uaham_site_tab_;
+  UaHam::LanguageSettingsWidget * uaham_language_tab_;
+  QString ui_language_;
   UaHam::CountryFilter::Mode country_filter_mode_;
   QStringList country_filter_entities_;
   bool uaham_site_enabled_;
@@ -1127,6 +1129,7 @@ void Configuration::set_country_entities (QList<AD1CCty::Entity> const& entities
   m_->uaham_filter_tab_->set_entities (entities);
 }
 UaHam::CountryFilter::Mode Configuration::country_filter_mode () const {return m_->country_filter_mode_;}
+QString Configuration::ui_language () const {return m_->ui_language_;}
 QStringList Configuration::country_filter_entities () const {return m_->country_filter_entities_;}
 bool Configuration::uaham_site_enabled () const {return m_->uaham_site_enabled_;}
 quint16 Configuration::uaham_site_port () const {return m_->uaham_site_port_;}
@@ -1847,6 +1850,8 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   uaham_site_tab_ = new UaHam::SiteSettingsWidget {this};
   ui_->configuration_tabs->addTab (uaham_filter_tab_, tr ("UaHam F&ilter"));
   ui_->configuration_tabs->addTab (uaham_site_tab_, tr ("UaHam &Site"));
+  uaham_language_tab_ = new UaHam::LanguageSettingsWidget {this};
+  ui_->configuration_tabs->addTab (uaham_language_tab_, tr ("&Language"));
 
   {
     // Make sure the default save directory exists
@@ -2250,6 +2255,7 @@ void Configuration::impl::initialize_models ()
   uaham_filter_tab_->set_selected_entities (country_filter_entities_);
   uaham_site_tab_->set_enabled (uaham_site_enabled_);
   uaham_site_tab_->set_port (uaham_site_port_);
+  uaham_language_tab_->set_language (ui_language_);
 
   ui_->cb_twoDays->setChecked(twoDays_);
   ui_->gbSpecialOpActivity->setChecked(bSpecialOp_);
@@ -2703,6 +2709,9 @@ void Configuration::impl::read_settings ()
   country_filter_entities_ = settings_->value ("UaHamCountryFilterEntities", QStringList {}).toStringList ();
   uaham_site_enabled_ = settings_->value ("UaHamSiteEnabled", false).toBool ();
   uaham_site_port_ = static_cast<quint16> (settings_->value ("UaHamSitePort", 8080).toUInt ());
+  // Read again in main.cpp, before any window exists, because that is when Qt
+  // installs translators. The key name is part of that contract.
+  ui_language_ = settings_->value ("UaHamUiLanguage", QString {}).toString ();
 
   twoDays_ = settings_->value("TwoDays",false).toBool ();
   bSpecialOp_ = settings_->value("SpecialOpActivity",false).toBool ();
@@ -2982,6 +2991,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("UaHamCountryFilterEntities", country_filter_entities_);
   settings_->setValue ("UaHamSiteEnabled", uaham_site_enabled_);
   settings_->setValue ("UaHamSitePort", uaham_site_port_);
+  settings_->setValue ("UaHamUiLanguage", ui_language_);
 
   settings_->setValue ("TwoDays", twoDays_);
   settings_->setValue ("SelectedActivity", SelectedActivity_);
@@ -3571,6 +3581,7 @@ void Configuration::impl::accept ()
   country_filter_entities_ = uaham_filter_tab_->selected_entities ();
   uaham_site_enabled_ = uaham_site_tab_->enabled ();
   uaham_site_port_ = uaham_site_tab_->port ();
+  ui_language_ = uaham_language_tab_->language ();
   Individual_Contest_Name_ = ui_->cbContestName->isChecked ();
   NCCC_Sprint_ = ui_->cb_NCCC_Sprint->isChecked ();
   Blacklisted_ = ui_->cbBlacklist->isChecked ();

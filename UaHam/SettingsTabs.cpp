@@ -1,6 +1,7 @@
 #include "SettingsTabs.hpp"
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -241,5 +242,79 @@ namespace UaHam
   void SiteSettingsWidget::show_status (QString const& text)
   {
     status_->setText (text);
+  }
+
+  namespace
+  {
+    //
+    // The languages WSJT-X ships translations for, by the code L10nLoader
+    // resolves. Each is named in its own language: somebody looking for their
+    // own is not helped by finding it written in English.
+    //
+    // Kept beside the LANGUAGES list in CMakeLists.txt — a code here that is
+    // not built there resolves to nothing and silently leaves the interface in
+    // English.
+    //
+    struct Language
+    {
+      char const * code;
+      char const * name;
+    };
+
+    Language const languages[] = {
+      {"", QT_TRANSLATE_NOOP ("UaHam::LanguageSettingsWidget", "System default")},
+      {"uk", "Українська"},
+      {"en", "English"},
+      {"ca", "Català"},
+      {"da", "Dansk"},
+      {"es", "Español"},
+      {"hu", "Magyar"},
+      {"it", "Italiano"},
+      {"ja", "日本語"},
+      {"zh", "中文"},
+    };
+  }
+
+  LanguageSettingsWidget::LanguageSettingsWidget (QWidget * parent)
+    : QWidget {parent}
+    , language_ {new QComboBox {this}}
+    , note_ {new QLabel {this}}
+  {
+    for (auto const& language : languages)
+      {
+        auto const label = *language.code
+          ? QString::fromUtf8 (language.name)
+          : tr ("System default");
+        language_->addItem (label, QString::fromLatin1 (language.code));
+      }
+
+    note_->setWordWrap (true);
+    note_->setText (tr (
+        "Takes effect the next time WSJT-X starts: the interface language is "
+        "chosen once, before any window exists.\n"
+        "Anything not yet translated stays in English, and technical terms — "
+        "mode names, units, the words on the air — are left alone on purpose."));
+
+    auto * form = new QFormLayout;
+    form->addRow (tr ("Interface language:"), language_);
+
+    auto * layout = new QVBoxLayout {this};
+    layout->addLayout (form);
+    layout->addWidget (note_);
+    layout->addStretch (1);
+  }
+
+  QString LanguageSettingsWidget::language () const
+  {
+    return language_->currentData ().toString ();
+  }
+
+  void LanguageSettingsWidget::set_language (QString const& language)
+  {
+    auto const at = language_->findData (language);
+    // An unknown code — a hand-edited settings file, or a translation dropped
+    // from a later build — falls back to the system default rather than
+    // leaving the box showing a language that will not load.
+    language_->setCurrentIndex (at < 0 ? 0 : at);
   }
 }

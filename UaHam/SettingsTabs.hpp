@@ -9,6 +9,7 @@
 #include "UaHam/CountryFilter.hpp"
 
 class QCheckBox;
+class QComboBox;
 class QLabel;
 class QLineEdit;
 class QListWidget;
@@ -87,6 +88,36 @@ namespace UaHam
     QCheckBox * enabled_;
     QSpinBox * port_;
     QLabel * status_;
+  };
+
+  //
+  // Settings → «Language»: which language the interface is in.
+  //
+  // WSJT-X picks its language from the system locale, and could otherwise only
+  // be overridden with a --language argument on the command line — which an
+  // operator who double-clicks an icon has no way to pass. This is that
+  // argument, in a place they can reach.
+  //
+  // Qt installs translators once, at startup, before any of this dialog
+  // exists, so a change here takes effect on the next run. Saying so on the
+  // widget is better than pretending otherwise and leaving a half-translated
+  // window behind.
+  //
+  class LanguageSettingsWidget final
+    : public QWidget
+  {
+    Q_OBJECT
+
+  public:
+    explicit LanguageSettingsWidget (QWidget * parent = nullptr);
+
+    // Empty means "follow the system", which is what WSJT-X always did.
+    QString language () const;
+    void set_language (QString const&);
+
+  private:
+    QComboBox * language_;
+    QLabel * note_;
   };
 }
 

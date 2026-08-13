@@ -1558,6 +1558,7 @@ set (LANGUAGES
   #pt				# Portuguese
   ru				# Russian
   #sv				# Swedish
+  uk				# Ukrainian
   zh				# Chinese
   zh_TW				# Chinese traditional
   it				# Italian

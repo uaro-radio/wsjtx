@@ -256,7 +256,19 @@ int main(int argc, char *argv[])
         }
 
       // load UI translations
-      L10nLoader l10n {&a, locale, parser.value (lang_option)};
+      //
+      // UaHamAward: the language chosen in Settings, read straight from the
+      // settings file because translators are installed here — before
+      // Configuration exists, and before any window. An explicit --language on
+      // the command line still wins: it is a deliberate override, and it is
+      // what makes a stuck setting recoverable without editing an ini file.
+      auto ui_language = parser.value (lang_option);
+      if (ui_language.isEmpty ())
+        {
+          SettingsGroup configuration_group {multi_settings.settings (), "Configuration"};
+          ui_language = multi_settings.settings ()->value ("UaHamUiLanguage").toString ();
+        }
+      L10nLoader l10n {&a, locale, ui_language};
 
       // Create a unique writeable temporary directory in a suitable location
       bool temp_ok {false};

@@ -300,6 +300,8 @@ public:
   // running needs no restart.
   void set_country_entities (QList<AD1CCty::Entity> const&);
   UaHam::CountryFilter::Mode country_filter_mode () const;
+  // Empty means "follow the system locale", which is what WSJT-X always did.
+  QString ui_language () const;
   QStringList country_filter_entities () const;
   bool uaham_site_enabled () const;
   quint16 uaham_site_port () const;
