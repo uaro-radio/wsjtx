@@ -121,7 +121,7 @@ set_build_type ()
 # reads 3.0.2-devel-uaham1 and a release reads 3.0.2-uaham1. Setting it empty
 # produces an unmarked build, which is only ever right when the changes here
 # have gone upstream.
-set (WSJT_FORK_TAG "uaham1" CACHE STRING "Fork marker appended to the version string; empty for none.")
+set (WSJT_FORK_TAG "uaham2" CACHE STRING "Fork marker appended to the version string; empty for none.")
 if (WSJT_FORK_TAG)
   set (BUILD_TYPE_REVISION "${BUILD_TYPE_REVISION}-${WSJT_FORK_TAG}")
 endif ()
