@@ -1356,6 +1356,16 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_uahamSite.reset (new UaHam::SiteServer {version () + "-uaham1", this});
   connect (m_uahamSite.data (), &UaHam::SiteServer::clients_changed
            , this, [this] (int) {uahamUpdateStatus ();});
+
+  m_uahamStatus = new UaHam::StatusWidget {this};
+  ui->tabWidget->addTab (m_uahamStatus, tr ("UaHam"));
+  connect (m_uahamStatus, &UaHam::StatusWidget::counters_reset, this, [this]
+           {
+             m_uahamFilter.reset_hidden_count ();
+             m_uahamQsosSent = 0;
+             uahamUpdateStatus ();
+           });
+
   uahamApplySettings ();
 
 // this must be the last statement of constructor
@@ -2664,6 +2674,16 @@ void MainWindow::fastSink(qint64 frames)
 
     QString text = decodedtext.string().replace("<","").replace(">","");   // for Wait features
 
+    // UaHamAward country filter, before the Wait features below answer the
+    // station. Unlike readFromStdout this function handles one decode per
+    // call, so `filtered` above is already reset per decode.
+    bool const uahamHidden {uahamHiddenByCountry (decodedtext)};
+    if (uahamHidden)
+      {
+        filtered = true;
+        uahamUpdateStatus ();
+      }
+
     // Filtering for MSK144
     QString text2 = "";
     QStringList tw=text.mid(24).split(" ",SkipEmptyParts);
@@ -3028,7 +3048,8 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // Wait & Reply for MSK144
-    if (text.contains(" " + m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
+    if (!uahamHidden
+        && text.contains(" " + m_config.my_callsign() + " " + m_hisCall) && m_hisCall!="" &&
         !text.contains("73 ") && m_mode=="MSK144" && m_config.Wait_features_enabled()
         && !ui->autoButton->isChecked()
         && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
@@ -3040,7 +3061,8 @@ void MainWindow::fastSink(qint64 frames)
     }
 
     // Wait & Call for MSK144
-    if (m_mode=="MSK144" && wait_and_call && m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() &&
+    if (!uahamHidden
+        && m_mode=="MSK144" && wait_and_call && m_specOp!=SpecOp::FOX && ui->cbAutoSeq->isChecked() &&
         m_hisCall!="" && (text.contains("CQ " + m_hisCall) or text.contains("CQ DX " + m_hisCall) or text.contains(m_hisCall + " RR73")
         or text.contains(m_hisCall + " RRR") or text.contains(m_hisCall + " 73")) && m_config.Wait_features_enabled()
         && (!(ui->actionFull_Duplex_Mode->isChecked() && m_txing))) {
@@ -3165,7 +3187,10 @@ void MainWindow::fastSink(qint64 frames)
         }
     }
     // show distance and bearing for MSK144
-    if (!filtered or m_config.filters_for_Wait_and_Pounce_only()) {
+    // "Use filters for Wait and Pounce only" lets WSJT-X's own filters through
+    // to the screen on purpose. The country filter is not one of those: it was
+    // asked to hide a country, so it hides it whatever that box says.
+    if (!uahamHidden && (!filtered or m_config.filters_for_Wait_and_Pounce_only())) {
         QString distance;
         QString deCall;
         QString deGrid;
@@ -6946,7 +6971,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
           ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
 
         // show distance and bearing
-        if (!filtered or m_config.filters_for_Wait_and_Pounce_only()) {  // show decodes if not filtered
+        // See the note in fastSink: the "Wait and Pounce only" escape hatch
+        // applies to WSJT-X's own filters, never to the country filter.
+        if (!uahamHidden && (!filtered or m_config.filters_for_Wait_and_Pounce_only())) {  // show decodes if not filtered
           QString distance;
           QString deCall;
           QString deGrid;
@@ -13502,34 +13529,45 @@ void MainWindow::uahamApplySettings ()
 //
 void MainWindow::uahamUpdateStatus ()
 {
+  QString filter_mode;
   switch (m_uahamFilter.mode ())
     {
-    case UaHam::CountryFilter::Block:
-      uaham_filter_label.setText (tr ("Filter: block %1 (%2 hidden)")
-                                  .arg (m_uahamFilter.size ()).arg (m_uahamFilter.hidden_count ()));
-      break;
-    case UaHam::CountryFilter::Only:
-      uaham_filter_label.setText (tr ("Filter: only %1 (%2 hidden)")
-                                  .arg (m_uahamFilter.size ()).arg (m_uahamFilter.hidden_count ()));
-      break;
-    default:
-      uaham_filter_label.setText (tr ("Filter: off"));
-      break;
+    case UaHam::CountryFilter::Block: filter_mode = tr ("blocking"); break;
+    case UaHam::CountryFilter::Only: filter_mode = tr ("showing only"); break;
+    default: filter_mode = tr ("off"); break;
     }
-  uaham_filter_label.setVisible (m_uahamFilter.active ());
 
+  uaham_filter_label.setVisible (m_uahamFilter.active ());
+  uaham_filter_label.setText (tr ("Filter: %1 %2 (%3 hidden)")
+                              .arg (filter_mode)
+                              .arg (m_uahamFilter.size ())
+                              .arg (m_uahamFilter.hidden_count ()));
+
+  QString site_state;
   if (!m_uahamSite->listening ())
     {
+      site_state = tr ("off");
       uaham_site_label.setVisible (false);
-      return;
     }
-  uaham_site_label.setVisible (true);
-  // The connection count matters more than the port: an operator whose
-  // contacts are not arriving needs to know whether the browser is there at
-  // all, and that is the half they can do something about.
-  uaham_site_label.setText (m_uahamSite->client_count ()
-                            ? tr ("UaHam: connected, %1 QSO sent").arg (m_uahamQsosSent)
-                            : tr ("UaHam: waiting on port %1").arg (m_uahamSite->port ()));
+  else
+    {
+      uaham_site_label.setVisible (true);
+      // The connection matters more than the port: an operator whose contacts
+      // are not arriving needs to know whether the browser is there at all,
+      // and that is the half they can do something about.
+      site_state = m_uahamSite->client_count ()
+        ? tr ("connected on port %1").arg (m_uahamSite->port ())
+        : tr ("waiting for a browser on port %1").arg (m_uahamSite->port ());
+      uaham_site_label.setText (m_uahamSite->client_count ()
+                                ? tr ("UaHam: connected, %1 sent").arg (m_uahamQsosSent)
+                                : tr ("UaHam: waiting on %1").arg (m_uahamSite->port ()));
+    }
+
+  if (m_uahamStatus)
+    {
+      m_uahamStatus->show_filter (filter_mode, m_uahamFilter.size (), m_uahamFilter.hidden_count ());
+      m_uahamStatus->show_site (site_state, m_uahamQsosSent);
+    }
 }
 
 //
