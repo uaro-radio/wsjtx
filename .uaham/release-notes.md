@@ -28,9 +28,32 @@ Windows — `.exe`. macOS — `.pkg` під ваш процесор (збірк�
 
 ---
 
-**English.** A build of WSJT-X with uahamaward.com integration: a DXCC country
-filter for the decode windows (hide chosen countries, or show only those), a
-built-in WebSocket connection that hands logged contacts straight to the site
-and replaces the separate bridge program, and a Ukrainian interface with a
-language selector. Not an official WSJT-X release — report problems with these
-additions here.
+# English
+
+## What this is
+
+A build of **WSJT-X** with [uahamaward.com](https://uahamaward.com) integration. Everything else is stock WSJT-X, unchanged.
+
+This is **not an official WSJT-X release**. Report problems with what is described below here, not to the WSJT-X team.
+
+## What was added
+
+**Country filter (Settings → UaHam Filter).** Pick DXCC entities from a list, in two modes: *hide the chosen ones* or *show only those*. A hidden station appears in neither Band Activity, nor Rx Frequency, nor Active Stations — and auto-sequencing will not answer it even when it calls you directly. `ALL.TXT` keeps every decode, and programs reading WSJT-X over UDP (JTAlert, GridTracker) see everything.
+
+Unlike the existing Filters tab, where twelve text boxes are matched against words of the message, this one asks `cty.dat` — so "Japan only" covers JA, JE–JS, 7J–7N and 8J–8N together, compound callsigns included.
+
+**Direct connection to the site (Settings → UaHam Site).** WSJT-X hands every logged contact to the award pages on uahamaward.com itself, whether you logged it by hand or auto-sequencing did. **The separate bridge program is no longer needed:** nothing to download, nothing to keep updated. With no log page open nothing is sent, and logging works exactly as it always did.
+
+**QRZ.com callsign lookup (Settings → QRZ).** A "Call info" tab in the main window shows the name, address, country and grid of whoever is in the DX Call box — so you can greet an operator by name rather than by callsign. It needs your own QRZ.com account with an XML subscription; without one the tab says so and no request is ever made. The data is shown to you and goes nowhere else.
+
+**Ukrainian interface (Settings → Language).** The main window, menus, every settings tab including its tooltips, the QSO logging dialog and error windows are translated. Mode names, band names, units and on-air abbreviations are deliberately left in English. The language takes effect on the next start.
+
+**A "UaHam" tab in the main window** shows the filter mode, how many decodes were hidden, whether a browser is connected and how many QSOs were sent. The same in short in the status bar.
+
+## Fixed in inherited code
+
+The filtering flag was cleared once per batch of decodes instead of once per decode. One filtered signal in a period was therefore enough to hide every later decode in the same batch, and to suppress auto-sequencing with them.
+
+## Installing
+
+Windows — `.exe`. macOS — a `.pkg` for your processor (the builds are unsigned: on first run use Ctrl+click → Open). Linux — `.AppImage`, `.deb` or `.rpm`.

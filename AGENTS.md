@@ -110,6 +110,18 @@ git push origin build/v3.0.2-uaham1
 - The release description comes from `.uaham/release-notes.md`. Edit that, not
   the workflow. Generated notes alone are a list of commit subjects, which
   says nothing to an operator who came to download a program.
+- **Release notes are written in both languages, in full.** Ukrainian first,
+  then an `# English` section carrying the same sections with the same
+  headings — not a summary paragraph, which is what this file used to end
+  with. Whoever downloads a WSJT-X fork is as likely to read English as
+  Ukrainian, and a release page that explains a country filter in one
+  language and waves at it in the other is a page that gets misunderstood in
+  exactly the half nobody checks. If a section is added to one language and
+  not the other, that is the review comment.
+- Notes are baked in at tag time: the release job checks out the tag, so
+  editing `release-notes.md` afterwards changes nothing on the page. Fix a
+  published release with `gh release edit <tag> --notes-file .uaham/release-notes.md`
+  **and** commit the file, or the next release repeats the omission.
 - **The release rebuilds everything.** CI artifacts are not reused, and must
   not be: CI derives its version from `CMakeLists.txt` on the DEVEL channel,
   so its binaries report `3.0.2-devel-uaham1`, and a release must be built
