@@ -1,10 +1,14 @@
 name: CI
 
+# `develop` is upstream's branch layout and does not exist in this fork, so
+# these triggers never fired and CI only ever ran when somebody remembered to
+# dispatch it. master is where the work lands here, and a green run on master
+# is what Auto release waits for.
 on:
   push:
-    branches: [develop]
+    branches: [master]
   pull_request:
-    branches: [develop]
+    branches: [master]
   workflow_dispatch:
 
 jobs:

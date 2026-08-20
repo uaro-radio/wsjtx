@@ -1,0 +1,65 @@
+name: Auto release
+
+# Releasing is not a separate errand: a green CI on master that carries a
+# version nobody has released yet *is* the release. This workflow is the wire
+# between the two — it dispatches release.yml, which then does what it always
+# does, so the automatic path and `gh workflow run release.yml` are the same
+# code path and cannot drift apart.
+#
+# The version is the switch. Push anything without touching WSJT_FORK_TAG or
+# project(VERSION) and this is a no-op, because that version is already tagged.
+# Bump it, commit, and the next green CI publishes. Nothing here decides when
+# to release; the release commit does, which is the only place that knows.
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [master]
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  dispatch:
+    # workflow_run fires for every finished CI run, red ones included.
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Release, if this version is not released yet
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          CMAKE_VERSION=$(sed -nE 's/^[[:space:]]*VERSION[[:space:]]+([0-9][0-9.]*).*/\1/p' CMakeLists.txt | head -1)
+          NUMERIC=$(echo "$CMAKE_VERSION" | awk -F. '{printf "%s.%s.%s", $1, $2, $3}')
+          FORK_TAG=$(sed -nE 's/^[[:space:]]*set \(WSJT_FORK_TAG "([^"]*)".*/\1/p' CMakeLists.txt | head -1)
+          VERSION="$NUMERIC"
+          [ -n "$FORK_TAG" ] && VERSION="${VERSION}-${FORK_TAG}"
+          TAG="build/v${VERSION}"
+
+          echo "CI was green on $CI_SHA"
+          echo "source version:  $VERSION"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "::notice::$TAG is already released — nothing to do. Bump WSJT_FORK_TAG (or project(VERSION)) in the commit that should ship."
+            exit 0
+          fi
+
+          # release.yml dispatches against a branch, and builds whatever master
+          # points at when it starts. If master has moved on since this CI run,
+          # releasing here would publish a commit nobody tested; that newer
+          # commit has its own CI, and its own turn at this gate.
+          HEAD_SHA=$(git ls-remote origin refs/heads/master | cut -f1)
+          if [ "$HEAD_SHA" != "$CI_SHA" ]; then
+            echo "::notice::master moved to ${HEAD_SHA} since this run — leaving the release to that commit's CI."
+            exit 0
+          fi
+
+          echo "::notice::$TAG is unreleased and master is still $CI_SHA — dispatching release.yml."
+          gh workflow run release.yml --ref master

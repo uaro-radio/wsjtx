@@ -94,7 +94,14 @@ seconds. Output in `build/linux/`.
 
 ## Releasing
 
-One dispatched run does everything:
+**Bumping the version is the release.** Put a new `WSJT_FORK_TAG` (or
+`project(VERSION)`) in the commit that should ship, push it to master, and a
+green CI publishes it: `auto-release.yml` waits for CI, checks whether that
+version is already tagged, and dispatches `release.yml` when it is not. Push
+anything without a bump and it is a no-op, because the version is already
+released. Nothing decides when to release except the release commit.
+
+To release without waiting for CI, or to re-run one by hand:
 
 ```sh
 gh workflow run release.yml --repo uaro-radio/wsjtx --ref master
@@ -114,7 +121,12 @@ gh workflow run release.yml --repo uaro-radio/wsjtx --ref master
   already tagged, and release notes that are missing or have no `# English`
   section, both before any build starts.
 - For a release candidate, pass `-f rc_number=1`: that builds `X.Y.Z-rcN` on
-  the RC channel, without the fork marker, flagged as a pre-release.
+  the RC channel, without the fork marker, flagged as a pre-release. Release
+  candidates are dispatched by hand only — the automatic path never invents an
+  rc number.
+- **CI runs on master.** It used to name `develop`, which upstream has and this
+  fork does not, so it fired for nobody and ran only when dispatched. Auto
+  release depends on it firing.
 - Nothing is published unless **all five platforms** produced an installer.
 - The release description comes from `.uaham/release-notes.md`. Edit that, not
   the workflow. Generated notes alone are a list of commit subjects, which
