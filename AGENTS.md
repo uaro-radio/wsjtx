@@ -237,6 +237,20 @@ docker run --rm -v "$PWD:/src" -u "$(id -u):$(id -g)" -e HOME=/tmp -w /src \
   uaham/wsjtx-build cmake -S /src -B /src/build/linux -DWSJT_FORK_TAG=uahamN
 ```
 
+**A force-pushed tag re-runs the workflow as it was in that tag's commit.**
+Rewriting history moves every fork tag with it, and moving a tag is a push
+event on that ref — so GitHub runs the release workflow *from the commit the
+tag points at*, which for any tag older than a workflow change is the old one.
+Five release builds started themselves the instant the rewritten tags landed,
+including the tag-triggered version this fork no longer uses. They cannot
+damage a published release, because `gh release create` refuses a tag that
+already has one, but they burn half an hour of CI each and leave cancelled runs
+in the history. Before force-pushing tags:
+
+```sh
+gh workflow disable Release --repo uaro-radio/wsjtx   # and enable it again afterwards
+```
+
 **cty.dat entity ids are line numbers.** They are handed out in parse order and
 every cty.dat update renumbers them, so settings store the **primary prefix**
 (`UR`, `JA`, `K`). A setting that remembered an id would quietly start naming a
