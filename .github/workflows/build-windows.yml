@@ -207,6 +207,19 @@ jobs:
         run: |
           file wsjtx-build/jt9.exe
           test -x wsjtx-build/map65/map65.exe
+          # The fork marker has to reach the binary, or a build of this fork is
+          # indistinguishable from an official one at the only moment anybody
+          # checks — when reporting a problem with it. Ask the binary for the
+          # exact marker, not merely for "-uaham": WSJT_FORK_TAG is a CMake
+          # cache variable, so a build directory that was configured once keeps
+          # reporting the marker it was configured with, and a substring test
+          # waves that through.
+          FORK_TAG=$(sed -nE 's/^[[:space:]]*set \(WSJT_FORK_TAG "([^"]*)".*/\1/p' CMakeLists.txt | head -1)
+          if [ -n "$FORK_TAG" ]; then
+            strings wsjtx-build/wsjtx.exe | grep -q -- "-${FORK_TAG}$" \
+              || { echo "::error::The built binary does not report -${FORK_TAG}. WSJT_FORK_TAG did not reach it."; exit 1; }
+            echo "  ok  binary reports -${FORK_TAG}"
+          fi
 
       - name: Stage install
         run: |
