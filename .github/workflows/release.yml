@@ -1,85 +1,107 @@
 name: Release
 
 on:
-  push:
-    tags: ["build/v*"]
+  workflow_dispatch:
+    inputs:
+      rc_number:
+        description: "Release candidate number (blank for a finished release)"
+        type: string
+        default: ""
+      dry_run:
+        description: "Build everything, but do not tag and do not publish"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
 
 jobs:
-  # ── Derive the version string once from the pushed tag ────────────
-  # Strips the "build/v" prefix so artifacts are named "wsjtx-3.0.1-rc1-*"
-  # rather than "wsjtx-build/v3.0.1-rc1-*". RC/beta suffixes (e.g.
-  # build/v3.0.1-rc1 → 3.0.1-rc1) are preserved so pre-release artifacts
-  # are distinguishable from GA. All downstream jobs consume this
-  # single output so the five platform artifacts cannot disagree.
+  # ── Derive the version string once, from the source ───────────────
+  # Never from a hand-typed tag: this workflow creates the tag itself, once the
+  # builds are green, so there is nothing to type and nothing that can
+  # disagree. CMakeLists.txt VERSION gives the numeric base and WSJT_FORK_TAG
+  # the marker that says whose build it is; an rc_number input makes the run a
+  # release candidate instead. All downstream jobs consume this single output,
+  # so the platform artifacts cannot disagree with each other.
   prepare:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.v.outputs.version }}
+      tag: ${{ steps.v.outputs.tag }}
       release_channel: ${{ steps.v.outputs.release_channel }}
       rc_number: ${{ steps.v.outputs.rc_number }}
     steps:
       - uses: actions/checkout@v6
       - id: v
+        env:
+          RC_INPUT: ${{ inputs.rc_number }}
         run: |
-          VERSION="${GITHUB_REF_NAME#build/v}"
-          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            RELEASE_CHANNEL=GA
-            RC_NUMBER=""
-          elif [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc([1-9][0-9]*)$ ]]; then
-            RELEASE_CHANNEL=RC
-            RC_NUMBER="${BASH_REMATCH[1]}"
-          # A finished release of this fork: upstream's version plus the fork
-          # marker that CMakeLists.txt carries in WSJT_FORK_TAG. Built on the
-          # GA channel because it is a finished build and should not nag the
-          # operator about being a development one — the marker in the version
-          # is what says whose build it is.
-          elif [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-(uaham[0-9]+)$ ]]; then
-            RELEASE_CHANNEL=GA
-            RC_NUMBER=""
-            FORK_TAG="${BASH_REMATCH[1]}"
-            CMAKE_FORK_TAG=$(sed -nE 's/^[[:space:]]*set \(WSJT_FORK_TAG "([^"]*)".*/\1/p' CMakeLists.txt | head -1)
-            # The tag names the artifacts; CMakeLists.txt names what is inside
-            # them. Letting those two disagree ships a file called uaham2
-            # containing a binary that reports uaham1.
-            if [ "$FORK_TAG" != "$CMAKE_FORK_TAG" ]; then
-              echo "::error::Tag fork marker ($FORK_TAG) != CMakeLists.txt WSJT_FORK_TAG ($CMAKE_FORK_TAG)."
-              exit 1
-            fi
-          else
-            echo "::error::Unsupported release tag version: $VERSION"
-            echo "::error::Supported release tags are build/vX.Y.Z, build/vX.Y.Z-rcN and build/vX.Y.Z-uahamN."
+          CMAKE_VERSION=$(sed -nE 's/^[[:space:]]*VERSION[[:space:]]+([0-9][0-9.]*).*/\1/p' CMakeLists.txt | head -1)
+          NUMERIC=$(echo "$CMAKE_VERSION" | awk -F. '{printf "%s.%s.%s", $1, $2, $3}')
+          FORK_TAG=$(sed -nE 's/^[[:space:]]*set \(WSJT_FORK_TAG "([^"]*)".*/\1/p' CMakeLists.txt | head -1)
+
+          if [ -z "$CMAKE_VERSION" ]; then
+            echo "::error::Could not read VERSION out of CMakeLists.txt."
             exit 1
           fi
 
+          RC_NUMBER="$(echo "$RC_INPUT" | tr -d '[:space:]')"
+          if [ -n "$RC_NUMBER" ]; then
+            # A release candidate: numbered, flagged as a pre-release on the
+            # page, and deliberately without the fork marker. An rc is for field
+            # testing, not a finished build somebody should find under "Latest".
+            case "$RC_NUMBER" in
+              *[!0-9]*) echo "::error::rc_number must be a positive integer, got '$RC_INPUT'."; exit 1 ;;
+            esac
+            VERSION="${NUMERIC}-rc${RC_NUMBER}"
+            RELEASE_CHANNEL=RC
+          elif [ -n "$FORK_TAG" ]; then
+            # A finished release of this fork: upstream's version plus the fork
+            # marker that CMakeLists.txt carries in WSJT_FORK_TAG. Built on the
+            # GA channel because it is a finished build and should not nag the
+            # operator about being a development one — the marker in the version
+            # is what says whose build it is.
+            VERSION="${NUMERIC}-${FORK_TAG}"
+            RELEASE_CHANNEL=GA
+          else
+            VERSION="$NUMERIC"
+            RELEASE_CHANNEL=GA
+          fi
+
+          echo "version: $VERSION ($RELEASE_CHANNEL)"
+          echo "commit:  $GITHUB_SHA"
           {
             echo "version=$VERSION"
+            echo "tag=build/v$VERSION"
             echo "release_channel=$RELEASE_CHANNEL"
             echo "rc_number=$RC_NUMBER"
           } >> "$GITHUB_OUTPUT"
 
-      # Enforce that the pushed tag's numeric version base
-      # matches CMakeLists.txt:55 VERSION (first 3 components). CMake's
-      # VERSION field is numeric-only and cannot carry pre-release
-      # suffixes like -rc1 or -beta1, so this check compares the tag
-      # version stripped of any `-<suffix>` against the first three
-      # dotted components of CMakeLists.txt VERSION. Mismatch means the
-      # release commit forgot to bump CMakeLists.txt in lockstep with
-      # the tag; fail fast here before five platform builds burn ~30
-      # minutes of CI.
-      - name: Verify tag ↔ CMakeLists.txt version parity
+      # Fail here rather than after half an hour of builds on six runners. A
+      # version that is already tagged means the release commit forgot to bump
+      # CMakeLists.txt VERSION or WSJT_FORK_TAG, and finishing the run would
+      # either clobber a published release or die at the last step with every
+      # installer already paid for.
+      - name: Refuse a version that is already released
+        env:
+          TAG: ${{ steps.v.outputs.tag }}
         run: |
-          TAG_VERSION="${GITHUB_REF_NAME#build/v}"
-          TAG_NUMERIC="${TAG_VERSION%%-*}"
-          CMAKE_VERSION=$(sed -nE 's/^[[:space:]]*VERSION[[:space:]]+([0-9][0-9.]*).*/\1/p' CMakeLists.txt | head -1)
-          CMAKE_NUMERIC=$(echo "$CMAKE_VERSION" | awk -F. '{printf "%s.%s.%s", $1, $2, $3}')
-          echo "Tag version:        $TAG_VERSION (numeric base: $TAG_NUMERIC)"
-          echo "CMakeLists.txt VER: $CMAKE_VERSION (first 3 components: $CMAKE_NUMERIC)"
-          if [ "$TAG_NUMERIC" != "$CMAKE_NUMERIC" ]; then
-            echo "::error::Tag numeric base ($TAG_NUMERIC) != CMakeLists.txt VERSION first 3 components ($CMAKE_NUMERIC)."
-            echo "::error::Bump CMakeLists.txt:55 VERSION in the same commit that gets tagged, then retry."
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "::error::$TAG already exists. Bump CMakeLists.txt VERSION or WSJT_FORK_TAG and commit that first."
             exit 1
           fi
-          echo "Parity check PASSED."
+          echo "  ok  $TAG is free"
+
+      # The release page is written before the release, not after: the notes are
+      # read from the commit being built, so editing them later changes nothing
+      # that anyone downloading this version will ever see.
+      - name: Verify the release notes exist in both languages
+        run: |
+          NOTES=.uaham/release-notes.md
+          [ -f "$NOTES" ] || { echo "::error::$NOTES is missing — write it before releasing."; exit 1; }
+          grep -q '^# English' "$NOTES" \
+            || { echo "::error::$NOTES has no '# English' section. Release notes are written in both languages, in full — see AGENTS.md."; exit 1; }
+          echo "  ok  $NOTES, $(wc -l < "$NOTES") lines, both languages present"
 
   # ── Build all five platforms ───────────────────────────────────────
   macos-arm64-qt:
@@ -179,7 +201,7 @@ jobs:
       # field testing). GA releases always include a source tarball per the
       # CI/CD adoption decision on platform-matrix assets.
       - name: Build source tarball (GA only)
-        if: ${{ !contains(github.ref_name, '-') }}
+        if: ${{ !contains(needs.prepare.outputs.version, '-') }}
         env:
           VERSION: ${{ needs.prepare.outputs.version }}
         run: |
@@ -191,7 +213,7 @@ jobs:
             --format=tar.gz \
             --prefix="wsjtx-${VERSION}/" \
             -o "artifacts/wsjtx-${VERSION}-src.tar.gz" \
-            "${GITHUB_REF_NAME}"
+            "${GITHUB_SHA}"
           ls -lh "artifacts/wsjtx-${VERSION}-src.tar.gz"
 
       - name: List artifacts
@@ -252,17 +274,38 @@ jobs:
           done
           if [ "$missing" -gt 0 ]; then
             echo "::error::All-platforms-ready gate FAILED — $missing of 5 platform(s) missing installer-grade artifact."
-            echo "::error::Refusing to publish a partial release. Fix the failing build job(s) and retry the tag."
+            echo "::error::Refusing to publish a partial release. Fix the failing build job(s) and dispatch again — nothing was tagged."
             exit 1
           fi
           echo "All-platforms-ready gate PASSED — all 5 installer-grade artifacts present. Proceeding to publish."
 
+      - name: Dry run — stopping before the tag
+        if: inputs.dry_run
+        env:
+          TAG: ${{ needs.prepare.outputs.tag }}
+        run: echo "::notice::Every installer built. A real run would now tag $TAG at $GITHUB_SHA and publish."
+
+      # Only now, with every installer in hand, does the version become a tag.
+      # It points at the commit the artifacts were built from — this run's
+      # checkout, not wherever master has drifted to since.
+      - name: Tag the commit that built
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/git/refs" \
+            -f ref="refs/tags/${TAG}" \
+            -f sha="${GITHUB_SHA}" > /dev/null
+          echo "  ok  ${TAG} -> ${GITHUB_SHA}"
+
       - name: Create GitHub Release
+        if: ${{ !inputs.dry_run }}
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ needs.prepare.outputs.version }}
+          TAG: ${{ needs.prepare.outputs.tag }}
         run: |
-          TAG="${GITHUB_REF_NAME}"
           # Filter to user-facing release assets. `find artifacts -type f`
           # without filtering pulls in 5× ctest-results.xml (one per
           # platform) and per-binary tarballs from individual-binaries-*
@@ -316,6 +359,7 @@ jobs:
           fi
 
           gh release create "$TAG" \
+            --target "$GITHUB_SHA" \
             --title "WSJT-X ${{ needs.prepare.outputs.version }} (UaHamAward)" \
             --notes-file "$NOTES" \
             --generate-notes \

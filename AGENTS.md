@@ -94,18 +94,27 @@ seconds. Output in `build/linux/`.
 
 ## Releasing
 
-One pushed tag does everything:
+One dispatched run does everything:
 
 ```sh
-git tag build/v3.0.2-uaham1
-git push origin build/v3.0.2-uaham1
+gh workflow run release.yml --repo uaro-radio/wsjtx --ref master
 ```
 
-- The tag's marker must match `WSJT_FORK_TAG` in `CMakeLists.txt`, and its
-  numeric base must match `project(VERSION)`. The job refuses the tag
-  otherwise: the tag names the files, `CMakeLists.txt` names what is inside
-  them, and a file called `uaham2` holding a binary that reports `uaham1`
-  helps nobody.
+- **Do not tag by hand.** The tag is what a green build earns, not what starts
+  one: the run builds all five platforms first and only then creates
+  `build/v<version>` on the commit it built, and publishes. A run that fails
+  half way leaves no tag to clean up and no version number burned on a build
+  nobody can download. Add `-f dry_run=true` to build everything and stop just
+  before the tag.
+- **The version is read, never typed.** `project(VERSION)` gives the numeric
+  base and `WSJT_FORK_TAG` the marker, so the tag names the files and
+  `CMakeLists.txt` names what is inside them and the two cannot disagree —
+  a file called `uaham2` holding a binary that reports `uaham1` helps nobody.
+  Bump them and commit before dispatching; the run refuses a version that is
+  already tagged, and release notes that are missing or have no `# English`
+  section, both before any build starts.
+- For a release candidate, pass `-f rc_number=1`: that builds `X.Y.Z-rcN` on
+  the RC channel, without the fork marker, flagged as a pre-release.
 - Nothing is published unless **all five platforms** produced an installer.
 - The release description comes from `.uaham/release-notes.md`. Edit that, not
   the workflow. Generated notes alone are a list of commit subjects, which
@@ -118,14 +127,14 @@ git push origin build/v3.0.2-uaham1
   language and waves at it in the other is a page that gets misunderstood in
   exactly the half nobody checks. If a section is added to one language and
   not the other, that is the review comment.
-- Notes are baked in at tag time: the release job checks out the tag, so
-  editing `release-notes.md` afterwards changes nothing on the page. Fix a
+- Notes are read from the commit being released, so editing
+  `release-notes.md` afterwards changes nothing on the page. Fix a
   published release with `gh release edit <tag> --notes-file .uaham/release-notes.md`
   **and** commit the file, or the next release repeats the omission.
 - **The release rebuilds everything.** CI artifacts are not reused, and must
   not be: CI derives its version from `CMakeLists.txt` on the DEVEL channel,
   so its binaries report `3.0.2-devel-uaham1`, and a release must be built
-  from the tagged commit to be worth the name.
+  from the commit it is published against to be worth the name.
 
 `build/vX.Y.Z` and `build/vX.Y.Z-rcN` still mean what they mean upstream and
 are not for this fork.
@@ -198,6 +207,24 @@ decompiling instead:
 lconvert -i build/linux/wsjtx_uk.qm -o /tmp/back.ts
 ```
 
+**`WSJT_FORK_TAG` is a CMake cache variable, so editing `CMakeLists.txt` does
+not move it.** `.uaham/docker/build.sh` configures only when `CMakeCache.txt` is
+absent, which means a local build keeps reporting whatever marker the very first
+configure wrote — a binary claiming `uaham1` long after the source says
+otherwise. Releases are unaffected: CI configures from a clean checkout. To
+check a local build, ask the binary rather than the source:
+
+```sh
+strings build/linux/wsjtx | grep -m1 -- -uaham
+```
+
+and if it disagrees, re-point the cache without a full rebuild:
+
+```sh
+docker run --rm -v "$PWD:/src" -u "$(id -u):$(id -g)" -e HOME=/tmp -w /src \
+  uaham/wsjtx-build cmake -S /src -B /src/build/linux -DWSJT_FORK_TAG=uahamN
+```
+
 **cty.dat entity ids are line numbers.** They are handed out in parse order and
 every cty.dat update renumbers them, so settings store the **primary prefix**
 (`UR`, `JA`, `K`). A setting that remembered an id would quietly start naming a
@@ -242,6 +269,29 @@ and all. `uk_apply.py` now refuses to write unless every hash matches.
 first matches full source text, the second matches sources differing only by
 whitespace or Qt's rich-text wrapper. Both skip ambiguous matches rather than
 guess.
+
+---
+
+## Commits
+
+- **No AI co-author trailers.** Nothing in a commit message credits an
+  assistant — no `Co-Authored-By:` for Claude or any other tool, no generated-by
+  footer. The person who decided the change owns it; the tooling that typed it
+  is no more a co-author than the editor is.
+- **Commit as an address GitHub can resolve.** GitHub links a commit to an
+  account by matching the author email against the verified addresses on that
+  account, and nothing else. An address that is not on the account makes the
+  commit authorless on the web view and invisible to the contributor graph —
+  the work lands, the name does not. Check with:
+
+  ```sh
+  gh api repos/uaro-radio/wsjtx/commits/HEAD --jq '.author.login // "NOT LINKED"'
+  ```
+
+  If that prints `NOT LINKED`, the address in `git config user.email` is
+  missing from https://github.com/settings/emails. Adding and verifying it
+  there fixes every past commit at once — GitHub re-links history, so there is
+  never a reason to rewrite commits over this.
 
 ---
 
