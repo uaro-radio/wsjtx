@@ -9,6 +9,29 @@ than the obvious alternative.
 
 ---
 
+## 3.0.2-uaham3 — 2026-08-22
+
+### Country filter also gates the averaged-message auto-reply
+
+Ported from WSJT-Z PR #1 (`fix autoqso with filtered stations`) and the
+follow-up that narrowed it. There the bug was that `callsignFiltered()` lets
+the current or last QSO partner through unchecked, so that station could
+answer a CQ with a bare report and `auto_sequence()` would accept it. This
+fork's `uahamHiddenByCountry()` has no such shortcut, so most of that patch
+has nothing to attach to: every "CQ: First" / best-priority reply path
+already checks `filtered`, and `auto_sequence()` only continues QSOs that
+were already accepted.
+
+The one equivalent path was the "Reply also to averaged messages" block in
+`readFromStdout` (`m_bCallingCQ && !m_bAutoReply && for_us`), which never
+consulted `filtered` or `uahamHidden`. With Include averaging on, a hidden
+station calling us during CQ got an automatic reply. It now checks
+`uahamHidden`. Nothing else from the Z patch was carried over — the probe-only
+re-check exists to avoid `callsignFiltered()`'s side effects, and the country
+filter here has none beyond a counter.
+
+---
+
 ## 3.0.2-uaham2 — 2026-08-14
 
 ### QRZ.com callsign lookup

@@ -7403,7 +7403,15 @@ void MainWindow::readFromStdout()                             //readFromStdout
           }
 
           // Reply also to averaged messages that are only displayed in the right window
-          if(m_bCallingCQ && !m_bAutoReply && for_us && m_specOp!=SpecOp::FOX && m_specOp!=SpecOp::HOUND
+          //
+          // UaHamAward: this is the one path that opens a new QSO while calling
+          // CQ without passing through `filtered` — the "CQ: First" and
+          // best-priority paths above all check it, this one never did. WSJT-Z
+          // had the same shape of hole (a station its filters rejected could
+          // still answer a CQ and be accepted automatically) and closed it by
+          // re-checking the filter right before auto-sequencing; here the
+          // verdict is already in uahamHidden, so ask that.
+          if(m_bCallingCQ && !m_bAutoReply && for_us && !uahamHidden && m_specOp!=SpecOp::FOX && m_specOp!=SpecOp::HOUND
               && ui->actionInclude_averaging->isVisible() && ui->actionInclude_averaging->isChecked()) {
             bool bProcessMsgNormally=ui->respondComboBox->currentText()!="CQ: None" or
                                        (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());

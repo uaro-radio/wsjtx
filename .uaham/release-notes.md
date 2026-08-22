@@ -20,6 +20,8 @@
 
 ## Виправлено в успадкованому коді
 
+**Автовідповідь на CQ на приховану станцію.** Один шлях у WSJT-X — відповідь на усереднені повідомлення (меню → «Include averaging») — відкривав QSO з будь-ким, хто викликав вас під час CQ, не питаючи фільтр країн. Тепер і він дотримується фільтра. Та сама дірка, що її закрито у WSJT-Z (uaham3), тільки тут вона була вужчою.
+
 Прапорець фільтрації скидався один раз на пачку декодів замість кожного декоду. Через це варто було відфільтрувати один сигнал у періоді — і зникали всі наступні в тій самій пачці, разом з автовідповіддю.
 
 ## Встановлення
@@ -51,6 +53,8 @@ Unlike the existing Filters tab, where twelve text boxes are matched against wor
 **A "UaHam" tab in the main window** shows the filter mode, how many decodes were hidden, whether a browser is connected and how many QSOs were sent. The same in short in the status bar.
 
 ## Fixed in inherited code
+
+**Auto-reply to a CQ from a hidden station.** One path in WSJT-X — replying to averaged messages (menu → "Include averaging") — opened a QSO with whoever called you during CQ without asking the country filter. It now honours the filter. The same hole that WSJT-Z closed in its uaham3, only narrower here.
 
 The filtering flag was cleared once per batch of decodes instead of once per decode. One filtered signal in a period was therefore enough to hide every later decode in the same batch, and to suppress auto-sequencing with them.
 
